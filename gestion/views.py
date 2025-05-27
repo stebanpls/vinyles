@@ -55,6 +55,9 @@ def pub_logOut(request):
 def pub_nosotros(request):
   return render(request, 'paginas/publico/pub_nosotros.html') # Se crea un renderizado de este archivo HTML.
 
+def pub_reembolsos(request):
+  return render(request, 'paginas/publico/pub_reembolsos.html')
+
 def pub_registro(request):
   return render(request, 'paginas/publico/pub_registro.html')
 
@@ -63,6 +66,9 @@ def pub_restablecer_contrasena(request):
 
 def pub_restablecer_contrasena_admin(request):
   return render(request, 'paginas/publico/pub_restablecer_contrasena_admin.html')
+
+def pub_soporte(request):
+  return render(request, 'paginas/publico/pub_soporte.html')
 
 def pub_terminos(request):
   return render(request, 'paginas/publico/pub_terminos.html')
@@ -406,23 +412,24 @@ def com_checkout(request):
         'total': total
     })
     # views.py
+    
+def com_nosotros(request):
+  return render(request, 'paginas/comprador/com_nosotros.html')
 
 def com_perfil(request):
   return render(request, 'paginas/comprador/com_perfil.html')
 
 def com_progreso_envio(request):
     return render(request, 'paginas/comprador/com_progreso_envio.html')
-
-# Cambiar a Publico?
-def pub_reembolsos(request):
+  
+def com_reembolsos(request):
   return render(request, 'paginas/publico/pub_reembolsos.html')
 
-def pub_soporte(request):
-  return render(request, 'paginas/publico/pub_soporte.html')
+def com_soporte(request):
+  return render(request, 'paginas/comprador/com_soporte.html')
 
-# Renombrar
-def com_sobre_nosotros(request):
-  return render(request, 'paginas/comprador/com_sobre_nosotros.html')
+def com_terminos(request):
+  return render(request, 'paginas/comprador/com_terminos.html')
 
 
 # VISTAS DE LA CARPETA "VENDEDOR"

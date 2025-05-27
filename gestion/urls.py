@@ -19,24 +19,25 @@ urlpatterns = [
     path('pub_login_administrador/', views.pub_login_administrador, name='pub_login_administrador'),
     path('pub_logOut/', views.pub_logOut, name='pub_logOut'),
     path('pub_nosotros/', views.pub_nosotros, name='pub_nosotros'),
+    path('pub_reembolsos/', views.pub_reembolsos, name='pub_reembolsos'),
     path('pub_registro/', views.pub_registro, name='pub_registro'),
     path('pub_restablecer_contrasena/', views.pub_restablecer_contrasena, name="pub_restablecer_contrasena"),
     path('pub_restablecer_contrasena_admin/', views.pub_restablecer_contrasena_admin, name='pub_restablecer_contrasena_admin'),
+    path('pub_soporte/', views.pub_soporte, name='pub_soporte'),
     path('pub_terminos/', views.pub_terminos, name='pub_terminos'),
     path('pub_vinilo/', views.pub_vinilo, name='pub_vinilo'),
     
     # URLS DE LA CARPETA "COMPRADOR"
+    path('com_inicio/', views.com_inicio, name='com_inicio'),
     path('com_albumes/', views.com_albumes, name='com_albumes'),
     path('com_carrito/', views.com_carrito, name='com_carrito'),
     path('com_checkout/', views.com_checkout, name='com_checkout'),
-    path('com_inicio/', views.com_inicio, name='com_inicio'),
+    path('com_nosotros/', views.com_nosotros, name='com_nosotros'),
     path('com_perfil/', views.com_perfil, name='com_perfil'),
     path('com_progreso_envio/', views.com_progreso_envio, name='com_progreso_envio'),
-    
-    path('com_sobre_nosotros/', views.com_sobre_nosotros, name='com_sobre_nosotros'), # Renombrar a nosotros
-    
-    path('pub_reembolsos/', views.pub_reembolsos, name='pub_reembolsos'), # Mirar a en donde van estos. No deberian estar en publico?
-    path('pub_soporte/', views.pub_soporte, name='pub_soporte'),
+    path('com_reembolsos/', views.com_reembolsos, name='com_reembolsos'),
+    path('com_soporte/', views.com_soporte, name='com_soporte'),
+    path('com_terminos/', views.com_terminos, name='com_terminos'),
     
     # URLS DE LA CARPETA "VENDEDOR"
     path('ven_bad/', views.ven_bad, name='ven_bad'),

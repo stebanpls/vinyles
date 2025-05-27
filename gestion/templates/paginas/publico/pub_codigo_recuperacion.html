@@ -1,8 +1,8 @@
-{% extends "plantilla.html" %}
+{% extends "plantillas/plantilla_publico.html" %}
 {% load static %}
 
 {% block extra_css %} 
-    <link rel="stylesheet" href="{% static 'css/styleCodigoRecuperacion.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/publico/style_codigo_recuperacion.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Recuperación {% endblock titulo %}
@@ -37,7 +37,7 @@
             <p><a href="#">Reenviar Código</a></p>
             <div class="form-group">
                 <button type="submit" class="btn btn-success">
-                    <a href="{% url 'restablecerContrasena' %}">Restablece tu Contraseña</a>
+                    <a href="{% url 'pub_restablecer_contrasena' %}">Restablece tu Contraseña</a>
                 </button>
             </div>
         </form>

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %} 
-    <link rel="stylesheet" href="{% static 'css/styleLogin.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/publico/style_login.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Inicio {% endblock titulo %}
@@ -42,18 +42,18 @@
             <p><a href="{% url 'pub_codigo_recuperacion' %}">¿Olvidaste tu Contraseña?</a></p>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">
-                    <a href="{% url 'inicioCom' %}">Iniciar Sesión</a>
+                    <a href="{% url 'com_inicio' %}">Iniciar Sesión</a>
                 </button>
             </div>
         </form>
         <p>
-            ¿No tienes una cuenta? <a href="{% url 'registro' %}">Regístrate</a>
+            ¿No tienes una cuenta? <a href="{% url 'pub_registro' %}">Regístrate</a>
         </p>
         <p>
             o
         </p>
         <button type="submit" class="btn btn-primary">
-            <a href="{% url 'loginAdministrador' %}">Inicia como Administrador</a>
+            <a href="{% url 'pub_login_administrador' %}">Inicia como Administrador</a>
         </button>
     </div>
 </div>
