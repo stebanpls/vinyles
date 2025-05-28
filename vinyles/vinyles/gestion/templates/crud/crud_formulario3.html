@@ -1,0 +1,89 @@
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {% for campo in formulario %}
+
+    <!-- bs5-form-input -->
+    <div class="mb-3 text text-start">
+        <!-- Añadido en label for: "{{ campo.id_for_label }}" -->
+        <label for="{{ campo.id_for_label }}" class="form-label fs-4 text-start">{{ campo.label }}</label>
+
+        <!-- Añadido el campo: "{{ campo }}" -->
+        <!-- {{ campo }} -->
+
+        {% if campo.field.widget.input_type == 'file' %}
+            {# Contenedor para la previsualización de la imagen y el input #}
+            <br>
+            <img id="preview_{{ campo.id_for_label }}"
+                src="{% if campo.value %}{{ MEDIA_URL }}/fotos/{{ campo.value }}{% else %}#{% endif %}"
+                width="80px"
+                height="100px"
+                alt="Foto del Estudiante"
+                style="display: {% if campo.value %}block{% else %}none{% endif %}; margin-bottom: 10px; border: 1px solid #ccc;">
+            <input
+                type="file"
+                class="form-control"
+                name="{{ campo.name }}"
+                id="{{ campo.id_for_label }}"
+                aria-describedby="helpId_{{ campo.name }}"
+                accept="image/*"
+                onchange="previewImage(event, 'preview_{{ campo.id_for_label }}')"
+            />
+        {% else %}
+            {# Renderizado para otros tipos de campos #}
+            <input
+                type="{{ campo.field.widget.input_type }}"
+                class="form-control"
+                name="{{ campo.name }}"
+                id="{{ campo.id_for_label }}" {# Usar id_for_label para el ID del input #}
+                aria-describedby="helpId_{{ campo.name }}"
+                placeholder="{{ campo.label }}"
+                value="{% if campo.name == 'fechaIngreso' %}{{ campo.value|date:"d/m/Y"|default:'' }}{% else %}{{ campo.value|default:'' }}{% endif %}"
+            />
+        {% endif %}
+        <div class="col-12 text-danger">{{ campo.errors }}</div>
+        <small id="helpId_{{ campo.name }}" class="form-text text-muted" style="display: none;">Ayuda para {{ campo.label }}</small>
+    </div>
+    {% endfor %}
+
+    <!-- bs5-form-input -->
+    <input
+        name=""
+        id=""
+        class="btn btn-warning"
+        type="submit"
+        value="Enviar Información"
+    />
+
+    <!-- bs5-button-a -->
+    <a
+        name=""
+        id=""
+        class="btn btn-primary"
+        href="{% url 'estudiantes' %}"
+        role="button"
+        >Cancelar</a
+    >
+</form>
+
+<script>
+function previewImage(event, previewElementId) {
+    const fileInput = event.target;
+    const preview = document.getElementById(previewElementId);
+
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block'; // Asegura que la imagen sea visible
+        }
+
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        // Opcional: si el usuario cancela la selección de archivo,
+        // puedes ocultar la previsualización o volver a una imagen por defecto.
+        // preview.src = "#"; // O una imagen placeholder
+        // preview.style.display = 'none';
+    }
+}
+</script>
