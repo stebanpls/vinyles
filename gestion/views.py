@@ -73,8 +73,10 @@ def pub_soporte(request):
 def pub_terminos(request):
   return render(request, 'paginas/publico/pub_terminos.html')
 
+"""
 def pub_vinilo(request):
-  return render(request, 'paginas/publico/pub_vinilo.html')
+  return render(request, 'paginas/publico/pub_vinilo.html') # Porqué esta repetida?
+"""
 
 def pub_vinilo(request):
     album_key = request.GET.get('album', '')  # ejemplo: 'bad', 'master', etc.
