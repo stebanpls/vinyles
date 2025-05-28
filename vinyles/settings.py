@@ -80,6 +80,14 @@ WSGI_APPLICATION = 'vinyles.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'vinyles.sqlite3',
+    }
+}
+
+"""
+DATABASES = {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',  # O 'django.db.backends.mysql' si usas MySQL
         'NAME': 'vinyles',
         'USER': 'root',
@@ -93,6 +101,7 @@ DATABASES = {
         },
     }
 }
+"""
 
 
 # Password validation
