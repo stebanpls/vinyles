@@ -80,8 +80,17 @@ WSGI_APPLICATION = 'vinyles.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'vinyles.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # O 'django.db.backends.mysql' si usas MySQL
+        'NAME': 'vinyles',
+        'USER': 'root',
+        'PASSWORD': 'GRUPO42025',
+        'HOST': 'localhost',  # O la dirección IP de tu servidor de MariaDB
+        'PORT': '3307',  # O el puerto en el que se ejecuta MariaDB (por defecto es 3306)
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'use_unicode': True,
+            'read_default_file': os.path.join(BASE_DIR, 'my.cnf'),
+        },
     }
 }
 
