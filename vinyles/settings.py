@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 # Se agregó el import de os
 import os
 from pathlib import Path
+# Importar python-dotenv
+from dotenv import load_dotenv
+
+load_dotenv()  # Carga variables desde el archivo .env que estará en la raíz del proyecto
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--byrce+$%&e!-0xl%$40w=-hry&3oc09wvsyd^9l9bk-g0%h20'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure--byrce+$%&e!-0xl%$40w=-hry&3oc09wvsyd^9l9bk-g0%h20') # Valor por defecto si no está en .env
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True' # Convertir string a Boolean
 
 ALLOWED_HOSTS = []
 
@@ -78,30 +82,40 @@ WSGI_APPLICATION = 'vinyles.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'vinyles.sqlite3',
     }
 }
-
 """
+
+# Leer configuraciones de la base de datos desde variables de entorno
+# Se pueden poner valores por defecto si se desea.
+DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.mysql')
+DB_NAME = os.environ.get('DB_NAME') # Obligatorio en .env
+DB_USER = os.environ.get('DB_USER') # Obligatorio en .env
+DB_PASSWORD = os.environ.get('DB_PASSWORD') # Obligatorio en .env
+DB_HOST = os.environ.get('DB_HOST', 'localhost') # Valor por defecto común para desarrollo
+DB_PORT = os.environ.get('DB_PORT', '3307') # Valor por defecto común para desarrollo (ajusta si es necesario). El puerto por defecto de MySQL es 3306, pero aquí se usa 3307.
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # O 'django.db.backends.mysql' si usas MySQL
-        'NAME': 'vinyles',
-        'USER': 'root',
-        'PASSWORD': 'GRUPO42025',
-        'HOST': 'localhost',  # O la dirección IP de tu servidor de MariaDB
-        'PORT': '3307',  # O el puerto en el que se ejecuta MariaDB (por defecto es 3306)
+        'ENGINE': DB_ENGINE,
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         'OPTIONS': {
             'charset': 'utf8mb4',
             'use_unicode': True,
-            'read_default_file': os.path.join(BASE_DIR, 'my.cnf'),
+            # 'read_default_file': os.path.join(BASE_DIR, 'my.cnf'), # Puedes comentar o quitar esto si usas .env exclusivamente
         },
     }
 }
-"""
+
 
 
 # Password validation

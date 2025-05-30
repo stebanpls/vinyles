@@ -1,14 +1,31 @@
+-- SQL de HeidiSQL
+-- Crear Base de Datos
+CREATE DATABASE IF NOT EXISTS vinyles_local CHARACTER SET utf8mb4 COLLATE UTF8MB4_UNICODE_CI;
+
+-- Crear el Usuario de la Base de Datos
+CREATE USER IF NOT EXISTS 'vinyles_sp'@'localhost' IDENTIFIED BY 'CONTRASEÑASEGURA2025';
+
+-- Asegurarse que la información del Usuario sea correcta
+ALTER USER 'vinyles_sp'@'localhost' IDENTIFIED BY 'CONTRASEÑASEGURA2025';
+
+-- Otorgar permisos al Usuario sobre la Base de Datos
+GRANT ALL PRIVILEGES ON vinyles_local.* TO 'vinyles_sp'@'localhost';
+
+-- Refresca los Privilegios
+FLUSH PRIVILEGES;
+
+-- SQL de Workbench
 -- Eliminar Base de Datos
-DROP DATABASE vinyles;
+DROP DATABASE vinyles_local IF NOT EXISTS;
 
 -- Crear Base de Datos
-CREATE DATABASE vinyles;
+CREATE DATABASE vinyles_local IF NOT EXISTS;
 
 -- Ingresar BD
-USE vinyles;
+USE vinyles_local;
 
 -- Crear tabla Ciudad
-CREATE TABLE Pais (
+CREATE TABLE pais (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID de los países',
     nombre VARCHAR(100) NOT NULL COMMENT 'Nombres de los países'
 ) COMMENT = 'Esta es la tabla que almacena los países de los pedidos';
