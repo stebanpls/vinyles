@@ -1,19 +1,3 @@
--- SQL de HeidiSQL
--- Crear Base de Datos
-CREATE DATABASE IF NOT EXISTS vinyles_local CHARACTER SET utf8mb4 COLLATE UTF8MB4_UNICODE_CI;
-
--- Crear el Usuario de la Base de Datos
-CREATE USER IF NOT EXISTS 'usuario'@'localhost' IDENTIFIED BY 'contraseña';
-
--- Asegurarse que la información del Usuario sea correcta
-ALTER USER 'usuario'@'localhost' IDENTIFIED BY 'contraseña';
-
--- Otorgar permisos al Usuario sobre la Base de Datos
-GRANT ALL PRIVILEGES ON vinyles_local.* TO 'usuario'@'localhost';
-
--- Refresca los Privilegios
-FLUSH PRIVILEGES;
-
 -- SQL de Workbench
 -- Eliminar Base de Datos
 DROP DATABASE vinyles_local IF NOT EXISTS;
