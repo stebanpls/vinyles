@@ -37,15 +37,14 @@ def pub_ddl(request):
 def pub_login(request):
     error_message = None
     # Para repoblar el campo email en caso de error y mantener datos del álbum
-    submitted_email = request.POST.get('email', '') if request.method == 'POST' else ''
+    # submitted_email = request.POST.get('email', '') if request.method == 'POST' else '' # Antigua línea
     album_name_get = request.GET.get('album_name')
     artist_get = request.GET.get('artist')
     price_get = request.GET.get('price')
     image_get = request.GET.get('image')
 
     # Inicializar error_message y submitted_email para el contexto
-    error_message = None
-    submitted_email = request.POST.get('email', '') if request.method == 'POST' else ''
+    submitted_identifier = request.POST.get('login_identifier', '') if request.method == 'POST' else ''
 
     # Obtener la URL de redirección 'next' si existe
     # Esto es útil si el usuario intentó acceder a una página protegida antes de loguearse
@@ -59,8 +58,8 @@ def pub_login(request):
             return redirect('com_inicio')
 
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        identifier = request.POST.get('login_identifier') # Cambiado de 'email'
+        password = request.POST.get('password') 
 
         # Datos del álbum del POST, con fallback a los de GET si no están en POST
         post_album_name = request.POST.get('album_name', album_name_get)
@@ -73,12 +72,12 @@ def pub_login(request):
         # user = authenticate(request, username=email, password=password) # Línea original
 
         # Intentar autenticar con el input como username primero
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=identifier, password=password)
 
         if user is None:
             # Si falla, intentar encontrar usuario por email y autenticar con su username real
             try:
-                user_by_email = User.objects.get(email__iexact=email) # Búsqueda case-insensitive
+                user_by_email = User.objects.get(email__iexact=identifier) # Búsqueda case-insensitive
                 user = authenticate(request, username=user_by_email.username, password=password)
             except User.DoesNotExist:
                 # No se encontró usuario con ese email, 'user' sigue siendo None
@@ -110,7 +109,7 @@ def pub_login(request):
     # Prepara el contexto y renderiza la plantilla de login.
     context = {
         'error_message': error_message, # Será None en GET, o el mensaje de error en POST fallido
-        'submitted_email': submitted_email, # Será '' en GET, o el email enviado en POST
+        'submitted_identifier': submitted_identifier, # Cambiado de submitted_email
         'album_name_get': album_name_get, # Datos del álbum de GET
         'artist_get': artist_get,       # Datos del álbum de GET
         'price_get': price_get,         # Datos del álbum de GET

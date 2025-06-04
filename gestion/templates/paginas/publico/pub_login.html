@@ -27,14 +27,15 @@
             {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
 
             <div class="form-group">
-                <label for="email" class="form-label">Email</label>
+                <label for="login_identifier" class="form-label">Email o Nombre de Usuario</label>
                 <input
-                    type="email"
+                    type="text"
                     class="form-control"
-                    name="email"
-                    id="email"
-                    aria-describedby="emailHelpId"
-                    placeholder="abc@mail.com"
+                    name="login_identifier" {# Cambiado de 'email' #}
+                    id="login_identifier"   {# Cambiado de 'email' #}
+                    aria-describedby="identifierHelpId"
+                    placeholder="Tu Email o Nombre de Usuario"
+                    value="{{ submitted_identifier }}" {# Para repoblar el campo #}
                 />
             </div>
             
