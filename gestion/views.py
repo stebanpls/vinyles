@@ -123,8 +123,7 @@ def pub_log_out(request):
     # Esta vista es el destino de LOGOUT_REDIRECT_URL en settings.py.
     # La LogoutView de Django ya ha cerrado la sesión antes de redirigir aquí.
     # Simplemente renderiza la página de confirmación.
-    # Puedes añadir un mensaje aquí si no usas el framework de mensajes en la LogoutView.
-    # messages.info(request, "Has cerrado sesión exitosamente.") # Si quieres mostrar un mensaje
+    # messages.info(request, "Has cerrado sesión exitosamente. ¡Hasta luego!") # Eliminamos este mensaje
     return render(request, 'paginas/publico/pub_log_out.html') # Renderiza tu página de sesión cerrada
 
 def pub_nosotros(request):

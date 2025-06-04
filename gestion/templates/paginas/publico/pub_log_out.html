@@ -3,12 +3,7 @@
 {% block titulo %} Sesión Cerrada {% endblock titulo %}
 {% block contenido %}
 <div class="container text-center mt-5">
-    <h2>Has cerrado sesión</h2>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-info">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
+    <h2>Has cerrado sesión</h2>    
     <p>Gracias por visitar Vinyles. ¡Esperamos verte pronto!</p>
     <p>
         <a href="{% url 'pub_login' %}" class="btn btn-primary">Iniciar Sesión de Nuevo</a>
@@ -16,6 +11,9 @@
     </p>
 </div>
 {% endblock contenido %}
+
+{# Override the message block from the base template to show no messages on this page #}
+{% block message_block %}{% endblock message_block %}
 
 {% block pie %}
 
