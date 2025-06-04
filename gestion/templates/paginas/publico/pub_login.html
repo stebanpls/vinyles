@@ -23,6 +23,9 @@
             <input type="hidden" name="price" value="{{ request.GET.price }}">
             <input type="hidden" name="image" value="{{ request.GET.image }}">
 
+            {# Campo oculto para la URL 'next' #}
+            {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
             <div class="form-group">
                 <label for="email" class="form-label">Email</label>
                 <input
@@ -41,24 +44,15 @@
             </div>
             <p><a href="{% url 'pub_codigo_recuperacion' %}">¿Olvidaste tu Contraseña?</a></p>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                    <a href="{% url 'com_inicio' %}">Iniciar Sesión</a>
-                </button>
+                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
             </div>
         </form>
         <p>
             ¿No tienes una cuenta? <a href="{% url 'pub_registro' %}">Regístrate</a>
         </p>
-        <p>
-            o
-        </p>
-        <button type="submit" class="btn btn-primary">
-            <a href="{% url 'pub_login_administrador' %}">Inicia como Administrador</a>
-        </button>
-    </div>
-</div>
 {% endblock contenido %}
 
+{# Asegúrate de que este div de cierre esté en el lugar correcto según tu diseño #}
 {% block pie %}
 
 {% endblock pie %}

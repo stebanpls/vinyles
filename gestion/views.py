@@ -11,6 +11,7 @@ from .forms import CrudForm, UserRegistrationForm # Importar formularios
 
 # Importar las funciones de autenticación de Django
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout # Importa las funciones de autenticación
+from django.contrib.auth.models import User # Importar el modelo User estándar
 from django.contrib import messages # Para mensajes opcionales
 
 # Create your views here.
@@ -42,6 +43,14 @@ def pub_login(request):
     price_get = request.GET.get('price')
     image_get = request.GET.get('image')
 
+    # Inicializar error_message y submitted_email para el contexto
+    error_message = None
+    submitted_email = request.POST.get('email', '') if request.method == 'POST' else ''
+
+    # Obtener la URL de redirección 'next' si existe
+    # Esto es útil si el usuario intentó acceder a una página protegida antes de loguearse
+    next_url = request.GET.get('next') or request.POST.get('next')
+
     if request.user.is_authenticated:
         # Si el usuario ya está autenticado, redirigir según su rol
         if request.user.is_staff or request.user.is_superuser:
@@ -61,72 +70,54 @@ def pub_login(request):
 
         # Autenticación real
         # Asumimos que tu modelo User usa 'email' como USERNAME_FIELD o que username = email
+        # user = authenticate(request, username=email, password=password) # Línea original
+
+        # Intentar autenticar con el input como username primero
         user = authenticate(request, username=email, password=password)
 
+        if user is None:
+            # Si falla, intentar encontrar usuario por email y autenticar con su username real
+            try:
+                user_by_email = User.objects.get(email__iexact=email) # Búsqueda case-insensitive
+                user = authenticate(request, username=user_by_email.username, password=password)
+            except User.DoesNotExist:
+                # No se encontró usuario con ese email, 'user' sigue siendo None
+                pass
+            except User.MultipleObjectsReturned:
+                # Hay múltiples usuarios con el mismo email (debería evitarse con unique=True en email)
+                messages.error(request, "Múltiples cuentas están asociadas con este correo electrónico. Por favor, contacte a soporte.")
+                # 'user' sigue siendo None, se mostrará el error genérico de credenciales incorrectas también.
+                pass
         if user is not None:
             auth_login(request, user)
             messages.success(request, f"¡Bienvenido de nuevo, {user.first_name or user.username}!")
 
-            if user.is_staff or user.is_superuser:
-                return redirect('admin_administrador')
-            else:
-                # Si hay datos del álbum, podrías redirigir al carrito o a una página específica
-                if post_album_name and post_artist: # Verifica si hay datos relevantes del álbum
-                    # Ejemplo: redirigir al carrito con los datos del álbum
-                    # carrito_url = reverse('com_carrito') # Asegúrate que 'com_carrito' sea el name de tu URL de carrito
-                    # query_string = f'?album={post_album_name}&artist={post_artist}&price={post_price}&image={post_image}' # Ajusta los nombres de los parámetros según tu vista de carrito
-                    # return redirect(f"{carrito_url}{query_string}")
-                    # Por ahora, redirigimos a com_inicio. Puedes implementar la lógica del carrito más adelante.
-                    return redirect('com_inicio')
-                return redirect('com_inicio')
+            # Redirigir al usuario a la página 'next' si existe,
+            # de lo contrario, redirigir según su rol.
+            if next_url:
+                return redirect(next_url)
+            # Si no hay 'next', redirigir según el rol llamando a redirect()
+            default_redirect_url_name = 'admin_administrador' if user.is_staff or user.is_superuser else 'com_inicio'
+            return redirect(default_redirect_url_name)
         else:
+            # Login fallido - establece error_message y messages.
+            # La vista continuará para renderizar el formulario con el mensaje de error.
             error_message = "Email o contraseña incorrectos. Por favor, inténtalo de nuevo."
             messages.error(request, error_message)
-
+    
+    # Este bloque de código se ejecuta si la solicitud es GET,
+    # o si la solicitud es POST pero la autenticación falló.
+    # Prepara el contexto y renderiza la plantilla de login.
     context = {
-        'error_message': error_message, # Para mostrar en la plantilla si no usas messages
-        'submitted_email': submitted_email,
-        # Pasar los datos del álbum para repoblar los campos ocultos
-        'album_name_get': album_name_get,
-        'artist_get': artist_get,
-        'price_get': price_get,
-        'image_get': image_get,
+        'error_message': error_message, # Será None en GET, o el mensaje de error en POST fallido
+        'submitted_email': submitted_email, # Será '' en GET, o el email enviado en POST
+        'album_name_get': album_name_get, # Datos del álbum de GET
+        'artist_get': artist_get,       # Datos del álbum de GET
+        'price_get': price_get,         # Datos del álbum de GET
+        'image_get': image_get,         # Datos del álbum de GET
+        'next_url': next_url,           # URL 'next' de GET o POST
     }
     return render(request, 'paginas/publico/pub_login.html', context)
-
-def pub_login_administrador(request):
-    error_message = None
-    submitted_email = request.POST.get('email', '') if request.method == 'POST' else ''
-
-    if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
-        return redirect('admin_administrador')
-    elif request.user.is_authenticated: # Usuario autenticado pero no admin
-        messages.warning(request, "Ya has iniciado sesión como usuario normal.")
-        return redirect('com_inicio')
-
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        user = authenticate(request, username=email, password=password)
-
-        if user is not None:
-            if user.is_staff or user.is_superuser:
-                auth_login(request, user)
-                messages.success(request, f"¡Bienvenido, Administrador {user.first_name or user.username}!")
-                return redirect('admin_administrador')
-            else:
-                error_message = "Acceso denegado. Esta cuenta no tiene permisos de administrador."
-                messages.error(request, error_message)
-        else:
-            error_message = "Email o contraseña incorrectos."
-            messages.error(request, error_message)
-
-    context = {
-        'error_message': error_message, # Para mostrar en la plantilla si no usas messages
-        'submitted_email': submitted_email,
-    }
-    return render(request, 'paginas/publico/pub_login_administrador.html', context)
 
 def pub_log_out(request):
     # Esta vista es el destino de LOGOUT_REDIRECT_URL en settings.py.
@@ -160,6 +151,7 @@ def pub_registro(request):
 
 def pub_reembolsos(request):
   return render(request, 'paginas/publico/pub_reembolsos.html')
+
 
 def pub_restablecer_contrasena(request):
   return render(request, 'paginas/publico/pub_restablecer_contrasena.html')
@@ -762,8 +754,3 @@ def crud_eliminar(request, id):
   eliminar_elemento = Crud.objects.get(id = id)
   eliminar_elemento.delete()
   return redirect('crud') # Redirecciona a la lista del CRUD
-
-
-# VISTAS DE LA CARPETA "PLANTILLAS"
-def plantilla_publico(request):
-  return render(request, 'plantillas/plantilla_publico.html')
