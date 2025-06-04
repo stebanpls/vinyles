@@ -24,15 +24,25 @@
                 <span class="dato-precio">${{ album_data.price|floatformat:"0" }}</span>
             </div>
 
+                        {# reproductor de audio (giselleteamo) #}
+            {% if album_data.audio %}
+            <div class="audio-player">
+                <audio controls>
+                    <source src="{% static album_data.audio %}" type="audio/mpeg">
+                    Tu navegador no soporta reproducción de audio.
+                </audio>
+            </div>
+            {% endif %}
+            
             <!-- Botones -->
             <div class="botones-acciones">
                 <!-- Botón de comprar: redirige al checkout (con el mismo parámetro 'album' si quieres) -->
-                <a href="{% url 'carrito' %}?album={{ request.GET.album }}&checkout=true" class="btn-comprar">
+                <a href="{% url 'com_carrito' %}?album={{ request.GET.album }}&checkout=true" class="btn-comprar">
                     Comprar
                 </a>
 
                 
-                <a href="{% url 'carrito' %}?album={{ request.GET.album }}" class="btn-agregar-carrito">
+                <a href="{% url 'com_carrito' %}?album={{ request.GET.album }}" class="btn-agregar-carrito">
                     Añadir al carrito
                 </a>
             </div>
@@ -127,7 +137,7 @@
     localStorage.setItem("cartProducts", JSON.stringify(cartProducts));
 
     // Redirigir al carrito
-    window.location.href = "{% url 'carrito' %}";
+    window.location.href = "{% url 'com_carrito' %}";
     }
 </script>
 {% endblock contenido %}

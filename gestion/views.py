@@ -184,6 +184,7 @@ def pub_vinilo(request):
         'Es considerado uno de los artistas más importantes e influyentes del siglo XX.'
     ),
     'image': 'images/bad.jpg',
+    'audio': 'audio/bad.mp3',
     'song_list': [
         'Bad',
         'The Way You Make Me Feel',
@@ -215,6 +216,7 @@ def pub_vinilo(request):
         'Es una de las bandas más influyentes y exitosas en la historia del metal.'
     ),
     'image': 'images/master.jpg',
+    'audio': 'audio/master.mp3',
     'song_list': [
         'Battery',
         'Master of Puppets',
@@ -243,6 +245,7 @@ def pub_vinilo(request):
         'considerado uno de los más grandes exponentes de la música caribeña en su país.'
     ),
     'image': 'images/joe.jpg',
+    'audio': 'audio/joe.mp3',
     'song_list': [
         'Rebelión',
         'La Noche',
@@ -274,6 +277,7 @@ def pub_vinilo(request):
         'sus bailes y su visión artística innovadora.'
     ),
     'image': 'images/thriller.jpg',
+    'audio': 'audio/thriller.mp3',
     'song_list': [
         'Wanna Be Startin\' Somethin\'',
         'Baby Be Mine',
@@ -303,6 +307,7 @@ def pub_vinilo(request):
         'Considerada la banda más influyente en la historia de la música popular.'
     ),
     'image': 'images/lonely.jpg',
+    'audio': 'audio/lonely.mp3',
     'song_list': [
         'Sgt. Pepper\'s Lonely Hearts Club Band',
         'With a Little Help from My Friends',
@@ -337,6 +342,7 @@ def pub_vinilo(request):
         'Con su sonido crudo y enérgico, se convirtieron en un fenómeno a finales de los 80.'
     ),
     'image': 'images/destruction.jpg',
+    'audio': 'audio/destruction.mp3',
     'song_list': [
         'Welcome to the Jungle',
         'It\'s So Easy',
@@ -369,6 +375,7 @@ def pub_vinilo(request):
         'y su influencia en la escena del trap contemporáneo.'
     ),
     'image': 'images/music.jpg',
+    'audio': 'audio/music.mp3',
     'song_list': [
         'Pop Out',
         'Crush (feat. Travis Scott)',
@@ -419,6 +426,7 @@ def pub_vinilo(request):
         'producers': '',
         'artist_info': '',
         'image': 'images/default.jpg',
+        'audio': '',
         'song_list': [],
         'comments': []
     })
@@ -571,195 +579,242 @@ def admin_administrador(request):
   return render(request, 'paginas/Administrador/admin_administrador.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_notificaciones(request):
   return render(request, 'paginas/administrador/admin_notificaciones.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido(request):
   return render(request, 'paginas/administrador/admin_pedido.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_producto(request):
   return render(request, 'paginas/administrador/admin_producto.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_reembolsos(request):
   return render(request, 'paginas/administrador/admin_reembolsos.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_usuario(request):
   return render(request, 'paginas/Administrador/admin_usuario.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_verificacion(request):
   return render(request, 'paginas/Administrador/admin_verificacion.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_adPro(request):
   return render(request, 'paginas/administrador/admin_adPro.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_bloq_users(request):
   return render(request, 'paginas/administrador/admin_bloq_users.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_generos(request):
   return render(request, 'paginas/admin_generos.html') # Se crea la rendererización de este archivo .HTML
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_gestion_users(request):
   return render(request, 'paginas/administrador/admin_gestion_users.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_new_users(request):
   return render(request, 'paginas/Administrador/admin_new_users.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido_pendiente(request):
   return render(request, 'paginas/administrador/admin_pedido_pendiente.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido_realizado(request):
   return render(request, 'paginas/administrador/admin_pedido_realizado.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_ventas(request):
   return render(request, 'paginas/Administrador/admin_ventas.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_nosotros(request):
   return render(request, 'paginas/administrador/admin_nosotros.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_terminos(request):
   return render(request, 'paginas/administrador/admin_terminos.html')
 
 # Vista placeholder para "Más Vendidos" (Asegúrate de que esta plantilla exista)
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def masVendidos(request):
   return render(request, 'paginas/masvendidos.html') # ¿Este qué?
 
 
 # VISTAS DE VINILOS, SUBCARPETA DE ADMINISTRADOR
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def bts(request):
   return render(request, 'paginas/administrador/ventas/bts.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def cartiMusic(request):
     return render(request, 'paginas/administrador/ventas/cartiMusic.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def eminemShow(request):
   return render(request, 'paginas/administrador/ventas/eminemShow.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def exitosJoe(request):
     return render(request, 'paginas/administrador/ventas/exitosJoe.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def gnrAppetite(request):
     return render(request, 'paginas/administrador/ventas/gnrAppetite.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def master(request):
     return render(request, 'paginas/administrador/ventas/master.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def mjBad(request):
   return render(request, 'paginas/administrador/ventas/mjBad.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def mjThriller(request):
     return render(request, 'paginas/administrador/ventas/mjThriller.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def nirvana(request):
   return render(request, 'paginas/administrador/ventas/nirvana.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def theBeatles(request):
   return render(request, 'paginas/administrador/ventas/theBeatles.html')
 
 
 # VISTAS DE LOS USUARIOS
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def lauraG(request):
   return render(request, 'paginas/administrador/usuarios/lauraG.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def carlosR(request):
   return render(request, 'paginas/administrador/usuarios/carlosR.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def camilaQ(request):
   return render(request, 'paginas/administrador/usuarios/camilaQ.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def jhonM(request):
   return render(request, 'paginasadministrador//usuarios/jhonM.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def alexR(request):
   return render(request, 'paginas/administrador/usuarios/alexR.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def andreaVillalobos(request):
   return render(request, 'paginas/administrador/usuarios/andreaVillalobos.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def benjaminCastro(request):
   return render(request, 'paginas/administrador/usuarios/benjaminCastro.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def cristianDominguez(request):
   return render(request, 'paginas/administrador/usuarios/cristianDominguez.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def angelaTorres(request):
   return render(request, 'paginas/administrador/usuarios/angelaTorres.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def elisaNaranjo(request):
   return render(request, 'paginas/administrador/usuarios/elisaNaranjo.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def emilioTorres(request):
   return render(request, 'paginas/administrador/usuarios/emilioTorres.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def andreaVillalobos2(request):
   return render(request, 'paginas/administrador/usuarios/andreaVillalobos2.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def benjaminCastro2(request):
   return render(request, 'paginas/administrador/usuarios/benjaminCastro2.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def cristianDominguez2(request):
   return render(request, 'paginas/administrador/usuarios/cristianDominguez2.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def angelaTorres2(request):
   return render(request, 'paginas/administrador/usuarios/angelaTorres2.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def elisaNaranjo2(request):
   return render(request, 'paginas/administrador/usuarios/bloqueados/elisaNaranjo2.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def emilioTorres2(request):
   return render(request, 'paginas/administrador/usuarios/emilioTorres2.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def sofiaRamirez(request):
   return render(request, 'paginas/administrador/usuarios/bloqueados/sofiaRamirez.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def esperanzaBarrera(request):
   return render(request, 'paginas/administrador/usuarios/bloqueados/esperanzaBarrera.html')
 
 @login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def fernandoMolina(request):
   return render(request, 'paginas/administrador/usuarios/bloqueados/fernandoMolina.html')
 
