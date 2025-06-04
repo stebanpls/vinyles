@@ -6,66 +6,44 @@
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Registro {% endblock titulo %}
+{% load widget_tweaks %} {# Opcional: si usas django-widget-tweaks para estilizar campos #}
 
 {% block contenido %}
-  <div class="login-container">
-    <div class="login-form">
-        <div class="logo-container">
-            <img src="{% static 'images/vinilo.ico' %}" alt="Logo">
-        </div>
-        <h2>Registro</h2>
-        <form id="loginForm" action="{% url 'registro' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" aria-label="Nombre" placeholder="Ingresa tu nombre" required>
+    <div class="login-container">
+        <div class="login-form">
+            <div class="logo-container">
+                <img src="{% static 'images/vinilo.ico' %}" alt="Logo">
             </div>
-            <div class="form-group">
-                <label for="usuario">Usuario</label>
-                <input type="text" id="usuario" name="usuario" aria-label="usuario" placeholder="Ingresa tu usuario" required>
-            </div>
-            <div class="form-group">
-              <label for="email" class="form-label">Email</label>
-              <input
-                type="email"
-                class="form-control"
-                name="email"
-                id="email"
-                aria-describedby="emailHelpId"
-                placeholder="abc@mail.com"
-              />
-            <div class="form-group">
-              <label for="celular">Celular</label>
-              <input type="tel" id="celular" name="celular" aria-label="Celular" placeholder="Ingresa tu celular" required>
-          </div>
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" aria-label="Contraseña" placeholder="Ingresa tu contraseña" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">Confirmar Contraseña</label>
-                <input type="password" id="confirm_password" name="confirm_password" aria-label="Confirmar Contraseña" placeholder="Confirma tu contraseña" required>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                    <a href="{% url 'perfil' %}">Registrarse</a>
-                </button>
-            </div>
-            <div class="form-group">
-                <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia Sesión</a></p>
-            </div>
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    {% for field, errors in form.errors.items %}
-                        {% for error in errors %}
-                            {{ field }}: {{ error }}
-                        {% endfor %}
-                    {% endfor %}
-                </div>
+            <h2>Crear una cuenta</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} mt-2">{{ message }}</div>
+                {% endfor %}
             {% endif %}
-        </form>
+            <form method="post" action="{% url 'pub_registro' %}"> {# La acción debe apuntar a la URL de tu vista de registro #}
+                {% csrf_token %}
+                {{ user_form.non_field_errors }} {# Muestra errores generales del formulario (ej. si no se pudo guardar) #}
+                {% for field in user_form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {# Renderiza el campo. Puedes usar widget_tweaks para añadir clases: #}
+                        {# {% render_field field class="form-control" placeholder=field.label %} #}
+                        {{ field }} {# Esto renderizará el widget HTML del campo (input, select, etc.) #}
+                        {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text|safe }}</small>{% endif %}
+                        {% for error in field.errors %}<div class="invalid-feedback d-block" style="color: red;">{{ error }}</div>{% endfor %} {# Muestra errores específicos del campo #}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        Registrarse
+                    </button>
+                </div>
+                <div class="form-group">
+                    <p>¿Ya tienes una cuenta? <a href="{% url 'pub_login' %}">Inicia Sesión</a></p>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock contenido %}
 
 {% block pie %}

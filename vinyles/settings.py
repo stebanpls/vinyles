@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Se agregó gestion
-    'gestion',
+    'gestion', # Tu aplicación
+    'widget_tweaks', # Si lo vas a usar
 ]
 
 MIDDLEWARE = [
@@ -170,3 +170,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'images', 'fotosusuario')
 MEDIA_URL = '/fotos/' # La URL para acceder a las fotos será /fotos/ dentro de la dirección de arriba.
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CONFIGURACIÓN DE AUTENTICACIÓN
+LOGIN_REDIRECT_URL = 'com_inicio'  # O 'dashboard' como en el video, apunta a tu vista post-login
+LOGIN_URL = 'pub_login'            # URL de tu vista de login principal
+LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out' después de cerrar sesión

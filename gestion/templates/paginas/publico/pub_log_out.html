@@ -1,0 +1,22 @@
+{% extends "plantillas/plantilla_publico.html" %}
+{% load static %}
+{% block titulo %} Sesión Cerrada {% endblock titulo %}
+{% block contenido %}
+<div class="container text-center mt-5">
+    <h2>Has cerrado sesión</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <p>Gracias por visitar Vinyles. ¡Esperamos verte pronto!</p>
+    <p>
+        <a href="{% url 'pub_login' %}" class="btn btn-primary">Iniciar Sesión de Nuevo</a>
+        <a href="{% url 'pub_inicio' %}" class="btn btn-secondary">Ir a la Página Principal</a>
+    </p>
+</div>
+{% endblock contenido %}
+
+{% block pie %}
+
+{% endblock pie %}

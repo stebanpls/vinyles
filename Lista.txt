@@ -1,0 +1,86 @@
+Lista de Pasos para Implementar Sistema de Autenticación en Django (Proyecto Vinyles)
+
+--- Pasos Completados y en Proceso ---
+
+1.  **Preparación del Entorno y Proyecto (Revisión Inicial):**
+    *   Verificación del entorno virtual.
+    *   Instalación de Django y `django-widget-tweaks`.
+    *   Configuración básica en `vinyles/settings.py` (`INSTALLED_APPS`, `LOGIN_REDIRECT_URL`, `LOGIN_URL`, `LOGOUT_REDIRECT_URL`).
+
+2.  **Configuración de URLs de Autenticación (`gestion/urls.py` y `vinyles/urls.py`):**
+    *   Definición de URLs para vistas personalizadas de login (`pub_login`, `pub_login_administrador`), registro (`pub_registro`) y página de logout (`pub_log_out`).
+    *   Inclusión de URLs de autenticación incorporadas de Django: `path('accounts/', include('django.contrib.auth.urls'))`.
+    *   Asegurar que `gestion.urls` esté incluido en `vinyles.urls`.
+
+3.  **Implementación de la Lógica de Autenticación Real en Vistas de Login (`gestion/views.py`):**
+    *   Modificación de `pub_login` y `pub_login_administrador` para usar `authenticate()` y `auth_login()`.
+    *   Manejo de redirecciones por rol.
+    *   Uso de `django.contrib.messages` para feedback al usuario.
+    *   Consideración para el paso de datos del álbum (lógica del carrito pendiente).
+    *   Repoblado de campos en caso de error de login.
+
+4.  **Implementación de la Lógica de Registro de Usuarios:**
+    *   **Formulario (`gestion/forms.py`):** Creación de `UserRegistrationForm` usando el modelo `User` estándar, pidiendo `username`, `first_name`, `email`, `password` y `password2`, con validación de contraseñas.
+    *   **Vista (`gestion/views.py`):** Implementación de `pub_registro` para procesar el formulario, crear el `User` (hasheando contraseña), mostrar mensajes y redirigir.
+    *   **Plantilla (`gestion/templates/paginas/publico/pub_registro.html`):** Actualización para renderizar el `UserRegistrationForm`.
+
+5.  **Creación de Plantillas para Vistas de Autenticación Incorporadas de Django:**
+    *   Creación de la carpeta `gestion/templates/registration/`.
+    *   Creación y llenado de los archivos HTML: `password_change_form.html`, `password_change_done.html`, `password_reset_form.html`, `password_reset_done.html`, `password_reset_confirm.html`, `password_reset_complete.html`.
+    *   Estas plantillas extienden la plantilla base y renderizan `{{ form }}`.
+
+6.  **Definición del Modelo `ClienteProfile` (`gestion/models.py`):**
+    *   Creación del modelo `ClienteProfile` con `OneToOneField` a `User`.
+    *   Añadido de campos como `numero_documento`, `celular`, `direccion_residencia`.
+    *   Implementación de una señal (`@receiver(post_save, sender=User)`) para crear automáticamente un `ClienteProfile` al crear un `User`.
+
+7.  **Ejecución de Migraciones:**
+    *   Ejecución de `python manage.py makemigrations gestion` y `python manage.py migrate` para aplicar cambios del modelo `ClienteProfile`.
+
+8.  **Actualización de Plantillas Base para Enlaces Condicionales:**
+    *   Modificación de `plantilla_publico.html`, `plantilla_comprador.html`, `plantilla_vendedor.html`, y `plantilla_administrador.html` para mostrar enlaces de navegación diferentes según el estado de autenticación del usuario (`{% if user.is_authenticated %}`).
+    *   Asegurar que "Cerrar Sesión" apunte a `{% url 'logout' %}`.
+
+9.  **Creación de Superusuario:**
+    *   Ejecución de `python manage.py createsuperuser`.
+
+10. **Registrar `ClienteProfile` en el Admin (`gestion/admin.py`):**
+    *   Importación y registro del modelo `ClienteProfile` para gestión en el panel de admin.
+
+11. **Proteger Vistas de Administrador (`gestion/views.py`):**
+    *   Aplicación de `@login_required` y `@user_passes_test(lambda u: u.is_staff, login_url='pub_login')` a vistas de administrador.
+
+--- Paso Actual y Siguientes Pasos Inmediatos ---
+
+12. **Probar Exhaustivamente Todo el Sistema de Autenticación:**
+    *   Verificar registro (éxito y errores).
+    *   Verificar login de comprador (éxito, errores, redirección, UI).
+    *   Verificar login de administrador (éxito, error con cuenta no admin, redirección, UI).
+    *   Verificar logout (redirección, UI).
+    *   Verificar cambio de contraseña (accediendo a `/accounts/password_change/`).
+    *   Verificar flujo de reseteo de contraseña (accediendo a `/accounts/password_reset/`, revisando consola para enlace).
+    *   Verificar acceso a páginas protegidas (sin login, con login de rol incorrecto).
+
+--- Pasos Futuros (Después de que el sistema de autenticación básico funcione bien) ---
+
+13. **Proteger Vistas de Comprador y Vendedor (`gestion/views.py`):**
+    *   Aplicar `@login_required` a todas las vistas `com_*` y `ven_*`.
+    *   Definir e implementar un mecanismo para identificar "Vendedores" y aplicar `@user_passes_test` a vistas `ven_*`.
+
+14. **Implementar Funcionalidad de "Mi Perfil":**
+    *   Crear vista y plantilla para que usuarios vean/editen su información (`User` y `ClienteProfile`).
+    *   Crear formulario de edición de perfil.
+
+15. **Manejo de Datos del Álbum en el Login:**
+    *   Implementar lógica en `pub_login` para que, si un usuario llega desde una página de producto, se le redirija al carrito o se añada el producto al carrito después del login (posiblemente usando sesiones).
+
+16. **Configuración de Envío de Emails para Producción:**
+    *   Configurar `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, etc., en `settings.py` para que el reseteo de contraseña envíe emails reales.
+
+17. **Refinamiento de la Interfaz de Usuario y Mensajes:**
+    *   Asegurar claridad y utilidad de todos los mensajes al usuario.
+    *   Mejorar diseño y usabilidad de formularios y páginas de autenticación.
+
+18. **Seguridad Adicional (Consideraciones):**
+    *   Revisar configuraciones de seguridad de Django para producción.
+    *   Considerar autenticación de dos factores (2FA) si es necesario.

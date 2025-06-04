@@ -1,11 +1,17 @@
 from django.shortcuts import render, redirect
+
 # Se importa el reverse para redireccionar a la vista de crud.
 from django.urls import reverse
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required, user_passes_test # Para proteger vistas
+
 # Se importa los atributos de Crud 
 from .models import Crud # Importar el modelo Crud (el cual está en mayúsculas) para poder usarlo en las vistas.
-from .forms import CrudForm # Importar el formulario CrudForm para poder usarlo en las vistas.
+from .forms import CrudForm, UserRegistrationForm # Importar formularios
 
+# Importar las funciones de autenticación de Django
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout # Importa las funciones de autenticación
+from django.contrib import messages # Para mensajes opcionales
 
 # Create your views here.
 """
@@ -28,47 +34,138 @@ def pub_ddl(request):
   return render(request, 'paginas/publico/pub_ddl.html')
 
 def pub_login(request):
-    # Si es POST, se procesa la "autenticación" y se redirige al carrito
-    if request.method == 'POST':
-        # Recoger datos del formulario, incluidos los campos ocultos con información del álbum
-        album_name = request.POST.get('album_name', '')
-        artist = request.POST.get('artist', '')
-        price = request.POST.get('price', '')
-        image = request.POST.get('image', '')
-        
-        # Simulación: asumimos que la autenticación es correcta.
-        # Construimos la URL para redirigir a la vista del carrito.
-        carrito_url = reverse('carrito')  # Asegúrate de que en urls.py la vista del carrito tenga nombre 'carrito'
-        # Creamos la query string con los datos del álbum
-        query_string = f'?album_name={album_name}&artist={artist}&price={price}&image={image}'
-        return redirect(carrito_url + query_string)
-    
-    # Para peticiones GET se muestra el formulario de login
-    return render(request, 'paginas/publico/pub_login.html')
-  
-def pub_login_administrador(request):
-  return render(request, 'paginas/publico/pub_login_administrador.html')
+    error_message = None
+    # Para repoblar el campo email en caso de error y mantener datos del álbum
+    submitted_email = request.POST.get('email', '') if request.method == 'POST' else ''
+    album_name_get = request.GET.get('album_name')
+    artist_get = request.GET.get('artist')
+    price_get = request.GET.get('price')
+    image_get = request.GET.get('image')
 
-def pub_logOut(request):
-  return render(request, 'paginas/publico/pub_logOut.html')
+    if request.user.is_authenticated:
+        # Si el usuario ya está autenticado, redirigir según su rol
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect('admin_administrador')
+        else:
+            return redirect('com_inicio')
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Datos del álbum del POST, con fallback a los de GET si no están en POST
+        post_album_name = request.POST.get('album_name', album_name_get)
+        post_artist = request.POST.get('artist', artist_get)
+        post_price = request.POST.get('price', price_get)
+        post_image = request.POST.get('image', image_get)
+
+        # Autenticación real
+        # Asumimos que tu modelo User usa 'email' como USERNAME_FIELD o que username = email
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            messages.success(request, f"¡Bienvenido de nuevo, {user.first_name or user.username}!")
+
+            if user.is_staff or user.is_superuser:
+                return redirect('admin_administrador')
+            else:
+                # Si hay datos del álbum, podrías redirigir al carrito o a una página específica
+                if post_album_name and post_artist: # Verifica si hay datos relevantes del álbum
+                    # Ejemplo: redirigir al carrito con los datos del álbum
+                    # carrito_url = reverse('com_carrito') # Asegúrate que 'com_carrito' sea el name de tu URL de carrito
+                    # query_string = f'?album={post_album_name}&artist={post_artist}&price={post_price}&image={post_image}' # Ajusta los nombres de los parámetros según tu vista de carrito
+                    # return redirect(f"{carrito_url}{query_string}")
+                    # Por ahora, redirigimos a com_inicio. Puedes implementar la lógica del carrito más adelante.
+                    return redirect('com_inicio')
+                return redirect('com_inicio')
+        else:
+            error_message = "Email o contraseña incorrectos. Por favor, inténtalo de nuevo."
+            messages.error(request, error_message)
+
+    context = {
+        'error_message': error_message, # Para mostrar en la plantilla si no usas messages
+        'submitted_email': submitted_email,
+        # Pasar los datos del álbum para repoblar los campos ocultos
+        'album_name_get': album_name_get,
+        'artist_get': artist_get,
+        'price_get': price_get,
+        'image_get': image_get,
+    }
+    return render(request, 'paginas/publico/pub_login.html', context)
+
+def pub_login_administrador(request):
+    error_message = None
+    submitted_email = request.POST.get('email', '') if request.method == 'POST' else ''
+
+    if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+        return redirect('admin_administrador')
+    elif request.user.is_authenticated: # Usuario autenticado pero no admin
+        messages.warning(request, "Ya has iniciado sesión como usuario normal.")
+        return redirect('com_inicio')
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            if user.is_staff or user.is_superuser:
+                auth_login(request, user)
+                messages.success(request, f"¡Bienvenido, Administrador {user.first_name or user.username}!")
+                return redirect('admin_administrador')
+            else:
+                error_message = "Acceso denegado. Esta cuenta no tiene permisos de administrador."
+                messages.error(request, error_message)
+        else:
+            error_message = "Email o contraseña incorrectos."
+            messages.error(request, error_message)
+
+    context = {
+        'error_message': error_message, # Para mostrar en la plantilla si no usas messages
+        'submitted_email': submitted_email,
+    }
+    return render(request, 'paginas/publico/pub_login_administrador.html', context)
+
+def pub_log_out(request):
+    # Esta vista es el destino de LOGOUT_REDIRECT_URL en settings.py.
+    # La LogoutView de Django ya ha cerrado la sesión antes de redirigir aquí.
+    # Simplemente renderiza la página de confirmación.
+    # Puedes añadir un mensaje aquí si no usas el framework de mensajes en la LogoutView.
+    # messages.info(request, "Has cerrado sesión exitosamente.") # Si quieres mostrar un mensaje
+    return render(request, 'paginas/publico/pub_log_out.html') # Renderiza tu página de sesión cerrada
 
 def pub_nosotros(request):
   return render(request, 'paginas/publico/pub_nosotros.html') # Se crea un renderizado de este archivo HTML.
 
+def pub_registro(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST) # Crea una instancia del formulario con los datos enviados
+        if user_form.is_valid():
+            # Crear un nuevo objeto usuario pero sin guardarlo todavía
+            new_user = user_form.save(commit=False)
+            # Establecer la contraseña elegida de forma segura
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Guardar el objeto User en la base de datos
+            new_user.save() # Ahora sí, guarda el usuario en la base de datos
+            # Aquí podrías crear el ClienteProfile si lo tienes: ClienteProfile.objects.create(user=new_user, ...)
+            messages.success(request, '¡Registro exitoso! Ahora puedes iniciar sesión.')
+            return redirect('pub_login') # Redirigir al login después del registro exitoso
+        else:
+            messages.error(request, 'Por favor corrige los errores presentados en el formulario.')
+    else:
+        user_form = UserRegistrationForm() # Si no es POST, crea un formulario vacío
+    return render(request, 'paginas/publico/pub_registro.html', {'user_form': user_form})
+
 def pub_reembolsos(request):
   return render(request, 'paginas/publico/pub_reembolsos.html')
-
-def pub_registro(request):
-  return render(request, 'paginas/publico/pub_registro.html')
 
 def pub_restablecer_contrasena(request):
   return render(request, 'paginas/publico/pub_restablecer_contrasena.html')
 
 def pub_restablecer_contrasena_admin(request):
   return render(request, 'paginas/publico/pub_restablecer_contrasena_admin.html')
-
-def pub_soporte(request):
-  return render(request, 'paginas/publico/pub_soporte.html')
 
 def pub_terminos(request):
   return render(request, 'paginas/publico/pub_terminos.html')
@@ -343,12 +440,15 @@ def pub_vinilo(request):
 
 
 # VISTAS DE LA CARPETA "COMPRADOR"
+@login_required
 def com_inicio(request):
   return render(request, 'paginas/comprador/com_inicio.html')
 
+@login_required
 def com_albumes(request):
   return render(request, 'paginas/comprador/com_albumes.html')
 
+@login_required
 def com_carrito(request):
     # 1) Mini-diccionario de álbumes
     albums_info = {
@@ -413,48 +513,69 @@ def com_checkout(request):
         'cart_items': cart,
         'total': total
     })
-    # views.py
     
+@login_required
 def com_nosotros(request):
   return render(request, 'paginas/comprador/com_nosotros.html')
 
+@login_required
 def com_perfil(request):
   return render(request, 'paginas/comprador/com_perfil.html')
 
+@login_required
 def com_progreso_envio(request):
     return render(request, 'paginas/comprador/com_progreso_envio.html')
   
+@login_required
 def com_reembolsos(request):
   return render(request, 'paginas/publico/pub_reembolsos.html')
 
+@login_required
 def com_soporte(request):
   return render(request, 'paginas/comprador/com_soporte.html')
 
+@login_required
 def com_terminos(request):
   return render(request, 'paginas/comprador/com_terminos.html')
 
 
 # VISTAS DE LA CARPETA "VENDEDOR"
+# Para estas vistas, además de @login_required, probablemente necesites
+# un @user_passes_test para verificar que el usuario es un vendedor.
+# Por ahora, solo añadiremos @login_required.
+@login_required
+# @user_passes_test(lambda u: u.es_vendedor, login_url='com_inicio') # Ejemplo si tuvieras u.es_vendedor
 def ven_bad(request):
   return render(request, 'paginas/vendedor/vinilos/ven_bad.html')
 
+@login_required
 def ven_crear(request):
   return render(request, 'paginas/vendedor/ven_crear.html')
 
+@login_required
 def ven_notificaciones(request):
   return render(request, 'paginas/vendedor/ven_notificaciones.html')
 
+@login_required
 def ven_perfil(request):
   return render(request, 'paginas/vendedor/ven_perfil.html')
 
+@login_required
 def ven_producto(request):
   return render(request, 'paginas/vendedor/ven_producto.html')
 
-def ven_sobre_nosotros(request):
-  return render(request, 'paginas/vendedor/ven_sobre_nosotros.html')
+@login_required
+def ven_nosotros(request):
+  return render(request, 'paginas/vendedor/ven_nosotros.html')
+
+@login_required
+def ven_terminos(request):
+  return render(request, 'paginas/vendedor/ven_terminos.html')
 
 
 # VISTAS DE LA CARPETA "ADMINISTRADOR"
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login') # Redirige a pub_login si no es staff
 def admin_administrador(request):
   return render(request, 'paginas/Administrador/admin_administrador.html')
 
@@ -500,11 +621,15 @@ def admin_pedido_realizado(request):
 def admin_ventas(request):
   return render(request, 'paginas/Administrador/admin_ventas.html')
 
-def admin_sobre_nosotros(request):
-  return render(request, 'paginas/administrador/admin_sobre_nosotros.html')
+def admin_nosotros(request):
+  return render(request, 'paginas/administrador/admin_nosotros.html')
 
+def admin_terminos(request):
+  return render(request, 'paginas/administrador/admin_terminos.html')
+
+# Vista placeholder para "Más Vendidos" (Asegúrate de que esta plantilla exista)
 def masVendidos(request):
-  return render(request, 'paginas/masvendidos.html')
+  return render(request, 'paginas/masvendidos.html') # ¿Este qué?
 
 
 # VISTAS DE VINILOS, SUBCARPETA DE ADMINISTRADOR
@@ -599,6 +724,9 @@ def esperanzaBarrera(request):
 
 def fernandoMolina(request):
   return render(request, 'paginas/administrador/usuarios/bloqueados/fernandoMolina.html')
+
+def pub_soporte(request):
+  return render(request, 'paginas/publico/pub_soporte.html')
 
 
 # VISTAS DE LA CARPETA "CRUD"
