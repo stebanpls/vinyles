@@ -185,6 +185,7 @@ def pub_vinilo(request):
         'Es considerado uno de los artistas más importantes e influyentes del siglo XX.'
     ),
     'image': 'images/bad.jpg',
+    'audio': 'audio/bad.mp3',
     'song_list': [
         'Bad',
         'The Way You Make Me Feel',
@@ -216,6 +217,7 @@ def pub_vinilo(request):
         'Es una de las bandas más influyentes y exitosas en la historia del metal.'
     ),
     'image': 'images/master.jpg',
+    'audio': 'audio/master.mp3',
     'song_list': [
         'Battery',
         'Master of Puppets',
@@ -244,6 +246,7 @@ def pub_vinilo(request):
         'considerado uno de los más grandes exponentes de la música caribeña en su país.'
     ),
     'image': 'images/joe.jpg',
+    'audio': 'audio/joe.mp3',
     'song_list': [
         'Rebelión',
         'La Noche',
@@ -275,6 +278,7 @@ def pub_vinilo(request):
         'sus bailes y su visión artística innovadora.'
     ),
     'image': 'images/thriller.jpg',
+    'audio': 'audio/thriller.mp3',
     'song_list': [
         'Wanna Be Startin\' Somethin\'',
         'Baby Be Mine',
@@ -304,6 +308,7 @@ def pub_vinilo(request):
         'Considerada la banda más influyente en la historia de la música popular.'
     ),
     'image': 'images/lonely.jpg',
+    'audio': 'audio/lonely.mp3',
     'song_list': [
         'Sgt. Pepper\'s Lonely Hearts Club Band',
         'With a Little Help from My Friends',
@@ -338,6 +343,7 @@ def pub_vinilo(request):
         'Con su sonido crudo y enérgico, se convirtieron en un fenómeno a finales de los 80.'
     ),
     'image': 'images/destruction.jpg',
+    'audio': 'audio/destruction.mp3',
     'song_list': [
         'Welcome to the Jungle',
         'It\'s So Easy',
@@ -370,6 +376,7 @@ def pub_vinilo(request):
         'y su influencia en la escena del trap contemporáneo.'
     ),
     'image': 'images/music.jpg',
+    'audio': 'audio/music.mp3',
     'song_list': [
         'Pop Out',
         'Crush (feat. Travis Scott)',
@@ -420,6 +427,7 @@ def pub_vinilo(request):
         'producers': '',
         'artist_info': '',
         'image': 'images/default.jpg',
+        'audio': '',
         'song_list': [],
         'comments': []
     })

@@ -301,6 +301,15 @@
     font-weight: bold;
     margin-right: 0.5rem;
 }
+.audio-player {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+.audio-player audio {
+    width: 100%;
+    outline: none;
+}
 
 @keyframes pulse {
     0% {
