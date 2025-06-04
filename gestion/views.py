@@ -661,8 +661,8 @@ def admin_terminos(request):
 # Vista placeholder para "Más Vendidos" (Asegúrate de que esta plantilla exista)
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def masVendidos(request):
-  return render(request, 'paginas/masvendidos.html') # ¿Este qué?
+def admin_mas_vendidos(request):
+  return render(request, 'paginas/administrador/admin_mas_vendidos.html') # ¿Este qué?
 
 
 # VISTAS DE VINILOS, SUBCARPETA DE ADMINISTRADOR
@@ -736,7 +736,7 @@ def camilaQ(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def jhonM(request):
-  return render(request, 'paginasadministrador//usuarios/jhonM.html')
+  return render(request, 'paginas/administrador/usuarios/jhonM.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')

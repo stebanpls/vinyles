@@ -31,6 +31,8 @@ urlpatterns = [
     path('admin_usuario/', views.admin_usuario, name = 'admin_usuario'),
     path('admin_ventas/', views.admin_ventas, name='admin_ventas'),
     path('admin_verificacion/', views.admin_verificacion, name = 'admin_verificacion'),
+    path('admin_mas_vendidos/', views.admin_mas_vendidos, name = 'admin_mas_vendidos'),
+
 
     # URLS DE LA CARPETA "COMPRADOR"
     path('com_albumes/', views.com_albumes, name='com_albumes'),
@@ -89,7 +91,7 @@ urlpatterns = [
     path('mjThriller/', views.mjThriller, name='mjThriller'),
     path('nirvana/', views.nirvana, name='nirvana'),
     path('theBeatles/', views.theBeatles, name='theBeatles'),
-    path('masVendidos/', views.masVendidos, name='masVendidos'), # Asegúrate que esta vista exista
+
 
     # URLS DE LOS USUARIOS (Considerar si deben estar prefijadas, ej: 'admin/usuarios/lauraG/')
     path('alexR/', views.alexR, name='alexR'), # Asegúrate que esta vista exista
