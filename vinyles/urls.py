@@ -17,10 +17,21 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-# Se Importa views desde gestion
-from gestion import views
+# Importar settings para acceder a DEBUG, MEDIA_URL, etc.
+from django.conf import settings
+# Importar static para servir archivos de MEDIA_URL en desarrollo
+from django.conf.urls.static import static
+# from django.contrib.staticfiles.urls import staticfiles_urlpatterns # Ya no es necesario con WhiteNoise
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('gestion.urls')), # Accediendo a todo lo que tiene gestion.urls para filtrarlo
 ]
+
+# Configuración para servir archivos de medios (MEDIA_URL) durante el desarrollo.
+# Esto es útil independientemente del valor de DEBUG para el desarrollo local.
+# WhiteNoise no sirve archivos de MEDIA por defecto, así que esto sigue siendo útil para desarrollo.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Nota: Si DEBUG es True, Django sirve los archivos estáticos automáticamente.
+# Si DEBUG es False, WhiteNoise los servirá a través de su middleware.

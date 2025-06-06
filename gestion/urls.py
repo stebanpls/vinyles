@@ -2,9 +2,8 @@
 from django.urls import path, include
 from . import views
 # Importar settings y los archivos estáticos
-from django.conf import settings
-# from django.contrib.staticfiles.urls import static # Esta funciona, pero la de abajo es más convencional para MEDIA_URL
-from django.conf.urls.static import static # Recomendada para servir MEDIA_URL en desarrollo
+# from django.conf import settings # Ya no es necesario aquí si se maneja en urls.py del proyecto
+# from django.conf.urls.static import static # Ya no es necesario aquí
 
 urlpatterns = [
     # URL DE ADMIN
@@ -115,4 +114,4 @@ urlpatterns = [
     path('lauraG/', views.lauraG, name='lauraG'),
     path('sofiaRamirez/', views.sofiaRamirez, name='sofiaRamirez'), # Añadido '/' al final
 
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) # Esta línea muestra los archivos de medios durante el desarrollo
+]

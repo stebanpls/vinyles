@@ -30,8 +30,12 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure--byrce+$%&e!-0
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True' # Convertir string a Boolean
+# DEBUG = False # FORZAR DEBUG A FALSE PARA PRUEBAS DE ESTÁTICOS
 
-ALLOWED_HOSTS = []
+# Cuando DEBUG es False, debes especificar los hosts permitidos.
+# Para desarrollo local, esto es usualmente suficiente.
+# En producción, reemplaza esto con tu dominio real.
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -49,12 +53,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # WhiteNoise va aquí
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'vinyles.urls'
@@ -62,7 +68,10 @@ ROOT_URLCONF = 'vinyles.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # Aquí le decimos a Django que busque plantillas en una carpeta 'templates'
+        # en la raíz de tu proyecto (al mismo nivel que manage.py).
+        # Aquí es donde deberías poner tu 404.html, 500.html, etc.
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -161,6 +170,10 @@ STATICFILES_DIRS = [
         BASE_DIR / "static",
     ),
 ] # Todos los archivos estáticos se busquen dentro de la carpeta "static"
+
+# STATIC_ROOT es donde `collectstatic` copiará los archivos para producción.
+# WhiteNoise también puede usarlo si DEBUG = False.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
