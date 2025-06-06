@@ -4,9 +4,9 @@ from django.contrib.auth.models import User # Importa el modelo User estándar d
 
 # Create your views here.
 class CrudForm(forms.ModelForm):
-  class Meta:
-    model = Crud # Especifica el modelo que se va a usar en el formulario
-    fields = '__all__'
+    class Meta:
+        model = Crud # Especifica el modelo que se va a usar en el formulario
+        fields = '__all__'
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)

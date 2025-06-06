@@ -17,14 +17,28 @@
         <form action="{% url 'pub_login' %}" method="post">
             {% csrf_token %}
 
-            {# Campos ocultos para el álbum (tomados de los parámetros GET) #}
-            <input type="hidden" name="album_name" value="{{ request.GET.album_name }}">
-            <input type="hidden" name="artist" value="{{ request.GET.artist }}">
-            <input type="hidden" name="price" value="{{ request.GET.price }}">
-            <input type="hidden" name="image" value="{{ request.GET.image }}">
+            {# Campos ocultos para el álbum (tomados del contexto de la vista) #}
+            {# Estos valores son preparados por la vista pub_login y pasados en el contexto. #}
+            {# Se usan para repoblar el formulario si el login falla y mantener los datos del álbum. #}
+            {% if album_name_get %}
+                <input type="hidden" name="album_name" value="{{ album_name_get }}">
+            {% endif %}
+            {% if artist_get %}
+                <input type="hidden" name="artist" value="{{ artist_get }}">
+            {% endif %}
+            {% if price_get %}
+                <input type="hidden" name="price" value="{{ price_get }}">
+            {% endif %}
+            {% if image_get %}
+                <input type="hidden" name="image" value="{{ image_get }}">
+            {% endif %}
+
+
 
             {# Campo oculto para la URL 'next' #}
-            {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+            {% if next_url %}
+                <input type="hidden" name="next" value="{{ next_url }}">
+            {% endif %}
 
             <div class="form-group">
                 <label for="login_identifier" class="form-label">Email o Nombre de Usuario</label>

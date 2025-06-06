@@ -40,7 +40,7 @@
   color: #e9ecef; /* Light gray label */
 }
 
-.form-group input[type="email"], /* Changed to email */
+.form-group input[type="text"], /* Changed to email */
 .form-group input[type="password"] {
   width: 100%;
   padding: 10px;

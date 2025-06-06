@@ -35,16 +35,14 @@ def pub_ddl(request):
   return render(request, 'paginas/publico/pub_ddl.html')
 
 def pub_login(request):
-    error_message = None
-    # Para repoblar el campo email en caso de error y mantener datos del álbum
-    # submitted_email = request.POST.get('email', '') if request.method == 'POST' else '' # Antigua línea
+    # Para repoblar el campo identificador en caso de error
+    submitted_identifier = request.POST.get('login_identifier', '') if request.method == 'POST' else ''
+
+    # Datos del álbum (si se pasan por GET para pre-llenar o mantener)
     album_name_get = request.GET.get('album_name')
     artist_get = request.GET.get('artist')
     price_get = request.GET.get('price')
     image_get = request.GET.get('image')
-
-    # Inicializar error_message y submitted_email para el contexto
-    submitted_identifier = request.POST.get('login_identifier', '') if request.method == 'POST' else ''
 
     # Obtener la URL de redirección 'next' si existe
     # Esto es útil si el usuario intentó acceder a una página protegida antes de loguearse
@@ -53,9 +51,10 @@ def pub_login(request):
     if request.user.is_authenticated:
         # Si el usuario ya está autenticado, redirigir según su rol
         if request.user.is_staff or request.user.is_superuser:
-            return redirect('admin_administrador')
+            # Priorizar next_url si existe
+            return redirect(next_url or 'admin_administrador')
         else:
-            return redirect('com_inicio')
+            return redirect(next_url or 'com_inicio')
 
     if request.method == 'POST':
         identifier = request.POST.get('login_identifier') # Cambiado de 'email'
@@ -66,13 +65,17 @@ def pub_login(request):
         post_artist = request.POST.get('artist', artist_get)
         post_price = request.POST.get('price', price_get)
         post_image = request.POST.get('image', image_get)
+        # Actualizar las variables _get para que el contexto refleje los datos del POST si existen
+        album_name_get = post_album_name
+        artist_get = post_artist
+        price_get = post_price
+        image_get = post_image
 
         # Autenticación real
-        # Asumimos que tu modelo User usa 'email' como USERNAME_FIELD o que username = email
-        # user = authenticate(request, username=email, password=password) # Línea original
 
         # Intentar autenticar con el input como username primero
         user = authenticate(request, username=identifier, password=password)
+        specific_auth_error_occurred = False # Inicializar aquí
 
         if user is None:
             # Si falla, intentar encontrar usuario por email y autenticar con su username real
@@ -85,8 +88,7 @@ def pub_login(request):
             except User.MultipleObjectsReturned:
                 # Hay múltiples usuarios con el mismo email (debería evitarse con unique=True en email)
                 messages.error(request, "Múltiples cuentas están asociadas con este correo electrónico. Por favor, contacte a soporte.")
-                # 'user' sigue siendo None, se mostrará el error genérico de credenciales incorrectas también.
-                pass
+                specific_auth_error_occurred = True # Marcar que este error específico ocurrió
         if user is not None:
             auth_login(request, user)
             messages.success(request, f"¡Bienvenido de nuevo, {user.first_name or user.username}!")
@@ -99,16 +101,14 @@ def pub_login(request):
             default_redirect_url_name = 'admin_administrador' if user.is_staff or user.is_superuser else 'com_inicio'
             return redirect(default_redirect_url_name)
         else:
-            # Login fallido - establece error_message y messages.
-            # La vista continuará para renderizar el formulario con el mensaje de error.
-            error_message = "Email o contraseña incorrectos. Por favor, inténtalo de nuevo."
-            messages.error(request, error_message)
+            # Login fallido. Solo mostrar el error genérico si no hubo un error más específico.
+            if not specific_auth_error_occurred:
+                messages.error(request, "El nombre de usuario/email o la contraseña son incorrectos. Por favor, inténtalo de nuevo.")
     
     # Este bloque de código se ejecuta si la solicitud es GET,
     # o si la solicitud es POST pero la autenticación falló.
     # Prepara el contexto y renderiza la plantilla de login.
     context = {
-        'error_message': error_message, # Será None en GET, o el mensaje de error en POST fallido
         'submitted_identifier': submitted_identifier, # Cambiado de submitted_email
         'album_name_get': album_name_get, # Datos del álbum de GET
         'artist_get': artist_get,       # Datos del álbum de GET
@@ -129,6 +129,16 @@ def pub_nosotros(request):
   return render(request, 'paginas/publico/pub_nosotros.html') # Se crea un renderizado de este archivo HTML.
 
 def pub_registro(request):
+    if request.user.is_authenticated:
+        messages.info(request, 'Ya has iniciado sesión. Si deseas registrar una nueva cuenta, por favor cierra tu sesión actual primero.')
+        # Redirige al usuario a una página apropiada.
+        if hasattr(request.user, 'is_staff') and request.user.is_staff:
+            # Si es staff/admin, redirigir al panel de administrador
+            return redirect('admin_administrador') # Asegúrate que 'admin_administrador' es el name de tu URL del panel de admin
+        else:
+            # Si es un usuario normal, redirigir a su inicio de comprador
+            return redirect('com_inicio') # Asegúrate que 'com_inicio' es el name de tu URL del dashboard de comprador
+
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST) # Crea una instancia del formulario con los datos enviados
         if user_form.is_valid():
