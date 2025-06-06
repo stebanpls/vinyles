@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test # Para proteger vistas
 
 # Se importa los atributos de Crud 
-from .models import Crud # Importar el modelo Crud (el cual está en mayúsculas) para poder usarlo en las vistas.
+from .models import Crud, Cliente, Genero # Importar modelos necesarios (Crud, Cliente, Genero)
 from .forms import CrudForm, UserRegistrationForm # Importar formularios
 
 # Importar las funciones de autenticación de Django
@@ -147,7 +147,12 @@ def pub_registro(request):
             # Establecer la contraseña elegida de forma segura
             new_user.set_password(user_form.cleaned_data['password'])
             # Guardar el objeto User en la base de datos
-            new_user.save() # Ahora sí, guarda el usuario en la base de datos
+            new_user.save()
+
+            # Crear el perfil de Cliente asociado al nuevo usuario
+            # La señal post_save ya hace esto automáticamente,
+            # pero si no usaras la señal, lo harías aquí:
+            # Cliente.objects.create(user=new_user)
             # Aquí podrías crear el ClienteProfile si lo tienes: ClienteProfile.objects.create(user=new_user, ...)
             messages.success(request, '¡Registro exitoso! Ahora puedes iniciar sesión.')
             return redirect('pub_login') # Redirigir al login después del registro exitoso
@@ -529,7 +534,11 @@ def com_nosotros(request):
 
 @login_required
 def com_perfil(request):
-  return render(request, 'paginas/comprador/com_perfil.html')
+    # Obtener el perfil de cliente asociado al usuario logueado
+    # Usamos .cliente porque así definimos el related_name en el OneToOneField
+    cliente_profile = request.user.cliente
+    # Aquí necesitarías obtener todos los géneros y los géneros favoritos del usuario para el formulario de edición
+    return render(request, 'paginas/comprador/com_perfil.html', {'cliente': cliente_profile}) # Pasar el perfil al contexto
 
 @login_required
 def com_progreso_envio(request):
@@ -567,7 +576,19 @@ def ven_notificaciones(request):
 
 @login_required
 def ven_perfil(request):
-  return render(request, 'paginas/vendedor/ven_perfil.html')
+    # Obtener el perfil de cliente asociado al usuario logueado
+    # Usamos .cliente porque así definimos el related_name en el OneToOneField
+    # Es buena práctica manejar el caso donde el perfil no exista, aunque la señal post_save debería crearlo.
+    try:
+        cliente_profile = request.user.cliente
+    except Cliente.DoesNotExist:
+        cliente_profile = None
+        messages.error(request, "No se encontró el perfil del vendedor asociado a tu cuenta.")
+        # Considera redirigir o manejar este error de forma más robusta
+
+    # Si vas a implementar la edición (método POST) en esta misma vista, la lógica iría aquí.
+    # También necesitarías pasar todos_los_generos y generos_favoritos_usuario_ids si incluyes el formulario de edición.
+    return render(request, 'paginas/vendedor/ven_perfil.html', {'cliente': cliente_profile}) # Pasar el perfil al contexto
 
 @login_required
 def ven_producto(request):

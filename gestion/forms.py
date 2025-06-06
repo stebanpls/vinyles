@@ -1,5 +1,5 @@
 from django import forms
-from .models import Crud # Importa el modelo Crud desde el archivo models.py
+from .models import Crud, Cliente # Importa los modelos Crud y Cliente
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
 
 # Create your views here.

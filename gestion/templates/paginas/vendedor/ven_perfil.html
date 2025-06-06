@@ -8,38 +8,53 @@
 {% block titulo %} Vinyles - Inicio {% endblock titulo %}
 
 {% block contenido %}
-  <div class="profile-container">
-    <div class="profile-picture-container">
-        <img src="{% static 'images/perfil.jpg' %}" alt="Profile Picture" class="profile-picture">
+    <div class="profile-container">
+        <div class="profile-picture-container">
+            {% if user.cliente.foto_perfil %}
+                <img src="{{ user.cliente.foto_perfil.url }}" alt="Foto de Perfil de {{ user.username }}" class="profile-picture">
+            {% else %}
+                <img src="{% static 'images/perfil.jpg' %}" alt="Foto de Perfil por defecto" class="profile-picture">
+            {% endif %}
+        </div>
+        <h2 class="user-name">Usuario: {{ user.first_name }} {{ user.last_name }}</h2>
+        <div class="profile-info">
+            <div class="info-item">
+                <label>Email:</label>
+                <span>{{ user.email|default:"-" }}</span>
+            </div>
+            <div class="info-item">
+                <label>Celular:</label>
+                {# Asumiendo que 'celular' está en tu modelo Cliente #}
+                <span>{{ user.cliente.celular|default:"-" }}</span>
+            </div>
+            <div class="info-item">
+                <label>Géneros Favoritos:</label>
+                <span>
+                    {% if user.cliente.generos_favoritos.all %}
+                        {% for genero in user.cliente.generos_favoritos.all %}
+                            {{ genero.nombre }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <label>Historial de Compra:</label>
+                {# Asumiendo que 'historial' es un campo o método que necesitas implementar #}
+                {# Por ahora, lo dejamos como estaba si no está en el modelo Cliente directamente #}
+                <span>{{ user.cliente.historial_compra|default:"-" }}</span> {# O como se llame el campo/método #}
+                <a href="{% static 'images/music.css' %}"></a>
+            </div>
+        </div>
+        <div class="profile-buttons">
+            <a href="{% url 'com_inicio' %}" class="btn btn-primary">Cambiar a Comprador</a>
+            <!--
+            <a href="#" class="btn btn-primary">Editar Perfil</a>
+            -->
+            <a href="{% url 'pub_logOut' %}" class="btn btn-danger">Cerrar Sesión</a>
+        </div>
     </div>
-    <h2 class="user-name">Usuario: {{ user.first_name }} {{ user.last_name }}</h2>
-    <div class="profile-info">
-        <div class="info-item">
-            <label>Email:</label>
-            <span>{{ user.email }}</span>
-        </div>
-        <div class="info-item">
-            <label>Celular:</label>
-            <span>{{ user.celular|default:"-" }}</span>
-        </div>
-        <div class="info-item">
-            <label>Géneros Favoritos:</label>
-            <span>{{ user.phone_number|default:"-" }}</span>
-        </div>
-        <div class="info-item">
-            <label>Historial de Compra:</label>
-            <span>{{ user.historial|default:"-" }}</span>
-            <a href="{% static 'images/music.css' %}"></a>
-        </div>
-    </div>
-    <div class="profile-buttons">
-        <a href="{% url 'com_inicio' %}" class="btn btn-primary">Cambiar a Comprador</a>
-        <!--
-        <a href="#" class="btn btn-primary">Editar Perfil</a>
-        -->
-        <a href="{% url 'pub_logOut' %}" class="btn btn-danger">Cerrar Sesión</a>
-    </div>
-  </div>
 {% endblock contenido %}
 
 {% block pie %}

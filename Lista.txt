@@ -38,7 +38,7 @@ Lista de Pasos para Implementar Sistema de Autenticación en Django (Proyecto Vi
     *   Ejecución de `python manage.py makemigrations gestion` y `python manage.py migrate` para aplicar cambios del modelo `ClienteProfile`.
 
 8.  **Actualización de Plantillas Base para Enlaces Condicionales:**
-    *   Modificación de `plantilla_publico.html`, `plantilla_comprador.html`, `plantilla_vendedor.html`, y `plantilla_administrador.html` para mostrar enlaces de navegación diferentes según el estado de autenticación del usuario (`{% if user.is_authenticated %}`).
+    *   Modificación de `plantilla_publico.html`, `plantilla_comprador.html`, `plantilla_vendedor.html`, y `plantilla_administrador.html` para mostrar enlaces de navegación diferentes según el estado de autenticación del usuario (`{% if user.is_authenticated %}`). Asegurarse de que los enlaces a perfil (comprador/vendedor) apunten a las URLs correctas.
     *   Asegurar que "Cerrar Sesión" apunte a `{% url 'logout' %}`.
 
 9.  **Creación de Superusuario:**
@@ -67,9 +67,19 @@ Lista de Pasos para Implementar Sistema de Autenticación en Django (Proyecto Vi
     *   Aplicar `@login_required` a todas las vistas `com_*` y `ven_*`.
     *   Definir e implementar un mecanismo para identificar "Vendedores" y aplicar `@user_passes_test` a vistas `ven_*`.
 
-14. **Implementar Funcionalidad de "Mi Perfil":**
-    *   Crear vista y plantilla para que usuarios vean/editen su información (`User` y `ClienteProfile`).
-    *   Crear formulario de edición de perfil.
+14. **Implementar Funcionalidad de "Mi Perfil" (Edición):**
+    *   **Crear/Actualizar Formulario de Edición:** Crear un nuevo formulario en `gestion/forms.py` (ej. `ClienteProfileForm` o `PerfilEdicionForm`) que maneje los campos del modelo `Cliente` (numero_documento, celular, direccion_residencia, foto_perfil, generos_favoritos) y, opcionalmente, campos del `User` (first_name, last_name, email) y la lógica de cambio de contraseña.
+    *   **Modificar Vistas de Perfil (`com_perfil`, `ven_perfil` en `gestion/views.py`):**
+        *   Añadir lógica para manejar solicitudes `POST`.
+        *   En `GET`: Obtener el objeto `Cliente` del usuario (`request.user.cliente`), obtener todos los `Genero`s, obtener los IDs de los géneros favoritos del usuario. Pasar estos datos al contexto de la plantilla. Instanciar el formulario de edición con los datos existentes (`instance=request.user.cliente`).
+        *   En `POST`: Instanciar el formulario de edición con los datos enviados (`request.POST`, `request.FILES`) y la instancia existente (`instance=request.user.cliente`). Validar el formulario (`is_valid()`). Si es válido, guardar los cambios en el modelo `Cliente` (el formulario `ModelForm` ayuda con esto). Manejar la lógica específica para la foto de perfil (guardar el archivo). Manejar la lógica para actualizar los géneros favoritos (borrar los antiguos, añadir los nuevos seleccionados). Manejar el cambio de contraseña si se proporcionó (usando `request.user.set_password()` y `request.user.save()`). Mostrar mensajes de éxito/error (`messages`). Redirigir (ej. a la misma página de perfil).
+        *   Añadir manejo de errores (`try...except Cliente.DoesNotExist`) en ambas vistas para obtener el perfil del cliente.
+    *   **Modificar Plantillas de Perfil (`com_perfil.html`, `ven_perfil.html`):**
+        *   Integrar el formulario de edición dentro de la plantilla.
+        *   Usar `{{ form.as_p }}` o renderizar los campos manualmente (`{{ form.campo.label_tag }} {{ form.campo }}`) para mostrar el formulario.
+        *   Asegurar que el formulario tenga `method="POST"` y `enctype="multipart/form-data"` (si se permite subir archivos).
+        *   Incluir `{% csrf_token %}`.
+        *   Mostrar mensajes de Django (`{% if messages %}`).
 
 15. **Manejo de Datos del Álbum en el Login:**
     *   Implementar lógica en `pub_login` para que, si un usuario llega desde una página de producto, se le redirija al carrito o se añada el producto al carrito después del login (posiblemente usando sesiones).
@@ -84,3 +94,5 @@ Lista de Pasos para Implementar Sistema de Autenticación en Django (Proyecto Vi
 18. **Seguridad Adicional (Consideraciones):**
     *   Revisar configuraciones de seguridad de Django para producción.
     *   Considerar autenticación de dos factores (2FA) si es necesario.
+
+Editar Perfil

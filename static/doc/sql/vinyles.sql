@@ -76,6 +76,15 @@ CREATE TABLE genero (
     nombre VARCHAR(100) NOT NULL COMMENT 'Nombre de los Géneros'
 ) COMMENT = 'Esta es la tabla que almacena los Géneros Musicales';
 
+-- Crear tabla Cliente Género Favorito (MOMENTANEA)
+CREATE TABLE cliente_genero_favorito (
+    idCliente INT NOT NULL, COMMENT 'ID, y Llave Foránea de los Clientes, que llamará la id de la tabla cliente',
+    idGenero INT NOT NULL, COMMENT 'ID, y Llave Foránea de los Géneros, que llamará la id de la tabla genero',
+    PRIMARY KEY (idCliente, idGenero), COMMENT 'Llave Primaria Compuesta de Cliente y Género Favorito',
+    FOREIGN KEY (idCliente) REFERENCES cliente(id) ON DELETE CASCADE,
+    FOREIGN KEY (idGenero) REFERENCES genero(id) ON DELETE CASCADE
+) COMMENT = 'Almacena los géneros favoritos de los clientes';
+
 -- Crear tabla Canción
 CREATE TABLE cancion (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID de las Canciones',
