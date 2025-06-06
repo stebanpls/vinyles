@@ -4,10 +4,13 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test # Para proteger vistas
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 # Se importa los atributos de Crud 
 from .models import Crud, Cliente, Genero # Importar modelos necesarios (Crud, Cliente, Genero)
-from .forms import CrudForm, UserRegistrationForm # Importar formularios
+
+from .forms import CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm # Importar formularios
 
 # Importar las funciones de autenticación de Django
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout # Importa las funciones de autenticación
@@ -531,14 +534,72 @@ def com_checkout(request):
 @login_required
 def com_nosotros(request):
   return render(request, 'paginas/comprador/com_nosotros.html')
-
+# Vista para MOSTRAR el perfil del comprador
 @login_required
 def com_perfil(request):
-    # Obtener el perfil de cliente asociado al usuario logueado
-    # Usamos .cliente porque así definimos el related_name en el OneToOneField
-    cliente_profile = request.user.cliente
-    # Aquí necesitarías obtener todos los géneros y los géneros favoritos del usuario para el formulario de edición
-    return render(request, 'paginas/comprador/com_perfil.html', {'cliente': cliente_profile}) # Pasar el perfil al contexto
+    user = request.user
+    # Asegurarse de que el perfil del cliente exista o crearlo
+    cliente_instance, created = Cliente.objects.get_or_create(user=user)
+    context = {
+        'cliente_instance': cliente_instance, # Pasar la instancia para mostrar datos del cliente
+        'user': user, # Pasar el objeto user para mostrar datos como email, nombre, etc.
+        'titulo_pagina': 'Mi Perfil'
+    }
+    # Esta vista ahora solo muestra la información del perfil.
+    return render(request, 'paginas/comprador/com_perfil.html', context)
+# Vista para EDITAR el perfil del comprador
+@login_required
+def com_perfil_editar(request):
+    user = request.user
+    cliente_instance, created = Cliente.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=user)
+        # Incluir request.FILES para el campo de imagen (foto_perfil)
+        cliente_form = ClienteUpdateForm(request.POST, request.FILES, instance=cliente_instance)
+        password_form = PasswordChangeForm(user, request.POST)
+
+        intent_to_change_password = bool(request.POST.get('new_password1'))
+        user_cliente_forms_valid = user_form.is_valid() and cliente_form.is_valid()
+        password_form_valid_if_intended = True
+
+        if intent_to_change_password:
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)
+            else:
+                password_form_valid_if_intended = False
+
+        if user_cliente_forms_valid and password_form_valid_if_intended:
+            user_form.save()
+            cliente_form.save()
+
+            if intent_to_change_password and password_form_valid_if_intended:
+                messages.success(request, '¡Tu perfil y contraseña han sido actualizados exitosamente!')
+            elif not intent_to_change_password:
+                messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
+
+            if not (intent_to_change_password and not password_form_valid_if_intended):
+                # Redirige a la página de visualización del perfil después de guardar
+                return redirect('com_perfil') 
+
+        if not user_cliente_forms_valid or (intent_to_change_password and not password_form_valid_if_intended):
+            messages.error(request, 'Por favor corrige los errores señalados abajo.')
+
+    else: # GET request (cuando el usuario visita la página de edición por primera vez)
+        user_form = UserUpdateForm(instance=user)
+        cliente_form = ClienteUpdateForm(instance=cliente_instance)
+        password_form = PasswordChangeForm(user)
+
+    context = {
+        'user_form': user_form,
+        'cliente_form': cliente_form,
+        'password_form': password_form,
+        'titulo_pagina': 'Mi Perfil',
+        'cliente_instance': cliente_instance # Para mostrar la foto actual en el formulario, etc.
+    }
+    # Renderiza la nueva plantilla de edición
+    return render(request, 'paginas/comprador/com_perfil_editar.html', context)
 
 @login_required
 def com_progreso_envio(request):
@@ -574,21 +635,71 @@ def ven_crear(request):
 def ven_notificaciones(request):
   return render(request, 'paginas/vendedor/ven_notificaciones.html')
 
+# Vista para MOSTRAR el perfil del vendedor
 @login_required
 def ven_perfil(request):
-    # Obtener el perfil de cliente asociado al usuario logueado
-    # Usamos .cliente porque así definimos el related_name en el OneToOneField
-    # Es buena práctica manejar el caso donde el perfil no exista, aunque la señal post_save debería crearlo.
-    try:
-        cliente_profile = request.user.cliente
-    except Cliente.DoesNotExist:
-        cliente_profile = None
-        messages.error(request, "No se encontró el perfil del vendedor asociado a tu cuenta.")
-        # Considera redirigir o manejar este error de forma más robusta
+    user = request.user
+    # Asegurarse de que el perfil del cliente exista o crearlo
+    cliente_instance, created = Cliente.objects.get_or_create(user=user)
+    context = {
+        'cliente_instance': cliente_instance,
+        'user': user,
+        'titulo_pagina': 'Mi Perfil de Vendedor'
+    }
+    # Esta vista ahora solo muestra la información del perfil.
+    return render(request, 'paginas/vendedor/ven_perfil.html', context)
+# Vista para EDITAR el perfil del vendedor
+@login_required
+def ven_perfil_editar(request):
+    user = request.user
+    cliente_instance, created = Cliente.objects.get_or_create(user=user)
 
-    # Si vas a implementar la edición (método POST) en esta misma vista, la lógica iría aquí.
-    # También necesitarías pasar todos_los_generos y generos_favoritos_usuario_ids si incluyes el formulario de edición.
-    return render(request, 'paginas/vendedor/ven_perfil.html', {'cliente': cliente_profile}) # Pasar el perfil al contexto
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=user)
+        cliente_form = ClienteUpdateForm(request.POST, request.FILES, instance=cliente_instance)
+        password_form = PasswordChangeForm(user, request.POST)
+
+        intent_to_change_password = bool(request.POST.get('new_password1'))
+        user_cliente_forms_valid = user_form.is_valid() and cliente_form.is_valid()
+        password_form_valid_if_intended = True
+
+        if intent_to_change_password:
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)
+            else:
+                password_form_valid_if_intended = False
+
+        if user_cliente_forms_valid and password_form_valid_if_intended:
+            user_form.save()
+            cliente_form.save()
+
+            if intent_to_change_password and password_form_valid_if_intended:
+                messages.success(request, '¡Tu perfil y contraseña han sido actualizados exitosamente!')
+            elif not intent_to_change_password:
+                messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
+
+            if not (intent_to_change_password and not password_form_valid_if_intended):
+                # Redirige a la página de visualización del perfil después de guardar
+                return redirect('ven_perfil') 
+
+        if not user_cliente_forms_valid or (intent_to_change_password and not password_form_valid_if_intended):
+            messages.error(request, 'Por favor corrige los errores señalados abajo.')
+    
+    else: # GET request (cuando el usuario visita la página de edición por primera vez)
+        user_form = UserUpdateForm(instance=user)
+        cliente_form = ClienteUpdateForm(instance=cliente_instance)
+        password_form = PasswordChangeForm(user)
+
+    context = {
+        'user_form': user_form,
+        'cliente_form': cliente_form,
+        'password_form': password_form,
+        'titulo_pagina': 'Mi Perfil de Vendedor',
+        'cliente_instance': cliente_instance
+    }
+    # Renderiza la nueva plantilla de edición
+    return render(request, 'paginas/vendedor/ven_perfil_editar.html', context)
 
 @login_required
 def ven_producto(request):

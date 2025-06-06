@@ -39,7 +39,9 @@ urlpatterns = [
     path('com_checkout/', views.com_checkout, name='com_checkout'),
     path('com_inicio/', views.com_inicio, name='com_inicio'),
     path('com_nosotros/', views.com_nosotros, name='com_nosotros'),
-    path('com_perfil/', views.com_perfil, name='com_perfil'), # Asegúrate que esta vista exista
+    # URLs para el perfil del comprador
+    path('com_perfil/', views.com_perfil, name='com_perfil'), # Vista para mostrar el perfil
+    path('com_perfil/editar/', views.com_perfil_editar, name='com_perfil_editar'), # Vista para editar el perfil
     path('com_progreso_envio/', views.com_progreso_envio, name='com_progreso_envio'),
     path('com_reembolsos/', views.com_reembolsos, name='com_reembolsos'),
     path('com_soporte/', views.com_soporte, name='com_soporte'),
@@ -75,7 +77,9 @@ urlpatterns = [
     path('ven_crear/', views.ven_crear, name='ven_crear'),
     path('ven_nosotros/', views.ven_nosotros, name='ven_nosotros'),
     path('ven_notificaciones/', views.ven_notificaciones, name='ven_notificaciones'),
-    path('ven_perfil/', views.ven_perfil, name='ven_perfil'), # Asegúrate que esta vista exista
+    # URLs para el perfil del vendedor
+    path('ven_perfil/', views.ven_perfil, name='ven_perfil'), # Vista para mostrar el perfil
+    path('ven_perfil/editar/', views.ven_perfil_editar, name='ven_perfil_editar'), # Vista para editar el perfil
     path('ven_producto/', views.ven_producto, name='ven_producto'),
     path('ven_terminos/', views.ven_terminos, name='ven_terminos'),
 
