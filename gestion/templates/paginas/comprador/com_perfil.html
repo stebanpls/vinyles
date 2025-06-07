@@ -16,7 +16,7 @@
                 <img src="{% static 'images/perfil.jpg' %}" alt="Foto de Perfil por defecto" class="profile-picture">
             {% endif %}
         </div>
-        <h2 class="user-name">Usuario: {{ user.first_name }} {{ user.last_name }}</h2>
+        <h2 class="user-name">Usuario: {{ user.username }}</h2>
         <div class="profile-info">
             <div class="info-item">
                 <label>Email:</label>

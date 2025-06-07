@@ -1,0 +1,169 @@
+/* Estilos para el modo oscuro del formulario de edición de perfil del vendedor */
+
+.profile-edit-form-container {
+    background-color: #2a2a2a; /* Fondo para el contenedor del formulario */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-width: 700px;
+    margin: 40px auto; /* Centrar y dar espacio */
+    color: #e0e0e0; /* Color de texto por defecto dentro del contenedor */
+}
+
+.profile-edit-form-container h1,
+.profile-edit-form-container h2 {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 15px;
+}
+
+/* Estilos para los campos del formulario */
+.profile-edit-form-container .form-group, /* Para Bootstrap form-group */
+.profile-edit-form-container p { /* Para formularios Django renderizados con {{ form.as_p }} */
+    margin-bottom: 20px;
+}
+
+.profile-edit-form-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: #b0b0b0; /* Un gris más claro para las etiquetas */
+    font-weight: bold;
+}
+
+.profile-edit-form-container input[type="text"],
+.profile-edit-form-container input[type="email"],
+.profile-edit-form-container input[type="password"],
+.profile-edit-form-container input[type="tel"],
+.profile-edit-form-container input[type="url"],
+.profile-edit-form-container input[type="date"],
+.profile-edit-form-container input[type="number"],
+.profile-edit-form-container textarea,
+.profile-edit-form-container select {
+    width: 100%;
+    padding: 12px;
+    background-color: #333333; /* Fondo del input */
+    border: 1px solid #555555; /* Borde del input */
+    border-radius: 5px;
+    color: #e0e0e0; /* Color del texto dentro del input */
+    box-sizing: border-box;
+}
+
+.profile-edit-form-container input[type="text"]:focus,
+.profile-edit-form-container input[type="email"]:focus,
+.profile-edit-form-container input[type="password"]:focus,
+.profile-edit-form-container input[type="tel"]:focus,
+.profile-edit-form-container input[type="url"]:focus,
+.profile-edit-form-container input[type="date"]:focus,
+.profile-edit-form-container input[type="number"]:focus,
+.profile-edit-form-container textarea:focus,
+.profile-edit-form-container select:focus {
+    border-color: #007bff; /* Color de borde al enfocar (Bootstrap primary) */
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.profile-edit-form-container input[type="file"] {
+    background-color: #333333;
+    border: 1px solid #555555;
+    color: #b0b0b0;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-edit-form-container input[type="file"]::file-selector-button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.profile-edit-form-container input[type="file"]::file-selector-button:hover {
+    background-color: #0056b3;
+}
+
+.profile-edit-form-container select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23b0b0b0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.profile-edit-form-container select option {
+    background-color: #333333;
+    color: #e0e0e0;
+}
+
+/* Estilos para checkboxes y radios */
+.profile-edit-form-container .form-check-input {
+    background-color: #333333;
+    border-color: #555555;
+}
+.profile-edit-form-container .form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.profile-edit-form-container .form-check-label {
+    color: #b0b0b0;
+    margin-left: 0.5em; /* Espacio entre el input y la etiqueta */
+}
+
+/* Ayuda de texto o errores del formulario Django */
+.profile-edit-form-container .helptext,
+.profile-edit-form-container ul.errorlist {
+    font-size: 0.9em;
+    color: #ff6b6b; /* Color para errores */
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+}
+.profile-edit-form-container .helptext {
+    color: #a0a0a0; /* Color para texto de ayuda normal */
+}
+
+/* Botones */
+.profile-edit-form-container .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px; /* Espacio arriba de los botones */
+    margin-right: 10px; /* Espacio entre botones */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Imagen de perfil actual */
+.profile-edit-form-container .current-profile-picture {
+    display: block;
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px; /* O 50% si la quieres redonda */
+    margin: 0 auto 20px auto; /* Centrar y dar espacio */
+    border: 3px solid #444;
+}
+
+/* Mensajes de Django (alertas) dentro del contenedor del formulario */
+.profile-edit-form-container .alert {
+    /* Los estilos de alerta de Bootstrap deberían funcionar, pero puedes personalizarlos más si es necesario */
+    /* Ejemplo: asegurar que el botón de cierre sea visible */
+    position: relative; /* Necesario para el posicionamiento del botón de cierre si se personaliza mucho */
+}
+
+.profile-edit-form-container .alert .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%); /* Hace el botón de cierre blanco */
+}
+
+/* Específico para cuando Django renderiza el formulario con <p> tags */
+.profile-edit-form-container form > p > label { /* Estilo para labels dentro de <p> */
+    margin-bottom: 8px;
+}
+.profile-edit-form-container form > p > br { /* Ocultar <br> innecesarios */
+    display: none;
+}

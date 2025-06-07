@@ -1,0 +1,274 @@
+/* Estilos para el modo oscuro del formulario de edición de perfil del comprador */
+
+.profile-edit-form-container {
+    /* Definición de variables de color para este componente */
+    --bg-main: #212121;
+    --bg-card: #2a2a2a;
+    --bg-input: #343a40;
+    --text-primary: #f8f9fa;
+    --text-secondary: #e9ecef;
+    --text-muted: #adb5bd;
+    --border-color: #495057;
+    --accent-color: #007bff;
+    --accent-color-hover: #0056b3;
+    --error-color: #ff6b6b; /* Rojo para errores, similar a Bootstrap .is-invalid */
+
+    background-color: var(--bg-main);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    max-width: 700px;
+    margin: 40px auto;
+    color: var(--text-primary);
+}
+
+.profile-edit-form-container h1,
+.profile-edit-form-container h2 {
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+.profile-edit-form-container hr {
+    border-top-color: var(--border-color);
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+/* Estilos para los campos del formulario */
+.profile-edit-form-container .form-group, /* Para Bootstrap form-group */
+.profile-edit-form-container p { /* Para formularios Django renderizados con {{ form.as_p }} */
+    margin-bottom: 20px;
+}
+.profile-edit-form-container form p:last-of-type { /* Evitar doble margen si el último elemento es un <p> antes de los botones */
+    margin-bottom: 0; 
+}
+
+.profile-edit-form-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+.profile-edit-form-container input[type="text"],
+.profile-edit-form-container input[type="email"],
+.profile-edit-form-container input[type="password"],
+.profile-edit-form-container input[type="tel"],
+.profile-edit-form-container input[type="url"],
+.profile-edit-form-container input[type="date"],
+.profile-edit-form-container input[type="number"],
+.profile-edit-form-container textarea,
+.profile-edit-form-container select {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    color: var(--text-primary);
+    box-sizing: border-box;
+}
+
+.profile-edit-form-container input[type="text"]:focus,
+.profile-edit-form-container input[type="email"]:focus,
+.profile-edit-form-container input[type="password"]:focus,
+.profile-edit-form-container input[type="tel"]:focus,
+.profile-edit-form-container input[type="url"]:focus,
+.profile-edit-form-container input[type="date"]:focus,
+.profile-edit-form-container input[type="number"]:focus,
+.profile-edit-form-container textarea:focus,
+.profile-edit-form-container select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(var(--accent-color-rgb, 0, 123, 255), 0.25); /* Definir --accent-color-rgb si es necesario o usar un color fijo para la sombra */
+}
+
+.profile-edit-form-container input[type="file"] {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+/* Bootstrap 5 usa .form-control para input file, así que la clase .form-control-file es redundante o custom */
+.profile-edit-form-container .form-control-file { 
+    /* Hereda estilos de input[type="file"] o .form-control */
+}
+.profile-edit-form-container input[type="file"]::file-selector-button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.2s ease-in-out;
+}
+.profile-edit-form-container input[type="file"]::file-selector-button:hover {
+    background-color: var(--accent-color-hover);
+}
+
+.profile-edit-form-container select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='var(--text-secondary)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); /* Idealmente, el color del stroke sería una variable, pero es complejo en data URI */
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.profile-edit-form-container select option {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+/* Estilos para checkboxes y radios */
+.profile-edit-form-container .form-check-input {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+}
+.profile-edit-form-container .form-check-input:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+.profile-edit-form-container .form-check-label {
+    color: var(--text-secondary);
+    margin-left: 0.5em; /* Espacio entre el input y la etiqueta */
+}
+
+/* Ayuda de texto o errores del formulario Django */
+.profile-edit-form-container .helptext,
+.profile-edit-form-container ul.errorlist {
+    font-size: 0.9em;
+    color: var(--error-color);
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+}
+.profile-edit-form-container .helptext {
+    color: var(--text-muted);
+}
+.profile-edit-form-container .form-text.text-muted { /* Para el texto de ayuda de Bootstrap */
+    color: var(--text-muted) !important;
+}
+.profile-edit-form-container .invalid-feedback {
+    color: var(--error-color);
+    /* d-block ya está en el HTML, así que no es necesario aquí si siempre se usa */
+}
+
+/* Botones */
+.profile-edit-form-container .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px; /* Espacio arriba de los botones */
+    margin-right: 10px; /* Espacio entre botones */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+/* Si necesitas forzar colores oscuros para botones específicos de Bootstrap: */
+.profile-edit-form-container .btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+}
+.profile-edit-form-container .btn-primary:hover {
+    background-color: var(--accent-color-hover);
+    border-color: var(--accent-color-hover);
+}
+.profile-edit-form-container .btn-secondary {
+    background-color: #5a6268; /* Un gris un poco más oscuro para secundario */
+    border-color: #5a6268;
+    color: #fff;
+}
+.profile-edit-form-container .btn-secondary:hover {
+    background-color: #4e555b;
+    border-color: #4e555b;
+}
+
+/* Imagen de perfil actual (usando .img-thumbnail de Bootstrap) */
+.profile-edit-form-container .img-thumbnail {
+    display: block;
+    /* max-width y max-height son controlados por inline style en el HTML */
+    /* object-fit es controlado por inline style en el HTML */
+    border-radius: var(--bs-border-radius, 0.375rem); /* Usa el radio de Bootstrap o uno personalizado */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px; /* Espacio inferior */
+    border: 3px solid var(--border-color); /* Borde personalizado */
+    background-color: var(--bg-input); /* Fondo por si la imagen es transparente o no carga */
+    padding: 0.25rem; /* Padding similar a Bootstrap .img-thumbnail */
+}
+
+/* Mensajes de Django (alertas) dentro del contenedor del formulario */
+.profile-edit-form-container .alert {
+    /* Los estilos de alerta de Bootstrap deberían funcionar, pero puedes personalizarlos más si es necesario */
+    /* Ejemplo: asegurar que el botón de cierre sea visible */
+    position: relative; /* Necesario para el posicionamiento del botón de cierre si se personaliza mucho */
+}
+
+.profile-edit-form-container .alert .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%); /* Hace el botón de cierre blanco */
+}
+
+/* Específico para cuando Django renderiza el formulario con <p> tags */
+.profile-edit-form-container form > p > label { /* Estilo para labels dentro de <p> */
+    margin-bottom: 8px;
+}
+.profile-edit-form-container form > p > br { /* Ocultar <br> innecesarios */
+    display: none;
+}
+
+/* Estilos para los cards de Bootstrap dentro del formulario */
+.profile-edit-form-container .card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    margin-bottom: 25px; /* Espacio entre cards */
+}
+
+.profile-edit-form-container .card-header {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1.25rem;
+}
+.profile-edit-form-container .card-header h4 {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+}
+.profile-edit-form-container .card-header .text-muted {
+    color: var(--text-muted) !important;
+    font-size: 0.875em;
+}
+
+.profile-edit-form-container .card-body {
+    padding: 1.25rem;
+    color: var(--text-primary);
+}
+
+/* Estilos para el campo de géneros favoritos .checkbox-list */
+.profile-edit-form-container .checkbox-list ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+.profile-edit-form-container .checkbox-list li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+.profile-edit-form-container .checkbox-list input[type="checkbox"] {
+    margin-right: 0.75rem; /* Aumentar un poco el espacio */
+    width: auto; /* Ancho automático para checkboxes */
+    /* Reutilizar estilos de .form-check-input */
+    flex-shrink: 0; /* Evitar que el checkbox se encoja */
+}
+.profile-edit-form-container .checkbox-list label {
+    font-weight: normal;
+    margin-bottom: 0;
+    color: var(--text-secondary);
+}

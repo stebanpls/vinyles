@@ -35,7 +35,7 @@
                         
                         {% if user.is_authenticated %}
                             <li class="nav-item">
-                                <span class="nav-link">Hola, {{ user.first_name|default:user.username }}</span>
+                                <span class="nav-link">Hola, {{ user.username }}</span>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'com_perfil' %}">Mi Perfil</a> {# Asumiendo que tienes una URL 'com_perfil' #}

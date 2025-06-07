@@ -43,7 +43,7 @@
                         </li>
                         {% if user.is_authenticated %} {# Siempre debería ser true si están en una página que usa esta plantilla #}
                         <li class="nav-item">
-                            <span class="nav-link">Hola, {{ user.first_name|default:user.username }}</span>
+                            <span class="nav-link">Hola, {{ user.username }}</span>
                         </li>
                         <li class="nav-item">
                             {# Convertir el enlace de Cerrar Sesión a un formulario POST #}
