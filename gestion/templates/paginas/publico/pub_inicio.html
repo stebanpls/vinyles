@@ -128,7 +128,8 @@
                     <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Master of Puppets</a></h3>
                     <p class="product-artist">Metallica</p>
                     <p class="product-price">$105.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Master%20Of%20Puppets&artist=Metallica%20&price=105000&image={% static 'images/master.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' 
+                    %}? album_name=Master%20Of%20Puppets&artist=Metallica%20&price=105000&image={% static 'images/master.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -234,6 +235,21 @@
                     <p class="product-artist">BTS</p>
                     <p class="product-price">$105.000</p>
                     <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Love%20Yourself&artist=BTS%20&price=105000&image={% static 'images/kpop.jpg' %}">
+                        Agregar al carrito
+                    </a>
+                </div>
+            </div>
+
+            {# Product Card 15 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
+            <div class="product-card">
+                <a href="#" class="product-image-link">
+                    <img src="{% static 'images/Frank.jpg' %}" alt="The World We Knew" class="product-image">
+                </a>
+                <div class="product-info">
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">The World We Knew</a></h3>
+                    <p class="product-artist">Frank Sinatra</p>
+                    <p class="product-price">$140.000</p>
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=The%20World%20We%20Knew&artist=Frank%20Sinatra&price=140000&image={% static 'images/Frank.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
