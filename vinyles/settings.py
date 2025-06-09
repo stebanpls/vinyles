@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'gestion', # Tu aplicación
+    'gestion.apps.GestionConfig', # Tu aplicación
     'widget_tweaks', # Si lo vas a usar
 ]
 
@@ -199,5 +199,3 @@ LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out'
 #EMAIL_HOST_USER = 'sebastian.rg303@gmail.com'
 #EMAIL_HOST_PASSWORD = 'aericita1234'
 #DEFAULT_FROM_EMAIL = 'Vinyles <sebastian.rg303@gmail.com>'
-
-

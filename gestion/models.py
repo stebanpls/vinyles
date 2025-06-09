@@ -95,4 +95,8 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
-        Cliente.objects.create(user=instance) # Referencia actualizada a Cliente
+        try:
+            Cliente.objects.create(user=instance)
+        except Exception as e:
+            # Considera registrar este error de forma más formal si es necesario para producción
+            pass # O maneja el error de otra manera
