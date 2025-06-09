@@ -188,3 +188,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'com_inicio'  # O 'dashboard' como en el video, apunta a tu vista post-login
 LOGIN_URL = 'pub_login'            # URL de tu vista de login principal
 LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out' después de cerrar sesión
+
+
+
+# 2) Si quieres usar Gmail (en modo real), comentas la línea anterior y descomentas estas:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_HOST_USER = 'sebastian.rg303@gmail.com'
+#EMAIL_HOST_PASSWORD = 'aericita1234'
+#DEFAULT_FROM_EMAIL = 'Vinyles <sebastian.rg303@gmail.com>'
+
+
