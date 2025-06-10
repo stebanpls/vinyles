@@ -178,3 +178,6 @@ cython_debug/
 
 # Ignorar la carpeta de documentación del proyecto
 # /docs/
+
+# Ignorar la carpeta STATIC_ROOT (donde collectstatic copia los archivos)
+/staticfiles/
