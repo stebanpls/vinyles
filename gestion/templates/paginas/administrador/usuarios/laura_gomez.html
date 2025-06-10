@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/adUsuariosPerfil.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/ad_usuarios_perfil.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Administrador - usuarios {% endblock titulo %}
@@ -10,26 +10,27 @@
 {% block contenido %} 
 <div class="perfil-container">
     <h2 class="titulo-perfil">Perfil usuario</h2>
-    
     <div class="perfil-card">
         <div class="perfil-avatar">
-            <img src="{% static 'images/fotosusuario/angelaTorres.jpg' %}" alt="Avatar">
-            <h3>Angela Torres</h3>
+            <img src="{% static 'images/fotos_perfil/laura_gomez.jpg' %}" alt="Avatar">
+            <h3>Laura Gòmez</h3>
         </div>
 
         <div class="perfil-info">
-            <p><strong>Correo electrónico:</strong> Angelatorres8888@gmail.com</p>
-            <p><strong>Número de teléfono:</strong> 3217777555</p>
+            
+            <p><strong>Correo electrónico:</strong> laura67gomezz@gmail.com</p>
+            <p><strong>Número de teléfono:</strong> 3167890463</p>
             <p><strong>País:</strong> Colombia</p>
-            <p><strong>Géneros favoritos:</strong> Pop</p>
+            <p><strong>Géneros favoritos:</strong> Rock, Pop</p>
 
             <div class="perfil-historial">
                 <p><strong>Historial de compra:</strong></p>
                 <div class="compra">
-                    <img src="{% static 'images/bad.jpg' %}" alt="Bad - Michael Jackson">
+                    <img src="{% static 'images/albumes/michael_jackson_bad.jpg' %}" alt="Bad - Michael Jackson">
                     <div>
-                        <p class="album"> Bad</p>
-                        <p class="artista">Michael Jackson</p>
+                        <p class="album"> Abbey Road	</p>
+                        <p class="artista">The Beatles</p>
+                        
                     </div>
                 </div>
             </div>
@@ -64,7 +65,6 @@
         }, 2000);
     }
 </script>
-
 
 
 {% endblock contenido %}

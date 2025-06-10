@@ -175,6 +175,9 @@ def pub_restablecer_contrasena(request):
 def pub_restablecer_contrasena_admin(request):
   return render(request, 'paginas/publico/pub_restablecer_contrasena_admin.html')
 
+def pub_soporte(request):
+  return render(request, 'paginas/publico/pub_soporte.html')
+
 def pub_terminos(request):
   return render(request, 'paginas/publico/pub_terminos.html')
 
@@ -862,106 +865,103 @@ def theBeatles(request):
 # VISTAS DE LOS USUARIOS
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def lauraG(request):
-  return render(request, 'paginas/administrador/usuarios/lauraG.html')
+def laura_g(request):
+  return render(request, 'paginas/administrador/usuarios/laura_g.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def carlosR(request):
-  return render(request, 'paginas/administrador/usuarios/carlosR.html')
+def carlos_r(request):
+  return render(request, 'paginas/administrador/usuarios/carlos_r.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def camilaQ(request):
-  return render(request, 'paginas/administrador/usuarios/camilaQ.html')
+def camila_q(request):
+  return render(request, 'paginas/administrador/usuarios/camila_q.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def jhonM(request):
-  return render(request, 'paginas/administrador/usuarios/jhonM.html')
+def jhon_m(request):
+  return render(request, 'paginas/administrador/usuarios/jhon_m.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def alexR(request):
-  return render(request, 'paginas/administrador/usuarios/alexR.html')
+def alex_r(request):
+  return render(request, 'paginas/administrador/usuarios/alex_r.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def andreaVillalobos(request):
-  return render(request, 'paginas/administrador/usuarios/andreaVillalobos.html')
+def andrea_villalobos(request):
+  return render(request, 'paginas/administrador/usuarios/andrea_villalobos.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def benjaminCastro(request):
-  return render(request, 'paginas/administrador/usuarios/benjaminCastro.html')
+def benjamin_castro(request):
+  return render(request, 'paginas/administrador/usuarios/benjamin_castro.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def cristianDominguez(request):
-  return render(request, 'paginas/administrador/usuarios/cristianDominguez.html')
+def cristian_dominguez(request):
+  return render(request, 'paginas/administrador/usuarios/cristian_dominguez.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def angelaTorres(request):
-  return render(request, 'paginas/administrador/usuarios/angelaTorres.html')
+def angela_torres(request):
+  return render(request, 'paginas/administrador/usuarios/angela_torres.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def elisaNaranjo(request):
-  return render(request, 'paginas/administrador/usuarios/elisaNaranjo.html')
+def elisa_naranjo(request):
+  return render(request, 'paginas/administrador/usuarios/elisa_naranjo.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def emilioTorres(request):
-  return render(request, 'paginas/administrador/usuarios/emilioTorres.html')
+def emilio_torres(request):
+  return render(request, 'paginas/administrador/usuarios/emilio_torres.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def andreaVillalobos2(request):
-  return render(request, 'paginas/administrador/usuarios/andreaVillalobos2.html')
+def andrea_villalobos_2(request):
+  return render(request, 'paginas/administrador/usuarios/andrea_villalobos_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def benjaminCastro2(request):
-  return render(request, 'paginas/administrador/usuarios/benjaminCastro2.html')
+def benjamin_castro_2(request):
+  return render(request, 'paginas/administrador/usuarios/benjamin_castro_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def cristianDominguez2(request):
-  return render(request, 'paginas/administrador/usuarios/cristianDominguez2.html')
+def cristian_dominguez_2(request):
+  return render(request, 'paginas/administrador/usuarios/cristian_dominguez_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def angelaTorres2(request):
-  return render(request, 'paginas/administrador/usuarios/angelaTorres2.html')
+def angela_torres_2(request):
+  return render(request, 'paginas/administrador/usuarios/angela_torres_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def elisaNaranjo2(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/elisaNaranjo2.html')
+def elisa_naranjo_2(request):
+  return render(request, 'paginas/administrador/usuarios/bloqueados/elisa_naranjo_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def emilioTorres2(request):
-  return render(request, 'paginas/administrador/usuarios/emilioTorres2.html')
+def emilio_torres_2(request):
+  return render(request, 'paginas/administrador/usuarios/emilio_torres_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def sofiaRamirez(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/sofiaRamirez.html')
+def sofia_ramirez(request):
+  return render(request, 'paginas/administrador/usuarios/bloqueados/sofia_ramirez.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def esperanzaBarrera(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/esperanzaBarrera.html')
+def esperanza_barrera(request):
+  return render(request, 'paginas/administrador/usuarios/bloqueados/esperanza_barrera.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
-def fernandoMolina(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/fernandoMolina.html')
-
-def pub_soporte(request):
-  return render(request, 'paginas/publico/pub_soporte.html')
+def fernando_molina(request):
+  return render(request, 'paginas/administrador/usuarios/bloqueados/fernando_molina.html')
 
 
 # VISTAS DE LA CARPETA "CRUD"

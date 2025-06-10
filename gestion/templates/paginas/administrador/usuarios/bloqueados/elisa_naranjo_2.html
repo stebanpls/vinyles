@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/bloqueados/adUsuariosPerfilBloq.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/bloqueados/ad_usuarios_perfil_bloq.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Administrador - usuarios {% endblock titulo %}
@@ -13,20 +13,20 @@
     
     <div class="perfil-card">
         <div class="perfil-avatar">
-            <img src="{% static 'images/fotosusuario/esperanzaBarrera.jpg' %}" alt="Avatar">
-            <h3>Esperanza Barrera </h3>
+            <img src="{% static 'images/fotos_perfil/elisa_naranjo.jpg' %}" alt="Avatar">
+            <h3>Elisa Naranjo</h3>
         </div>
 
         <div class="perfil-info">
-            <p><strong>Correo electrónico:</strong> esperanzabarrera7878@gmail.com</p>
-            <p><strong>Número de teléfono:</strong> 3217293862</p>
+            <p><strong>Correo electrónico:</strong> elinaranjo56@gmail.com</p>
+            <p><strong>Número de teléfono:</strong> 3289000870</p>
             <p><strong>País:</strong> Colombia</p>
             <p><strong>Géneros favoritos:</strong> Pop</p>
 
             <div class="perfil-historial">
                 <p><strong>Historial de compra:</strong></p>
                 <div class="compra">
-                    <img src="{% static 'images/bad.jpg' %}" alt="Bad - Michael Jackson">
+                    <img src="{% static 'images/albumes/michael_jackson_bad.jpg' %}" alt="Bad - Michael Jackson">
                     <div>
                         <p class="album"> Bad</p>
                         <p class="artista">Michael Jackson</p>
@@ -39,7 +39,7 @@
 <div class="bloq">
     <div class="bloq-wrapper">
         <p id="mensaje-bloqueo" class="mensaje-flotante"></p>
-        <button id="boton-bloqueo" class="bloquear desbloquear" onclick="toggleBloqueo()">Desbloquear usuario</button>
+        <button id="boton-bloqueo" class="bloquear" onclick="toggleBloqueo()">Bloquear usuario</button>
     </div>
 </div>
 
@@ -47,17 +47,17 @@
     function toggleBloqueo() {
         const boton = document.getElementById('boton-bloqueo');
         const mensaje = document.getElementById('mensaje-bloqueo');
-
-        if (boton.textContent === "Desbloquear usuario") {
-            mensaje.textContent = "Usuario desbloqueado con éxito ✅";
-            boton.textContent = "Bloquear usuario";
-            boton.classList.remove("desbloquear");
-        } else {
+    
+        if (boton.textContent === "Bloquear usuario") {
             mensaje.textContent = "Usuario bloqueado con éxito ✅";
             boton.textContent = "Desbloquear usuario";
             boton.classList.add("desbloquear");
+        } else {
+            mensaje.textContent = "Usuario desbloqueado con éxito ✅";
+            boton.textContent = "Bloquear usuario";
+            boton.classList.remove("desbloquear");
         }
-
+    
         mensaje.classList.add("visible");
         setTimeout(() => {
             mensaje.classList.remove("visible");

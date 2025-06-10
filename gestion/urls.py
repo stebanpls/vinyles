@@ -97,25 +97,24 @@ urlpatterns = [
 
 
     # URLS DE LOS USUARIOS (Considerar si deben estar prefijadas, ej: 'admin/usuarios/lauraG/')
-    path('alexR/', views.alexR, name='alexR'), # Asegúrate que esta vista exista
-    path('andreaVillalobos/', views.andreaVillalobos, name='andreaVillalobos'), # Añadido '/' al final
-    path('andreaVillalobos2/', views.andreaVillalobos2, name='andreaVillalobos2'), # Añadido '/' al final
-    path('angelaTorres/', views.angelaTorres, name='angelaTorres'), # Añadido '/' al final
-    path('angelaTorres2/', views.angelaTorres2, name='angelaTorres2'), # Añadido '/' al final
-    path('benjaminCastro/', views.benjaminCastro, name='benjaminCastro'), # Añadido '/' al final
-    path('benjaminCastro2/', views.benjaminCastro2, name='benjaminCastro2'), # Añadido '/' al final
-    path('camilaQ/', views.camilaQ, name='camilaQ'),
-    path('carlosR/', views.carlosR, name='carlosR'),
-    path('cristianDominguez/', views.cristianDominguez, name='cristianDominguez'), # Corregido 'crisitan' a 'cristian', añadido '/'
-    path('cristianDominguez2/', views.cristianDominguez2, name='cristianDominguez2'), # Corregido 'crisitan' a 'cristian', añadido '/'
-    path('elisaNaranjo/', views.elisaNaranjo, name='elisaNaranjo'), # Añadido '/' al final
-    path('elisaNaranjo2/', views.elisaNaranjo2, name='elisaNaranjo2'), # Añadido '/' al final
-    path('emilioTorres/', views.emilioTorres, name='emilioTorres'), # Añadido '/' al final
-    path('emilioTorres2/', views.emilioTorres2, name='emilioTorres2'), # Añadido '/' al final
-    path('esperanzaBarrera/', views.esperanzaBarrera, name='esperanzaBarrera'), # Añadido '/' al final
-    path('fernandoMolina/', views.fernandoMolina, name='fernandoMolina'), # Añadido '/' al final
-    path('jhonM/', views.jhonM, name='jhonM'),
-    path('lauraG/', views.lauraG, name='lauraG'),
-    path('sofiaRamirez/', views.sofiaRamirez, name='sofiaRamirez'), # Añadido '/' al final
-
+    path('alex_r/', views.alex_r, name='alex_r'),
+    path('andrea_villalobos/', views.andrea_villalobos, name='andrea_villalobos'),
+    path('andrea_villalobos_2/', views.andrea_villalobos_2, name='andrea_villalobos_2'),
+    path('angela_torres/', views.angela_torres, name='angela_torres'),
+    path('angela_torres_2/', views.angela_torres_2, name='angela_torres_2'),
+    path('benjamin_castro/', views.benjamin_castro, name='benjamin_castro'),
+    path('benjamin_castro_2/', views.benjamin_castro_2, name='benjamin_castro_2'),
+    path('camila_q/', views.camila_q, name='camila_q'),
+    path('carlos_r/', views.carlos_r, name='carlos_r'),
+    path('cristian_dominguez/', views.cristian_dominguez, name='cristian_dominguez'),
+    path('cristian_dominguez_2/', views.cristian_dominguez_2, name='cristian_dominguez_2'),
+    path('elisa_naranjo/', views.elisa_naranjo, name='elisa_naranjo'),
+    path('elisa_naranjo_2/', views.elisa_naranjo_2, name='elisa_naranjo_2'),
+    path('emilio_torres/', views.emilio_torres, name='emilio_torres'),
+    path('emilio_torres_2/', views.emilio_torres_2, name='emilio_torres_2'),
+    path('esperanza_barrera/', views.esperanza_barrera, name='esperanza_barrera'),
+    path('fernando_molina/', views.fernando_molina, name='fernando_molina'),
+    path('jhon_m/', views.jhon_m, name='jhon_m'),
+    path('laura_g/', views.laura_g, name='laura_g'),
+    path('sofia_ramirez/', views.sofia_ramirez, name='sofia_ramirez'),
 ]

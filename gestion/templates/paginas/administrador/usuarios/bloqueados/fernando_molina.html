@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/adUsuariosPerfil.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/bloqueados/ad_usuarios_perfil_bloq.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Administrador - usuarios {% endblock titulo %}
@@ -13,14 +13,25 @@
     
     <div class="perfil-card">
         <div class="perfil-avatar">
-            <img src="{% static 'images/fotosusuario/cristianDominguez.jpg' %}" alt="Avatar">
-            <h3>Cristian Dominguez</h3>
+            <img src="{% static 'images/fotos_perfil/fernando_molina.jpg' %}" alt="Avatar">
+            <h3>Sofia Ramirez</h3>
         </div>
+
         <div class="perfil-info">
-            <p><strong>Correo electrónico:</strong> crisssTianD000.com</p>
+            <p><strong>Correo electrónico:</strong> sofiaRRRamirez@gmail.com</p>
             <p><strong>Número de teléfono:</strong> 3217668962</p>
             <p><strong>País:</strong> Colombia</p>
-        </div>
+            <p><strong>Géneros favoritos:</strong> Pop</p>
+
+            <div class="perfil-historial">
+                <p><strong>Historial de compra:</strong></p>
+                <div class="compra">
+                    <img src="{% static 'images/albumes/michael_jackson_bad.jpg' %}" alt="Bad - Michael Jackson">
+                    <div>
+                        <p class="album"> Bad</p>
+                        <p class="artista">Michael Jackson</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -28,7 +39,7 @@
 <div class="bloq">
     <div class="bloq-wrapper">
         <p id="mensaje-bloqueo" class="mensaje-flotante"></p>
-        <button id="boton-bloqueo" class="bloquear" onclick="toggleBloqueo()">Bloquear usuario</button>
+        <button id="boton-bloqueo" class="bloquear desbloquear" onclick="toggleBloqueo()">Desbloquear usuario</button>
     </div>
 </div>
 
@@ -36,23 +47,24 @@
     function toggleBloqueo() {
         const boton = document.getElementById('boton-bloqueo');
         const mensaje = document.getElementById('mensaje-bloqueo');
-    
-        if (boton.textContent === "Bloquear usuario") {
-            mensaje.textContent = "Usuario bloqueado con éxito ✅";
-            boton.textContent = "Desbloquear usuario";
-            boton.classList.add("desbloquear");
-        } else {
+
+        if (boton.textContent === "Desbloquear usuario") {
             mensaje.textContent = "Usuario desbloqueado con éxito ✅";
             boton.textContent = "Bloquear usuario";
             boton.classList.remove("desbloquear");
+        } else {
+            mensaje.textContent = "Usuario bloqueado con éxito ✅";
+            boton.textContent = "Desbloquear usuario";
+            boton.classList.add("desbloquear");
         }
-    
+
         mensaje.classList.add("visible");
         setTimeout(() => {
             mensaje.classList.remove("visible");
         }, 2000);
     }
 </script>
+
 
 
 

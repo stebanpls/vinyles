@@ -2,18 +2,18 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/adUsuariosPerfil.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/ad_usuarios_perfil.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Administrador - usuarios {% endblock titulo %}
 
-{% block contenido %} 
+{% block contenido %}   
 <div class="perfil-container">
     <h2 class="titulo-perfil">Perfil usuario</h2>
     
     <div class="perfil-card">
         <div class="perfil-avatar">
-            <img src="{% static 'images/fotosusuario/benjaminCastro.jpg' %}" alt="Avatar">
+            <img src="{% static 'images/fotos_perfil/benjamin_castro.jpg' %}" alt="Avatar">
             <h3>Benjamin Castro</h3>
         </div>
 
@@ -21,16 +21,6 @@
             <p><strong>Correo electrónico:</strong> Benja9078.com</p>
             <p><strong>Número de teléfono:</strong> 321789783</p>
             <p><strong>País:</strong> Colombia</p>
-            <p><strong>Géneros favoritos:</strong> Pop</p>
-
-            <div class="perfil-historial">
-                <p><strong>Historial de compra:</strong></p>
-                <div class="compra">
-                    <img src="{% static 'images/bad.jpg' %}" alt="Bad - Michael Jackson">
-                    <div>
-                        <p class="album"> Bad</p>
-                        <p class="artista">Michael Jackson</p>
-                    </div>
                 </div>
             </div>
         </div>
