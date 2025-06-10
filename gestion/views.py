@@ -94,7 +94,7 @@ def pub_login(request):
                 specific_auth_error_occurred = True # Marcar que este error específico ocurrió
         if user is not None:
             auth_login(request, user)
-            messages.success(request, f"¡Bienvenido de nuevo, {user.first_name or user.username}!")
+            messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
 
             # Redirigir al usuario a la página 'next' si existe,
             # de lo contrario, redirigir según su rol.

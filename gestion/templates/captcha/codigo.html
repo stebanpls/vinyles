@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/captcha/codigo.css' %}">
+{% endblock extra_css %}
+
+{% block titulo %} Captcha {% endblock titulo %}
+
+{% block contenido %}
+<div>
+    <p>
+        Código
+    </p>
+</div>
+{% block pie %}
+
+{% endblock pie %}
