@@ -172,3 +172,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ignorar volcados de base de datos en la carpeta de exportaciones
+# /database/*.sql
+
+# Ignorar la carpeta de documentación del proyecto
+# /docs/

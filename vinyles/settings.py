@@ -151,13 +151,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-co' # o 'es-es', 'es-ar', 'es-mx', etc.
 
-TIME_ZONE = 'UTC' # O tu zona horaria
+# Configura esto a tu zona horaria local. Para Colombia, sería 'America/Bogota'.
+TIME_ZONE = 'America/Bogota' # Por defecto, Django usa UTC, pero puedes cambiarlo a tu zona horaria local.
 
-USE_I18N = True
+USE_I18N = True # Esto activa la internacionalización, permitiendo que Django use traducciones y formatos localizados.
 
 USE_L10N = True # Importante para que los formatos localizados funcionen
 
-USE_TZ = True
+USE_TZ = True # Esto permite que Django maneje las zonas horarias correctamente.
 
 
 # Static files (CSS, JavaScript, Images)
