@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_administrador.css' %}">
 {% endblock extra_css %}
 
@@ -29,21 +30,19 @@
     </a>
 
 
-    <a href="{% url 'admin_notificaciones'%}" class="nota piel">
+    <a href="{% url 'admin_notificaciones' %}" class="nota piel">
         <h3>🔔 Notificaciones</h3>
         <div class="value">2</div>
         <div class="desc">Soporte necesita respuesta</div>
     </a>
 
-<a href="{% url 'admin_mas_vendidos'%}" class="nota piel">
+    <a href="{% url 'admin_mas_vendidos' %}" class="nota piel">
         <h3> 💹 Más vendidos</h3>
         <div class="value">5</div>
         <div class="desc">productos más vendidos</div>
     </a>
 
 </section>
-
-
 {% endblock contenido %}
 
 {% block pie %}

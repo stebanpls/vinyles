@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_adpro.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_adpro.css' %}"> {# ¿Porque sigue siendo adpro? #}
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Álbumes {% endblock titulo %}
@@ -22,7 +22,7 @@
 
     <div class = "cuadro">
         <div class ="contenedor">
-            <img src="{%static 'images/bad.jpg' %}" alt="Snow" >
+            <img src="{% static 'images/albumes/bad.jpg' %}" alt="Álbum Bad - Michael Jackson" >
         </div>
         
         <div class = "info">
@@ -105,11 +105,11 @@
                 <summary class="acor">Reseñas y comentarios</summary>
                 <div class="comentario">
                     <div class="avatar">
-                        <img src="{%static 'images/fotosusuario/lauragomez.jpg' %}" alt="Avatar de laura">
+                        <img src="{% static 'images/fotos_perfil/laura_gomez.jpg' %}" alt="Avatar de Laura Gómez">
                         
                     </div>
                     <div class="contenido-comentario">
-                        <a href = "{% url "lauraG" %}">laura Gomez</a>
+                        <a href = "{% url 'laura_g' %}">Laura Gómez</a> {# Asumiendo que tienes una URL para el perfil de Laura Gómez #}
                         <p class="texto">
                             ¡Excelente calidad y servicio!
                         </p>

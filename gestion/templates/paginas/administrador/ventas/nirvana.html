@@ -2,10 +2,8 @@
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_adpro.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Álbumes {% endblock titulo %}
@@ -18,7 +16,7 @@
     </div>
     <div class = "cuadro">
         <div class ="contenedor">
-            <img src="{%static 'images/nirvana in utero.jpg' %}" alt="Snow" >
+            <img src="{%static 'images/albumes/nirvana_in_utero.jpg' %}" alt="Snow" >
         </div>
         
         <div class = "info">
@@ -93,11 +91,11 @@ In Utero fue su tercer y último álbum de estudio. A diferencia del más pulido
                 <summary class="acor">Reseñas y comentarios</summary>
                 <div class="comentario">
                     <div class="avatar">
-                        <img src="{%static 'images/fotosusuario/carlosR.jpg' %}" alt="Avatar de laura">
+                        <img src="{%static 'images/fotos_perfil/carlos_r.jpg' %}" alt="Avatar de Carlos">
                         
                     </div>
                     <div class="contenido-comentario">
-                        <a href = "{% url "carlosR" %}">Carlos Ruiz</a>
+                        <a href = "{% url "carlos_r" %}">Carlos Ruiz</a>
                         <p class="texto"> Muy Bueno </p>
                     </div>
                 </div>

@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/vendedor/style_crear.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Álbumes {% endblock titulo %}
@@ -24,7 +24,7 @@
 
     <div class = "cuadro">
         <div class="contenedor" onclick="document.getElementById('inputImg').click()">
-            <img id="preview" src="{% static 'images/añadirImagen.jpg' %}" alt="Imagen" />
+            <img id="preview" src="{% static 'images/utiles/anadir_imagen.jpg' %}" alt="Añadir Imagen" />
         </div>
         
         <div class = "info">

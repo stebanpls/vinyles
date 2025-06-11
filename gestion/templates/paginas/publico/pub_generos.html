@@ -1,7 +1,8 @@
 {% extends "plantillas/plantilla_publico.html" %}
 {% load static %}
 
-{% block extra_css %} 
+{% block extra_css %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="{% static 'css/paginas/publico/style_generos.css' %}">
 {% endblock extra_css %}
 
@@ -10,45 +11,45 @@
 {% block contenido %}
 <section>
   <div class="bloque">
-    <img src="{%static 'images/thriller.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/michael_jackson_thriller.jpg' %}" alt="Pop" >
     <button class="button">POP</button>
   </div>
   
 
   <div class="bloque">
-    <img src="{%static 'images/suavemente.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/elvis_crespo_suavemente.jpg' %}" alt="Merengue" >
     <button class="button">MERENGUE</button>
   </div>
   
   <div class="bloque">
-    <img src="{%static 'images/jazz.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/frank_sinatra_the_world.jpg' %}" alt="Jazz">
     <button class="button">JAZZ</button>
   </div>
 
   <div class="bloque">
-    <img src="{%static 'images/master.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/metallica_master.jpg' %}" alt="Rock" >
     <button class="button">ROCK</button>
   </div>
 
   <div class="bloque">
-    <img src="{%static 'images/regueton.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/daddy_yankee_barrio.jpg' %}" alt="Reguetón" >
     <button class="button">REGUETÓN</button>
   </div>
 
   <div class="bloque">
-    <img src="{%static 'images/kpop.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/bts_love.jpg' %}" alt="Kpop" >
     <button class="button">KPOP</button>
   </div>
 
 
   <div class="bloque">
-    <img src="{%static 'images/rap.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/eminem_the_eminem_show.jpg' %}" alt="Rap" >
     <button class="button">RAP</button>
   </div>
 
 
   <div class="bloque">
-    <img src="{%static 'images/descarga.jpg' %}" alt="Snow" >
+    <img src="{% static 'images/albumes/beethoven_essential.jpg' %}" alt="Clásica"> {# Manteniendo la imagen que ya tenías para clásica #}
     <button class="button">CLÁSICA</button>
   </div>
 

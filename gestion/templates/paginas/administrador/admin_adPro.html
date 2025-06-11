@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_adPro.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Álbumes {% endblock titulo %}
@@ -24,7 +24,7 @@
 
     <div class = "cuadro">
         <div class ="contenedor">
-            <img src="{%static 'images/suavemente.jpg' %}" alt="Snow" >
+            <img src="{%static 'images/albumes/elvis_crespo_suavemente.jpg' %}" alt="Snow" >
         </div>
         
         <div class = "info">
@@ -116,10 +116,10 @@
                 </summary>
                 <div class="comentario">
                     <div class="avatar">
-                        <img src="{%static 'images/fotosusuario/lauragomez.jpg' %}" alt="Avatar de laura">
+                        <img src="{%static 'images/fotos_perfil/laura_gomez.jpg' %}" alt="Avatar de Laura">
                     </div>
                     <div class="contenido-comentario">
-                        <a href = "{% url "lauraG" %}">laura Gomez</a>
+                        <a href = "{% url "laura_g" %}">Laura Gomez</a>
                         <p class="texto">
                             ¡Excelente calidad y servicio!
                         </p>

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/publico/style_vinilo.css' %}">
 {% endblock extra_css %}
 
@@ -12,7 +12,7 @@
 <section class="vinilo-section">
     <div class="cuadro">
         <div class="contenedor">
-            <img src="{% static album_data.image %}" alt="Carátula de {{ album_data.title }}" >
+            <img src="{% static album_data.image %}" alt="Carátula de {{ album_data.title|default:'Álbum Desconocido' }}" >
         </div>
         
         <div class="info">
@@ -37,12 +37,12 @@
             <!-- Botones -->
             <div class="botones-acciones">
                 <!-- Botón de comprar: redirige al checkout (con el mismo parámetro 'album' si quieres) -->
-                <a href="{% url 'com_carrito' %}?album={{ request.GET.album }}&checkout=true" class="btn-comprar">
+                <a href="{% url 'com_carrito' %}?album={{ album_data.key }}&checkout=true" class="btn-comprar"> {# Usar album_data.key si lo añades en views.py #}
                     Comprar
                 </a>
 
                 
-                <a href="{% url 'com_carrito' %}?album={{ request.GET.album }}" class="btn-agregar-carrito">
+                <a href="{% url 'com_carrito' %}?album={{ album_data.key }}" class="btn-agregar-carrito"> {# Usar album_data.key #}
                     Añadir al carrito
                 </a>
             </div>
@@ -101,8 +101,7 @@
                 {% for comment in album_data.comments %}
                 <div class="comentario">
                     <div class="avatar">
-                        {# Imagen de avatar estática o podrías tenerla en tu data #}
-                        <img src="{% static 'images/avatarsito.jpg' %}" alt="Avatar de {{ comment.username }}">
+                        <img src="{% static 'images/fotos_perfil/default_avatar.svg' %}" alt="Avatar de {{ comment.username }}"> {# Usar avatar por defecto #}
                     </div>
                     <div class="contenido-comentario">
                         <span class="nombre">{{ comment.username }}</span>

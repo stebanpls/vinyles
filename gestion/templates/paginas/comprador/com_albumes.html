@@ -1,8 +1,9 @@
-{% extends "plantillas/plantilla_publico.html" %}
+{% extends "plantillas/plantilla_comprador.html" %}
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/publico/style_albumes.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_albumes.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Álbumes {% endblock titulo %}
@@ -35,93 +36,93 @@
     <main class="main-albumes">
       
       <div class="album-card" data-genre="rock">
-        <img src="{% static 'images/bad.jpg' %}" alt="Álbum Bad - Michael Jackson" />
+        <img src="{% static 'images/albumes/bad.jpg' %}" alt="Álbum Bad - Michael Jackson" />
         <p><strong>Álbum:</strong> Bad</p>
         <p><strong>Artista:</strong> Michael Jackson</p>
       </div>
 
       
       <div class="album-card" data-genre="rock">
-        <img src="{% static 'images/master.jpg' %}" alt="Álbum Master of Puppets - Metallica" />
+        <img src="{% static 'images/albumes/master.jpg' %}" alt="Álbum Master of Puppets - Metallica" />
         <p><strong>Álbum:</strong> Master of Puppets</p>
         <p><strong>Artista:</strong> Metallica</p>
       </div>
 
       <div class="album-card" data-genre="salsa">
-        <img src="{% static 'images/joe.jpg' %}" alt="Álbum Los mejores Exitos - Joe Arroyo" />
+        <img src="{% static 'images/albumes/joe.jpg' %}" alt="Álbum Los mejores Exitos - Joe Arroyo" />
         <p><strong>Álbum:</strong> Los Mejores Exitos</p>
         <p><strong>Artista:</strong> Joe Arroyo</p>
       </div>
 
       
       <div class="album-card" data-genre="pop">
-        <img src="{% static 'images/thriller.jpg' %}" alt="Álbum Thriller - Michael Jackson" />
+        <img src="{% static 'images/albumes/thriller.jpg' %}" alt="Álbum Thriller - Michael Jackson" />
         <p><strong>Álbum:</strong> Thriller</p>
         <p><strong>Artista:</strong> Michael Jackson</p>
       </div>
 
       <div class="album-card" data-genre="rock">
-        <img src="{% static 'images/lonely.jpg' %}" alt="Sgt. Pepper's Lonely Hearts Club Band - The Beatles" >
+        <img src="{% static 'images/albumes/lonely.jpg' %}" alt="Sgt. Pepper's Lonely Hearts Club Band - The Beatles" >
         <p><strong>Álbum:</strong> Sgt. Pepper's Lonely Hearts Club Band</p>
         <p><strong>Artista:</strong> The Beatles</p>
       </div>
 
       <div class="album-card" data-genre="rock">
-        <img src="{% static 'images/destruction.jpg' %}" alt="Appetite for Destruction - Guns N' Roses" />
+        <img src="{% static 'images/albumes/destruction.jpg' %}" alt="Appetite for Destruction - Guns N' Roses" />
         <p><strong>Álbum:</strong> Appetite for Destruction</p>
         <p><strong>Artista:</strong> Guns N' Roses</p>
       </div>
 
       <div class="album-card" data-genre="rap">
-        <img src="{% static 'images/music.jpg' %}" alt="Music - Playboi Carti" />
+        <img src="{% static 'images/albumes/music.jpg' %}" alt="Music - Playboi Carti" />
         <p><strong>Álbum:</strong> Music</p>
         <p><strong>Artista:</strong> Playboi Carti</p>
       </div>
 
       <div class="album-card" data-genre="merengue">
-        <img src="{% static 'images/suavemente.jpg' %}" alt="Suavemente - Elvis Crespo" />
+        <img src="{% static 'images/albumes/elvis_crespo_suavemente.jpg' %}" alt="Suavemente - Elvis Crespo" />
         <p><strong>Álbum:</strong> Suavemente</p>
         <p><strong>Artista:</strong> Elvis Crespo</p>
       </div>
 
       <div class="album-card" data-genre="rap">
-        <img src="{% static 'images/rap.jpg' %}" alt="The Eminem Show - Eminem" />
+        <img src="{% static 'images/albumes/eminem_the_eminem_show.jpg' %}" alt="The Eminem Show - Eminem" />
         <p><strong>Álbum:</strong> The Eminem Show</p>
         <p><strong>Artista:</strong> Eminem</p>
       </div>
 
       <div class="album-card" data-genre="rock">
-        <img src="{% static 'images/nirvana in utero.jpg' %}" alt="In Utero - Nirvana" />
+        <img src="{% static 'images/albumes/nirvana_in_utero.jpg' %}" alt="In Utero - Nirvana" />
         <p><strong>Álbum:</strong> In Utero</p>
         <p><strong>Artista:</strong> Nirvana</p>
       </div>
 
       <div class="album-card" data-genre="kpop">
-        <img src="{% static 'images/whiplash.jpg' %}" alt="Whiplash - Aespa" />
+        <img src="{% static 'images/albumes/aespa_whiplash.jpg' %}" alt="Whiplash - Aespa" />
         <p><strong>Álbum:</strong> Whiplash</p>
         <p><strong>Artista:</strong> Aespa</p>
       </div>
 
       <div class="album-card" data-genre="reggaeton">
-        <img src="{% static 'images/regueton.jpg' %}" alt="Prestige - Daddy Yankee" />
+        <img src="{% static 'images/albumes/daddy_yankee_prestige.jpg' %}" alt="Prestige - Daddy Yankee" />
         <p><strong>Álbum:</strong> Prestige</p>
         <p><strong>Artista:</strong> Daddy Yankee</p>
       </div>
 
       <div class="album-card" data-genre="rock">
-        <img src="{% static 'images/the beatles-abbey road.jpg' %}" alt="Abbey Road - The Beatles" />
+        <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles" />
         <p><strong>Álbum:</strong> Abbey Road</p>
         <p><strong>Artista:</strong> The Beatles</p>
       </div>
 
       <div class="album-card" data-genre="kpop">
-        <img src="{% static 'images/kpop.jpg' %}" alt="Love Yourself - BTS" />
+        <img src="{% static 'images/albumes/bts_love_yourself.jpg' %}" alt="Love Yourself - BTS" />
         <p><strong>Álbum:</strong> Love Yourself</p>
         <p><strong>Artista:</strong> BTS</p>
       </div>
 
       <div class="album-card" data-genre="Jazz">
-        <img src="{% static 'images/Frank.jpg' %}" alt="The World We Knew - Frank Sinatra" />
+        <img src="{% static 'images/albumes/frank_sinatra_the_world.jpg' %}" alt="The World We Knew - Frank Sinatra" />
         <p><strong>Álbum:</strong> The World We Knew</p>
         <p><strong>Artista:</strong> Frank Sinatra</p>
       </div>

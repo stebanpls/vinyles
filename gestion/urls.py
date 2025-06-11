@@ -85,15 +85,15 @@ urlpatterns = [
 
     # URLS DE LOS ÁLBUMES (Considerar si deben estar prefijadas, ej: 'admin/albumes/bts/')
     path('bts/', views.bts, name='bts'), # Asegúrate que esta vista exista
-    path('cartiMusic/', views.cartiMusic, name='cartiMusic'),
-    path('eminemShow/', views.eminemShow, name='eminemShow'), # Añadido '/' al final
-    path('exitosJoe/', views.exitosJoe, name='exitosJoe'),
-    path('gnrAppetite/', views.gnrAppetite, name='gnrAppetite'),
+    path('carti_music/', views.carti_music, name='carti_music'),
+    path('eminem_show/', views.eminem_show, name='eminem_show'),
+    path('exitos_joe/', views.exitos_joe, name='exitos_joe'),
+    path('gnr_appetite/', views.gnr_appetite, name='gnr_appetite'),
     path('master/', views.master, name='master'),
-    path('mjBad/', views.mjBad, name='mjBad'), # Añadido '/' al final
-    path('mjThriller/', views.mjThriller, name='mjThriller'),
+    path('mj_bad/', views.mj_bad, name='mj_bad'),
+    path('mj_thriller/', views.mj_thriller, name='mj_thriller'),
     path('nirvana/', views.nirvana, name='nirvana'),
-    path('theBeatles/', views.theBeatles, name='theBeatles'),
+    path('the_beatles/', views.the_beatles, name='the_beatles'),
 
 
     # URLS DE LOS USUARIOS (Considerar si deben estar prefijadas, ej: 'admin/usuarios/lauraG/')
@@ -114,7 +114,7 @@ urlpatterns = [
     path('emilio_torres_2/', views.emilio_torres_2, name='emilio_torres_2'),
     path('esperanza_barrera/', views.esperanza_barrera, name='esperanza_barrera'),
     path('fernando_molina/', views.fernando_molina, name='fernando_molina'),
-    path('jhon_m/', views.jhon_m, name='jhon_m'),
+    path('john_m/', views.john_m, name='john_m'),
     path('laura_g/', views.laura_g, name='laura_g'),
     path('sofia_ramirez/', views.sofia_ramirez, name='sofia_ramirez'),
 ]

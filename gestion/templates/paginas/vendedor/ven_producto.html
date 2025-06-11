@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/vendedor/style_producto.css' %}">
 {% endblock extra_css %}
 
@@ -12,7 +13,7 @@
   <main class="main-albumes">
     <div class="album-card">
       <a href="{% url 'ven_bad' %}">
-      <img src="{% static 'images/bad.jpg' %}" alt="Álbum Bad - Michael Jackson" />
+      <img src="{% static 'images/albumes/bad.jpg' %}" alt="Álbum Bad - Michael Jackson" />
       <p><strong>Álbum:</strong> Bad</p>
       <p><strong>Artista:</strong> Michael Jackson</p>
       </a>
@@ -20,7 +21,7 @@
 
     <div class="album-card">
       <a href="{% url 'ven_crear' %}">
-        <img src="{% static 'images/plus.jpg' %}" alt="Añadir Album" class="plus-icon"/>
+        <img src="{% static 'images/utiles/agregar_album.jpg' %}" alt="Añadir Album" class="plus-icon"/>
         <p>Añadir Album</p>
       </a>
     </div>

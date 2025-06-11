@@ -11,7 +11,7 @@
 {% block contenido %}
     <section class="hero-banner-section">
         <div class="hero-banner">
-            <img src="{% static 'images/master.jpg' %}" alt="Featured Album - Master of Puppets">
+            <img src="{% static 'images/albumes/metallica_master.jpg' %}" alt="Featured Album - Master of Puppets">
             {# Optional text overlay
             <div class="hero-text">
                 <h2>Bienvenido!</h2>
@@ -31,13 +31,13 @@
             {# Product Card 1 #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/lonely.jpg' %}" alt="Sgt. Pepper's Lonely Hearts Club Band" class="product-image">
+                    <img src="{% static 'images/albumes/the_beatles_sgt_pepper.jpg' %}" alt="Sgt. Pepper's Lonely Hearts Club Band" class="product-image">
                 </a>
                 <div class="product-info">
                     <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Sgt. Pepper's Lonely Hearts Club Band</a></h3>
                     <p class="product-artist">The Beatles</p>
                     <p class="product-price">$95.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Sgt.%20Pepper%27s%20Lonely%20Hearts%20Club%20Band&artist=The%20Beatles&price=95000&image={% static 'images/lonely.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Sgt.%20Pepper%27s%20Lonely%20Hearts%20Club%20Band&artist=The%20Beatles&price=95000&image={% static 'images/albumes/the_beatles_sgt_pepper.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -46,13 +46,13 @@
             {# Product Card 2 #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/thriller.jpg' %}" alt="Thriller" class="product-image">
+                    <img src="{% static 'images/albumes/michael_jackson_thriller.jpg' %}" alt="Thriller" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Thriller</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=thriller">Thriller</a></h3> {# Añadido ?album=thriller #}
                     <p class="product-artist">Michael Jackson</p>
                     <p class="product-price">$110.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Thriller.%20&artist=Michael%20Jackson&price=110000&image={% static 'images/thriller.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Thriller.%20&artist=Michael%20Jackson&price=110000&image={% static 'images/albumes/michael_jackson_thriller.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -61,13 +61,13 @@
             {# Product Card 3 #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/joe.jpg' %}" alt="Grandes Exitos - Joe Arroyo" class="product-image">
+                    <img src="{% static 'images/albumes/joe_arroyo_la_verdad.jpg' %}" alt="Grandes Exitos - Joe Arroyo" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Grandes Exitos</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=joe">La Verdad de Joe Arroyo: el Original</a></h3> {# Añadido ?album=joe #}
                     <p class="product-artist">Joe Arroyo</p>
                     <p class="product-price">$80.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Grandes%20Exitos&artist=Joe%20Arroyo&price=80000&image={% static 'images/joe.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Grandes%20Exitos&artist=Joe%20Arroyo&price=80000&image={% static 'images/albumes/joe_arroyo_la_verdad.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -76,13 +76,13 @@
             {# Product Card 4 #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/bad.jpg' %}" alt="Bad" class="product-image">
+                    <img src="{% static 'images/albumes/michael_jackson_bad.jpg' %}" alt="Bad" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Bad</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=bad">Bad</a></h3> {# Añadido ?album=bad #}
                     <p class="product-artist">Michael Jackson</p>
                     <p class="product-price">$105.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Bad&artist=Michael%20Jackson&price=105000&image={% static 'images/bad.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Bad&artist=Michael%20Jackson&price=105000&image={% static 'images/albumes/michael_jackson_bad.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -91,13 +91,13 @@
             {# Product Card 5 #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/destruction.jpg' %}" alt="Appetite for Destruction" class="product-image">
+                    <img src="{% static 'images/albumes/guns_n_roses_appetite.jpg' %}" alt="Appetite for Destruction" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Appetite for Destruction</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=destruction">Appetite for Destruction</a></h3> {# Añadido ?album=destruction #}
                     <p class="product-artist">Guns N' Roses</p>
                     <p class="product-price">$120.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Appetite%20for%20Destruction&artist=Guns%20N'%20Roses&price=120000&image={% static 'images/destruction.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Appetite%20for%20Destruction&artist=Guns%20N'%20Roses&price=120000&image={% static 'images/albumes/guns_n_roses_appetite.jpg' %}">
                         Agregar al carrito
                     </a>
                     
@@ -107,13 +107,13 @@
             {# Product Card 6 #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/music.jpg' %}" alt="MUSIC" class="product-image">
+                    <img src="{% static 'images/albumes/playboi_carti_music.jpg' %}" alt="MUSIC" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">MUSIC</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=music">MUSIC</a></h3> {# Añadido ?album=music #}
                     <p class="product-artist">Playboi Carti</p>
                     <p class="product-price">$90.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=MUSIC&artist=Playboi%20Carti&price=90000&image={% static 'images/music.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=MUSIC&artist=Playboi%20Carti&price=90000&image={% static 'images/albumes/playboi_carti_music.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -122,14 +122,14 @@
             {# Product Card 7 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/master.jpg' %}" alt="Master of Puppets" class="product-image">
+                    <img src="{% static 'images/albumes/metallica_master.jpg' %}" alt="Master of Puppets" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Master of Puppets</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=master">Master of Puppets</a></h3> {# Añadido ?album=master #}
                     <p class="product-artist">Metallica</p>
                     <p class="product-price">$105.000</p>
                     <a class="btn btn-add-to-cart" href="{% url 'pub_login' 
-                    %}? album_name=Master%20Of%20Puppets&artist=Metallica%20&price=105000&image={% static 'images/master.jpg' %}">
+                    %}? album_name=Master%20Of%20Puppets&artist=Metallica%20&price=105000&image={% static 'images/albumes/metallica_master.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -138,13 +138,13 @@
             {# Product Card 8 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/suavemente.jpg' %}" alt="Suavemente" class="product-image">
+                    <img src="{% static 'images/albumes/elvis_crespo_suavemente.jpg' %}" alt="Suavemente" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Suavemente</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=suavemente">Suavemente</a></h3> {# Añadido ?album=suavemente #}
                     <p class="product-artist">Elvis Crespo</p>
                     <p class="product-price">$50.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Suavemente%20&artist=Elvis%20Crespo&price=50000&image={% static 'images/suavemente.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Suavemente%20&artist=Elvis%20Crespo&price=50000&image={% static 'images/albumes/elvis_crespo_suavemente.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -153,13 +153,13 @@
             {# Product Card 9 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/rap.jpg' %}" alt="The Eminem Show" class="product-image">
+                    <img src="{% static 'images/albumes/eminem_the_eminem_show.jpg' %}" alt="The Eminem Show" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">The Eminem Show</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=eminem_show">The Eminem Show</a></h3> {# Añadido ?album=eminem_show #}
                     <p class="product-artist">Eminem</p>
                     <p class="product-price">$95.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=The%20Eminem%20Show&artist=Eminem%20&price=95000&image={% static 'images/rap.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=The%20Eminem%20Show&artist=Eminem%20&price=95000&image={% static 'images/albumes/eminem_the_eminem_show.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -168,13 +168,13 @@
             {# Product Card 10 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/nirvana in utero.jpg' %}" alt="In Utero" class="product-image">
+                    <img src="{% static 'images/albumes/nirvana_in_utero.jpg' %}" alt="In Utero" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">In Utero</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=nirvana_in_utero">In Utero</a></h3> {# Añadido ?album=nirvana_in_utero #}
                     <p class="product-artist">Nirvana</p>
                     <p class="product-price">$120.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=In%20Utero&artist=Nirvana%20&price=120000&image={% static 'images/nirvana in utero.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=In%20Utero&artist=Nirvana%20&price=120000&image={% static 'images/albumes/nirvana_in_utero.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -183,13 +183,13 @@
             {# Product Card 11 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/whiplash.jpg' %}" alt="Whiplash" class="product-image">
+                    <img src="{% static 'images/albumes/aespa_whiplash.jpg' %}" alt="Whiplash" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Whiplash</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=aespa_whiplash">Whiplash</a></h3> {# Añadido ?album=aespa_whiplash #}
                     <p class="product-artist">Aespa</p>
                     <p class="product-price">$130.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Whiplash%20&artist=Aespa%20&price=130000&image={% static 'images/whiplash.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Whiplash%20&artist=Aespa%20&price=130000&image={% static 'images/albumes/aespa_whiplash.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -198,13 +198,13 @@
             {# Product Card 12 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/regueton.jpg' %}" alt="Prestige" class="product-image">
+                    <img src="{% static 'images/albumes/daddy_yankee_barrio.jpg' %}" alt="Prestige" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Prestige</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=daddy_yankee_prestige">Barrio Fino (Deluxe Version)</a></h3> {# Añadido ?album=daddy_yankee_prestige #}
                     <p class="product-artist">Daddy Yankee</p>
                     <p class="product-price">$150.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Prestige%20&artist=Daddy%20Yankee&price=150000&image={% static 'images/regueton.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Prestige%20&artist=Daddy%20Yankee&price=150000&image={% static 'images/albumes/daddy_yankee_barrio.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -213,13 +213,13 @@
             {# Product Card 13 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/the beatles-abbey road.jpg' %}" alt="Abbey Road" class="product-image">
+                    <img src="{% static 'images/albumes/the_beatles_abbey.jpg' %}" alt="Abbey Road" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Abbey Road</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=the_beatles_abbey_road">Abbey Road</a></h3> {# Añadido ?album=the_beatles_abbey_road #}
                     <p class="product-artist">The Beatles</p>
                     <p class="product-price">$135.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Abbey%20Road&artist=The%20Beatles&price=135000&image={% static 'images/the beatles-abbey road.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Abbey%20Road&artist=The%20Beatles&price=135000&image={% static 'images/albumes/the_beatles_abbey.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -228,13 +228,13 @@
             {# Product Card 14 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/kpop.jpg' %}" alt="Love Yourself" class="product-image">
+                    <img src="{% static 'images/albumes/bts_love.jpg' %}" alt="Love Yourself" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">Love Yourself</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=bts_love_yourself">Love Yourself</a></h3> {# Añadido ?album=bts_love_yourself #}
                     <p class="product-artist">BTS</p>
                     <p class="product-price">$105.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Love%20Yourself&artist=BTS%20&price=105000&image={% static 'images/kpop.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=Love%20Yourself&artist=BTS%20&price=105000&image={% static 'images/albumes/bts_love.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>
@@ -243,13 +243,13 @@
             {# Product Card 15 - MOVER ESTE BLOQUE DENTRO DEL .product-grid #}
             <div class="product-card">
                 <a href="#" class="product-image-link">
-                    <img src="{% static 'images/Frank.jpg' %}" alt="The World We Knew" class="product-image">
+                    <img src="{% static 'images/albumes/frank_sinatra_the_world.jpg' %}" alt="The World We Knew" class="product-image">
                 </a>
                 <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}">The World We Knew</a></h3>
+                    <h3 class="product-title"><a href="{% url 'pub_vinilo' %}?album=frank_sinatra_the_world">The World We Knew</a></h3> {# Añadido ?album=frank_sinatra_the_world #}
                     <p class="product-artist">Frank Sinatra</p>
                     <p class="product-price">$140.000</p>
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=The%20World%20We%20Knew&artist=Frank%20Sinatra&price=140000&image={% static 'images/Frank.jpg' %}">
+                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?album_name=The%20World%20We%20Knew&artist=Frank%20Sinatra&price=140000&image={% static 'images/albumes/frank_sinatra_the_world.jpg' %}">
                         Agregar al carrito
                     </a>
                 </div>

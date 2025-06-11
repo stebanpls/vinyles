@@ -1,7 +1,8 @@
-{% extends "plantillas/plantilla_comprador.html" %}
+{% extends "plantillas/plantilla_publico.html" %} {# Cambiado a plantilla_publico si es accesible sin login #}
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/publico/style_reembolsos.css' %}">
 {% endblock extra_css %}
 

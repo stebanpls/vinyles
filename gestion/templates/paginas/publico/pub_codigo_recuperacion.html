@@ -1,7 +1,8 @@
 {% extends "plantillas/plantilla_publico.html" %}
 {% load static %}
 
-{% block extra_css %} 
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/publico/style_codigo_recuperacion.css' %}">
 {% endblock extra_css %}
 
@@ -11,7 +12,7 @@
   <div class="login-container">
     <div class="login-form">
         <div class="logo-container">
-            <img src="{% static 'images/vinilo.ico' %}" alt="Logo">
+            <img src="{% static 'images/utiles/vinilo_240.ico' %}" alt="Logo Vinyles">
         </div>
         <h2>Recupera tu Contraseña</h2>
         <form action="#" method="post">

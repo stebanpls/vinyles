@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_mas_vendidos.css' %}">
 {% endblock extra_css %}
 
@@ -25,7 +26,7 @@
         <tbody>
             <tr>
             <td>7</td>
-            <td><a href="{% url 'theBeatles' %}"> The Beatles - Abbey Road</a></td>
+            <td><a href="{% url 'the_beatles' %}"> The Beatles - Abbey Road</a></td>
             <td>$1.750.000</td>
             </tr>
             <tr>
@@ -40,12 +41,12 @@
                 </tr>
                 <tr>
                     <td>4</td>
-                    <td><a href="{% url 'mjBad'%}">Michael Jackson - Bad</a></td>
+                    <td><a href="{% url 'mj_bad'%}">Michael Jackson - Bad</a></td>
                     <td>$1.080.000</td>
                     </tr>
                     <tr>
                         <td>3</td>
-                        <td><a href="{% url 'eminemShow'%}">Eminem - The Eminem Show</a></td>
+                        <td><a href="{% url 'eminem_show'%}">Eminem - The Eminem Show</a></td>
                         <td>$750.000</td>
                         </tr>
             <!-- Más filas -->

@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_ventas.css' %}">
 {% endblock extra_css %}
 
@@ -25,32 +26,32 @@
         </thead>
         <tbody>
             <tr>
-            <td><a href="{% url 'lauraG'%}" >Laura Gómez</a></td>
-            <td><a href="{% url 'theBeatles' %}"> The Beatles - Abbey Road</a></td>
+            <td><a href="{% url 'laura_g'%}" >Laura Gómez</a></td>
+            <td><a href="{% url 'the_beatles' %}"> The Beatles - Abbey Road</a></td>
             <td>$250.000</td>
             <td>09/04/2025</td>
             </tr>
             <tr>
-            <td><a href="{% url 'carlosR'%}">Carlos Ruiz</a></td>
+            <td><a href="{% url 'carlos_r'%}">Carlos Ruiz</a></td>
             <td><a href="{% url 'nirvana' %}">Nirvana - In Utero</a></td>
             <td>$210.000</td>
             <td>09/04/2025</td>
             </tr>
             <tr>
-                <td><a href="{% url 'camilaQ'%}">Camila Quintero</a></td>
+                <td><a href="{% url 'camila_q'%}">Camila Quintero</a></td>
                 <td><a href="{% url 'bts'%}">BTS - Be</a></td>
                 <td>$250.000</td>
                 <td>09/04/2025</td>
                 </tr>
                 <tr>
-                    <td><a href="{% url 'jhonM'%}">Jhon Martínez</a></td>
-                    <td><a href="{% url 'mjBad'%}">Michael Jackson - Bad</a></td>
+                    <td><a href="{% url 'john_m'%}">Jhon Martínez</a></td>
+                    <td><a href="{% url 'mj_bad'%}">Michael Jackson - Bad</a></td>
                     <td>$270.000</td>
                     <td>09/04/2025</td>
                     </tr>
                     <tr>
-                        <td><a href="{% url 'alexR'%}">Alex Rojas</a></td>
-                        <td><a href="{% url 'eminemShow'%}">Eminem - The Eminem Show</a></td>
+                        <td><a href="{% url 'alex_r'%}">Alex Rojas</a></td>
+                        <td><a href="{% url 'eminem_show'%}">Eminem - The Eminem Show</a></td>
                         <td>$250.000</td>
                         <td>09/04/2025</td>
                         </tr>
