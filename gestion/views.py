@@ -447,7 +447,7 @@ def pub_vinilo(request):
             'label': 'Apple Records',
             'producers': 'George Martin',
             'artist_info': 'The Beatles, una de las bandas más influyentes de todos los tiempos, conocidos por su innovación musical y su impacto cultural.',
-            'image': 'images/albumes/the_beatles_abbey_road.jpg',
+            'image': 'images/albumes/the_beatles_abbey.jpg',
             'audio': 'audio/abbey_road.mp3',
             'song_list': ['Come Together', 'Something', 'Maxwell\'s Silver Hammer', 'Oh! Darling', 'Octopus\'s Garden', 'I Want You (She\'s So Heavy)', 'Here Comes the Sun', 'Because', 'You Never Give Me Your Money', 'Sun King', 'Mean Mr. Mustard', 'Polythene Pam', 'She Came In Through the Bathroom Window', 'Golden Slumbers', 'Carry That Weight', 'The End', 'Her Majesty'],
             'comments': [{'username': 'classicRockFan', 'comment': 'Una obra maestra atemporal, la despedida perfecta.'}]
@@ -462,7 +462,7 @@ def pub_vinilo(request):
             'label': 'Big Hit Entertainment',
             'producers': 'Pdogg, Slow Rabbit, Supreme Boi, y otros',
             'artist_info': 'BTS es un grupo surcoreano que ha alcanzado fama mundial, conocido por su música significativa y sus poderosas actuaciones.',
-            'image': 'images/albumes/bts_love_yourself.jpg',
+            'image': 'images/albumes/bts_love.jpg',
             'audio': 'audio/love_yourself.mp3',
             'song_list': ['Euphoria', 'Trivia 起: Just Dance', 'Serendipity (Full Length Edition)', 'DNA', 'Dimple', 'Trivia 承: Love', 'Her', 'Singularity', 'FAKE LOVE', 'The Truth Untold (feat. Steve Aoki)', 'Trivia 轉: Seesaw', 'Tear', 'Epiphany', 'I\'m Fine', 'IDOL', 'Answer: Love Myself', 'Magic Shop', 'Best of Me', 'Airplane Pt.2', 'Go Go', 'Anpanman', 'MIC Drop', 'DNA (Pedal 2 LA Mix)', 'FAKE LOVE (Rocking Vibe Mix)', 'MIC Drop (Steve Aoki Remix) (Full Length Edition)'],
             'comments': [{'username': 'ARMYforever', 'comment': 'Un álbum lleno de mensajes hermosos y música increíble. ¡BTS los mejores!'}]
@@ -533,8 +533,8 @@ def com_carrito(request):
         'nirvana_in_utero': {'title': 'In Utero', 'artist': 'Nirvana', 'price': 120000, 'image': 'images/albumes/nirvana_in_utero.jpg'},
         'aespa_whiplash': {'title': 'Whiplash', 'artist': 'Aespa', 'price': 130000, 'image': 'images/albumes/aespa_whiplash.jpg'},
         'daddy_yankee_barrio': {'title': 'Barrio Fino', 'artist': 'Daddy Yankee', 'price': 150000, 'image': 'images/albumes/daddy_yankee_barrio.jpg'},
-        'the_beatles_abbey_road': {'title': 'Abbey Road', 'artist': 'The Beatles', 'price': 135000, 'image': 'images/albumes/the_beatles_abbey_road.jpg'},
-        'bts_love_yourself': {'title': 'Love Yourself: Answer', 'artist': 'BTS', 'price': 105000, 'image': 'images/albumes/bts_love_yourself.jpg'},
+        'the_beatles_abbey_road': {'title': 'Abbey Road', 'artist': 'The Beatles', 'price': 135000, 'image': 'images/albumes/the_beatles_abbey.jpg'},
+        'bts_love_yourself': {'title': 'Love Yourself: Answer', 'artist': 'BTS', 'price': 105000, 'image': 'images/albumes/bts_love.jpg'},
         'frank_sinatra_the_world': {'title': 'The World We Knew', 'artist': 'Frank Sinatra', 'price': 140000, 'image': 'images/albumes/frank_sinatra_the_world.jpg'},
         # Mapeo de claves antiguas (si aún se usan en algún enlace) a las nuevas para retrocompatibilidad temporal
         # Si estás seguro de que todos los enlaces usan las nuevas claves largas, puedes eliminar estos mapeos.
