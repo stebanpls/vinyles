@@ -637,38 +637,64 @@ def com_perfil_editar(request):
     user = request.user
     cliente_instance, created = Cliente.objects.get_or_create(user=user)
 
+    # Inicializar formularios para la solicitud GET o para repoblar en caso de error POST
+    # Empezamos con un password_form no vinculado para GET o si no hay intención de cambiar contraseña en POST
+    user_form = UserUpdateForm(instance=user)
+    cliente_form = ClienteUpdateForm(instance=cliente_instance)
+    password_form = PasswordChangeForm(user=user)
+
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=user)
         # Incluir request.FILES para el campo de imagen (foto_perfil)
         cliente_form = ClienteUpdateForm(request.POST, request.FILES, instance=cliente_instance)
-        password_form = PasswordChangeForm(user, request.POST)
 
-        intent_to_change_password = bool(request.POST.get('new_password1'))
-        user_cliente_forms_valid = user_form.is_valid() and cliente_form.is_valid()
-        password_form_valid_if_intended = True
+        # Determinar si hubo un intento de cambiar la contraseña
+        # Es un intento si alguno de los campos de contraseña tiene algún valor
+        intent_to_change_password = bool(
+            request.POST.get('old_password') or \
+            request.POST.get('new_password1') or \
+            request.POST.get('new_password2')
+        )
 
         if intent_to_change_password:
-            if password_form.is_valid():
-                password_form.save()
-                update_session_auth_hash(request, password_form.user)
-            else:
-                password_form_valid_if_intended = False
+            # Solo si hay intención, vinculamos el password_form con los datos del POST
+            password_form = PasswordChangeForm(user=user, data=request.POST)
 
-        if user_cliente_forms_valid and password_form_valid_if_intended:
+        # Validar los formularios relevantes
+        # user_form y cliente_form siempre se validan
+        # password_form solo se valida si hubo intención de cambiarla
+        all_relevant_forms_valid = user_form.is_valid() and cliente_form.is_valid()
+        if intent_to_change_password:
+            all_relevant_forms_valid = all_relevant_forms_valid and password_form.is_valid()
+
+
+        if all_relevant_forms_valid:
             user_form.save()
+            
+            # Manejo de la eliminación de la foto
+            # Accedemos a cleaned_data porque cliente_form.is_valid() fue parte de all_relevant_forms_valid
+            if cliente_form.cleaned_data.get('_delete_profile_photo'):
+                delete_photo_flag = cliente_form.cleaned_data.get('_delete_profile_photo')
+                if delete_photo_flag:
+                    if cliente_instance.foto_perfil:
+                        cliente_instance.foto_perfil.delete(save=False) # Elimina el archivo físico
+                        cliente_instance.foto_perfil = None # Asegura que el campo se limpie en el modelo
+
             cliente_form.save()
 
-            if intent_to_change_password and password_form_valid_if_intended:
+            if intent_to_change_password: # Si llegamos aquí, password_form.is_valid() fue True
+                # Solo guardar el formulario de contraseña si fue válido Y se intentó cambiar
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)
                 messages.success(request, '¡Tu perfil y contraseña han sido actualizados exitosamente!')
-            elif not intent_to_change_password:
+            else: # No hubo intento de cambiar contraseña, y user_form/cliente_form fueron válidos
                 messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
 
-            if not (intent_to_change_password and not password_form_valid_if_intended):
-                # Redirige a la página de visualización del perfil después de guardar
-                return redirect('com_perfil') 
-
-        if not user_cliente_forms_valid or (intent_to_change_password and not password_form_valid_if_intended):
-            messages.error(request, 'Por favor corrige los errores señalados abajo.')
+            return redirect('com_perfil')
+        else:
+            # Si los formularios no son válidos, los mensajes de error se mostrarán junto a los campos.
+            if not all_relevant_forms_valid: # Si la validación combinada falló
+                messages.error(request, 'Por favor, corrige los errores señalados en el formulario.')
 
     else: # GET request (cuando el usuario visita la página de edición por primera vez)
         user_form = UserUpdateForm(instance=user)
@@ -676,10 +702,10 @@ def com_perfil_editar(request):
         password_form = PasswordChangeForm(user)
 
     context = {
-        'user_form': user_form,
-        'cliente_form': cliente_form,
-        'password_form': password_form,
-        'titulo_pagina': 'Mi Perfil',
+        'user_form': user_form, # Será la instancia del POST si es POST, o nueva si es GET
+        'cliente_form': cliente_form, # Será la instancia del POST si es POST, o nueva si es GET
+        'password_form': password_form, # Será la instancia del POST (si hubo intento) o nueva (si GET o no hubo intento)
+        'titulo_pagina': 'Editar Mi Perfil', # Corregido para que coincida con el contexto
         'cliente_instance': cliente_instance # Para mostrar la foto actual en el formulario, etc.
     }
     # Renderiza la nueva plantilla de edición

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_perfil_editar.css' %}"> {# Considera un CSS específico si es necesario #}
 {% endblock extra_css %}
 
-{% block titulo %}{{ titulo_pagina|default:"Editar Mi Perfil" }} - Vinyles{% endblock titulo %}
+{% block titulo %}{{ titulo_pagina|default:"Editar Mi Perfil" }} {% endblock titulo %}
 
 {% block contenido %}
 <div class="profile-edit-form-container"> {# Cambiado de "container mt-5 mb-5" #}
@@ -16,7 +16,7 @@
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show mb-3" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -52,7 +52,7 @@
                 {% for field in cliente_form %}
                     {% if field.name == 'foto_perfil' %}
                     <div class="mb-3 profile-picture-section">
-                        <label class="form-label">Foto de Perfil</label>
+                        <label class="form-label d-block">Foto de Perfil</label> {# d-block para que el botón y error vayan abajo #}
                         <div class="current-profile-image mb-2">
                             <img id="profileImagePreview" 
                                 src="{% if cliente_instance.foto_perfil %}{{ cliente_instance.foto_perfil.url }}{% else %}{% static 'images/utiles/default_avatar.svg' %}{% endif %}" 
@@ -60,15 +60,27 @@
                                 style="max-height: 150px; max-width: 150px; object-fit: cover;">
                         </div>
                         <button type="button" id="editPhotoButton" class="btn btn-outline-secondary btn-sm mb-2">Editar Foto</button>
-                        
+
+                        {# Contenedor inicial para el error de foto_perfil, se mostrará debajo de "Editar Foto" #}
+                        <div id="fotoPerfilErrorWrapperInitial">
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block foto-perfil-error-message">
+                                    {% for error in field.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
                         <div id="photoEditOptions" style="display: none; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-top:10px; background-color: #f9f9f9;">
                             <p class="mb-2 small text-muted">Sube una nueva foto o elimina la actual.</p>
                             {{ field|add_class:"form-control-file mb-3" }} {# foto_perfil input #}
                             
-                            {% comment %} El campo eliminar_foto_perfil se renderizará oculto más abajo y se controla con JS {% endcomment %}
                             {% if cliente_instance.foto_perfil %}
                             <button type="button" id="removeProfilePhotoButton" class="btn btn-danger btn-sm">Eliminar foto actual</button>
                             {% endif %}
+                            {# Contenedor para el error de foto_perfil cuando las opciones están visibles, se mostrará debajo de "Eliminar foto actual" #}
+                            <div id="fotoPerfilErrorWrapperMoved" class="mt-2">
+                                <!-- El mensaje de error se moverá aquí con JS -->
+                            </div>
                         </div>
                     </div>
                     {% elif field.name == '_delete_profile_photo' %}
@@ -98,6 +110,12 @@
                 <h4>Cambiar Contraseña</h4>
                 <small class="text-muted">Deja estos campos en blanco si no deseas cambiar tu contraseña.</small>
             </div>
+            {% if password_form.non_field_errors or password_form.errors %}
+            <div class="alert alert-danger m-3" role="alert">
+                Hubo problemas al intentar cambiar tu contraseña. Por favor, revisa los mensajes de error junto a los campos.
+                {{ password_form.non_field_errors }}
+            </div>
+            {% endif %}
             <div class="card-body">
                 {{ password_form.as_p }}
             </div>
@@ -117,6 +135,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileImagePreview = document.getElementById('profileImagePreview');
     const fotoPerfilInput = document.querySelector('input[name="foto_perfil"]');
     // Apuntar al nuevo campo oculto
+    const fotoPerfilErrorWrapperInitial = document.getElementById('fotoPerfilErrorWrapperInitial');
+    const fotoPerfilErrorWrapperMoved = document.getElementById('fotoPerfilErrorWrapperMoved');
+    // Selecciona el mensaje de error real si existe
+    const fotoPerfilErrorMessage = fotoPerfilErrorWrapperInitial ? fotoPerfilErrorWrapperInitial.querySelector('.foto-perfil-error-message') : null;
     const deleteProfilePhotoHiddenInput = document.querySelector('input[name="_delete_profile_photo"]');
     const defaultAvatarUrl = "{% static 'images/utiles/default_avatar.svg' %}";
 
@@ -126,14 +148,25 @@ document.addEventListener('DOMContentLoaded', function() {
             // Si se abre el panel, asegurarse de que la intención de borrar no esté marcada
             // a menos que el usuario explícitamente presione "Eliminar foto actual"
             if (deleteProfilePhotoHiddenInput) {
-                deleteProfilePhotoHiddenInput.checked = false;
+                // deleteProfilePhotoHiddenInput.checked = false; // Cambiado
+                deleteProfilePhotoHiddenInput.value = ''; // Asegurar que el valor sea 'falso'
+            }
+
+            // Mover el mensaje de error
+            if (fotoPerfilErrorMessage) {
+                if (photoEditOptions.style.display === 'block' && fotoPerfilErrorWrapperMoved) {
+                    fotoPerfilErrorWrapperMoved.appendChild(fotoPerfilErrorMessage);
+                } else if (fotoPerfilErrorWrapperInitial) {
+                    fotoPerfilErrorWrapperInitial.appendChild(fotoPerfilErrorMessage);
+                }
             }
         });
     }
 
     if (removeProfilePhotoButton && deleteProfilePhotoHiddenInput && profileImagePreview) {
         removeProfilePhotoButton.addEventListener('click', function() {
-            deleteProfilePhotoHiddenInput.checked = true; // Marcar el campo oculto
+            // deleteProfilePhotoHiddenInput.checked = true; // Cambiado
+            deleteProfilePhotoHiddenInput.value = 'on'; // Establecer valor para que se interprete como True
             profileImagePreview.src = defaultAvatarUrl; // Mostrar avatar por defecto
             if (fotoPerfilInput) {
                 fotoPerfilInput.value = ""; // Limpiar el input de archivo si algo fue seleccionado
@@ -145,7 +178,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fotoPerfilInput.addEventListener('change', function(event) {
             // Si se selecciona un nuevo archivo, desmarcar la opción de eliminar
             if (deleteProfilePhotoHiddenInput) {
-                deleteProfilePhotoHiddenInput.checked = false;
+                // deleteProfilePhotoHiddenInput.checked = false; // Cambiado
+                deleteProfilePhotoHiddenInput.value = ''; // Limpiar la intención de eliminar
             }
             // Previsualizar la nueva imagen
             if (event.target.files && event.target.files[0]) {

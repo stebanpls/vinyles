@@ -128,7 +128,7 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
                     # procesar_imagen_nueva permanece False, lo cual es correcto.
                     pass
             except Cliente.DoesNotExist:
-                 if self.foto_perfil: # Should not happen if self.pk is set, but for safety
+                if self.foto_perfil: # Should not happen if self.pk is set, but for safety
                     procesar_imagen_nueva = True
         elif self.foto_perfil: # Nuevo objeto con foto
             procesar_imagen_nueva = True

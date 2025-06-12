@@ -52,7 +52,10 @@ class ClienteUpdateForm(forms.ModelForm):
 
     foto_perfil = forms.ImageField(
         required=False,
-        widget=MinimalFileInput() # Usamos nuestro widget personalizado
+        widget=MinimalFileInput(), # Usamos nuestro widget personalizado
+        error_messages={
+            'invalid_image': "La imagen seleccionada no es válida o está corrupta. Por favor, intente con un archivo de imagen diferente (JPG o PNG)."
+        }
     )
 
     class Meta:
@@ -65,5 +68,5 @@ class ClienteUpdateForm(forms.ModelForm):
         self.fields['celular'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Celular'})
         self.fields['direccion_residencia'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Dirección de Residencia'})
         self.fields['foto_perfil'].widget.attrs.update({'class': 'form-control-file mb-2'})
-           # self.fields['foto_perfil'].required = False # Ya se define en la declaración del campo arriba
+        # self.fields['foto_perfil'].required = False # Ya se define en la declaración del campo arriba
         # El campo _delete_profile_photo es un HiddenInput, su posición no afecta la UI visible.
