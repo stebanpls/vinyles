@@ -13,24 +13,24 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')), # Esto incluye login, logout, password_change, password_reset, etc.
 
     # URLS DE LA CARPETA "ADMINISTRADOR"
-    path('admin_adPro/', views.admin_adPro, name = 'admin_adPro'),
-    path('admin_administrador/', views.admin_administrador, name = 'admin_administrador'),
+    path('admin_adPro/', views.admin_adPro, name='admin_adPro'),
+    path('admin_administrador/', views.admin_administrador, name='admin_administrador'),
     path('admin_bloq_users/', views.admin_bloq_users, name='admin_bloq_users'), # Añadido '/' al final
     path('admin_generos/', views.admin_generos, name='admin_generos'),
     path('admin_gestion_users/', views.admin_gestion_users, name='admin_gestion_users'),
     path('admin_new_users/', views.admin_new_users, name='admin_new_users'), # Añadido '/' al final
     path('admin_nosotros/', views.admin_nosotros, name='admin_nosotros'), # Renombrado desde admin_sobre_nosotros
     path('admin_notificaciones/', views.admin_notificaciones, name='admin_notificaciones'),
-    path('admin_pedido/', views.admin_pedido, name = 'admin_pedido'),
+    path('admin_pedido/', views.admin_pedido, name='admin_pedido'),
     path('admin_pedido_pendiente/', views.admin_pedido_pendiente, name='admin_pedido_pendiente'), # Añadido '/' al final
     path('admin_pedido_realizado/', views.admin_pedido_realizado, name='admin_pedido_realizado'), # Añadido '/' al final
-    path('admin_producto/', views.admin_producto, name = 'admin_producto'),
+    path('admin_producto/', views.admin_producto, name='admin_producto'),
     path('admin_reembolsos/', views.admin_reembolsos, name='admin_reembolsos'), # Añadido '/' al final
     path('admin_terminos/', views.admin_terminos, name='admin_terminos'),
-    path('admin_usuario/', views.admin_usuario, name = 'admin_usuario'),
+    path('admin_usuario/', views.admin_usuario, name='admin_usuario'),
     path('admin_ventas/', views.admin_ventas, name='admin_ventas'),
-    path('admin_verificacion/', views.admin_verificacion, name = 'admin_verificacion'),
-    path('admin_mas_vendidos/', views.admin_mas_vendidos, name = 'admin_mas_vendidos'),
+    path('admin_verificacion/', views.admin_verificacion, name='admin_verificacion'),
+    path('admin_mas_vendidos/', views.admin_mas_vendidos, name='admin_mas_vendidos'),
 
 
     # URLS DE LA CARPETA "COMPRADOR"
@@ -60,7 +60,7 @@ urlpatterns = [
     path('pub_ddl/', views.pub_ddl, name='pub_ddl'), # Mantener si tienes la vista pub_ddl
     path('pub_log_out/', views.pub_log_out, name='pub_log_out'),
     path('pub_login/', views.pub_login, name='pub_login'),
-    path('pub_nosotros/', views.pub_nosotros, name='pub_nosotros'),
+    path('pub_nosotros/', views.pub_nosotros, name='pub_nosotros'), # Añadido '/' al final
     path('pub_reembolsos/', views.pub_reembolsos, name='pub_reembolsos'),
     path('pub_registro/', views.pub_registro, name='pub_registro'),
     path('pub_restablecer_contrasena/', views.pub_restablecer_contrasena, name="pub_restablecer_contrasena"), # Asegúrate que esta vista exista

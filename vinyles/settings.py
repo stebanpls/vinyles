@@ -179,9 +179,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-# DIRECCIONARÁ LAS FOTOS A LA CARPETA "static/images/fotosusuario"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'images', 'fotosusuario')
-MEDIA_URL = '/fotos/' # La URL para acceder a las fotos será /fotos/ dentro de la dirección de arriba.
+# MEDIA_ROOT es donde se guardarán los archivos subidos por los usuarios.
+MEDIA_ROOT = BASE_DIR / 'media'  # Carpeta 'media' en la raíz del proyecto
+MEDIA_URL = '/media/' # URL base para acceder a estos archivos
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

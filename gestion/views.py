@@ -124,8 +124,8 @@ def pub_login(request):
 def pub_log_out(request):
     # Esta vista es el destino de LOGOUT_REDIRECT_URL en settings.py.
     # La LogoutView de Django ya ha cerrado la sesión antes de redirigir aquí.
-    # Simplemente renderiza la página de confirmación.
-    # messages.info(request, "Has cerrado sesión exitosamente. ¡Hasta luego!") # Eliminamos este mensaje
+    # Simplemente renderiza la página de confirmación y muestra un mensaje.
+    messages.info(request, "Has cerrado sesión exitosamente. ¡Hasta luego!")
     return render(request, 'paginas/publico/pub_log_out.html') # Renderiza tu página de sesión cerrada
 
 def pub_nosotros(request):
@@ -238,7 +238,7 @@ def pub_vinilo(request):
         },
         'joe_arroyo_la_verdad': {
             'key': 'joe_arroyo_la_verdad',
-            'title': 'La Verdad',
+            'title': 'La Verdad de Joe Arroyo: el Original',
             'artist': 'Joe Arroyo',
             'price': 80000,
             'genre': 'Salsa, Cumbia',
@@ -422,16 +422,16 @@ def pub_vinilo(request):
             'song_list': ['Whiplash', 'Otra Canción 1', 'Otra Canción 2'], # Ejemplo, actualizar
             'comments': [{'username': 'MYaespa', 'comment': '¡Aespa siempre sorprendiendo con su sonido único!'}]
         },
-        'daddy_yankee_barrio': {
+        'daddy_yankee_barrio': { 
             'key': 'daddy_yankee_barrio',
-            'title': 'Barrio Fino',
+            'title': 'Barrio Fino (Deluxe Version)', 
             'artist': 'Daddy Yankee',
             'price': 150000,
             'genre': 'Reggaetón',
             'release_date': '13 de julio de 2004',
             'label': 'El Cartel Records, VI Music',
             'producers': 'Luny Tunes, DJ Nelson, Monserrate & DJ Urba, Nely "El Arma Secreta", Naldo, Echo, Diesel',
-            'artist_info': 'Daddy Yankee es un cantante, rapero, compositor y productor discográfico puertorriqueño, apodado el "Rey del Reguetón".',
+            'artist_info': 'Daddy Yankee es un cantante, rapero, compositor y productor discográfico puertorriqueño, apodado el "Rey del Reguetón". "Barrio Fino" es uno de sus álbumes más icónicos.',
             'image': 'images/albumes/daddy_yankee_barrio.jpg',
             'audio': 'audio/barrio_fino.mp3',
             'song_list': ['Intro', 'King Daddy', 'Gasolina', 'Lo Que Pasó, Pasó', 'No Me Dejes Solo (feat. Wisin & Yandel)', 'Salud y Vida', 'Corazones', 'Tu Príncipe (feat. Zion & Lennox)', 'Cuéntame', 'Santifica Tus Escapularios', 'Sabor A Melao (feat. Andy Montañez)', 'El Muro', 'Dale Caliente', 'El Empuje', '¿Qué Vas A Hacer? (feat. May-Be)', 'Intermedio "Gavilan"', 'ElCangri.com', 'Golpe De Estado (feat. Tommy Viera)', '2 Mujeres', 'Saber Su Nombre', 'Outro'],
@@ -520,35 +520,39 @@ def com_albumes(request):
 def com_carrito(request):
     # 1) Mini-diccionario de álbumes
     # Las claves aquí deben coincidir con las usadas en los parámetros ?album=
-    albums_info = {
-        'michael_jackson_bad':   {'title': 'Bad',   'artist': 'Michael Jackson', 'price': 105000, 'image': 'images/albumes/michael_jackson_bad.jpg'},
-        'metallica_master':{'title': 'Master of Puppets', 'artist': 'Metallica', 'price': 105000, 'image': 'images/albumes/metallica_master.jpg'},
-        'joe_arroyo_la_verdad':   {'title': 'La Verdad',    'artist': 'Joe Arroyo',   'price': 80000,  'image': 'images/albumes/joe_arroyo_la_verdad.jpg'},
-        'michael_jackson_thriller': {'title': 'Thriller',      'artist': 'Michael Jackson','price':110000,'image':'images/albumes/michael_jackson_thriller.jpg'},
-        'the_beatles_sgt_pepper':   {'title': "Sgt. Pepper's Lonely Hearts Club Band", 'artist': 'The Beatles','price':95000,'image':'images/albumes/the_beatles_sgt_pepper.jpg'},
-        'guns_n_roses_appetite':{'title':'Appetite for Destruction','artist':"Guns N' Roses",'price':120000,'image':'images/albumes/guns_n_roses_appetite.jpg'},
-        'playboi_carti_music':{'title':'Music','artist':'Playboi Carti','price':90000,'image':'images/albumes/playboi_carti_music.jpg'},
+    albums_info_base = {
+        'michael_jackson_bad': {'title': 'Bad', 'artist': 'Michael Jackson', 'price': 105000, 'image': 'images/albumes/michael_jackson_bad.jpg'},
+        'metallica_master': {'title': 'Master of Puppets', 'artist': 'Metallica', 'price': 105000, 'image': 'images/albumes/metallica_master.jpg'},
+        'joe_arroyo_la_verdad': {'title': 'La Verdad', 'artist': 'Joe Arroyo', 'price': 80000,  'image': 'images/albumes/joe_arroyo_la_verdad.jpg'},
+        'michael_jackson_thriller': {'title': 'Thriller', 'artist': 'Michael Jackson','price':110000,'image':'images/albumes/michael_jackson_thriller.jpg'},
+        'the_beatles_sgt_pepper': {'title': "Sgt. Pepper's Lonely Hearts Club Band", 'artist': 'The Beatles','price':95000,'image':'images/albumes/the_beatles_sgt_pepper.jpg'},
+        'guns_n_roses_appetite': {'title':'Appetite for Destruction','artist':"Guns N' Roses",'price':120000,'image':'images/albumes/guns_n_roses_appetite.jpg'},
+        'playboi_carti_music': {'title':'Music','artist':'Playboi Carti','price':90000,'image':'images/albumes/playboi_carti_music.jpg'},
         'elvis_crespo_suavemente': {'title': 'Suavemente', 'artist': 'Elvis Crespo', 'price': 50000, 'image': 'images/albumes/elvis_crespo_suavemente.jpg'},
         'eminem_the_eminem_show': {'title': 'The Eminem Show', 'artist': 'Eminem', 'price': 95000, 'image': 'images/albumes/eminem_the_eminem_show.jpg'},
         'nirvana_in_utero': {'title': 'In Utero', 'artist': 'Nirvana', 'price': 120000, 'image': 'images/albumes/nirvana_in_utero.jpg'},
         'aespa_whiplash': {'title': 'Whiplash', 'artist': 'Aespa', 'price': 130000, 'image': 'images/albumes/aespa_whiplash.jpg'},
-        'daddy_yankee_barrio': {'title': 'Barrio Fino', 'artist': 'Daddy Yankee', 'price': 150000, 'image': 'images/albumes/daddy_yankee_barrio.jpg'},
+        'daddy_yankee_barrio': {'title': 'Barrio Fino (Deluxe Version)', 'artist': 'Daddy Yankee', 'price': 150000, 'image': 'images/albumes/daddy_yankee_barrio.jpg'},
         'the_beatles_abbey_road': {'title': 'Abbey Road', 'artist': 'The Beatles', 'price': 135000, 'image': 'images/albumes/the_beatles_abbey.jpg'},
         'bts_love_yourself': {'title': 'Love Yourself: Answer', 'artist': 'BTS', 'price': 105000, 'image': 'images/albumes/bts_love.jpg'},
         'frank_sinatra_the_world': {'title': 'The World We Knew', 'artist': 'Frank Sinatra', 'price': 140000, 'image': 'images/albumes/frank_sinatra_the_world.jpg'},
-        # Mapeo de claves antiguas (si aún se usan en algún enlace) a las nuevas para retrocompatibilidad temporal
-        # Si estás seguro de que todos los enlaces usan las nuevas claves largas, puedes eliminar estos mapeos.
-        'bad': albums_info.get('michael_jackson_bad'),
-        'master': albums_info.get('metallica_master'),
-        'joe': albums_info.get('joe_arroyo_la_verdad'),
-        'thriller': albums_info.get('michael_jackson_thriller'),
-        'lonely': albums_info.get('the_beatles_sgt_pepper'),
-        'destruction': albums_info.get('guns_n_roses_appetite'),
-        'music': albums_info.get('playboi_carti_music'),
-        'suavemente': albums_info.get('elvis_crespo_suavemente'),
-        'eminem': albums_info.get('eminem_the_eminem_show'), # Asumiendo que 'eminem' era la clave para The Eminem Show
-        'Nirvana': albums_info.get('nirvana_in_utero') # Asumiendo que 'Nirvana' era la clave para In Utero
     }
+
+    # Crear una copia para añadir los mapeos de retrocompatibilidad
+    albums_info = albums_info_base.copy()
+    albums_info.update({
+        'bad': albums_info_base.get('michael_jackson_bad'),
+        'master': albums_info_base.get('metallica_master'),
+        'joe': albums_info_base.get('joe_arroyo_la_verdad'),
+        'thriller': albums_info_base.get('michael_jackson_thriller'),
+        'lonely': albums_info_base.get('the_beatles_sgt_pepper'),
+        'destruction': albums_info_base.get('guns_n_roses_appetite'),
+        'music': albums_info_base.get('playboi_carti_music'),
+        'suavemente': albums_info_base.get('elvis_crespo_suavemente'),
+        'eminem_show': albums_info_base.get('eminem_the_eminem_show'),
+        'nirvana_in_utero': albums_info_base.get('nirvana_in_utero'),
+        # Si tenías un mapeo para 'daddy_yankee_prestige' antes, asegúrate que ahora apunte a 'daddy_yankee_barrio' si es necesario, o elimínalo si 'daddy_yankee_prestige' ya no se usa.
+    })
 
     # 2) Carga (o inicializa) tu carrito
     cart = request.session.get('cart', [])
@@ -843,7 +847,7 @@ def admin_bloq_users(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_generos(request):
-  return render(request, 'paginas/admin_generos.html') # Se crea la rendererización de este archivo .HTML
+  return render(request, 'paginas/administrador/admin_generos.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
@@ -884,7 +888,7 @@ def admin_terminos(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_mas_vendidos(request):
-  return render(request, 'paginas/administrador/admin_mas_vendidos.html') # ¿Este qué?
+  return render(request, 'paginas/administrador/admin_mas_vendidos.html')
 
 
 # VISTAS DE VINILOS, SUBCARPETA DE ADMINISTRADOR
@@ -1018,7 +1022,7 @@ def angela_torres_2(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def elisa_naranjo_2(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/elisa_naranjo_2.html')
+  return render(request, 'paginas/administrador/usuarios/elisa_naranjo_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')

@@ -11,9 +11,9 @@
 {% block contenido %}
 <div class="container-albumes">
   <main class="main-albumes">
-    <div class="album-card">
+    <div class="album-card">  {# Corrección: Eliminado el cierre del div que cortaba el enlace #}
       <a href="{% url 'ven_bad' %}">
-      <img src="{% static 'images/albumes/bad.jpg' %}" alt="Álbum Bad - Michael Jackson" />
+      <img src="{% static 'images/albumes/michael_jackson_bad.jpg' %}" alt="Álbum Bad - Michael Jackson" />
       <p><strong>Álbum:</strong> Bad</p>
       <p><strong>Artista:</strong> Michael Jackson</p>
       </a>

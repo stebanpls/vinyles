@@ -4,22 +4,29 @@ from django.contrib.auth.models import User # Importa el modelo User
 from django.core.exceptions import ValidationError # Para validaciones
 from django.db.models.signals import post_save # Para crear el perfil automáticamente
 from django.dispatch import receiver # Para el decorador de la señal
+import os # Para construir rutas de archivo
+from uuid import uuid4 # Para generar nombres de archivo únicos
+
+def user_directory_path(instance, filename):
+    ext = filename.split('.')[-1]
+    new_filename = f"{uuid4().hex}.{ext}"
+    return os.path.join('fotos_perfil', f'user_{instance.user.id}', new_filename)
 
 # Create your models here.
 class Crud(models.Model): # Es mejor nombrar la clase con mayúscula inicial, siguiendo las convenciones de Python
     # id = models.AutoField(primary_key = True) # Django lo añade automáticamente
     nombre = models.CharField(max_length = 50, verbose_name = "Nombre")
-    apellido = models.CharField(max_length = 50, verbose_name = "Apellido")
-    foto = models.ImageField(upload_to = 'fotos/', verbose_name = "Foto", null = True)
+    apellido = models.CharField(max_length = 50, verbose_name = "Apellidos") # Cambiado a plural para consistencia
+    foto = models.ImageField(upload_to = 'fotos_crud/', verbose_name = "Foto", null = True, blank=True) # Añadido blank=True, y ruta de subida más específica
     # Si 'clase' tiene una longitud máxima definida, CharField es más apropiado que TextField.
     clase = models.CharField(max_length = 100, verbose_name = "Clase", null = True, blank = True)
     direccion = models.CharField(max_length = 250, verbose_name = "Dirección", blank = True, null = True)
     fechaIngreso = models.DateField(verbose_name = "Fecha de Ingreso", blank = True, null = True)
 
     class Meta:
-        db_table = 'crud' # Nombre de la tabla en singular
-        verbose_name = "Crud" # Nombre singular para el admin
-        verbose_name_plural = "Cruds" # Nombre plural para el admin
+        db_table = 'registros_crud' # Nombre de tabla más corto y descriptivo
+        verbose_name = "Registro CRUD"
+        verbose_name_plural = "Registros CRUD"
 
     def __str__(self):
         return f"ID = {self.pk} y Nombres: {self.nombre} {self.apellido}" # Usar self.pk es una forma genérica de referirse a la clave primaria
@@ -35,9 +42,9 @@ class Genero(models.Model):
     nombre = models.CharField(max_length=100, unique=True, verbose_name="Nombre del Género")
 
     class Meta:
-        db_table = 'genero' # Nombre de la tabla en singular
-        verbose_name = "Género"
-        verbose_name_plural = "Géneros"
+        db_table = 'generos' # Nombre de tabla corto
+        verbose_name = "Género" # Coincide con el concepto de la tabla
+        verbose_name_plural = "Géneros" # Plural del verbose_name
     def __str__(self):
         return self.nombre
 
@@ -73,7 +80,7 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
     # 'upload_to' define la subcarpeta dentro de MEDIA_ROOT donde se guardarán las imágenes.
     # Asegúrate de que MEDIA_ROOT y MEDIA_URL estén configurados en settings.py
     foto_perfil = models.ImageField(
-        upload_to='fotos_perfil/', # Las imágenes se guardarán en MEDIA_ROOT/fotos_perfil/
+        upload_to=user_directory_path, 
         null=True,
         blank=True,
         verbose_name="Foto de Perfil"
@@ -90,9 +97,9 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
     )
 
     class Meta:
-        db_table = 'cliente' # Actualizado al nombre de tabla en singular
-        verbose_name = "Cliente" # Actualizado verbose_name
-        verbose_name_plural = "Clientes" # Actualizado verbose_name_plural
+        db_table = 'perfiles' # Nombre de tabla corto para los perfiles de cliente
+        verbose_name = "Perfil" # Coincide con el concepto de la tabla
+        verbose_name_plural = "Perfiles" # Plural del verbose_name
 
 # Señal para crear automáticamente un ClienteProfile cuando se crea un User
 @receiver(post_save, sender=User)

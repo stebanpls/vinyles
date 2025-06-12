@@ -13,18 +13,19 @@
   <!-- ENCABEZADO DE CHECKOUT -->
   <h1>Contacto</h1>
 
-  <form>
+  <!-- TODO: Añadir method="post" y action="{% url 'tu_vista_de_procesar_checkout' %}" para enviar el formulario al backend -->
+  <form> 
     <div class="row g-3">
       <!-- CORREO ELECTRÓNICO -->
       <div class="col-12 col-md-6">
         <label for="email" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="email" placeholder="nombre@ejemplo.com">
+        <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com">
       </div>
 
       <!-- CHECKBOX DE NOVEDADES -->
       <div class="col-12">
         <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="novedades">
+          <input type="checkbox" class="form-check-input" id="novedades" name="novedades">
           <label class="form-check-label" for="novedades">
             Enviarme novedades y ofertas por correo electrónico
           </label>
@@ -37,45 +38,45 @@
       <h2 class="mt-4">Entrega</h2>
       <div class="col-12 col-md-4">
         <label for="pais" class="form-label">País</label>
-        <select class="form-select" id="pais">
+        <select class="form-select" id="pais" name="pais">
           <option>Colombia</option>
         </select>
       </div>
       <div class="col-12 col-md-4">
         <label for="ciudad" class="form-label">Ciudad</label>
-        <input type="text" class="form-control" id="ciudad" placeholder="Bogotá">
+        <input type="text" class="form-control" id="ciudad" name="ciudad_entrega" placeholder="Bogotá">
       </div>
 
       <!-- Datos receptor -->
       <div class="col-12 col-md-4">
         <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
+        <input type="text" class="form-control" id="nombre" name="nombre_receptor" placeholder="Tu nombre">
       </div>
       <div class="col-12 col-md-4">
         <label for="apellidos" class="form-label">Apellidos</label>
-        <input type="text" class="form-control" id="apellidos" placeholder="Tus apellidos">
+        <input type="text" class="form-control" id="apellidos" name="apellidos_receptor" placeholder="Tus apellidos">
       </div>
       <div class="col-12 col-md-4">
         <label for="cedula" class="form-label">Cédula / NIT</label>
-        <input type="text" class="form-control" id="cedula" placeholder="12345678">
+        <input type="text" class="form-control" id="cedula" name="cedula_receptor" placeholder="12345678">
       </div>
       <div class="col-12 col-md-4">
         <label for="telefono" class="form-label">Teléfono</label>
-        <input type="text" class="form-control" id="telefono" placeholder="3001234567">
+        <input type="text" class="form-control" id="telefono" name="telefono_receptor" placeholder="3001234567">
       </div>
 
 <!-- Dirección -->
 <div class="col-12 col-md-6"">
   <label for="direccion" class="form-label">Dirección</label>
-  <input type="text" class="form-control" id="direccion" placeholder="Calle 1 # 2 - 3">
+  <input type="text" class="form-control" id="direccion" name="direccion_entrega" placeholder="Calle 1 # 2 - 3">
 </div>
 <div class="col-12 col-md-6">
   <label for="extra" class="form-label">Casa, apto, etc. (opcional)</label>
-  <input type="text" class="form-control" id="extra" placeholder="Apartamento 101">
+  <input type="text" class="form-control" id="extra" name="direccion_extra" placeholder="Apartamento 101">
 </div>
 <div class="col-12 col-md-3">
   <label for="postal" class="form-label">Código postal</label>
-  <input type="text" class="form-control" id="postal" placeholder="000000">
+  <input type="text" class="form-control" id="postal" name="codigo_postal" placeholder="000000">
 </div>
 <div class="col-12 col-md-3">
       <!-- puedes dejar otra cosa aquí o dejar vacío para balancear -->
@@ -85,7 +86,7 @@
 
   <div class="col-12">
     <div class="form-check">
-      <input type="checkbox" class="form-check-input" id="guardarInfo">
+      <input type="checkbox" class="form-check-input" id="guardarInfo" name="guardar_info">
       <label class="form-check-label" for="guardarInfo">
         Guardar mi información y consultar más rápido
       </label>
@@ -126,7 +127,7 @@
       <!-- MÉTODOS DE ENVÍO -->
       <div class="col-12 col-md-6">
         <h2>Métodos de envío</h2>
-        <select id="ciudad-envio" class="form-select">
+        <select id="ciudad-envio" name="metodo_envio_ciudad" class="form-select">
           <option value="7500">Bogotá — COP $7.500</option>
           <option value="9000">Medellín — COP $9.000</option>
           <option value="8500">Cali — COP $8.500</option>
@@ -153,19 +154,19 @@
       <!-- Radios -->
       <div class="col-12 col-md-4">
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="payment-method" id="creditCard" value="credit" checked>
+          <input class="form-check-input" type="radio" name="payment_method" id="creditCard" value="credit" checked>
           <label class="form-check-label" for="creditCard">Tarjeta de Crédito</label>
         </div>
       </div>
       <div class="col-12 col-md-4">
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="payment-method" id="nequi" value="nequi">
+          <input class="form-check-input" type="radio" name="payment_method" id="nequi" value="nequi">
           <label class="form-check-label" for="nequi">Nequi</label>
         </div>
       </div>
       <div class="col-12 col-md-4">
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="payment-method" id="others" value="others">
+          <input class="form-check-input" type="radio" name="payment_method" id="others" value="others">
           <label class="form-check-label" for="others">Otros (Débito)</label>
         </div>
       </div>
@@ -173,25 +174,27 @@
       <!-- Secciones según método seleccionado -->
       <div id="credit-section" class="col-12 col-md-4 payment-section">
         <label for="cardNumber" class="form-label">Número de Tarjeta</label>
-        <input type="text" id="cardNumber" class="form-control mb-2" placeholder="XXXX-XXXX-XXXX-XXXX">
+        <input type="text" id="cardNumber" name="card_number" class="form-control mb-2" placeholder="XXXX-XXXX-XXXX-XXXX">
         <label for="cardExpiry" class="form-label">Fecha de Expiración</label>
-        <input type="text" id="cardExpiry" class="form-control mb-2" placeholder="MM/AA">
+        <input type="text" id="cardExpiry" name="card_expiry" class="form-control mb-2" placeholder="MM/AA">
         <label for="cardCVC" class="form-label">CVC</label>
-        <input type="text" id="cardCVC" class="form-control" placeholder="CVC">
+        <input type="text" id="cardCVC" name="card_cvc" class="form-control" placeholder="CVC">
       </div>
       <div id="nequi-section" class="col-12 col-md-4 payment-section" style="display:none;">
         <label for="nequiNumber" class="form-label">Número de Celular Nequi</label>
-        <input type="text" id="nequiNumber" class="form-control mb-2" placeholder="Ej: 3123456789">
+        <input type="text" id="nequiNumber" name="nequi_number" class="form-control mb-2" placeholder="Ej: 3123456789">
         <label for="nequiCode" class="form-label">Clave Dinámica</label>
-        <input type="text" id="nequiCode" class="form-control" placeholder="Código dinámico">
+        <input type="text" id="nequiCode" name="nequi_code" class="form-control" placeholder="Código dinámico">
       </div>
       <div id="others-section" class="col-12 col-md-4 payment-section" style="display:none;">
         <label for="debitInfo" class="form-label">Información Débito</label>
-        <input type="text" id="debitInfo" class="form-control" placeholder="Cuenta o débito">
+        <input type="text" id="debitInfo" name="debit_info" class="form-control" placeholder="Cuenta o débito">
       </div>
 
       <!-- BOTÓN FINALIZAR -->
       <div class="col-12 text-end">
+        <!-- TODO: Si este botón debe enviar el formulario, cambiar type="button" a type="submit" -->
+        <!-- La redirección a 'com_progreso_envio' debería ocurrir DESPUÉS de que el servidor procese el pedido. -->
         <button id="finalizar-compra" type="button" class="btn btn-primary" data-url="{% url 'com_progreso_envio' %}">
           Finalizar compra
         </button>
@@ -241,67 +244,6 @@
   });
 </script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function(){
-    const btn = document.getElementById("finalizar-compra");
-    btn.addEventListener("click", function(){
-      window.location.href = btn.getAttribute("data-url");
-    });
-  });
-</script>
-
-<!-- Script para mostrar el resumen de la compra -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const cartSummaryDiv = document.getElementById("checkout-cart-summary");
-
-  // Función de formateo a COP similar a la que usas en carrito.js
-  function formatCOP(value) {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(value);
-  }
-
-  // Recupera el carrito del localStorage
-  let cartProducts = JSON.parse(localStorage.getItem("cartProducts")) || [];
-
-  if (cartProducts.length > 0) {
-    let html = "<ul>";
-    let total = 0;
-    cartProducts.forEach(product => {
-      html += `<li><strong>${product.albumName}</strong> - ${product.artistName} : ${formatCOP(product.price)}</li>`;
-      total += product.price;
-    });
-    html += "</ul>";
-    html += `<h3>Total a pagar: ${formatCOP(total)}</h3>`;
-    cartSummaryDiv.innerHTML = html;
-  } else {
-    cartSummaryDiv.innerHTML = "<p>No hay productos en el carrito.</p>";
-  }
-});
-</script>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const select = document.getElementById("ciudad-envio");
-    const envioCostP = document.getElementById("envio-cost");
-    const totalFinalP = document.getElementById("total-final");
-    // Subtotal que vino del servidor
-    const subtotal = {{ total }};  
-  
-    function updateEnvio() {
-      const cost = parseInt(select.value, 10);
-      envioCostP.innerHTML = `Costo envío:<br><strong>COP $${cost}</strong>`;
-      totalFinalP.innerHTML = `<strong>Total:</strong><br>COP $${subtotal + cost}`;
-    }
-  
-    select.addEventListener("change", updateEnvio);
-  });
-  </script>
-  
 {% endblock contenido %}
 
 {% block pie %}

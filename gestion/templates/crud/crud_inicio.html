@@ -53,7 +53,7 @@
                                 <td>{{ item.apellido }}</td>
                                 <td>
                                     {% if item.foto %}
-                                        <img src="{{ item.foto.url }}" alt="Foto" width="90px" height="100px">
+                                        <img src="{{ MEDIA_URL }}/fotos/{{ item.foto }}" alt="Foto" width="90px" height="100px">
                                     {% else %}
                                         Sin foto
                                     {% endif %}

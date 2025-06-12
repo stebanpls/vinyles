@@ -50,7 +50,7 @@
         <div class="profile-buttons">
             <a href="{% url 'ven_perfil_editar' %}" class="btn btn-info">Editar Perfil</a>
             <a href="{% url 'com_inicio' %}" class="btn btn-primary">Cambiar a Comprador</a>
-            <a href="{% url 'pub_log_out' %}" class="btn btn-danger">Cerrar Sesión</a>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar Sesión</a> {# Corregido a 'logout', idealmente debería ser un POST #}
         </div>
     </div>
 {% endblock contenido %}

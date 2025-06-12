@@ -37,9 +37,8 @@
             </div>
             <p><a href="#">Reenviar Código</a></p>
             <div class="form-group">
-                <button type="submit" class="btn btn-success">
-                    <a href="{% url 'pub_restablecer_contrasena' %}">Restablece tu Contraseña</a>
-                </button>
+                {# Este botón probablemente debería ser un enlace si solo navega #}
+                <a href="{% url 'pub_restablecer_contrasena' %}" class="btn btn-success">Restablece tu Contraseña</a>
             </div>
         </form>
     </div>
