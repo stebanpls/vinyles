@@ -272,3 +272,55 @@
     margin-bottom: 0;
     color: var(--text-secondary);
 }
+
+/* Estilos para la nueva sección de edición de foto de perfil */
+.profile-edit-form-container .profile-picture-section {
+    margin-bottom: 1.5rem; /* Espacio alrededor de la sección de la foto */
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--bg-card); /* Usar el color de fondo de las tarjetas para consistencia */
+}
+
+.profile-edit-form-container .profile-picture-section .form-label {
+    /* El label "Foto de Perfil" ya hereda estilos generales, no necesita cambios específicos aquí */
+}
+
+.profile-edit-form-container .current-profile-image img.img-thumbnail {
+    display: block; 
+    margin-bottom: 0.75rem; /* Espacio entre la imagen y el botón "Editar Foto" */
+    /* Los estilos de .img-thumbnail ya están definidos arriba y son adecuados */
+}
+
+.profile-edit-form-container #editPhotoButton {
+    /* Hereda estilos de .btn, pero podemos ser más específicos si es necesario */
+    /* Por ejemplo, si quieres que sea un botón secundario: */
+    background-color: var(--bs-secondary-bg, #495057); /* Usar una variable de Bootstrap o un color oscuro */
+    border-color: var(--bs-secondary-border-color, #495057);
+    color: var(--bs-secondary-color, #fff);
+}
+.profile-edit-form-container #editPhotoButton:hover {
+    background-color: #5a6268; /* Un poco más claro al pasar el mouse */
+    border-color: #5a6268;
+}
+
+.profile-edit-form-container #photoEditOptions {
+    /* background-color: #f8f9fa;  Ya definido en el HTML, pero podemos usar variables CSS */
+    background-color: var(--bg-input); /* Un fondo ligeramente diferente al de la tarjeta */
+    border: 1px solid var(--border-color); 
+    /* padding, margin-top, border-radius ya están en el style inline del HTML, pero se pueden mover aquí */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175); /* Sombra sutil */
+}
+
+.profile-edit-form-container #removeProfilePhotoButton {
+    /* Hereda estilos de .btn y .btn-danger (si Bootstrap está disponible y se usa esa clase) */
+    /* Si no, puedes definirlo aquí: */
+    background-color: var(--error-color);
+    border-color: var(--error-color);
+    color: #fff;
+    margin-top: 0.5rem; 
+}
+.profile-edit-form-container #removeProfilePhotoButton:hover {
+    background-color: #d9534f; /* Un rojo más oscuro al pasar el mouse */
+    border-color: #d9534f;
+}

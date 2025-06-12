@@ -1,0 +1,3 @@
+{# Esta plantilla solo renderizará el input de tipo archivo. #}
+{# Las etiquetas como "Change:" o el enlace "Currently:" y el checkbox "Clear" se omiten. #}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>

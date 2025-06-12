@@ -50,27 +50,46 @@
             <div class="card-body">
                 {{ cliente_form.non_field_errors }}
                 {% for field in cliente_form %}
+                    {% if field.name == 'foto_perfil' %}
+                    <div class="mb-3 profile-picture-section">
+                        <label class="form-label">Foto de Perfil</label>
+                        <div class="current-profile-image mb-2">
+                            <img id="profileImagePreview" 
+                                src="{% if cliente_instance.foto_perfil %}{{ cliente_instance.foto_perfil.url }}{% else %}{% static 'images/utiles/default_avatar.svg' %}{% endif %}" 
+                                alt="Foto de Perfil" class="img-thumbnail" 
+                                style="max-height: 150px; max-width: 150px; object-fit: cover;">
+                        </div>
+                        <button type="button" id="editPhotoButton" class="btn btn-outline-secondary btn-sm mb-2">Editar Foto</button>
+                        
+                        <div id="photoEditOptions" style="display: none; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-top:10px; background-color: #f9f9f9;">
+                            <p class="mb-2 small text-muted">Sube una nueva foto o elimina la actual.</p>
+                            {{ field|add_class:"form-control-file mb-3" }} {# foto_perfil input #}
+                            
+                            {% comment %} El campo eliminar_foto_perfil se renderizará oculto más abajo y se controla con JS {% endcomment %}
+                            {% if cliente_instance.foto_perfil %}
+                            <button type="button" id="removeProfilePhotoButton" class="btn btn-danger btn-sm">Eliminar foto actual</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% elif field.name == '_delete_profile_photo' %}
+                        {# Este es nuestro campo oculto, se renderizará pero no será visible #}
+                        <div style="display:none;">{{ field }}</div>
+                    {% elif field.name == 'generos_favoritos' %}
                     <div class="mb-3">
                         <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        
-                        {% if field.name == 'foto_perfil' %}
-                            {% if cliente_instance.foto_perfil %}
-                                <div class="mb-2">
-                                    <p class="mb-1">Foto actual:</p>
-                                    <img src="{{ cliente_instance.foto_perfil.url }}" alt="Foto de Perfil" class="img-thumbnail" style="max-height: 150px; max-width: 150px; object-fit: cover;">
-                                </div>
-                            {% endif %}
-                            {{ field|add_class:"form-control-file" }}
-                        {% elif field.name == 'generos_favoritos' %}
-                            <div class="checkbox-list"> {{ field }} </div> {# Puedes estilizar .checkbox-list con CSS #}
-                        {% else %}
-                            {{ field|add_class:"form-control" }}
-                        {% endif %}
-                        
+                        <div class="checkbox-list"> {{ field }} </div>
                         {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
                         {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                     </div>
-                {% endfor %}
+                    {% else %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field|add_class:"form-control" }}
+                        {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% endif %} {# Cierre del if/elif/else principal para cada field #}
+                {% endfor %} {# Cierre del bucle cliente_form #}
             </div>
         </div>
 
@@ -88,6 +107,59 @@
         <a href="{% url 'com_perfil' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editPhotoButton = document.getElementById('editPhotoButton');
+    const photoEditOptions = document.getElementById('photoEditOptions');
+    const removeProfilePhotoButton = document.getElementById('removeProfilePhotoButton');
+    const profileImagePreview = document.getElementById('profileImagePreview');
+    const fotoPerfilInput = document.querySelector('input[name="foto_perfil"]');
+    // Apuntar al nuevo campo oculto
+    const deleteProfilePhotoHiddenInput = document.querySelector('input[name="_delete_profile_photo"]');
+    const defaultAvatarUrl = "{% static 'images/utiles/default_avatar.svg' %}";
+
+    if (editPhotoButton && photoEditOptions) {
+        editPhotoButton.addEventListener('click', function() {
+            photoEditOptions.style.display = photoEditOptions.style.display === 'none' ? 'block' : 'none';
+            // Si se abre el panel, asegurarse de que la intención de borrar no esté marcada
+            // a menos que el usuario explícitamente presione "Eliminar foto actual"
+            if (deleteProfilePhotoHiddenInput) {
+                deleteProfilePhotoHiddenInput.checked = false;
+            }
+        });
+    }
+
+    if (removeProfilePhotoButton && deleteProfilePhotoHiddenInput && profileImagePreview) {
+        removeProfilePhotoButton.addEventListener('click', function() {
+            deleteProfilePhotoHiddenInput.checked = true; // Marcar el campo oculto
+            profileImagePreview.src = defaultAvatarUrl; // Mostrar avatar por defecto
+            if (fotoPerfilInput) {
+                fotoPerfilInput.value = ""; // Limpiar el input de archivo si algo fue seleccionado
+            }
+        });
+    }
+
+    if (fotoPerfilInput && deleteProfilePhotoHiddenInput && profileImagePreview) {
+        fotoPerfilInput.addEventListener('change', function(event) {
+            // Si se selecciona un nuevo archivo, desmarcar la opción de eliminar
+            if (deleteProfilePhotoHiddenInput) {
+                deleteProfilePhotoHiddenInput.checked = false;
+            }
+            // Previsualizar la nueva imagen
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImagePreview.src = e.target.result;
+                }
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+    }
+});
+</script>
+{% endblock extra_js %}
 {% endblock contenido %}
 
 {% block pie %}

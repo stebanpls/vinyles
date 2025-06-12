@@ -756,6 +756,16 @@ def ven_perfil_editar(request):
 
         if user_cliente_forms_valid and password_form_valid_if_intended:
             user_form.save()
+            
+            # Manejar eliminación de foto de perfil
+            # Esto se hace ANTES de cliente_form.save()
+            # Si se sube una nueva foto en el mismo envío, esa nueva foto prevalecerá
+            # porque cliente_form.save() la asignará.
+            if cliente_form.cleaned_data.get('_delete_profile_photo'):
+                if cliente_instance.foto_perfil:
+                    cliente_instance.foto_perfil.delete(save=False) # Elimina el archivo físico
+                cliente_instance.foto_perfil = None # Asegura que el campo se limpie en el modelo
+            
             cliente_form.save()
 
             if intent_to_change_password and password_form_valid_if_intended:

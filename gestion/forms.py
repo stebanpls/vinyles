@@ -1,5 +1,6 @@
 from django import forms
 from .models import Crud, Cliente, Genero # Importa los modelos Crud, Cliente y Genero
+from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
 
 # Create your views here.
@@ -39,20 +40,30 @@ class UserUpdateForm(forms.ModelForm):
         self.fields['email'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Correo Electrónico'})
 
 class ClienteUpdateForm(forms.ModelForm):
+    # Ya no necesitamos el checkbox visible 'eliminar_foto_perfil'
     generos_favoritos = forms.ModelMultipleChoiceField(
         queryset=Genero.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
         label="Géneros Favoritos"
     )
+    # Campo oculto para marcar la intención de eliminar la foto
+    _delete_profile_photo = forms.BooleanField(required=False, widget=forms.HiddenInput())
+
+    foto_perfil = forms.ImageField(
+        required=False,
+        widget=MinimalFileInput() # Usamos nuestro widget personalizado
+    )
 
     class Meta:
         model = Cliente
-        fields = ['numero_documento', 'celular', 'direccion_residencia', 'foto_perfil', 'generos_favoritos']
+        fields = ['numero_documento', 'celular', 'direccion_residencia', 'foto_perfil', '_delete_profile_photo', 'generos_favoritos']
 
     def __init__(self, *args, **kwargs):
         super(ClienteUpdateForm, self).__init__(*args, **kwargs)
         self.fields['numero_documento'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Número de Documento'})
         self.fields['celular'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Celular'})
         self.fields['direccion_residencia'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Dirección de Residencia'})
-        self.fields['foto_perfil'].widget.attrs.update({'class': 'form-control-file mb-2'}) # Para input de archivo
+        self.fields['foto_perfil'].widget.attrs.update({'class': 'form-control-file mb-2'})
+           # self.fields['foto_perfil'].required = False # Ya se define en la declaración del campo arriba
+        # El campo _delete_profile_photo es un HiddenInput, su posición no afecta la UI visible.
