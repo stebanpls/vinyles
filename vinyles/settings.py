@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gestion.apps.GestionConfig', # Tu aplicación
+    'captcha',                  # Para django-recaptcha
     'widget_tweaks', # Si lo vas a usar
 ]
 
@@ -200,3 +201,9 @@ LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out'
 #EMAIL_HOST_USER = 'sebastian.rg303@gmail.com'
 #EMAIL_HOST_PASSWORD = 'aericita1234'
 #DEFAULT_FROM_EMAIL = 'Vinyles <sebastian.rg303@gmail.com>'
+
+# CONFIGURACIÓN DE reCAPTCHA
+# Estas variables se leen desde tu archivo .env
+# Asegúrate de haber definido RECAPTCHA_SITE_KEY y RECAPTCHA_SECRET_KEY en .env
+RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_SITE_KEY')
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
