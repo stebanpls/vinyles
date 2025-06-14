@@ -10,7 +10,7 @@ from django.contrib.auth import update_session_auth_hash
 # Se importa los atributos de Crud 
 from .models import Crud, Cliente, Genero # Importar modelos necesarios (Crud, Cliente, Genero)
 
-from .forms import CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm # Importar formularios
+from .forms import CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm # Importar formularios
 
 # Importar las funciones de autenticación de Django
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout # Importa las funciones de autenticación
@@ -38,9 +38,6 @@ def pub_ddl(request):
   return render(request, 'paginas/publico/pub_ddl.html')
 
 def pub_login(request):
-    # Para repoblar el campo identificador en caso de error
-    submitted_identifier = request.POST.get('login_identifier', '') if request.method == 'POST' else ''
-
     # Datos del álbum (si se pasan por GET para pre-llenar o mantener)
     album_name_get = request.GET.get('album_name')
     artist_get = request.GET.get('artist')
@@ -58,6 +55,8 @@ def pub_login(request):
             return redirect(next_url or 'admin_administrador')
         else:
             return redirect(next_url or 'com_inicio')
+
+    form = LoginForm() # Inicializar el formulario para GET requests
 
     if request.method == 'POST':
         identifier = request.POST.get('login_identifier') # Cambiado de 'email'

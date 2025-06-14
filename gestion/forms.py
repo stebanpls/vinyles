@@ -2,6 +2,7 @@ from django import forms
 from .models import Crud, Cliente, Genero # Importa los modelos Crud, Cliente y Genero
 from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
+from django_recaptcha.fields import ReCaptchaField # Importar ReCaptchaField
 
 # Create your views here.
 class CrudForm(forms.ModelForm):
@@ -12,6 +13,7 @@ class CrudForm(forms.ModelForm):
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repetir Contraseña', widget=forms.PasswordInput)
+    captcha = ReCaptchaField(label='No soy un robot') # Usar ReCaptchaField
 
     class Meta:
         model = User # Usaremos el modelo User que Django ya provee
@@ -70,3 +72,8 @@ class ClienteUpdateForm(forms.ModelForm):
         self.fields['foto_perfil'].widget.attrs.update({'class': 'form-control-file mb-2'})
         # self.fields['foto_perfil'].required = False # Ya se define en la declaración del campo arriba
         # El campo _delete_profile_photo es un HiddenInput, su posición no afecta la UI visible.
+
+class LoginForm(forms.Form):
+    login_identifier = forms.CharField(label="Nombre de usuario o Correo Electrónico")
+    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
+    captcha = ReCaptchaField(label='No soy un robot') # Usar ReCaptchaField

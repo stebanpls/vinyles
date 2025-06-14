@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gestion.apps.GestionConfig', # Tu aplicación
-    'django_recaptcha',         # Para django-recaptcha
+    'django_recaptcha',         # Para django-recaptcha. La próxima vez toca asegurarnos de que se llame como se llama en la dependencia.
     'widget_tweaks', # Si lo vas a usar
 ]
 
@@ -168,9 +168,7 @@ USE_TZ = True # Esto permite que Django maneje las zonas horarias correctamente.
 STATIC_URL = 'static/'
 # Se agregó la ruta de los archivos estáticos
 STATICFILES_DIRS = [
-    os.path.join(
-        BASE_DIR / "static",
-    ),
+    BASE_DIR / "static",
 ] # Todos los archivos estáticos se busquen dentro de la carpeta "static"
 
 # STATIC_ROOT es donde `collectstatic` copiará los archivos para producción.
