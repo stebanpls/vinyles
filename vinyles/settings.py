@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gestion.apps.GestionConfig', # Tu aplicación
-    'captcha',                  # Para django-recaptcha
+    'django_recaptcha',         # Para django-recaptcha
     'widget_tweaks', # Si lo vas a usar
 ]
 
