@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Versión del servidor:         11.7.2-MariaDB - mariadb.org binary distribution
+-- Versión del servidor:         11.8.2-MariaDB - mariadb.org binary distribution
 -- SO del servidor:              Win64
--- HeidiSQL Versión:             12.10.0.7000
+-- HeidiSQL Versión:             12.11.0.7067
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `auth_permission` (
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.auth_permission: ~36 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.auth_permission: ~40 rows (aproximadamente)
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 	(1, 'Can add log entry', 1, 'add_logentry');
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   CONSTRAINT `clientes_user_id_2e92d62d_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.clientes: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.clientes: ~1 rows (aproximadamente)
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
 	(2, NULL, NULL, NULL, 'fotos_perfil/user_2/8f55b4dc52444bc68618511dd82b5391.jpg');
 
@@ -271,27 +271,27 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_content_type: ~9 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_content_type: ~10 rows (aproximadamente)
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(1, 'admin', 'logentry');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(3, 'auth', 'group');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(2, 'auth', 'permission');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(3, 'auth', 'group');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(4, 'auth', 'user');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(5, 'contenttypes', 'contenttype');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(10, 'gestion', 'cliente');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(8, 'gestion', 'clienteprofile');
+	(6, 'sessions', 'session');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(7, 'gestion', 'crud');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(8, 'gestion', 'clienteprofile');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(9, 'gestion', 'genero');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(6, 'sessions', 'session');
+	(10, 'gestion', 'cliente');
 
 -- Volcando estructura para tabla vinyles_local.django_migrations
 DROP TABLE IF EXISTS `django_migrations`;
@@ -303,7 +303,7 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~24 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~25 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-05-30 01:52:14.584499');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
