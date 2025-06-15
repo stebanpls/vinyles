@@ -59,59 +59,68 @@ def pub_login(request):
     form = LoginForm() # Inicializar el formulario para GET requests
 
     if request.method == 'POST':
-        identifier = request.POST.get('login_identifier') # Cambiado de 'email'
-        password = request.POST.get('password') 
+        form = LoginForm(request.POST) # Vincular datos del POST al formulario
 
         # Datos del álbum del POST, con fallback a los de GET si no están en POST
         post_album_name = request.POST.get('album_name', album_name_get)
         post_artist = request.POST.get('artist', artist_get)
         post_price = request.POST.get('price', price_get)
         post_image = request.POST.get('image', image_get)
-        # Actualizar las variables _get para que el contexto refleje los datos del POST si existen
+        # Actualizar las variables _get para que el contexto refleje los datos del POST si existen,
+        # o si el formulario no es válido y se vuelve a renderizar.
         album_name_get = post_album_name
         artist_get = post_artist
         price_get = post_price
         image_get = post_image
+        
+        if form.is_valid(): # Esto validará el reCAPTCHA y los otros campos
+            identifier = form.cleaned_data['login_identifier']
+            password = form.cleaned_data['password']
+            specific_auth_error_occurred = False
 
-        # Autenticación real
+            # Intentar autenticar con el input como username primero
+            user = authenticate(request, username=identifier, password=password)
 
-        # Intentar autenticar con el input como username primero
-        user = authenticate(request, username=identifier, password=password)
-        specific_auth_error_occurred = False # Inicializar aquí
+            if user is None:
+                # Si falla, intentar encontrar usuario por email y autenticar con su username real
+                try:
+                    user_by_email = User.objects.get(email__iexact=identifier) # Búsqueda case-insensitive
+                    user = authenticate(request, username=user_by_email.username, password=password)
+                except User.DoesNotExist:
+                    # No se encontró usuario con ese email, 'user' sigue siendo None
+                    pass
+                except User.MultipleObjectsReturned:
+                    # Hay múltiples usuarios con el mismo email (debería evitarse con unique=True en email)
+                    messages.error(request, "Múltiples cuentas están asociadas con este correo electrónico. Por favor, contacte a soporte.")
+                    specific_auth_error_occurred = True # Marcar que este error específico ocurrió
+            
+            if user is not None:
+                auth_login(request, user)
+                messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
 
-        if user is None:
-            # Si falla, intentar encontrar usuario por email y autenticar con su username real
-            try:
-                user_by_email = User.objects.get(email__iexact=identifier) # Búsqueda case-insensitive
-                user = authenticate(request, username=user_by_email.username, password=password)
-            except User.DoesNotExist:
-                # No se encontró usuario con ese email, 'user' sigue siendo None
-                pass
-            except User.MultipleObjectsReturned:
-                # Hay múltiples usuarios con el mismo email (debería evitarse con unique=True en email)
-                messages.error(request, "Múltiples cuentas están asociadas con este correo electrónico. Por favor, contacte a soporte.")
-                specific_auth_error_occurred = True # Marcar que este error específico ocurrió
-        if user is not None:
-            auth_login(request, user)
-            messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
-
-            # Redirigir al usuario a la página 'next' si existe,
-            # de lo contrario, redirigir según su rol.
-            if next_url:
-                return redirect(next_url)
-            # Si no hay 'next', redirigir según el rol llamando a redirect()
-            default_redirect_url_name = 'admin_administrador' if user.is_staff or user.is_superuser else 'com_inicio'
-            return redirect(default_redirect_url_name)
-        else:
-            # Login fallido. Solo mostrar el error genérico si no hubo un error más específico.
-            if not specific_auth_error_occurred:
-                messages.error(request, "El nombre de usuario/email o la contraseña son incorrectos. Por favor, inténtalo de nuevo.")
+                # Redirigir al usuario a la página 'next' si existe,
+                # de lo contrario, redirigir según su rol.
+                if next_url:
+                    return redirect(next_url)
+                # Si no hay 'next', redirigir según el rol llamando a redirect()
+                default_redirect_url_name = 'admin_administrador' if user.is_staff or user.is_superuser else 'com_inicio'
+                return redirect(default_redirect_url_name)
+            else:
+                # Login fallido. Solo mostrar el error genérico si no hubo un error más específico.
+                if not specific_auth_error_occurred:
+                    # Puedes añadir el error al formulario para mostrarlo cerca de los campos,
+                    # o mantener el mensaje global.
+                    # form.add_error(None, "El nombre de usuario/email o la contraseña son incorrectos.")
+                    messages.error(request, "El nombre de usuario/email o la contraseña son incorrectos. Por favor, inténtalo de nuevo.")
+        # Si el formulario no es válido (ej. captcha falló), se re-renderizará la página
+        # con los errores del formulario. No es necesario un 'else' explícito aquí para messages.error
+        # si los errores del formulario son suficientes.
     
     # Este bloque de código se ejecuta si la solicitud es GET,
     # o si la solicitud es POST pero la autenticación falló.
     # Prepara el contexto y renderiza la plantilla de login.
     context = {
-        'submitted_identifier': submitted_identifier, # Cambiado de submitted_email
+        'form': form, # Pasar el formulario al contexto
         'album_name_get': album_name_get, # Datos del álbum de GET
         'artist_get': artist_get,       # Datos del álbum de GET
         'price_get': price_get,         # Datos del álbum de GET

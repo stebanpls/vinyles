@@ -1,13 +1,12 @@
 {% extends "plantillas/plantilla_publico.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/publico/style_registro.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Registro {% endblock titulo %}
-{% load widget_tweaks %} {# Opcional: si usas django-widget-tweaks para estilizar campos #}
 
 {% block contenido %}
     <div class="login-container">
@@ -18,28 +17,45 @@
             <h2>Crear una cuenta</h2>
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} mt-2">{{ message }}</div>
+                    <div class="alert alert-{{ message.tags }} mt-2 alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 {% endfor %}
             {% endif %}
+
             <form method="post" action="{% url 'pub_registro' %}"> {# La acción debe apuntar a la URL de tu vista de registro #}
                 {% csrf_token %}
-                {{ user_form.non_field_errors }} {# Muestra errores generales del formulario (ej. si no se pudo guardar) #}
+                
+                {% if user_form.non_field_errors %} {# Muestra errores generales del formulario (ej. si no se pudo guardar) #}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in user_form.non_field_errors %}
+                            <p class="mb-0">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
                 {% for field in user_form %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {# Renderiza el campo. Puedes usar widget_tweaks para añadir clases: #}
-                        {# {% render_field field class="form-control" placeholder=field.label %} #}
-                        {{ field }} {# Esto renderizará el widget HTML del campo (input, select, etc.) #}
+                    <div class="form-group mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {# Tratar el campo captcha de forma especial #}
+                        {% if field.name == 'captcha' %}
+                            {{ field }} {# Renderizar el widget de captcha directamente #}
+                        {% else %}
+                            {# Para otros campos, usar widget_tweaks como antes #}
+                            {% render_field field class="form-control" placeholder=field.label %}
+                        {% endif %}
+
                         {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text|safe }}</small>{% endif %}
-                        {% for error in field.errors %}<div class="invalid-feedback d-block" style="color: red;">{{ error }}</div>{% endfor %} {# Muestra errores específicos del campo #}
+                        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %} {# Muestra errores específicos del campo #}
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary w-100">
                         Registrarse
                     </button>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-3 text-center">
                     <p>¿Ya tienes una cuenta? <a href="{% url 'pub_login' %}">Inicia Sesión</a></p>
                 </div>
             </form>

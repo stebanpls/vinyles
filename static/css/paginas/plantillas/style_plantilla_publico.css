@@ -8,6 +8,12 @@ header {
   background-color: #121212; /* Dark background for header */
   padding: 1rem 0;
   border-bottom: 1px solid #333; /* Subtle border */
+  /* Para hacer el header fijo/pegajoso */
+  position: sticky;
+  top: 0; /* Se pega en la parte superior */
+  left: 0; /* Asegura que se extienda a la izquierda */
+  right: 0; /* Asegura que se extienda a la derecha (ocupa todo el ancho) */
+  z-index: 1030; /* Un z-index alto para que esté por encima de otros contenidos */
 }
 
 body {

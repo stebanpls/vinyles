@@ -2,8 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  background-color: #000000; /* Dark background */
+  /* Ajustar min-height para considerar header y footer si es necesario */
+  min-height: calc(100vh - 120px); /* Ejemplo: 120px para header+footer */
+  /* background-color: #000000;  El fondo principal lo maneja plantilla_publico.css (main tag) */
+  padding-top: 20px; /* Espacio desde el header fijo */
+  padding-bottom: 20px;
 }
 
 .login-form {
@@ -11,12 +14,13 @@
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Darker shadow */
-  width: 400px;
+  width: 100%; /* Ocupa el ancho del login-container */
+  max-width: 420px; /* Ancho máximo del formulario */
   text-align: center;
 }
 
 .login-form h2 {
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* Más espacio debajo del título */
   color: #f8f9fa; /* Light text */
 }
 
@@ -24,31 +28,41 @@
   margin-bottom: 15px;
   text-align: left;
   color: #f8f9fa;
+  /* Si usas mb-3 en el HTML, este margin-bottom puede ser menor o eliminarse */
 }
 
-.form-group input::placeholder {
+.form-group .form-control::placeholder { /* Apuntar a .form-control */
   color: #adb5bd; /* Light gray placeholder text */
 }
 
-#emailHelpId {
-  color: #e9ecef;
-}
-
-.form-group label {
+.form-group .form-label { /* Apuntar a .form-label */
   display: block;
   margin-bottom: 5px;
   color: #e9ecef; /* Light gray label */
+  font-weight: 500;
 }
 
-.form-group input[type="text"], /* Changed to email */
-.form-group input[type="password"] {
+.form-group .form-control { /* Estilo general para .form-control */
   width: 100%;
-  padding: 10px;
+  padding: 0.75rem 1rem; /* Padding más generoso */
   border: 1px solid #495057; /* Darker border */
   border-radius: 4px;
   box-sizing: border-box;
   background-color: #343a40; /* Dark input background */
   color: #f8f9fa; /* Light text in input */
+}
+
+.form-group .form-control:focus {
+  background-color: #3a3f44; /* Ligeramente más claro al enfocar */
+  color: #ffffff;
+  border-color: #007bff; /* Color de Bootstrap primario */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-group .g-recaptcha { /* Estilos para el widget de reCAPTCHA */
+    display: flex;
+    justify-content: center;
+    /* margin-bottom: 1rem; ya controlado por form-group mb-3 */
 }
 
 .form-group button[type="submit"] {
@@ -58,7 +72,7 @@
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
+  /* width: 100%; ya aplicado con w-100 en el HTML */
   transition: background-color 0.3s ease; /* Smooth transition on hover */
 }
 
@@ -68,6 +82,7 @@
 
 .login-form p {
   margin-top: 15px;
+  font-size: 0.9rem;
   color: #adb5bd; /* Light gray text */
 }
 
@@ -87,6 +102,29 @@
 }
 
 .logo-container img {
-  width: 100px;
-  height: 100px;
+  width: 90px; /* Ajustar tamaño del logo */
+  height: auto;
+}
+
+/* Estilos para los mensajes de error de campo de Bootstrap */
+.invalid-feedback.d-block {
+    color: #ff4d4d; /* Un rojo brillante para errores */
+    font-size: 0.875rem; /* Bootstrap default */
+    /* margin-top: .25rem; ya gestionado por Bootstrap o form-group */
+}
+
+/* Estilos para los mensajes de alerta de Django */
+.alert {
+    border-radius: 5px;
+    font-size: 0.95rem;
+    padding: 0.8rem 1rem;
+}
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.15); 
+    border-color: rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+}
+/* Asegurar que el botón de cierre de la alerta sea visible en tema oscuro */
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
 }

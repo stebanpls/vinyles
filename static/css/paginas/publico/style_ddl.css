@@ -15,17 +15,30 @@
   box-sizing: border-box; /* Asegura que padding y border se incluyan en el max-width */
 }
 
+/* --- Estilo Unificado para las CAJAS de Contenido de cada Sección --- */
+/* Esta clase se aplicará directamente al iframe, img, pre, y al div del diccionario de datos */
+.ddl-content-box {
+    background-color: #222; /* Fondo oscuro para el contenido de la sección */
+    border: 10px solid #444; /* Borde grueso y oscuro */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 15px; /* Padding interno para el contenido */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Sombra */
+    width: 100%; /* Asegura que ocupe el ancho del contenedor padre */
+    box-sizing: border-box; /* Padding y borde dentro del width */
+    margin-top: 0; /* El título se encargará del margen superior */
+    margin-bottom: 40px; /* Espacio después de cada caja de contenido */
+}
+
 /* --- Elementos Principales con Ancho Consistente --- */
 
 .excel,
 .imagen,
 table,
-pre,
-code,
+pre, /* 'code' no necesita width:100% por sí mismo, 'pre' sí */
 #indiceAlfabetico {
   width: 100%;             /* <<< MODIFICADO/AÑADIDO: Todos ocupan el 100% del contenedor padre */
   box-sizing: border-box;  /* <<< AÑADIDO: Asegura que padding y border se incluyan en el width */
-  margin-bottom: 30px;     /* Espaciado inferior consistente */
+  /* margin-bottom: 40px; */ /* Ahora controlado por .ddl-content-box o el contenedor de sección */
 }
 
 /* --- Estilos Específicos (manteniendo width: 100%) --- */
@@ -34,9 +47,7 @@ code,
   /* width: 100%; */ /* Ya establecido arriba */
   height: 900px; /* O ajusta a 'auto' si prefieres que la altura dependa del contenido */
   overflow: auto;
-  border: 10px solid #444;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  /* Los estilos de borde, fondo, etc., se aplicarán con la clase .ddl-content-box */
   /* margin-bottom: 50px; */ /* Ajustado a 30px arriba */
 }
 
@@ -44,41 +55,58 @@ code,
   /* width: 100%; */ /* Ya establecido arriba */
   height: auto; /* Mantiene la proporción */
   display: block; /* Evita espacio extra debajo si es inline */
-  border-radius: 8px;
-  border: 10px solid #444;
+  /* Los estilos de borde, fondo, etc., se aplicarán con la clase .ddl-content-box */
   /* margin-bottom: 50px; */ /* Ajustado a 30px arriba */
 }
 
 table {
   /* width: 100%; */ /* Ya establecido arriba */
   /* margin-bottom: 30px; */ /* Ya establecido arriba */
-  border-collapse: separate;
+  border-collapse: collapse; /* Cambiado para que el padding funcione mejor con el fondo */
   border-spacing: 0;
   color: #ccc;
-  background-color: #222;
-  border-radius: 8px;
-  border: 10px solid #444; /* Mantenido borde grueso */
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  /* Estilos de borde, fondo, etc. para la tabla contenedora (si es #indiceAlfabetico)
+     se aplicarán con la clase .ddl-content-box al div #indiceAlfabetico */
 }
 
-pre, code {
+#modelo-relacional-container {
+    /* Este div es solo para el título y el contenedor de la imagen */
+    /* No necesita su propio fondo o borde si la imagen interna lo tiene */
+    text-align: center; /* Para centrar la imagen si es un elemento de bloque */
+    margin-bottom: 0; /* El margen inferior lo tendrá la imagen con .ddl-content-box */
+}
+
+#modelo-relacional-container .imagen {
+    /* Esta imagen es un caso especial porque querías un fondo diferente */
+    background-color: #333333; /* Aplicamos el fondo directamente a la imagen */
+    padding: 10px; /* Opcional: añade un padding interno si quieres espacio entre el borde y el inicio del fondo */
+    max-width: 100%; /* Asegura que la imagen sea responsiva dentro del contenedor */
+    height: auto;
+    display: block; /* Para que el padding y text-align funcionen bien */
+    margin: 0 auto 40px auto; /* Centrar la imagen y darle el margen inferior de .ddl-content-box */
+    border: 10px solid #444; /* Aseguramos que tenga el mismo borde que los otros contenedores */
+    border-radius: 8px; /* Y el mismo borde redondeado */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Y la misma sombra */
+    box-sizing: border-box;
+}
+
+pre { /* Aplicar a 'pre', no a 'code' directamente para el bloque */
   /* width: 100%; */ /* Ya establecido arriba */
-  background-color: #222;
-  border-radius: 8px;
   color: #c5c8c6;
   font-family: 'Courier New', Courier, monospace;
   white-space: pre-wrap;
   word-wrap: break-word;
-  /* margin-bottom: 50px; */ /* Ajustado a 30px arriba */
   text-align: left;
-  padding: 0px; /* Añadir padding interno para el código */
+  /* Los estilos de borde, fondo, etc., se aplicarán con la clase .ddl-content-box */
 }
+
+
 
 #indiceAlfabetico {
   /* width: 100%; */ /* Ya establecido arriba */
   color: #ccc;
-  /* margin-bottom: 25px; */ /* Ajustado a 30px arriba */
+  /* margin-bottom ahora controlado por .ddl-content-box */
   text-align: left; /* O 'center' si prefieres el índice centrado */
   padding: 10px 0; /* Añadir algo de padding vertical */
 }
@@ -97,11 +125,11 @@ table caption {
 }
 
 abbr {
-  cursor: help;
-  text-decoration: underline dotted;
-  color: #ccc;
+    cursor: help;
+    text-decoration: none; /* Quitar subrayado por defecto si no se quiere */
+    border-bottom: 1px dotted #ccc; /* Subrayado punteado sutil */
+    color: #ccc;
 }
-
 td, th {
   border: 1px solid #444; /* Líneas internas */
   padding: 10px 12px;
@@ -110,17 +138,17 @@ td, th {
 }
 
 th {
-  background-color: #2a2a2a;
+  background-color: #383838; /* Un poco más claro para cabeceras de tabla */
   color: #f0f0f0;
   font-weight: bold;
 }
 
 td {
-  color: #ccc;
+  color: #b0b0b0; /* Ligeramente más suave para el contenido de la celda */
 }
 
 tr:hover {
-  background-color: #333;
+  background-color: #2c2c2c; /* Hover más sutil para filas de tabla */
   color: #fff;
 }
 
@@ -138,12 +166,16 @@ tr:hover {
     margin-bottom: 5px;
 }
 
-#title-sect {
+.title-sect {
   color: #ddd;
-  text-align: center;
-  font-size: 1.2em;
-  margin-bottom: 20px;
-  /* No necesita width: 100% explícito */
+  text-align: center; /* Centra el contenido (el h1) dentro de este div */
+  font-size: 1.8em; /* Hacer los títulos de sección más grandes */
+  font-weight: bold;
+  margin-top: 40px; /* Espacio encima del título de la sección */
+  margin-bottom: 15px; /* Espacio entre el título y la caja de contenido */
+  width: 100%; /* Asegura que el div ocupe todo el ancho disponible */
+  clear: both; /* Por si acaso hay floats antes */
+  scroll-margin-top: 100px; /* Ajusta este valor a la altura de tu header fijo */
 }
 
 .proj-desc {

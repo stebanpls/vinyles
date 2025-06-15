@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/publico/style_ddl.css' %}">
 {% endblock extra_css %}
 
@@ -10,33 +9,27 @@
 
 {% block contenido %}
 <body>
-    <div id="title-sect">
-        <h1>
-            Normalización
-        </h1>
-        <iframe class="excel" frameborder="0" scrolling="no" src="https://1drv.ms/x/c/d78fe620d467d6f4/IQRxLRAniqJ6Rbw-AL6NEEIbARUOb-Nxj4-dgIVa-s-BqMQ?em=2&ActiveCell='3FN'!A1&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True"></iframe>
+    <div id="titulo-normalizacion" class="title-sect"> {# ID para el título de Normalización #}
+        <h1>Normalización</h1>
+        <iframe class="excel ddl-content-box" frameborder="0" scrolling="no" src="https://1drv.ms/x/c/d78fe620d467d6f4/IQRxLRAniqJ6Rbw-AL6NEEIbARUOb-Nxj4-dgIVa-s-BqMQ?em=2&ActiveCell='3FN'!A1&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True"></iframe>
     </div>
 
-    <div id="title-sect">
+    {# El modelo relacional es un caso especial porque su imagen ya tiene estilos específicos para el fondo #}
+    <div id="modelo-relacional-container" class="title-sect">
         <h1>
             Modelo Relacional
         </h1>
         <img class="imagen" src="{% static 'images/ddl/modelo.svg' %}" alt="Modelo Relacional">
     </div>
 
-    <div id="title-sect">
-        <h1>
-            Diagrama de Clases
-        </h1>
-        <img class="imagen" src="{% static 'images/ddl/diagrama.svg' %}" alt="Diagrama de Clases">
+    <div id="titulo-diagrama-clases" class="title-sect"> {# ID para el título de Diagrama de Clases #}
+        <h1>Diagrama de Clases</h1>
+        <img class="imagen ddl-content-box" src="{% static 'images/ddl/diagrama.svg' %}" alt="Diagrama de Clases">
     </div>
 
-    <div id="title-sect">
-        <h1>
-            Código SQL
-        </h1>
-
-        <pre class="sql">
+    <div id="titulo-codigo-sql" class="title-sect"> {# ID para el título de Código SQL #}
+        <h1>Código SQL</h1>
+        <pre class="sql ddl-content-box">
             <code>
                 -- Crear Base de Datos
                 CREATE DATABASE vinyles;
@@ -165,930 +158,925 @@
         </pre>
     </div>
 
-    <div id="title-sect">
+    <div id="titulo-diccionario-datos" class="title-sect"> {# ID para el título de Diccionario de Datos #}
         <br>
         <h1>Diccionario de Datos</h1>
-        <p class="proj-desc">
-        <em>
-            <!-- Puedes añadir una descripción aquí si lo deseas -->
-        </em>
-        </p>
-    </div>
-
-    <div id="indiceAlfabetico">
-        <h2>Índice Alfabético</h2> <!-- Traducido -->
-        <ul>
-        <li><a href='#artista'>artista</a></li>
-        <li><a href='#cancion'>cancion</a></li>
-        <li><a href='#ciudad'>ciudad</a></li>
-        <li><a href='#cliente'>cliente</a></li>
-        <li><a href='#clientemediodepago'>clientemediodepago</a></li>
-        <li><a href='#departamento'>departamento</a></li>
-        <li><a href='#genero'>genero</a></li>
-        <li><a href='#mediodepago'>mediodepago</a></li>
-        <li><a href='#pais'>pais</a></li>
-        <li><a href='#pedido'>pedido</a></li>
-        <li><a href='#pedidoproducto'>pedidoproducto</a></li>
-        <li><a href='#producto'>producto</a></li>
-        <li><a href='#soporte'>soporte</a></li>
-        </ul>
-        <table id='artista'>
-        <caption>artista</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de los Artistas</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Artistas</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombre de los Artistas</td>
-        </tr>
-        <tr>
-            <td>informacion</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Información relevante de los Artistas</td>
-        </tr>
-        </table> <!-- Cerrar tabla artista -->
-        <table id='cancion'>
-        <caption>cancion</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de las Canciones</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de las Canciones</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombre de las Canciones</td>
-        </tr>
-        <tr>
-            <td>idArtista</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Artistas, que llamará la id de la tabla artista</td>
-        </tr>
-        <tr>
-            <td>idGenero</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Géneros musicales, que llamará la id de la tabla genero</td>
-        </tr>
-        </table> <!-- Cerrar tabla cancion -->
-        <table id='ciudad'>
-        <caption>ciudad</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena las Ciudades de los pedidos</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de las Ciudades</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombres de las Ciudades</td>
-        </tr>
-        <tr>
-            <td>idDepartamento</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Departamentos, que llamará la id de la tabla departamentos</td>
-        </tr>
-        </table> <!-- Cerrar tabla ciudad -->
-        <table id='cliente'>
-        <caption>cliente</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de los Clientes</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Clientes</td>
-        </tr>
-        <tr>
-            <td>numeroDocumento</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Número de Documento de los Clientes</td>
-        </tr>
-        <tr>
-            <td>usuario</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Usuario de los Clientes</td>
-        </tr>
-        <tr>
-            <td>contrasena</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Contraseña de los Clientes</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombres de los Clientes</td>
-        </tr>
-        <tr>
-            <td>apellido</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Apellidos de los Clientes</td>
-        </tr>
-        <tr>
-            <td>email</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Email de los Clientes</td>
-        </tr>
-        <tr>
-            <td>celular</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Celular de los Clientes</td>
-        </tr>
-        <tr>
-            <td>direccion</td>
-            <td>VARCHAR(255)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Dirección de los Clientes</td>
-        </tr>
-        </table> <!-- Cerrar tabla cliente -->
-        <table id='clientemediodepago'>
-        <caption>clientemediodepago</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de los Medios de Pago de los Clientes</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>idCliente</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Clientes, que llamará la id de la tabla cliente</td>
-        </tr>
-        <tr>
-            <td>idMedioDePago</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Medios de Pago, que llamará la id de la tabla mediosDePago</td>
-        </tr>
-        </table> <!-- Cerrar tabla clientemediodepago -->
-        <table id='departamento'>
-        <caption>departamento</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena los Departamentos de los pedidos</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Departamentos</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombres de los Departamentos</td>
-        </tr>
-        <tr>
-            <td>idPais</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Países, que llamará la id de la tabla pais</td>
-        </tr>
-        </table> <!-- Cerrar tabla departamento -->
-        <table id='genero'>
-        <caption>genero</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena los Géneros Musicales</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Géneros</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombre de los Géneros</td>
-        </tr>
-        </table> <!-- Cerrar tabla genero -->
-        <table id='mediodepago'>
-        <caption>mediodepago</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de los Medios de Pago de los clientes</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Medios de Pago</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombres de los Medios de Pago</td>
-        </tr>
-        </table> <!-- Cerrar tabla mediodepago -->
-        <table id='pais'>
-        <caption>pais</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena los países de los pedidos</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los países</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(100)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombres de los países</td>
-        </tr>
-        </table> <!-- Cerrar tabla pais -->
-        <table id='pedido'>
-        <caption>pedido</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de los Pedidos de los clientes</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Pedidos</td>
-        </tr>
-        <tr>
-            <td>fecha</td>
-            <td>DATE</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Fecha de los Pedidos</td>
-        </tr>
-        <tr>
-            <td>total</td>
-            <td>DECIMAL(10,2)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Total de los Pedidos</td>
-        </tr>
-        <tr>
-            <td>direccionEnvio</td>
-            <td>VARCHAR(255)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Direccion de Envío de los Pedidos</td>
-        </tr>
-        <tr>
-            <td>idCiudad</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de las Ciudades, que llamará la id de la tabla ciudad</td>
-        </tr>
-        <tr>
-            <td>idCliente</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Clientes, que llamará la id de la tabla cliente</td>
-        </tr>
-        <tr>
-            <td>idMedioDePago</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Medios de Pago, que llamará la id de la tabla mediosDePago</td>
-        </tr>
-        </table> <!-- Cerrar tabla pedido -->
-        <table id='pedidoproducto'>
-        <caption>pedidoproducto</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de los Productos de cada Pedido</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Productos de cada Pedido</td>
-        </tr>
-        <tr>
-            <td>cantidad</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Cantidad de los Productos de cada Pedido</td>
-        </tr>
-        <tr>
-            <td>valorUnitario</td>
-            <td>DECIMAL(10,2)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Valor Unitario de los Productos de cada Pedido</td>
-        </tr>
-        <tr>
-            <td>idPedido</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Pedidos, que llamará la id de la tabla pedido</td>
-        </tr>
-        <tr>
-            <td>idProducto</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Productos comerciables, que llamará la id de la tabla producto</td>
-        </tr>
-        </table> <!-- Cerrar tabla pedidoproducto -->
-        <table id='producto'>
-        <caption>producto</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena los Productos comerciables</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Productos</td>
-        </tr>
-        <tr>
-            <td>nombre</td>
-            <td>VARCHAR(2000)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Nombre de los Productos</td>
-        </tr>
-        <tr>
-            <td>stock</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Stock o Cantidad Existente de los Productos</td>
-        </tr>
-        <tr>
-            <td>discografica</td>
-            <td>VARCHAR(2000)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Compañía Discográfica de los Productos</td>
-        </tr>
-        <tr>
-            <td>lanzamiento</td>
-            <td>DATE</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Fecha de Lanzamiento de los Productos</td>
-        </tr>
-        <tr>
-            <td>idCancion</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de las Canciones, que llamará la id de la tabla cancion</td>
-        </tr>
-        </table> <!-- Cerrar tabla producto -->
-        <table id='soporte'>
-        <caption>soporte</caption>
-        <tr><td colspan='11'>Esta es la tabla que almacena la información de los Casos de nuestro Soporte Técnico</td></tr>
-        <tr>
-            <th>Nombre Columna</th> <!-- Traducido -->
-            <th>Tipo de Dato</th> <!-- Traducido -->
-            <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
-            <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
-            <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
-            <th>Por Defecto</th> <!-- Traducido -->
-            <th>Comentario</th> <!-- Traducido -->
-        </tr>
-        <tr>
-            <td>id</td>
-            <td>INT(11)</td>
-            <td>&#10004;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td></td>
-            <td>ID de los Casos de nuestro Soporte Técnico</td>
-        </tr>
-        <tr>
-            <td>descripcion</td>
-            <td>VARCHAR(2000)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Descripción de los Casos de nuestro Soporte Técnico</td>
-        </tr>
-        <tr>
-            <td>estado</td>
-            <td>VARCHAR(20)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>Estado de los Casos de nuestro Soporte Técnico</td>
-        </tr>
-        <tr>
-            <td>idCliente</td>
-            <td>INT(11)</td>
-            <td>&nbsp;</td>
-            <td>&#10004;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class='attr'>&nbsp;</td>
-            <td></td>
-            <td>ID, y Llave Foránea de los Clientes, que llamará la id de la tabla cliente</td>
-        </tr>
-        </table> <!-- Cerrar tabla soporte -->
+        <p class="proj-desc"><em><!-- Puedes añadir una descripción aquí si lo deseas --></em></p>
+        <div id="indiceAlfabetico" class="ddl-content-box">
+            <h2>Índice Alfabético</h2> <!-- Traducido -->
+            <ul>
+            <li><a href='#artista'>artista</a></li>
+            <li><a href='#cancion'>cancion</a></li>
+            <li><a href='#ciudad'>ciudad</a></li>
+            <li><a href='#cliente'>cliente</a></li>
+            <li><a href='#clientemediodepago'>clientemediodepago</a></li>
+            <li><a href='#departamento'>departamento</a></li>
+            <li><a href='#genero'>genero</a></li>
+            <li><a href='#mediodepago'>mediodepago</a></li>
+            <li><a href='#pais'>pais</a></li>
+            <li><a href='#pedido'>pedido</a></li>
+            <li><a href='#pedidoproducto'>pedidoproducto</a></li>
+            <li><a href='#producto'>producto</a></li>
+            <li><a href='#soporte'>soporte</a></li>
+            </ul>
+            <table id='artista'>
+            <caption>artista</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de los Artistas</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Artistas</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombre de los Artistas</td>
+            </tr>
+            <tr>
+                <td>informacion</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Información relevante de los Artistas</td>
+            </tr>
+            </table> <!-- Cerrar tabla artista -->
+            <table id='cancion'>
+            <caption>cancion</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de las Canciones</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de las Canciones</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombre de las Canciones</td>
+            </tr>
+            <tr>
+                <td>idArtista</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Artistas, que llamará la id de la tabla artista</td>
+            </tr>
+            <tr>
+                <td>idGenero</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Géneros musicales, que llamará la id de la tabla genero</td>
+            </tr>
+            </table> <!-- Cerrar tabla cancion -->
+            <table id='ciudad'>
+            <caption>ciudad</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena las Ciudades de los pedidos</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de las Ciudades</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombres de las Ciudades</td>
+            </tr>
+            <tr>
+                <td>idDepartamento</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Departamentos, que llamará la id de la tabla departamentos</td>
+            </tr>
+            </table> <!-- Cerrar tabla ciudad -->
+            <table id='cliente'>
+            <caption>cliente</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de los Clientes</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Clientes</td>
+            </tr>
+            <tr>
+                <td>numeroDocumento</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Número de Documento de los Clientes</td>
+            </tr>
+            <tr>
+                <td>usuario</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Usuario de los Clientes</td>
+            </tr>
+            <tr>
+                <td>contrasena</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Contraseña de los Clientes</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombres de los Clientes</td>
+            </tr>
+            <tr>
+                <td>apellido</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Apellidos de los Clientes</td>
+            </tr>
+            <tr>
+                <td>email</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Email de los Clientes</td>
+            </tr>
+            <tr>
+                <td>celular</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Celular de los Clientes</td>
+            </tr>
+            <tr>
+                <td>direccion</td>
+                <td>VARCHAR(255)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Dirección de los Clientes</td>
+            </tr>
+            </table> <!-- Cerrar tabla cliente -->
+            <table id='clientemediodepago'>
+            <caption>clientemediodepago</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de los Medios de Pago de los Clientes</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>idCliente</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Clientes, que llamará la id de la tabla cliente</td>
+            </tr>
+            <tr>
+                <td>idMedioDePago</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Medios de Pago, que llamará la id de la tabla mediosDePago</td>
+            </tr>
+            </table> <!-- Cerrar tabla clientemediodepago -->
+            <table id='departamento'>
+            <caption>departamento</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena los Departamentos de los pedidos</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Departamentos</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombres de los Departamentos</td>
+            </tr>
+            <tr>
+                <td>idPais</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Países, que llamará la id de la tabla pais</td>
+            </tr>
+            </table> <!-- Cerrar tabla departamento -->
+            <table id='genero'>
+            <caption>genero</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena los Géneros Musicales</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Géneros</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombre de los Géneros</td>
+            </tr>
+            </table> <!-- Cerrar tabla genero -->
+            <table id='mediodepago'>
+            <caption>mediodepago</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de los Medios de Pago de los clientes</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Medios de Pago</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombres de los Medios de Pago</td>
+            </tr>
+            </table> <!-- Cerrar tabla mediodepago -->
+            <table id='pais'>
+            <caption>pais</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena los países de los pedidos</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los países</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(100)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombres de los países</td>
+            </tr>
+            </table> <!-- Cerrar tabla pais -->
+            <table id='pedido'>
+            <caption>pedido</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de los Pedidos de los clientes</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Pedidos</td>
+            </tr>
+            <tr>
+                <td>fecha</td>
+                <td>DATE</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Fecha de los Pedidos</td>
+            </tr>
+            <tr>
+                <td>total</td>
+                <td>DECIMAL(10,2)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Total de los Pedidos</td>
+            </tr>
+            <tr>
+                <td>direccionEnvio</td>
+                <td>VARCHAR(255)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Direccion de Envío de los Pedidos</td>
+            </tr>
+            <tr>
+                <td>idCiudad</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de las Ciudades, que llamará la id de la tabla ciudad</td>
+            </tr>
+            <tr>
+                <td>idCliente</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Clientes, que llamará la id de la tabla cliente</td>
+            </tr>
+            <tr>
+                <td>idMedioDePago</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Medios de Pago, que llamará la id de la tabla mediosDePago</td>
+            </tr>
+            </table> <!-- Cerrar tabla pedido -->
+            <table id='pedidoproducto'>
+            <caption>pedidoproducto</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de los Productos de cada Pedido</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Productos de cada Pedido</td>
+            </tr>
+            <tr>
+                <td>cantidad</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Cantidad de los Productos de cada Pedido</td>
+            </tr>
+            <tr>
+                <td>valorUnitario</td>
+                <td>DECIMAL(10,2)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Valor Unitario de los Productos de cada Pedido</td>
+            </tr>
+            <tr>
+                <td>idPedido</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Pedidos, que llamará la id de la tabla pedido</td>
+            </tr>
+            <tr>
+                <td>idProducto</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Productos comerciables, que llamará la id de la tabla producto</td>
+            </tr>
+            </table> <!-- Cerrar tabla pedidoproducto -->
+            <table id='producto'>
+            <caption>producto</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena los Productos comerciables</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Productos</td>
+            </tr>
+            <tr>
+                <td>nombre</td>
+                <td>VARCHAR(2000)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Nombre de los Productos</td>
+            </tr>
+            <tr>
+                <td>stock</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Stock o Cantidad Existente de los Productos</td>
+            </tr>
+            <tr>
+                <td>discografica</td>
+                <td>VARCHAR(2000)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Compañía Discográfica de los Productos</td>
+            </tr>
+            <tr>
+                <td>lanzamiento</td>
+                <td>DATE</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Fecha de Lanzamiento de los Productos</td>
+            </tr>
+            <tr>
+                <td>idCancion</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de las Canciones, que llamará la id de la tabla cancion</td>
+            </tr>
+            </table> <!-- Cerrar tabla producto -->
+            <table id='soporte'>
+            <caption>soporte</caption>
+            <tr><td colspan='11'>Esta es la tabla que almacena la información de los Casos de nuestro Soporte Técnico</td></tr>
+            <tr>
+                <th>Nombre Columna</th> <!-- Traducido -->
+                <th>Tipo de Dato</th> <!-- Traducido -->
+                <th><abbr title='Clave Primaria'>PK</abbr></th> <!-- Traducido title -->
+                <th><abbr title='No Nulo'>NN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Único'>UQ</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Binario'>BIN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Sin Signo'>UN</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Relleno con Ceros'>ZF</abbr></th> <!-- Traducido title -->
+                <th><abbr title='Autoincremental'>AI</abbr></th> <!-- Traducido title -->
+                <th>Por Defecto</th> <!-- Traducido -->
+                <th>Comentario</th> <!-- Traducido -->
+            </tr>
+            <tr>
+                <td>id</td>
+                <td>INT(11)</td>
+                <td>&#10004;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td></td>
+                <td>ID de los Casos de nuestro Soporte Técnico</td>
+            </tr>
+            <tr>
+                <td>descripcion</td>
+                <td>VARCHAR(2000)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Descripción de los Casos de nuestro Soporte Técnico</td>
+            </tr>
+            <tr>
+                <td>estado</td>
+                <td>VARCHAR(20)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>Estado de los Casos de nuestro Soporte Técnico</td>
+            </tr>
+            <tr>
+                <td>idCliente</td>
+                <td>INT(11)</td>
+                <td>&nbsp;</td>
+                <td>&#10004;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class='attr'>&nbsp;</td>
+                <td></td>
+                <td>ID, y Llave Foránea de los Clientes, que llamará la id de la tabla cliente</td>
+            </tr>
+            </table> <!-- Cerrar tabla soporte -->
+        </div>
     </div>
 </body>
 {% endblock contenido %}

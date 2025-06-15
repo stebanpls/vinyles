@@ -2,7 +2,8 @@ from django import forms
 from .models import Crud, Cliente, Genero # Importa los modelos Crud, Cliente y Genero
 from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
-from django_recaptcha.fields import ReCaptchaField # Importar ReCaptchaField
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV2Checkbox # Importar el widget para personalizarlo
 
 # Create your views here.
 class CrudForm(forms.ModelForm):
@@ -13,7 +14,20 @@ class CrudForm(forms.ModelForm):
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repetir Contraseña', widget=forms.PasswordInput)
-    captcha = ReCaptchaField(label='No soy un robot') # Usar ReCaptchaField
+    captcha = ReCaptchaField(
+        label='Verificación', # Puedes cambiar la etiqueta si lo deseas
+        widget=ReCaptchaV2Checkbox(
+            # attrs={'data-hl': 'es'} # Mantenemos esto por si acaso, pero priorizaremos api_params
+            api_params={'hl': 'es-419'}, # Añadimos el idioma como parámetro de la API
+            attrs={
+                'data-theme': 'dark', # Solicitar el tema oscuro para el widget
+            }
+        ),
+        error_messages={
+            'required': 'Por favor, completa la verificación reCAPTCHA.',
+            'captcha_invalid': 'Verificación reCAPTCHA inválida. Por favor, inténtalo de nuevo.'
+        }
+    )
 
     class Meta:
         model = User # Usaremos el modelo User que Django ya provee
@@ -76,4 +90,17 @@ class ClienteUpdateForm(forms.ModelForm):
 class LoginForm(forms.Form):
     login_identifier = forms.CharField(label="Nombre de usuario o Correo Electrónico")
     password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
-    captcha = ReCaptchaField(label='No soy un robot') # Usar ReCaptchaField
+    captcha = ReCaptchaField(
+        label='Verificación',
+        widget=ReCaptchaV2Checkbox(
+            # attrs={'data-hl': 'es'}
+            api_params={'hl': 'es-419'}, # Añadimos el idioma como parámetro de la API
+            attrs={
+                'data-theme': 'dark', # Solicitar el tema oscuro para el widget
+            }
+        ),
+        error_messages={
+            'required': 'Por favor, completa la verificación reCAPTCHA.',
+            'captcha_invalid': 'Verificación reCAPTCHA inválida. Por favor, inténtalo de nuevo.'
+        }
+    )

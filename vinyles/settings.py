@@ -205,3 +205,7 @@ LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out'
 # Asegúrate de haber definido RECAPTCHA_SITE_KEY y RECAPTCHA_SECRET_KEY en .env
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_SITE_KEY')
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
+
+# Silenciar la advertencia de claves de prueba de reCAPTCHA para desarrollo
+# Dejar comentado en lo posible.
+# SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
