@@ -203,8 +203,8 @@ LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out'
 # CONFIGURACIÓN DE reCAPTCHA
 # Estas variables se leen desde tu archivo .env
 # Asegúrate de haber definido RECAPTCHA_SITE_KEY y RECAPTCHA_SECRET_KEY en .env
-RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_SITE_KEY')
-RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
+RECAPTCHA_PUBLIC_KEY  = os.environ.get('RECAPTCHA_SITE_KEY',  '')
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
 
 # Silenciar la advertencia de claves de prueba de reCAPTCHA para desarrollo
 # Dejar comentado en lo posible.
