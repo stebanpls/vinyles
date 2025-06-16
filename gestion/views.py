@@ -2,15 +2,19 @@ from django.shortcuts import render, redirect
 
 # Se importa el reverse para redireccionar a la vista de crud.
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test # Para proteger vistas
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.template.loader import render_to_string
 
 # Se importa los atributos de Crud 
-from .models import Crud, Cliente, Genero # Importar modelos necesarios (Crud, Cliente, Genero)
+from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion # Importar modelos necesarios
 
-from .forms import CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm # Importar formularios
+from .forms import (
+    CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm,
+    ProductoForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm
+) # Importar formularios
 
 # Importar las funciones de autenticación de Django
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout # Importa las funciones de autenticación
@@ -23,6 +27,71 @@ def saludo(request):
   return HttpResponse("<h1>Hasta Mañana, babys!</h1>")
 """
 
+# Vistas para los modales de creación
+def artista_form_modal(request):
+    if request.method == "POST":
+        form = ArtistaForm(request.POST, request.FILES)
+        if form.is_valid():
+            artista = form.save()
+            return JsonResponse({
+                'success': True,
+                'id': artista.id,
+                'nombre': str(artista) # Usar str(artista) para obtener la representación del modelo
+            })
+        else:
+            # Devolver el HTML del formulario con errores para AJAX
+            form_html = render_to_string('modales/modal_artista.html', {'form': form}, request=request)
+            return JsonResponse({'success': False, 'form_html': form_html})
+    else:
+        form = ArtistaForm()
+    return render(request, 'modales/modal_artista.html', {'form': form})
+
+def modal_genero(request):
+    if request.method == "POST":
+        form = GeneroForm(request.POST) # No necesita request.FILES si no hay subida de archivos
+        if form.is_valid():
+            genero = form.save()
+            return JsonResponse({
+                'success': True,
+                'id': genero.id,
+                'nombre': str(genero)
+            })
+        else:
+            form_html = render_to_string('modales/modal_genero.html', {'form': form}, request=request)
+            return JsonResponse({'success': False, 'form_html': form_html})
+    else:
+        form = GeneroForm()
+    return render(request, 'modales/modal_genero.html', {'form': form})
+
+def modal_productor(request):
+    if request.method == "POST":
+        form = ProductorForm(request.POST) # No necesita request.FILES
+        if form.is_valid():
+            productor = form.save()
+            return JsonResponse({
+                'success': True,
+                'id': productor.id,
+                'nombre': str(productor)
+            })
+        else:
+            form_html = render_to_string('modales/modal_productor.html', {'form': form}, request=request)
+            return JsonResponse({'success': False, 'form_html': form_html})
+    else:
+        form = ProductorForm() # Corregido: Usar ProductorForm
+    return render(request, 'modales/modal_productor.html', {'form': form})
+
+def modal_cancion(request): # Esta vista es para crear una canción individualmente, no para asociarla a un producto.
+    if request.method == "POST":
+        form = CancionForm(request.POST) # Asumiendo que CancionForm no maneja archivos directamente
+        if form.is_valid():
+            cancion = form.save()
+            return JsonResponse({'success': True, 'id': cancion.id, 'nombre': str(cancion)})
+        else:
+            form_html = render_to_string('modales/modal_cancion.html', {'form': form}, request=request)
+            return JsonResponse({'success': False, 'form_html': form_html})
+    else:
+        form = CancionForm()
+    return render(request, 'modales/modal_cancion.html', {'form': form})
 
 # VISTAS DE LA CARPETA "PUBLICO"
 def pub_inicio(request):
@@ -747,7 +816,50 @@ def ven_bad(request):
 
 @login_required
 def ven_crear(request):
-  return render(request, 'paginas/vendedor/ven_crear.html')
+    # Formularios para la página principal y para los modales
+    if request.method == 'POST':
+        # Asumimos que el POST principal es para crear un Producto
+        producto_form = ProductoForm(request.POST, request.FILES)
+        
+        # Los otros formularios se instancian vacíos para los modales,
+        # ya que sus envíos se manejan por separado vía AJAX por sus propias vistas modales.
+        artista_form_modal = ArtistaForm()
+        productor_form_modal = ProductorForm()
+        genero_form_modal = GeneroForm()
+        cancion_form_modal = CancionForm() # Para el modal de crear canción individual
+
+        if producto_form.is_valid():
+            producto = producto_form.save(commit=False)
+            # Aquí podrías asignar el vendedor actual si tienes esa lógica
+            # ej: if hasattr(request.user, 'perfil_vendedor'): producto.vendedor = request.user.perfil_vendedor
+            producto.save()
+            producto_form.save_m2m() # Guarda las relaciones ManyToMany (artistas, genero_principal)
+            
+            messages.success(request, f"Producto '{producto.nombre}' creado exitosamente.")
+            # Idealmente, redirigir a la página del producto o a una lista.
+            # Por ahora, redirigimos de nuevo a la página de creación o a otra página de vendedor.
+            return redirect('ven_crear') # O 'ven_lista_productos' si existe una, o al detalle del producto.
+        else:
+            messages.error(request, "Por favor, corrige los errores en el formulario del producto.")
+            # Si hay errores en producto_form, se re-renderizará la página con producto_form
+            # conteniendo los errores. Los formularios de los modales seguirán vacíos.
+
+    else: # GET request
+        producto_form = ProductoForm()
+        artista_form_modal = ArtistaForm()
+        productor_form_modal = ProductorForm()
+        genero_form_modal = GeneroForm()
+        cancion_form_modal = CancionForm()
+
+    context = {
+        'producto_form': producto_form,         # Formulario principal de la página
+        'artista_form_modal': artista_form_modal, # Para el modal de artista
+        'productor_form_modal': productor_form_modal, # Para el modal de productor
+        'genero_form_modal': genero_form_modal,   # Para el modal de genero
+        'cancion_form_modal': cancion_form_modal, # Para el modal de cancion
+        'titulo_pagina': 'Crear Nuevo Contenido Musical',
+    }
+    return render(request, 'paginas/vendedor/ven_crear.html', context)
 
 @login_required
 def ven_notificaciones(request):

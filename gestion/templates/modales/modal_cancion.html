@@ -1,0 +1,70 @@
+
+ {% load widget_tweaks %}
+
+  <form method="post" action="{% url 'modal_cancion_crear' %}" enctype="multipart/form-data" style="background-color: lightpink;">
+    
+    {% csrf_token %}
+
+    <div class="modal-header">
+      <h5 class="modal-title text-dark">Nueva Canción</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="mb-3">
+        <label class="form-label text-dark">Nombre de la Canción</label>
+        {{ form.nombre|add_class:"form-control" }}
+        {% if form.nombre.errors %}
+          <div class="text-danger">{{ form.nombre.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+<div class="mb-3">
+  <label class="form-label text-dark">Duración</label>
+  <div class="input-group">
+    <span class="input-group-text">Min</span>
+    {{ form.minutos }}
+    <span class="input-group-text">:</span>
+    <span class="input-group-text">Seg</span>
+    {{ form.segundos }}
+  </div>
+</div>
+
+      <div class="mb-3">
+        <label class="form-label text-dark">Artistas</label>
+        {{ form.artistas|add_class:"form-control select-artista-modal" }}
+      </div>
+
+      <button type="button" class="btn btn-primary mb-3" onclick='abrirModalArtista("{% url "modal_artista_crear" %}?select_id=id_artistas&modal_id=modalCancion")'>
+    + Agregar nuevo artista
+  </button>
+
+
+      <div class="mb-3">
+        <label class="form-label text-dark">Productores</label>
+        {{ form.productores|add_class:"form-control select-productor-modal" }}
+
+      </div>
+
+      <button type="button" class="btn btn-primary mb-3" onclick="abrirModalProductorDesdeCancion('{% url 'modal_productor_crear' %}?select_id=id_productores&modal_id=modalCancion')">
+  + Agregar nuevo Productor
+</button>
+
+      <div class="mb-3">
+        <label class="form-label text-dark">Géneros</label>
+        {{ form.generos|add_class:"form-control select-genero" }}
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="abrirModalGenero('{% url 'modal_genero_crear' %}', true)">
+  + Agregar nuevo género
+</button>
+
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      <button type="submit" class="btn btn-success">Guardar Canción</button>
+    </div>
+  </form>

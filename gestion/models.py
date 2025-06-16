@@ -36,7 +36,7 @@ class Crud(models.Model): # Es mejor nombrar la clase con mayúscula inicial, si
     def delete(self, using = None, keep_parents = False):
         if self.foto: # Buena práctica: verificar si la foto existe antes de intentar borrarla
             self.foto.storage.delete(self.foto.name)
-            super().delete()
+        super().delete()
 
 # Modelo para representar los géneros musicales
 class Genero(models.Model):
@@ -53,46 +53,35 @@ class Genero(models.Model):
 # Modelo para extender el modelo User de Django con información específica del cliente
 class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='cliente') # Cambiado related_name a 'cliente'
-    # Campos de tu tabla 'cliente' que no están en el modelo 'User' de Django
-    # Ajusta los tipos de datos y longitudes según tu SQL si es necesario.
-    # El SQL usa INT para numeroDocumento y celular, pero CharField es más flexible
-    # si pueden contener ceros a la izquierda o caracteres no numéricos.
-    # Asegúrate de que estos nombres de campo coincidan con los que esperas en tu base de datos SQL
-    # si estás mapeando a una base de datos existente.
     numero_documento = models.CharField(
-        max_length=20,  # Ajusta según la longitud máxima esperada
-        # unique=True,    # Asumiendo que el número de documento debe ser único. Comenta si no es una restricción estricta.
-        blank=True,     # Permite que el campo esté vacío en el formulario
-        null=True,      # Permite que el campo sea NULL en la base de datos
+        max_length=20,
+        blank=True,
+        null=True,
         verbose_name="Número de Documento"
     )
-    # Se elimina la definición duplicada de 'celular'
     celular = models.CharField(
         max_length=20,
         blank=True,
-        null=True,      # Permite que el campo sea NULL en la base de datos
-        verbose_name="Celular" # Añadido verbose_name para claridad
+        null=True,
+        verbose_name="Celular"
     )
     direccion_residencia = models.CharField(max_length=255, blank=True, null=True)
-
-    # Campo para la foto de perfil. Usamos ImageField para manejar subidas de archivos.
-    # 'upload_to' define la subcarpeta dentro de MEDIA_ROOT donde se guardarán las imágenes.
-    # Asegúrate de que MEDIA_ROOT y MEDIA_URL estén configurados en settings.py
     foto_perfil = models.ImageField(
         upload_to=user_directory_path, 
         null=True,
         blank=True,
         verbose_name="Foto de Perfil"
     )
-
-    # Campo Many-to-Many para los géneros favoritos.
-    # Django creará automáticamente la tabla intermedia (cliente_genero_favorito)
-    # si no la especificas con 'through'. Si ya la creaste manualmente,
-    # podrías necesitar usar 'through' para apuntar a tu tabla existente.
     generos_favoritos = models.ManyToManyField(
         Genero,
-        blank=True, # Permite que un usuario no tenga géneros favoritos
+        blank=True,
         verbose_name="Géneros Favoritos"
+    )
+    medios_de_pago_guardados = models.ManyToManyField(
+        'MedioDePago', # Forward reference to MedioDePago model
+        blank=True,
+        verbose_name="Medios de Pago Guardados",
+        db_table='cliente_medio_de_pago' # Explicitly naming the M2M table to match SQL
     )
 
     class Meta:
@@ -104,43 +93,32 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
         return f"Cliente: {self.user.username}"
 
     def save(self, *args, **kwargs):
-        # Determinar si la foto ha cambiado o es nueva
-        procesar_imagen_nueva = False # Flag para decidir si la imagen actual (nueva o cambiada) necesita procesamiento
-        # Guardar una referencia a la foto antigua ANTES de que super().save() la sobrescriba
-        # si se está subiendo una nueva.
+        procesar_imagen_nueva = False
         old_foto_perfil_instance = None
 
-        if self.pk: # Si el objeto ya existe (actualización)
+        if self.pk:
             try:
                 old_instance = Cliente.objects.get(pk=self.pk)
                 if old_instance.foto_perfil:
-                    old_foto_perfil_instance = old_instance.foto_perfil # Foto actualmente en la BD
+                    old_foto_perfil_instance = old_instance.foto_perfil
 
-                # Si se subió una nueva foto (diferente a la anterior o no había)
                 if self.foto_perfil and self.foto_perfil != old_instance.foto_perfil:
                     procesar_imagen_nueva = True
-                    # Si hay una foto antigua y la nueva es diferente, eliminar la antigua.
-                    # Esto maneja el caso de REEMPLAZO.
                     if old_foto_perfil_instance and self.foto_perfil.name != old_foto_perfil_instance.name:
                         old_foto_perfil_instance.delete(save=False)
                 elif not self.foto_perfil and old_foto_perfil_instance:
-                    # Foto eliminada a través del formulario (la vista ya llamó a .delete() sobre el archivo)
-                    # procesar_imagen_nueva permanece False, lo cual es correcto.
                     pass
             except Cliente.DoesNotExist:
-                if self.foto_perfil: # Should not happen if self.pk is set, but for safety
+                if self.foto_perfil:
                     procesar_imagen_nueva = True
-        elif self.foto_perfil: # Nuevo objeto con foto
+        elif self.foto_perfil:
             procesar_imagen_nueva = True
 
         super().save(*args, **kwargs)
 
-        # Procesar la imagen (recortar, convertir) si es una foto nueva o cambiada y existe.
         if procesar_imagen_nueva and self.foto_perfil and hasattr(self.foto_perfil, 'path') and os.path.exists(self.foto_perfil.path):
             try:
                 img = Image.open(self.foto_perfil.path)
-
-                # 1. Recortar a cuadrado (desde el centro)
                 width, height = img.size
                 if width != height:
                     short_side = min(width, height)
@@ -150,7 +128,6 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
                     bottom = (height + short_side) / 2
                     img = img.crop((left, top, right, bottom))
 
-                # 2. Convertir a RGB (necesario para JPG si tiene canal alfa) y guardar como JPG
                 if img.mode == 'RGBA' or img.mode == 'LA' or (img.mode == 'P' and 'transparency' in img.info):
                     background = Image.new('RGB', img.size, (255, 255, 255))
                     mask = img.convert('RGBA').split()[-1] if (img.mode == 'RGBA' or img.mode == 'LA' or (img.mode == 'P' and 'transparency' in img.info)) else None
@@ -170,5 +147,231 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
         try:
             Cliente.objects.create(user=instance)
         except Exception as e:
-            # Considera registrar este error de forma más formal si es necesario para producción
-            pass # O maneja el error de otra manera
+            pass
+
+# --- Modelos para Catálogo de Música (Ajustados a vinyles.sql y convenciones) ---
+
+class Artista(models.Model):
+    nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Artista")
+    informacion = models.TextField(blank=True, null=True, verbose_name="Información del Artista")
+    foto = models.ImageField(upload_to='artistas/', blank=True, null=True, verbose_name="Foto del Artista")
+
+    class Meta:
+        db_table = 'artistas' # Convención: plural
+        verbose_name = "Artista"
+        verbose_name_plural = "Artistas"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+class Productor(models.Model):
+    nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Productor")
+
+    class Meta:
+        db_table = 'productores' # Convención: plural
+        verbose_name = "Productor"
+        verbose_name_plural = "Productores"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+class Cancion(models.Model):
+    nombre = models.CharField(max_length=200, verbose_name="Nombre de la Canción")
+    artistas = models.ManyToManyField(
+        Artista,
+        related_name='canciones_realizadas',
+        blank=True,
+        verbose_name="Artistas"
+    )
+    productores = models.ManyToManyField(
+        Productor,
+        related_name='canciones_producidas',
+        blank=True,
+        verbose_name="Productores"
+    )
+    generos = models.ManyToManyField(
+        Genero,
+        related_name='canciones_genero',
+        blank=True,
+        verbose_name="Géneros"
+    )
+    duracion = models.DurationField(verbose_name="Duración (ej: 00:03:46)", blank=True, null=True)
+
+    class Meta:
+        db_table = 'canciones' # Convención: plural
+        verbose_name = "Canción"
+        verbose_name_plural = "Canciones"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+class Producto(models.Model):
+    nombre = models.CharField(max_length=255, verbose_name="Nombre del Producto/Álbum")
+    artistas = models.ManyToManyField(
+        Artista,
+        related_name="productos",
+        verbose_name="Artista(s) Principal(es)"
+    )
+    lanzamiento = models.DateField(blank=True, null=True, verbose_name="Fecha de Lanzamiento")
+    precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
+    stock = models.PositiveIntegerField(default=0, verbose_name="Cantidad en Stock")
+    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción del Producto")
+    discografica = models.CharField(max_length=200, blank=True, null=True, verbose_name="Compañía Discográfica")
+    imagen_portada = models.ImageField(upload_to='productos_portadas/', blank=True, null=True, verbose_name="Imagen de Portada")
+    genero_principal = models.ManyToManyField(
+        Genero,
+        related_name="productos_principales",
+        verbose_name="Género(s) Principal(es) del Álbum",
+        blank=True
+    )
+
+    class Meta:
+        db_table = 'productos' # Convención: plural
+        verbose_name = "Producto (Vinilo/Álbum)"
+        verbose_name_plural = "Productos (Vinilos/Álbumes)"
+        ordering = ['nombre']
+
+    def __str__(self):
+        artistas_nombres = ", ".join(art.nombre for art in self.artistas.all())
+        return f"{self.nombre} - {artistas_nombres}"
+
+class ProductoCancion(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="tracks", verbose_name="Producto")
+    cancion = models.ForeignKey(Cancion, on_delete=models.CASCADE, related_name="apariciones_en_productos", verbose_name="Canción")
+    numero_pista = models.PositiveIntegerField(verbose_name="Número de Pista")
+
+    class Meta:
+        db_table = 'producto_canciones' # Convención: plural
+        verbose_name = "Canción en Producto"
+        verbose_name_plural = "Canciones en Productos"
+        ordering = ['producto', 'numero_pista']
+        unique_together = (('producto', 'cancion'), ('producto', 'numero_pista'))
+
+    def __str__(self):
+        return f"Pista {self.numero_pista}: {self.cancion.nombre} (Álbum: {self.producto.nombre})"
+
+# --- Modelos para Localización Geográfica (Pedidos) ---
+
+class Pais(models.Model):
+    nombre = models.CharField(max_length=100, verbose_name="Nombre del País")
+
+    class Meta:
+        db_table = 'paises'
+        verbose_name = "País"
+        verbose_name_plural = "Países"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+class Departamento(models.Model):
+    nombre = models.CharField(max_length=100, verbose_name="Nombre del Departamento")
+    pais = models.ForeignKey(Pais, on_delete=models.CASCADE, related_name='departamentos', verbose_name="País")
+
+    class Meta:
+        db_table = 'departamentos'
+        verbose_name = "Departamento"
+        verbose_name_plural = "Departamentos"
+        ordering = ['pais', 'nombre']
+
+    def __str__(self):
+        return f"{self.nombre}, {self.pais.nombre}"
+
+class Ciudad(models.Model):
+    nombre = models.CharField(max_length=100, verbose_name="Nombre de la Ciudad")
+    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, related_name='ciudades', verbose_name="Departamento")
+
+    class Meta:
+        db_table = 'ciudades'
+        verbose_name = "Ciudad"
+        verbose_name_plural = "Ciudades"
+        ordering = ['departamento', 'nombre']
+
+    def __str__(self):
+        return f"{self.nombre}, {self.departamento.nombre}"
+
+# --- Modelos para Pedidos y Pagos ---
+
+class MedioDePago(models.Model):
+    nombre = models.CharField(max_length=100, unique=True, verbose_name="Nombre del Medio de Pago")
+
+    class Meta:
+        db_table = 'medios_de_pago'
+        verbose_name = "Medio de Pago"
+        verbose_name_plural = "Medios de Pago"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+class Pedido(models.Model):
+    fecha = models.DateField(verbose_name="Fecha del Pedido")
+    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido")
+    direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío")
+    ciudad_envio = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos_enviados_aqui', verbose_name="Ciudad de Envío")
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pedidos', verbose_name="Cliente")
+    medio_de_pago = models.ForeignKey(MedioDePago, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos_pagados_con', verbose_name="Medio de Pago")
+    productos = models.ManyToManyField(Producto, through='PedidoProducto', related_name='en_pedidos', verbose_name="Productos en el Pedido")
+
+    class Meta:
+        db_table = 'pedidos'
+        verbose_name = "Pedido"
+        verbose_name_plural = "Pedidos"
+        ordering = ['-fecha', 'cliente']
+
+    def __str__(self):
+        return f"Pedido #{self.pk} de {self.cliente.user.username} - {self.fecha}"
+
+class PedidoProducto(models.Model): # Modelo intermedio para Pedido <-> Producto
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items_pedido", verbose_name="Pedido")
+    producto = models.ForeignKey(Producto, on_delete=models.PROTECT, related_name="lineas_de_pedido", verbose_name="Producto")
+    cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
+    valor_unitario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor Unitario en el Momento de la Compra")
+
+    class Meta:
+        db_table = 'pedido_productos'
+        verbose_name = "Producto del Pedido"
+        verbose_name_plural = "Productos del Pedido"
+        ordering = ['pedido', 'producto']
+        unique_together = (('pedido', 'producto'),)
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.nombre} en Pedido #{self.pedido.pk}"
+
+# --- Modelo para Soporte ---
+
+class TicketSoporte(models.Model):
+    # Definimos las constantes para los estados
+    ESTADO_ABIERTO = 'ABIERTO'
+    ESTADO_EN_PROCESO = 'EN_PROCESO'
+    ESTADO_RESUELTO = 'RESUELTO'
+    ESTADO_CERRADO = 'CERRADO'
+    
+    ESTADO_CHOICES = [
+        (ESTADO_ABIERTO, 'Abierto'),
+        (ESTADO_EN_PROCESO, 'En Proceso'),
+        (ESTADO_RESUELTO, 'Resuelto'),
+        (ESTADO_CERRADO, 'Cerrado'),
+    ]
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='tickets_soporte', verbose_name="Cliente")
+    descripcion = models.TextField(verbose_name="Descripción del Caso")
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default=ESTADO_ABIERTO, # Usamos la constante aquí
+        verbose_name="Estado del Caso"
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Última Actualización")
+
+    class Meta:
+        db_table = 'tickets_soporte'
+        verbose_name = "Ticket de Soporte"
+        verbose_name_plural = "Tickets de Soporte"
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+        return f"Ticket #{self.pk} de {self.cliente.user.username} ({self.get_estado_display()})" # get_estado_display() es útil aquí

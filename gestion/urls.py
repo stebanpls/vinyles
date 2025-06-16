@@ -15,17 +15,17 @@ urlpatterns = [
     # URLS DE LA CARPETA "ADMINISTRADOR"
     path('admin_adPro/', views.admin_adPro, name='admin_adPro'),
     path('admin_administrador/', views.admin_administrador, name='admin_administrador'),
-    path('admin_bloq_users/', views.admin_bloq_users, name='admin_bloq_users'), # Añadido '/' al final
+    path('admin_bloq_users/', views.admin_bloq_users, name='admin_bloq_users'),
     path('admin_generos/', views.admin_generos, name='admin_generos'),
     path('admin_gestion_users/', views.admin_gestion_users, name='admin_gestion_users'),
-    path('admin_new_users/', views.admin_new_users, name='admin_new_users'), # Añadido '/' al final
-    path('admin_nosotros/', views.admin_nosotros, name='admin_nosotros'), # Renombrado desde admin_sobre_nosotros
+    path('admin_new_users/', views.admin_new_users, name='admin_new_users'),
+    path('admin_nosotros/', views.admin_nosotros, name='admin_nosotros'),
     path('admin_notificaciones/', views.admin_notificaciones, name='admin_notificaciones'),
     path('admin_pedido/', views.admin_pedido, name='admin_pedido'),
-    path('admin_pedido_pendiente/', views.admin_pedido_pendiente, name='admin_pedido_pendiente'), # Añadido '/' al final
-    path('admin_pedido_realizado/', views.admin_pedido_realizado, name='admin_pedido_realizado'), # Añadido '/' al final
+    path('admin_pedido_pendiente/', views.admin_pedido_pendiente, name='admin_pedido_pendiente'),
+    path('admin_pedido_realizado/', views.admin_pedido_realizado, name='admin_pedido_realizado'),
     path('admin_producto/', views.admin_producto, name='admin_producto'),
-    path('admin_reembolsos/', views.admin_reembolsos, name='admin_reembolsos'), # Añadido '/' al final
+    path('admin_reembolsos/', views.admin_reembolsos, name='admin_reembolsos'),
     path('admin_terminos/', views.admin_terminos, name='admin_terminos'),
     path('admin_usuario/', views.admin_usuario, name='admin_usuario'),
     path('admin_ventas/', views.admin_ventas, name='admin_ventas'),
@@ -40,37 +40,34 @@ urlpatterns = [
     path('com_inicio/', views.com_inicio, name='com_inicio'),
     path('com_nosotros/', views.com_nosotros, name='com_nosotros'),
     # URLs para el perfil del comprador
-    path('com_perfil/', views.com_perfil, name='com_perfil'), # Vista para mostrar el perfil
-    path('com_perfil/editar/', views.com_perfil_editar, name='com_perfil_editar'), # Vista para editar el perfil
+    path('com_perfil/', views.com_perfil, name='com_perfil'),
+    path('com_perfil/editar/', views.com_perfil_editar, name='com_perfil_editar'),
     path('com_progreso_envio/', views.com_progreso_envio, name='com_progreso_envio'),
     path('com_reembolsos/', views.com_reembolsos, name='com_reembolsos'),
     path('com_soporte/', views.com_soporte, name='com_soporte'),
     path('com_terminos/', views.com_terminos, name='com_terminos'),
 
     # URLS DE LA CARPETA "CRUD"
-    path('crud/', views.crud, name='crud'), # Asegúrate que esta vista exista
+    path('crud/', views.crud, name='crud'),
     path('crud/crear/', views.crud_crear, name='crud_crear'),
-    path('crud/editar/<int:id>', views.crud_editar, name='crud_editar'),
-    path('crud/eliminar/<int:id>', views.crud_eliminar, name='crud_eliminar'), # Actualizado para consistencia
+    path('crud/editar/<int:id>/', views.crud_editar, name='crud_editar'),
+    path('crud/eliminar/<int:id>/', views.crud_eliminar, name='crud_eliminar'),
 
     # URLS DE LA CARPETA "PUBLICO"
-    path('', views.pub_inicio, name='pub_inicio'), # Cuando vamos a acceder a una URL, vamos a usar este nombre
+    path('', views.pub_inicio, name='pub_inicio'),
     path('pub_albumes/', views.pub_albumes, name='pub_albumes'),
     path('pub_codigo_recuperacion/', views.pub_codigo_recuperacion, name='pub_codigo_recuperacion'),
-    path('pub_ddl/', views.pub_ddl, name='pub_ddl'), # Mantener si tienes la vista pub_ddl
+    path('pub_ddl/', views.pub_ddl, name='pub_ddl'),
     path('pub_log_out/', views.pub_log_out, name='pub_log_out'),
     path('pub_login/', views.pub_login, name='pub_login'),
-    path('pub_nosotros/', views.pub_nosotros, name='pub_nosotros'), # Añadido '/' al final
+    path('pub_nosotros/', views.pub_nosotros, name='pub_nosotros'),
     path('pub_reembolsos/', views.pub_reembolsos, name='pub_reembolsos'),
     path('pub_registro/', views.pub_registro, name='pub_registro'),
-    path('pub_restablecer_contrasena/', views.pub_restablecer_contrasena, name="pub_restablecer_contrasena"), # Asegúrate que esta vista exista
+    path('pub_restablecer_contrasena/', views.pub_restablecer_contrasena, name="pub_restablecer_contrasena"),
     path('pub_restablecer_contrasena_admin/', views.pub_restablecer_contrasena_admin, name='pub_restablecer_contrasena_admin'),
     path('pub_soporte/', views.pub_soporte, name='pub_soporte'),
     path('pub_terminos/', views.pub_terminos, name='pub_terminos'),
-    path('pub_vinilo/', views.pub_vinilo, name='pub_vinilo'), # Asegúrate que esta vista exista
-
-    # URLS DELA CARPETA "PLANTILLAS"
-    # path('plantilla_publico/', views.plantilla_publico, name='plantilla_publico'), # <-- Eliminar esta URL, las plantillas base no suelen tener URL directa
+    path('pub_vinilo/', views.pub_vinilo, name='pub_vinilo'),
 
     # URLS DE LA CARPETA "VENDEDOR"
     path('ven_bad/', views.ven_bad, name='ven_bad'),
@@ -78,13 +75,13 @@ urlpatterns = [
     path('ven_nosotros/', views.ven_nosotros, name='ven_nosotros'),
     path('ven_notificaciones/', views.ven_notificaciones, name='ven_notificaciones'),
     # URLs para el perfil del vendedor
-    path('ven_perfil/', views.ven_perfil, name='ven_perfil'), # Vista para mostrar el perfil
-    path('ven_perfil/editar/', views.ven_perfil_editar, name='ven_perfil_editar'), # Vista para editar el perfil
+    path('ven_perfil/', views.ven_perfil, name='ven_perfil'),
+    path('ven_perfil/editar/', views.ven_perfil_editar, name='ven_perfil_editar'),
     path('ven_producto/', views.ven_producto, name='ven_producto'),
     path('ven_terminos/', views.ven_terminos, name='ven_terminos'),
 
     # URLS DE LOS ÁLBUMES (Considerar si deben estar prefijadas, ej: 'admin/albumes/bts/')
-    path('bts/', views.bts, name='bts'), # Asegúrate que esta vista exista
+    path('bts/', views.bts, name='bts'),
     path('carti_music/', views.carti_music, name='carti_music'),
     path('eminem_show/', views.eminem_show, name='eminem_show'),
     path('exitos_joe/', views.exitos_joe, name='exitos_joe'),
@@ -117,4 +114,10 @@ urlpatterns = [
     path('john_m/', views.john_m, name='john_m'),
     path('laura_g/', views.laura_g, name='laura_g'),
     path('sofia_ramirez/', views.sofia_ramirez, name='sofia_ramirez'),
+
+    # URLs para las vistas modales (AJAX)
+    path('modal/artista/crear/', views.artista_form_modal, name='modal_artista_crear'),
+    path('modal/genero/crear/', views.modal_genero, name='modal_genero_crear'),
+    path('modal/cancion/crear/', views.modal_cancion, name='modal_cancion_crear'),
+    path('modal/productor/crear/', views.modal_productor, name='modal_productor_crear'),
 ]

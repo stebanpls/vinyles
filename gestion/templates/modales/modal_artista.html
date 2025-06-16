@@ -1,0 +1,42 @@
+{% load widget_tweaks %}
+
+<form method="post" action="{% url 'modal_artista_crear' %}" enctype="multipart/form-data" onsubmit="enviarFormularioArtistaDesdeCancion(event, this)">
+
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title text-dark">Nuevo Artista</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="mb-3">
+      <label class="form-label text-dark">Nombre del Artista</label>
+      {{ form.nombre|add_class:"form-control" }}
+      {% if form.nombre.errors %}
+        <div class="text-danger">{{ form.nombre.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-dark">Información del Artista</label>
+      {{ form.informacion|add_class:"form-control" }}
+      {% if form.informacion.errors %}
+        <div class="text-danger">{{ form.informacion.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-dark">Foto del Artista</label>
+      {{ form.foto|add_class:"form-control" }}
+      {% if form.foto.errors %}
+        <div class="text-danger">{{ form.foto.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-success">Guardar Artista</button>
+  </div>
+</form>

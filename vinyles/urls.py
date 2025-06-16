@@ -28,7 +28,7 @@ urlpatterns = [
     path('', include('gestion.urls')), # Accediendo a todo lo que tiene gestion.urls para filtrarlo
     path('accounts/', include('django.contrib.auth.urls')),
 
-# from django.contrib.auth import views as auth_views
+    # from django.contrib.auth import views as auth_views # Descomentar si se personalizan las vistas de reseteo de contraseña
     # urlpatterns += [
     #     path('accounts/password_reset/', 
     #          auth_views.PasswordResetView.as_view(), 

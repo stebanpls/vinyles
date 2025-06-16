@@ -1,9 +1,10 @@
 from django import forms
-from .models import Crud, Cliente, Genero # Importa los modelos Crud, Cliente y Genero
+from .models import Crud, Cliente, Genero, Artista, Productor, Producto, Cancion # Importa los modelos
 from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox # Importar el widget para personalizarlo
+from datetime import timedelta # Para el formulario de Cancion
 
 # Create your views here.
 class CrudForm(forms.ModelForm):
@@ -29,18 +30,195 @@ class UserRegistrationForm(forms.ModelForm):
         }
     )
 
+#FORMULARIO PARA CREAR ARTISTA 
+class ArtistaForm(forms.ModelForm):
     class Meta:
-        model = User # Usaremos el modelo User que Django ya provee
-        fields = ('username', 'first_name', 'email') # Campos que pediremos del modelo User.
-        # Puedes añadir 'last_name' si lo deseas.
+        model = Artista
+        fields = ['nombre', 'informacion', 'foto'] # 'biografia' cambiado a 'informacion'
+        labels = {
+            'nombre': 'Nombre del Artista',
+            'informacion': 'Información del Artista', # Etiqueta actualizada
+            'foto': 'Foto del Artista',
+        }
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Michael Jackson'}),
+            'informacion': forms.Textarea(attrs={ # 'biografia' cambiado a 'informacion'
+                'rows': 4,
+                'placeholder': 'Cuenta algo sobre el artista...',
+                'class': 'form-control'
+            }),
+            'foto': MinimalFileInput(attrs={ # Usamos MinimalFileInput si es apropiado, o ClearableFileInput
+                'class': 'form-control-file mb-2', # Ajustar clases según tu CSS
+                'accept': 'image/*'
+            }),
+        }
 
-    def clean_password2(self):
-        # Este método se llama automáticamente durante la validación del formulario
-        cd = self.cleaned_data # Diccionario con los datos limpios del formulario
-        # Verifica que ambos campos de contraseña existan y que sean iguales
-        if cd.get('password') and cd.get('password2') and cd['password'] != cd['password2']:
-            raise forms.ValidationError('Las contraseñas no coinciden.')
-        return cd.get('password2') # Devuelve la contraseña confirmada (o None si no estaba presente)
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not nombre or not nombre.strip():
+            raise forms.ValidationError("El nombre del artista es obligatorio.")
+        return nombre
+
+    # La validación para 'informacion' y 'foto' puede ser opcional si en el modelo
+    # los campos permiten blank=True, null=True.
+    # Si son obligatorios en el modelo, el ModelForm ya lo valida.
+    # Estas validaciones personalizadas son útiles para mensajes específicos.
+    # def clean_informacion(self):
+    #     informacion = self.cleaned_data.get('informacion')
+    #     if not informacion or not informacion.strip(): # Solo si es obligatorio
+    #         raise forms.ValidationError("La información del artista es obligatoria.")
+    #     return informacion
+
+    # def clean_foto(self):
+    #     foto = self.cleaned_data.get('foto')
+    #     if not foto: # Solo si es obligatorio
+    #         raise forms.ValidationError("La foto del artista es obligatoria.")
+    #     return foto
+
+#PARA EL FORMULARIO DE PRODUCTO 
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = [
+            'nombre', # 'titulo' cambiado a 'nombre'
+            'artistas', # Mapeado desde 'artista_existente'
+            'lanzamiento', # 'fecha_lanzamiento' cambiado a 'lanzamiento'
+            'precio',
+            'stock',
+            'descripcion',
+            'discografica', # 'sello_discografico' cambiado a 'discografica'
+            'imagen_portada',
+            'genero_principal',
+        ]
+        labels = {
+            'nombre': 'Nombre del Producto/Álbum',
+            'artistas': 'Artista(s) Principal(es)',
+            'lanzamiento': 'Fecha de Lanzamiento',
+            'discografica': 'Compañía Discográfica',
+        }
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Thriller'}),
+            'artistas': forms.SelectMultiple(attrs={'class': 'form-control select-artista'}), # Para ManyToManyField
+            'lanzamiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'genero_principal': forms.SelectMultiple(attrs={'class': 'form-control select-genero'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.01', 'placeholder': 'Ej: 100000'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1', 'placeholder': 'Ej: 10'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'discografica': forms.TextInput(attrs={'class': 'form-control'}),
+            'imagen_portada': MinimalFileInput(attrs={'class': 'form-control-file mb-2', 'accept': 'image/*'}),
+        }
+
+    def clean_precio(self):
+        precio = self.cleaned_data.get('precio')
+        if precio is not None and precio < 0:
+            raise forms.ValidationError("El precio no puede ser negativo.")
+        return precio
+
+    def clean_stock(self):
+        stock = self.cleaned_data.get('stock')
+        if stock is not None and stock < 0:
+            raise forms.ValidationError("El stock no puede ser negativo.")
+        return stock
+
+    def clean(self):
+        cleaned_data = super().clean()
+        artistas = cleaned_data.get('artistas')
+        if not artistas: # Un producto debe tener al menos un artista
+            self.add_error('artistas', "Debes seleccionar al menos un artista.")
+        return cleaned_data
+
+#PARA EL FORMULARIO DE CANCION
+class CancionForm(forms.ModelForm):
+    minutos = forms.IntegerField(min_value=0, max_value=120, label="Minutos", required=False, widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'placeholder': '00'
+    }))
+    segundos = forms.IntegerField(min_value=0, max_value=59, label="Segundos", required=False, widget=forms.NumberInput(attrs={
+        'class': 'form-control', 'placeholder': '00'
+    }))
+
+    class Meta:
+        model = Cancion
+        fields = ['nombre', 'artistas', 'productores', 'generos'] # 'duracion' se maneja a través de minutos/segundos
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'artistas': forms.SelectMultiple(attrs={'class': 'form-control select-artista'}),
+            'productores': forms.SelectMultiple(attrs={'class': 'form-control select-productor'}),
+            'generos': forms.SelectMultiple(attrs={'class': 'form-control select-genero'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        minutos = cleaned_data.get('minutos')
+        segundos = cleaned_data.get('segundos')
+
+        # Si minutos o segundos no se proporcionan o son None, se asumen como 0
+        minutos = minutos if minutos is not None else 0
+        segundos = segundos if segundos is not None else 0
+
+        if minutos == 0 and segundos == 0:
+            # Solo lanzar error si ambos son explícitamente 0 y el campo duracion es obligatorio en el modelo
+            # o si se requiere una duración mínima. Si duracion puede ser null/blank, esto podría ser opcional.
+            # Por ahora, asumimos que una canción debe tener duración.
+            self.add_error(None, "La duración de la canción no puede ser 0 minutos y 0 segundos.")
+        else:
+            cleaned_data['duracion'] = timedelta(minutes=minutos, seconds=segundos)
+        
+        # Validar que los campos M2M no estén vacíos si son requeridos
+        if not cleaned_data.get('artistas'):
+            self.add_error('artistas', "Debes seleccionar al menos un artista.")
+        # Puedes añadir validaciones similares para productores y géneros si son obligatorios
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        # Asegurarse de que 'duracion' esté en cleaned_data antes de asignarla
+        if 'duracion' in self.cleaned_data:
+            instance.duracion = self.cleaned_data['duracion']
+        
+        if commit:
+            instance.save()
+            self.save_m2m() # Necesario para guardar las relaciones ManyToMany
+        return instance
+
+#FORMULARIO PARA EL PRODCUTOR 
+class ProductorForm(forms.ModelForm):
+    class Meta:
+        model = Productor
+        fields = ['nombre']
+        labels = {
+            'nombre': 'Nombre del Productor',
+        }
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Quincy Jones'}),
+        }
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not nombre or not nombre.strip():
+            raise forms.ValidationError("El nombre del productor es obligatorio.")
+        return nombre
+
+#FORMULARIO PARA EL GENERO
+class GeneroForm(forms.ModelForm):
+    class Meta:
+        model = Genero
+        fields = ['nombre']
+        labels = {
+            'nombre': 'Nombre del Género',
+        }
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Salsa'}),
+        }
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not nombre or not nombre.strip():
+            raise forms.ValidationError("El nombre del género es obligatorio.")
+        # Considerar validar si el género ya existe si el campo 'nombre' en el modelo es unique=True
+        # if Genero.objects.filter(nombre__iexact=nombre).exists():
+        #     raise forms.ValidationError("Este género ya existe.")
+        return nombre
 
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField(required=True)

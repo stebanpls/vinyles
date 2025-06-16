@@ -47,9 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Aplicaciones de Terceros
+    'django_recaptcha', # Para django-recaptcha.
+    'widget_tweaks', # Si lo vamos a usar
+    'dal',
+    'dal_select2', # dal y dal_select2 usan select2 para autocompletado (más lindo)
+    # Nuestras applicaciones
     'gestion.apps.GestionConfig', # Tu aplicación
-    'django_recaptcha',         # Para django-recaptcha. La próxima vez toca asegurarnos de que se llame como se llama en la dependencia.
-    'widget_tweaks', # Si lo vas a usar
 ]
 
 MIDDLEWARE = [
@@ -203,7 +207,7 @@ LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out'
 # CONFIGURACIÓN DE reCAPTCHA
 # Estas variables se leen desde tu archivo .env
 # Asegúrate de haber definido RECAPTCHA_SITE_KEY y RECAPTCHA_SECRET_KEY en .env
-RECAPTCHA_PUBLIC_KEY  = os.environ.get('RECAPTCHA_SITE_KEY',  '')
+RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_SITE_KEY', '')
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
 
 # Silenciar la advertencia de claves de prueba de reCAPTCHA para desarrollo
