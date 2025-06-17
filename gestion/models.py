@@ -10,6 +10,9 @@ from PIL import Image # Importar Pillow
 from django.core.files.base import ContentFile # Para guardar la imagen procesada
 import io # Para manejar el stream de bytes de la imagen
 
+import logging # Añadir al inicio del archivo
+logger = logging.getLogger(__name__) # Añadir al inicio del archivo, después de los imports
+
 def user_directory_path(instance, filename):
     new_filename = f"{uuid4().hex}.jpg" # Siempre usaremos extensión .jpg
     return os.path.join('fotos_perfil', f'user_{instance.user.id}', new_filename)
@@ -147,7 +150,9 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
         try:
             Cliente.objects.create(user=instance)
         except Exception as e:
-            pass
+            # En lugar de 'pass', registra el error
+            logger.error(f"Error al crear el perfil Cliente para el usuario {instance.username}: {e}")
+            # pass # Puedes dejar el pass si no quieres que la falla de la señal detenga nada más
 
 # --- Modelos para Catálogo de Música (Ajustados a vinyles.sql y convenciones) ---
 

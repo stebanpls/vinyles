@@ -19,6 +19,19 @@
 CREATE DATABASE IF NOT EXISTS `vinyles_local` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
 USE `vinyles_local`;
 
+-- Volcando estructura para tabla vinyles_local.artistas
+DROP TABLE IF EXISTS `artistas`;
+CREATE TABLE IF NOT EXISTS `artistas` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(200) NOT NULL,
+  `informacion` longtext DEFAULT NULL,
+  `foto` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre` (`nombre`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.artistas: ~0 rows (aproximadamente)
+
 -- Volcando estructura para tabla vinyles_local.auth_group
 DROP TABLE IF EXISTS `auth_group`;
 CREATE TABLE IF NOT EXISTS `auth_group` (
@@ -55,9 +68,9 @@ CREATE TABLE IF NOT EXISTS `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.auth_permission: ~40 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.auth_permission: ~88 rows (aproximadamente)
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 	(1, 'Can add log entry', 1, 'add_logentry');
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
@@ -138,6 +151,102 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 	(39, 'Can delete Cliente', 10, 'delete_cliente');
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 	(40, 'Can view Cliente', 10, 'view_cliente');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(41, 'Can add Canción', 11, 'add_cancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(42, 'Can change Canción', 11, 'change_cancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(43, 'Can delete Canción', 11, 'delete_cancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(44, 'Can view Canción', 11, 'view_cancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(45, 'Can add Productor', 12, 'add_productor');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(46, 'Can change Productor', 12, 'change_productor');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(47, 'Can delete Productor', 12, 'delete_productor');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(48, 'Can view Productor', 12, 'view_productor');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(49, 'Can add Pedido', 13, 'add_pedido');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(50, 'Can change Pedido', 13, 'change_pedido');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(51, 'Can delete Pedido', 13, 'delete_pedido');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(52, 'Can view Pedido', 13, 'view_pedido');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(53, 'Can add País', 14, 'add_pais');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(54, 'Can change País', 14, 'change_pais');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(55, 'Can delete País', 14, 'delete_pais');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(56, 'Can view País', 14, 'view_pais');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(57, 'Can add Ciudad', 15, 'add_ciudad');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(58, 'Can change Ciudad', 15, 'change_ciudad');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(59, 'Can delete Ciudad', 15, 'delete_ciudad');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(60, 'Can view Ciudad', 15, 'view_ciudad');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(61, 'Can add Canción en Producto', 16, 'add_productocancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(62, 'Can change Canción en Producto', 16, 'change_productocancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(63, 'Can delete Canción en Producto', 16, 'delete_productocancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(64, 'Can view Canción en Producto', 16, 'view_productocancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(65, 'Can add Artista', 17, 'add_artista');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(66, 'Can change Artista', 17, 'change_artista');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(67, 'Can delete Artista', 17, 'delete_artista');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(68, 'Can view Artista', 17, 'view_artista');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(69, 'Can add Departamento', 18, 'add_departamento');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(70, 'Can change Departamento', 18, 'change_departamento');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(71, 'Can delete Departamento', 18, 'delete_departamento');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(72, 'Can view Departamento', 18, 'view_departamento');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(73, 'Can add Ticket de Soporte', 19, 'add_ticketsoporte');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(74, 'Can change Ticket de Soporte', 19, 'change_ticketsoporte');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(75, 'Can delete Ticket de Soporte', 19, 'delete_ticketsoporte');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(76, 'Can view Ticket de Soporte', 19, 'view_ticketsoporte');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(77, 'Can add Medio de Pago', 20, 'add_mediodepago');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(78, 'Can change Medio de Pago', 20, 'change_mediodepago');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(79, 'Can delete Medio de Pago', 20, 'delete_mediodepago');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(80, 'Can view Medio de Pago', 20, 'view_mediodepago');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(81, 'Can add Producto (Vinilo/Álbum)', 21, 'add_producto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(82, 'Can change Producto (Vinilo/Álbum)', 21, 'change_producto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(83, 'Can delete Producto (Vinilo/Álbum)', 21, 'delete_producto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(84, 'Can view Producto (Vinilo/Álbum)', 21, 'view_producto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(85, 'Can add Producto del Pedido', 22, 'add_pedidoproducto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(86, 'Can change Producto del Pedido', 22, 'change_pedidoproducto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(87, 'Can delete Producto del Pedido', 22, 'delete_pedidoproducto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(88, 'Can view Producto del Pedido', 22, 'view_pedidoproducto');
 
 -- Volcando estructura para tabla vinyles_local.auth_user
 DROP TABLE IF EXISTS `auth_user`;
@@ -161,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(1, 'pbkdf2_sha256$1000000$IHl9F1X4p8yHxkfwwwgJTB$ut5YyPEJJ2PdfJ2VZ/TVIHX5LGYg/rtgOOCrqKSJhPM=', '2025-06-06 01:57:09.850898', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-05-30 02:22:23.892608');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-	(2, 'pbkdf2_sha256$1000000$3uLNUO3WxlaOptKesonJEB$pevuoUC4lo5jN0rDv9LV3K6sm6U5b+ZQ97+87vTweq4=', '2025-06-12 03:58:34.159328', 0, 'stebanpls', 'Steban', '', 'stebanpulido@gmail.com', 0, 1, '2025-06-06 00:42:50.616501');
+	(2, 'pbkdf2_sha256$1000000$3uLNUO3WxlaOptKesonJEB$pevuoUC4lo5jN0rDv9LV3K6sm6U5b+ZQ97+87vTweq4=', '2025-06-15 01:37:04.787212', 0, 'stebanpls', 'Steban', '', 'stebanpulido@gmail.com', 0, 1, '2025-06-06 00:42:50.616501');
 
 -- Volcando estructura para tabla vinyles_local.auth_user_groups
 DROP TABLE IF EXISTS `auth_user_groups`;
@@ -192,6 +301,75 @@ CREATE TABLE IF NOT EXISTS `auth_user_user_permissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla vinyles_local.auth_user_user_permissions: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.canciones
+DROP TABLE IF EXISTS `canciones`;
+CREATE TABLE IF NOT EXISTS `canciones` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(200) NOT NULL,
+  `duracion` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.canciones: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.canciones_artistas
+DROP TABLE IF EXISTS `canciones_artistas`;
+CREATE TABLE IF NOT EXISTS `canciones_artistas` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cancion_id` bigint(20) NOT NULL,
+  `artista_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `canciones_artistas_cancion_id_artista_id_658a2234_uniq` (`cancion_id`,`artista_id`),
+  KEY `canciones_artistas_artista_id_7e3ca9b6_fk_artistas_id` (`artista_id`),
+  CONSTRAINT `canciones_artistas_artista_id_7e3ca9b6_fk_artistas_id` FOREIGN KEY (`artista_id`) REFERENCES `artistas` (`id`),
+  CONSTRAINT `canciones_artistas_cancion_id_f63baf3e_fk_canciones_id` FOREIGN KEY (`cancion_id`) REFERENCES `canciones` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.canciones_artistas: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.canciones_generos
+DROP TABLE IF EXISTS `canciones_generos`;
+CREATE TABLE IF NOT EXISTS `canciones_generos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cancion_id` bigint(20) NOT NULL,
+  `genero_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `canciones_generos_cancion_id_genero_id_f5b48d74_uniq` (`cancion_id`,`genero_id`),
+  KEY `canciones_generos_genero_id_a160c320_fk_generos_id` (`genero_id`),
+  CONSTRAINT `canciones_generos_cancion_id_efa4578e_fk_canciones_id` FOREIGN KEY (`cancion_id`) REFERENCES `canciones` (`id`),
+  CONSTRAINT `canciones_generos_genero_id_a160c320_fk_generos_id` FOREIGN KEY (`genero_id`) REFERENCES `generos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.canciones_generos: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.canciones_productores
+DROP TABLE IF EXISTS `canciones_productores`;
+CREATE TABLE IF NOT EXISTS `canciones_productores` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cancion_id` bigint(20) NOT NULL,
+  `productor_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `canciones_productores_cancion_id_productor_id_69fc0ac1_uniq` (`cancion_id`,`productor_id`),
+  KEY `canciones_productores_productor_id_a8b93e9f_fk_productores_id` (`productor_id`),
+  CONSTRAINT `canciones_productores_cancion_id_13a8a67c_fk_canciones_id` FOREIGN KEY (`cancion_id`) REFERENCES `canciones` (`id`),
+  CONSTRAINT `canciones_productores_productor_id_a8b93e9f_fk_productores_id` FOREIGN KEY (`productor_id`) REFERENCES `productores` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.canciones_productores: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.ciudades
+DROP TABLE IF EXISTS `ciudades`;
+CREATE TABLE IF NOT EXISTS `ciudades` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `departamento_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ciudades_departamento_id_55a1aff1_fk_departamentos_id` (`departamento_id`),
+  CONSTRAINT `ciudades_departamento_id_55a1aff1_fk_departamentos_id` FOREIGN KEY (`departamento_id`) REFERENCES `departamentos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.ciudades: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla vinyles_local.clientes
 DROP TABLE IF EXISTS `clientes`;
@@ -224,6 +402,21 @@ CREATE TABLE IF NOT EXISTS `clientes_generos_favoritos` (
 
 -- Volcando datos para la tabla vinyles_local.clientes_generos_favoritos: ~0 rows (aproximadamente)
 
+-- Volcando estructura para tabla vinyles_local.cliente_medio_de_pago
+DROP TABLE IF EXISTS `cliente_medio_de_pago`;
+CREATE TABLE IF NOT EXISTS `cliente_medio_de_pago` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cliente_id` int(11) NOT NULL,
+  `mediodepago_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cliente_medio_de_pago_cliente_id_mediodepago_id_5d030f7d_uniq` (`cliente_id`,`mediodepago_id`),
+  KEY `cliente_medio_de_pag_mediodepago_id_5f374dc4_fk_medios_de` (`mediodepago_id`),
+  CONSTRAINT `cliente_medio_de_pag_mediodepago_id_5f374dc4_fk_medios_de` FOREIGN KEY (`mediodepago_id`) REFERENCES `medios_de_pago` (`id`),
+  CONSTRAINT `cliente_medio_de_pago_cliente_id_22c9b106_fk_clientes_user_id` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.cliente_medio_de_pago: ~0 rows (aproximadamente)
+
 -- Volcando estructura para tabla vinyles_local.cruds
 DROP TABLE IF EXISTS `cruds`;
 CREATE TABLE IF NOT EXISTS `cruds` (
@@ -240,6 +433,19 @@ CREATE TABLE IF NOT EXISTS `cruds` (
 -- Volcando datos para la tabla vinyles_local.cruds: ~1 rows (aproximadamente)
 INSERT INTO `cruds` (`id`, `nombre`, `apellido`, `foto`, `clase`, `direccion`, `fechaIngreso`) VALUES
 	(1, 'Edwin Steban', 'Pulido Rojas', 'fotos/foto7_GWzFezF.jpg', 'TPS', '182 Peel Street', '2025-05-30');
+
+-- Volcando estructura para tabla vinyles_local.departamentos
+DROP TABLE IF EXISTS `departamentos`;
+CREATE TABLE IF NOT EXISTS `departamentos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `pais_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `departamentos_pais_id_4ba1a8e7_fk_paises_id` (`pais_id`),
+  CONSTRAINT `departamentos_pais_id_4ba1a8e7_fk_paises_id` FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.departamentos: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla vinyles_local.django_admin_log
 DROP TABLE IF EXISTS `django_admin_log`;
@@ -269,9 +475,9 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_content_type: ~10 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_content_type: ~22 rows (aproximadamente)
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(1, 'admin', 'logentry');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
@@ -292,6 +498,30 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(9, 'gestion', 'genero');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(10, 'gestion', 'cliente');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(11, 'gestion', 'cancion');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(12, 'gestion', 'productor');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(13, 'gestion', 'pedido');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(14, 'gestion', 'pais');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(15, 'gestion', 'ciudad');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(16, 'gestion', 'productocancion');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(17, 'gestion', 'artista');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(18, 'gestion', 'departamento');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(19, 'gestion', 'ticketsoporte');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(20, 'gestion', 'mediodepago');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(21, 'gestion', 'producto');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(22, 'gestion', 'pedidoproducto');
 
 -- Volcando estructura para tabla vinyles_local.django_migrations
 DROP TABLE IF EXISTS `django_migrations`;
@@ -301,9 +531,9 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~25 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~26 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-05-30 01:52:14.584499');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
@@ -354,6 +584,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(24, 'gestion', '0006_alter_crud_options_alter_crud_clase_alter_crud_id_and_more', '2025-06-10 02:29:34.209690');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(25, 'gestion', '0007_alter_crud_options_alter_cliente_foto_perfil_and_more', '2025-06-12 03:03:05.681229');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(26, 'gestion', '0008_artista_departamento_mediodepago_pais_productor_and_more', '2025-06-17 01:23:59.769130');
 
 -- Volcando estructura para tabla vinyles_local.django_session
 DROP TABLE IF EXISTS `django_session`;
@@ -405,6 +637,155 @@ CREATE TABLE IF NOT EXISTS `generos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla vinyles_local.generos: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.medios_de_pago
+DROP TABLE IF EXISTS `medios_de_pago`;
+CREATE TABLE IF NOT EXISTS `medios_de_pago` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre` (`nombre`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.medios_de_pago: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.paises
+DROP TABLE IF EXISTS `paises`;
+CREATE TABLE IF NOT EXISTS `paises` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.paises: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.pedidos
+DROP TABLE IF EXISTS `pedidos`;
+CREATE TABLE IF NOT EXISTS `pedidos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `direccion_envio` varchar(255) NOT NULL,
+  `ciudad_envio_id` bigint(20) DEFAULT NULL,
+  `cliente_id` int(11) NOT NULL,
+  `medio_de_pago_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pedidos_ciudad_envio_id_625e6773_fk_ciudades_id` (`ciudad_envio_id`),
+  KEY `pedidos_cliente_id_0591b0b3_fk_clientes_user_id` (`cliente_id`),
+  KEY `pedidos_medio_de_pago_id_07a30f33_fk_medios_de_pago_id` (`medio_de_pago_id`),
+  CONSTRAINT `pedidos_ciudad_envio_id_625e6773_fk_ciudades_id` FOREIGN KEY (`ciudad_envio_id`) REFERENCES `ciudades` (`id`),
+  CONSTRAINT `pedidos_cliente_id_0591b0b3_fk_clientes_user_id` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`user_id`),
+  CONSTRAINT `pedidos_medio_de_pago_id_07a30f33_fk_medios_de_pago_id` FOREIGN KEY (`medio_de_pago_id`) REFERENCES `medios_de_pago` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.pedidos: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.pedido_productos
+DROP TABLE IF EXISTS `pedido_productos`;
+CREATE TABLE IF NOT EXISTS `pedido_productos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cantidad` int(10) unsigned NOT NULL CHECK (`cantidad` >= 0),
+  `valor_unitario` decimal(10,2) NOT NULL,
+  `pedido_id` bigint(20) NOT NULL,
+  `producto_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pedido_productos_pedido_id_producto_id_c0c450b8_uniq` (`pedido_id`,`producto_id`),
+  KEY `pedido_productos_producto_id_9b5f11d8_fk_productos_id` (`producto_id`),
+  CONSTRAINT `pedido_productos_pedido_id_a0f53d95_fk_pedidos_id` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`),
+  CONSTRAINT `pedido_productos_producto_id_9b5f11d8_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.pedido_productos: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.productores
+DROP TABLE IF EXISTS `productores`;
+CREATE TABLE IF NOT EXISTS `productores` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre` (`nombre`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.productores: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.productos
+DROP TABLE IF EXISTS `productos`;
+CREATE TABLE IF NOT EXISTS `productos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `lanzamiento` date DEFAULT NULL,
+  `precio` decimal(10,2) NOT NULL,
+  `stock` int(10) unsigned NOT NULL CHECK (`stock` >= 0),
+  `descripcion` longtext DEFAULT NULL,
+  `discografica` varchar(200) DEFAULT NULL,
+  `imagen_portada` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.productos: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.productos_artistas
+DROP TABLE IF EXISTS `productos_artistas`;
+CREATE TABLE IF NOT EXISTS `productos_artistas` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `producto_id` bigint(20) NOT NULL,
+  `artista_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `productos_artistas_producto_id_artista_id_1d704be9_uniq` (`producto_id`,`artista_id`),
+  KEY `productos_artistas_artista_id_750b8d1c_fk_artistas_id` (`artista_id`),
+  CONSTRAINT `productos_artistas_artista_id_750b8d1c_fk_artistas_id` FOREIGN KEY (`artista_id`) REFERENCES `artistas` (`id`),
+  CONSTRAINT `productos_artistas_producto_id_ccb2281e_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.productos_artistas: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.productos_genero_principal
+DROP TABLE IF EXISTS `productos_genero_principal`;
+CREATE TABLE IF NOT EXISTS `productos_genero_principal` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `producto_id` bigint(20) NOT NULL,
+  `genero_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `productos_genero_principal_producto_id_genero_id_e6096a75_uniq` (`producto_id`,`genero_id`),
+  KEY `productos_genero_principal_genero_id_67fa962f_fk_generos_id` (`genero_id`),
+  CONSTRAINT `productos_genero_principal_genero_id_67fa962f_fk_generos_id` FOREIGN KEY (`genero_id`) REFERENCES `generos` (`id`),
+  CONSTRAINT `productos_genero_principal_producto_id_e9b51d06_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.productos_genero_principal: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.producto_canciones
+DROP TABLE IF EXISTS `producto_canciones`;
+CREATE TABLE IF NOT EXISTS `producto_canciones` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `numero_pista` int(10) unsigned NOT NULL CHECK (`numero_pista` >= 0),
+  `cancion_id` bigint(20) NOT NULL,
+  `producto_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `producto_canciones_producto_id_numero_pista_31e03927_uniq` (`producto_id`,`numero_pista`),
+  UNIQUE KEY `producto_canciones_producto_id_cancion_id_89617936_uniq` (`producto_id`,`cancion_id`),
+  KEY `producto_canciones_cancion_id_faa58a16_fk_canciones_id` (`cancion_id`),
+  CONSTRAINT `producto_canciones_cancion_id_faa58a16_fk_canciones_id` FOREIGN KEY (`cancion_id`) REFERENCES `canciones` (`id`),
+  CONSTRAINT `producto_canciones_producto_id_8a889b51_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.producto_canciones: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.tickets_soporte
+DROP TABLE IF EXISTS `tickets_soporte`;
+CREATE TABLE IF NOT EXISTS `tickets_soporte` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `descripcion` longtext NOT NULL,
+  `estado` varchar(20) NOT NULL,
+  `fecha_creacion` datetime(6) NOT NULL,
+  `fecha_actualizacion` datetime(6) NOT NULL,
+  `cliente_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tickets_soporte_cliente_id_9ae8f092_fk_clientes_user_id` (`cliente_id`),
+  CONSTRAINT `tickets_soporte_cliente_id_9ae8f092_fk_clientes_user_id` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.tickets_soporte: ~0 rows (aproximadamente)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
