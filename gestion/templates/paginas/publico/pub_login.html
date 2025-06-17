@@ -85,7 +85,7 @@
                 {% for error in form.captcha.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
             </div>
 
-            <p><a href="{% url 'pub_codigo_recuperacion' %}">¿Olvidaste tu Contraseña?</a></p>
+    <p><a href="{% url 'password_reset' %}">¿Olvidaste tu Contraseña?</a></p>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
             </div>

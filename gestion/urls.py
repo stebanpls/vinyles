@@ -10,7 +10,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls, name='admin'),
 
     # URLS DE AUTENTICACIÓN
-    path('accounts/', include('django.contrib.auth.urls')), # Esto incluye login, logout, password_change, password_reset, etc.
+    # path('accounts/', include('django.contrib.auth.urls')), # Comentado o eliminado porque se maneja en vinyles/urls.py
 
     # URLS DE LA CARPETA "ADMINISTRADOR"
     path('admin_adPro/', views.admin_adPro, name='admin_adPro'),
@@ -56,7 +56,6 @@ urlpatterns = [
     # URLS DE LA CARPETA "PUBLICO"
     path('', views.pub_inicio, name='pub_inicio'),
     path('pub_albumes/', views.pub_albumes, name='pub_albumes'),
-    path('pub_codigo_recuperacion/', views.pub_codigo_recuperacion, name='pub_codigo_recuperacion'),
     path('pub_ddl/', views.pub_ddl, name='pub_ddl'),
     path('pub_log_out/', views.pub_log_out, name='pub_log_out'),
     path('pub_login/', views.pub_login, name='pub_login'),
@@ -64,7 +63,6 @@ urlpatterns = [
     path('pub_reembolsos/', views.pub_reembolsos, name='pub_reembolsos'),
     path('pub_registro/', views.pub_registro, name='pub_registro'),
     path('pub_restablecer_contrasena/', views.pub_restablecer_contrasena, name="pub_restablecer_contrasena"),
-    path('pub_restablecer_contrasena_admin/', views.pub_restablecer_contrasena_admin, name='pub_restablecer_contrasena_admin'),
     path('pub_soporte/', views.pub_soporte, name='pub_soporte'),
     path('pub_terminos/', views.pub_terminos, name='pub_terminos'),
     path('pub_vinilo/', views.pub_vinilo, name='pub_vinilo'),

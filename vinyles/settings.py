@@ -194,15 +194,21 @@ LOGIN_URL = 'pub_login'            # URL de tu vista de login principal
 LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out' después de cerrar sesión
 
 
+# Configuración para que los emails se muestren en la consola durante el desarrollo
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # Comentamos esta línea
+
 
 # 2) Si quieres usar Gmail (en modo real), comentas la línea anterior y descomentas estas:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
-#EMAIL_HOST_USER = 'sebastian.rg303@gmail.com'
-#EMAIL_HOST_PASSWORD = 'aericita1234'
-#DEFAULT_FROM_EMAIL = 'Vinyles <sebastian.rg303@gmail.com>'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587 # Puerto estándar para TLS
+EMAIL_USE_TLS = True # Usar Transport Layer Security (recomendado)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') # Lee tu email desde .env
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') # Lee tu contraseña de aplicación desde .env
+DEFAULT_FROM_EMAIL = f"Vinyles <{os.environ.get('EMAIL_HOST_USER')}>" # Email que aparecerá como remitente
+
+# Opcional: si quieres que el nombre del remitente sea fijo y no dependa del EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = 'Vinyles <tu_correo_de_soporte@example.com>'
 
 # CONFIGURACIÓN DE reCAPTCHA
 # Estas variables se leen desde tu archivo .env
