@@ -62,7 +62,6 @@ urlpatterns = [
     path('pub_nosotros/', views.pub_nosotros, name='pub_nosotros'),
     path('pub_reembolsos/', views.pub_reembolsos, name='pub_reembolsos'),
     path('pub_registro/', views.pub_registro, name='pub_registro'),
-    path('pub_restablecer_contrasena/', views.pub_restablecer_contrasena, name="pub_restablecer_contrasena"),
     path('pub_soporte/', views.pub_soporte, name='pub_soporte'),
     path('pub_terminos/', views.pub_terminos, name='pub_terminos'),
     path('pub_vinilo/', views.pub_vinilo, name='pub_vinilo'),

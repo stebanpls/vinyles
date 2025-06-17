@@ -99,9 +99,6 @@ def pub_inicio(request):
 
 def pub_albumes(request):
   return render(request, 'paginas/publico/pub_albumes.html')
-
-def pub_codigo_recuperacion(request):
-  return render(request, 'paginas/publico/pub_codigo_recuperacion.html')
   
 def pub_ddl(request):
   return render(request, 'paginas/publico/pub_ddl.html')
@@ -244,13 +241,6 @@ def pub_registro(request):
 
 def pub_reembolsos(request):
   return render(request, 'paginas/publico/pub_reembolsos.html')
-
-
-def pub_restablecer_contrasena(request):
-  return render(request, 'paginas/publico/pub_restablecer_contrasena.html')
-
-def pub_restablecer_contrasena_admin(request):
-  return render(request, 'paginas/publico/pub_restablecer_contrasena_admin.html')
 
 def pub_soporte(request):
   return render(request, 'paginas/publico/pub_soporte.html')
@@ -713,10 +703,11 @@ def com_perfil_editar(request):
     user = request.user
     cliente_instance, created = Cliente.objects.get_or_create(user=user)
 
-    # Inicializar formularios para la solicitud GET o para repoblar en caso de error POST
-    # Empezamos con un password_form no vinculado para GET o si no hay intención de cambiar contraseña en POST
+    # Inicializar formularios para la solicitud GET y para el contexto si el POST falla
     user_form = UserUpdateForm(instance=user)
     cliente_form = ClienteUpdateForm(instance=cliente_instance)
+    # Siempre inicializa password_form para el contexto, incluso si no hay intento de cambio.
+    # Se vinculará con datos POST solo si hay un intento.
     password_form = PasswordChangeForm(user=user)
 
     if request.method == 'POST':
@@ -733,22 +724,20 @@ def com_perfil_editar(request):
         )
 
         if intent_to_change_password:
-            # Solo si hay intención, vinculamos el password_form con los datos del POST
+            # Vincular password_form con los datos del POST solo si hay intención
             password_form = PasswordChangeForm(user=user, data=request.POST)
 
-        # Validar los formularios relevantes
-        # user_form y cliente_form siempre se validan
-        # password_form solo se valida si hubo intención de cambiarla
-        all_relevant_forms_valid = user_form.is_valid() and cliente_form.is_valid()
+        # Construir lista de formularios a validar
+        forms_to_validate = [user_form, cliente_form]
         if intent_to_change_password:
-            all_relevant_forms_valid = all_relevant_forms_valid and password_form.is_valid()
+            forms_to_validate.append(password_form)
 
+        all_forms_are_valid = all(f.is_valid() for f in forms_to_validate)
 
-        if all_relevant_forms_valid:
+        if all_forms_are_valid:
             user_form.save()
             
             # Manejo de la eliminación de la foto
-            # Accedemos a cleaned_data porque cliente_form.is_valid() fue parte de all_relevant_forms_valid
             if cliente_form.cleaned_data.get('_delete_profile_photo'):
                 delete_photo_flag = cliente_form.cleaned_data.get('_delete_profile_photo')
                 if delete_photo_flag:
@@ -756,9 +745,9 @@ def com_perfil_editar(request):
                         cliente_instance.foto_perfil.delete(save=False) # Elimina el archivo físico
                         cliente_instance.foto_perfil = None # Asegura que el campo se limpie en el modelo
 
-            cliente_form.save()
+            cliente_form.save() # Guarda el cliente_form (incluyendo la posible nueva foto o ninguna)
 
-            if intent_to_change_password: # Si llegamos aquí, password_form.is_valid() fue True
+            if intent_to_change_password: # password_form ya fue validado y es válido
                 # Solo guardar el formulario de contraseña si fue válido Y se intentó cambiar
                 password_form.save()
                 update_session_auth_hash(request, password_form.user)
@@ -768,23 +757,18 @@ def com_perfil_editar(request):
 
             return redirect('com_perfil')
         else:
-            # Si los formularios no son válidos, los mensajes de error se mostrarán junto a los campos.
-            if not all_relevant_forms_valid: # Si la validación combinada falló
-                messages.error(request, 'Por favor, corrige los errores señalados en el formulario.')
-
-    else: # GET request (cuando el usuario visita la página de edición por primera vez)
-        user_form = UserUpdateForm(instance=user)
-        cliente_form = ClienteUpdateForm(instance=cliente_instance)
-        password_form = PasswordChangeForm(user)
+            # Si algún formulario no es válido, los errores se mostrarán.
+            # password_form (vinculado si hubo intento) se pasará al contexto con sus errores.
+            messages.error(request, 'Por favor, corrige los errores señalados en el formulario.')
+    # Para GET request, los formularios ya están inicializados arriba (user_form, cliente_form no vinculados, password_form no vinculado)
 
     context = {
-        'user_form': user_form, # Será la instancia del POST si es POST, o nueva si es GET
-        'cliente_form': cliente_form, # Será la instancia del POST si es POST, o nueva si es GET
-        'password_form': password_form, # Será la instancia del POST (si hubo intento) o nueva (si GET o no hubo intento)
-        'titulo_pagina': 'Editar Mi Perfil', # Corregido para que coincida con el contexto
-        'cliente_instance': cliente_instance # Para mostrar la foto actual en el formulario, etc.
+        'user_form': user_form,
+        'cliente_form': cliente_form,
+        'password_form': password_form,
+        'titulo_pagina': 'Editar Mi Perfil',
+        'cliente_instance': cliente_instance
     }
-    # Renderiza la nueva plantilla de edición
     return render(request, 'paginas/comprador/com_perfil_editar.html', context)
 
 @login_required
@@ -882,62 +866,62 @@ def ven_perfil(request):
 def ven_perfil_editar(request):
     user = request.user
     cliente_instance, created = Cliente.objects.get_or_create(user=user)
+    
+    # Inicializar formularios para la solicitud GET y para el contexto si el POST falla
+    user_form = UserUpdateForm(instance=user)
+    cliente_form = ClienteUpdateForm(instance=cliente_instance)
+    password_form = PasswordChangeForm(user=user) # No vinculado inicialmente
 
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=user)
         cliente_form = ClienteUpdateForm(request.POST, request.FILES, instance=cliente_instance)
-        password_form = PasswordChangeForm(user, request.POST)
+        
+        intent_to_change_password = bool(
+            request.POST.get('old_password') or \
+            request.POST.get('new_password1') or \
+            request.POST.get('new_password2')
+        )
 
-        intent_to_change_password = bool(request.POST.get('new_password1'))
-        user_cliente_forms_valid = user_form.is_valid() and cliente_form.is_valid()
-        password_form_valid_if_intended = True
-
+        forms_to_validate = [user_form, cliente_form]
         if intent_to_change_password:
-            if password_form.is_valid():
-                password_form.save()
-                update_session_auth_hash(request, password_form.user)
-            else:
-                password_form_valid_if_intended = False
+            password_form = PasswordChangeForm(user=user, data=request.POST) # Vincular si hay intento
+            forms_to_validate.append(password_form)
+        
+        all_forms_are_valid = all(f.is_valid() for f in forms_to_validate)
 
-        if user_cliente_forms_valid and password_form_valid_if_intended:
+        if all_forms_are_valid:
             user_form.save()
             
-            # Manejar eliminación de foto de perfil
-            # Esto se hace ANTES de cliente_form.save()
-            # Si se sube una nueva foto en el mismo envío, esa nueva foto prevalecerá
-            # porque cliente_form.save() la asignará.
             if cliente_form.cleaned_data.get('_delete_profile_photo'):
                 if cliente_instance.foto_perfil:
-                    cliente_instance.foto_perfil.delete(save=False) # Elimina el archivo físico
-                cliente_instance.foto_perfil = None # Asegura que el campo se limpie en el modelo
+                    cliente_instance.foto_perfil.delete(save=False)
+                cliente_instance.foto_perfil = None
             
             cliente_form.save()
-
-            if intent_to_change_password and password_form_valid_if_intended:
+            
+            # Este bloque if/else para los mensajes y el guardado de contraseña
+            # debe estar DENTRO del if all_forms_are_valid:
+            if intent_to_change_password:
+                password_form.save() # Ya está validado
+                update_session_auth_hash(request, password_form.user)
                 messages.success(request, '¡Tu perfil y contraseña han sido actualizados exitosamente!')
-            elif not intent_to_change_password:
+            else: # Solo perfil actualizado, sin intento de cambiar contraseña
                 messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
+            return redirect('ven_perfil') # La redirección ocurre solo si todo fue válido y guardado
+        # El siguiente else corresponde al if all_forms_are_valid:
 
-            if not (intent_to_change_password and not password_form_valid_if_intended):
-                # Redirige a la página de visualización del perfil después de guardar
-                return redirect('ven_perfil') 
-
-        if not user_cliente_forms_valid or (intent_to_change_password and not password_form_valid_if_intended):
-            messages.error(request, 'Por favor corrige los errores señalados abajo.')
+        else: # Si algún formulario no es válido
+            messages.error(request, 'Por favor corrige los errores señalados en el formulario.')
     
-    else: # GET request (cuando el usuario visita la página de edición por primera vez)
-        user_form = UserUpdateForm(instance=user)
-        cliente_form = ClienteUpdateForm(instance=cliente_instance)
-        password_form = PasswordChangeForm(user)
+    # Para GET request, los formularios ya están inicializados arriba
 
     context = {
         'user_form': user_form,
         'cliente_form': cliente_form,
-        'password_form': password_form,
-        'titulo_pagina': 'Mi Perfil de Vendedor',
+        'password_form': password_form, # Pasará la instancia correcta (vinculada con errores o no vinculada)
+        'titulo_pagina': 'Editar Perfil de Vendedor', # Ajustado el título
         'cliente_instance': cliente_instance
     }
-    # Renderiza la nueva plantilla de edición
     return render(request, 'paginas/vendedor/ven_perfil_editar.html', context)
 
 @login_required
