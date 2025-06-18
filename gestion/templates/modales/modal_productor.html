@@ -1,6 +1,7 @@
 {% load widget_tweaks %}
 
-<form method="post" action="{% url 'modal_productor_crear' %}" enctype="multipart/form-data" onsubmit="enviarFormularioProductor(event, this)">
+<div id="modalContentProductor">
+<form method="post" action="{% url 'modal_productor_crear' %}" enctype="multipart/form-data">
   {% csrf_token %}
 
   <div class="modal-header">
@@ -23,3 +24,4 @@
     <button type="submit" class="btn btn-success">Guardar Productor</button>
   </div>
 </form>
+</div>

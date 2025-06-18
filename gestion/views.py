@@ -39,6 +39,8 @@ def artista_form_modal(request):
                 'nombre': str(artista) # Usar str(artista) para obtener la representación del modelo
             })
         else:
+            # Para depuración en el servidor:
+            print(f"Errores en el formulario de artista (modal): {form.errors.as_json()}")
             # Devolver el HTML del formulario con errores para AJAX
             form_html = render_to_string('modales/modal_artista.html', {'form': form}, request=request)
             return JsonResponse({'success': False, 'form_html': form_html})
@@ -57,6 +59,8 @@ def modal_genero(request):
                 'nombre': str(genero)
             })
         else:
+            # Para depuración en el servidor:
+            print(f"Errores en el formulario de género (modal): {form.errors.as_json()}")
             form_html = render_to_string('modales/modal_genero.html', {'form': form}, request=request)
             return JsonResponse({'success': False, 'form_html': form_html})
     else:
@@ -74,6 +78,8 @@ def modal_productor(request):
                 'nombre': str(productor)
             })
         else:
+            # Para depuración en el servidor:
+            print(f"Errores en el formulario de productor (modal): {form.errors.as_json()}")
             form_html = render_to_string('modales/modal_productor.html', {'form': form}, request=request)
             return JsonResponse({'success': False, 'form_html': form_html})
     else:
@@ -87,6 +93,8 @@ def modal_cancion(request): # Esta vista es para crear una canción individualme
             cancion = form.save()
             return JsonResponse({'success': True, 'id': cancion.id, 'nombre': str(cancion)})
         else:
+            # Para depuración en el servidor:
+            print(f"Errores en el formulario de canción (modal): {form.errors.as_json()}")
             form_html = render_to_string('modales/modal_cancion.html', {'form': form}, request=request)
             return JsonResponse({'success': False, 'form_html': form_html})
     else:
@@ -800,39 +808,52 @@ def ven_bad(request):
 @login_required
 def ven_crear(request):
     # Formularios para la página principal y para los modales
+    # Estos se usan para el contexto GET y para los modales que se cargan dinámicamente.
+    artista_form_modal = ArtistaForm()
+    productor_form_modal = ProductorForm()
+    genero_form_modal = GeneroForm()
+    cancion_form_modal = CancionForm()
+    # Obtener canciones para el dropdown inicial
+    canciones = Cancion.objects.all() # Asegúrate de pasar esto al contexto
+
     if request.method == 'POST':
         # Asumimos que el POST principal es para crear un Producto
         producto_form = ProductoForm(request.POST, request.FILES)
-        
-        # Los otros formularios se instancian vacíos para los modales,
-        # ya que sus envíos se manejan por separado vía AJAX por sus propias vistas modales.
-        artista_form_modal = ArtistaForm()
-        productor_form_modal = ProductorForm()
-        genero_form_modal = GeneroForm()
-        cancion_form_modal = CancionForm() # Para el modal de crear canción individual
 
         if producto_form.is_valid():
             producto = producto_form.save(commit=False)
-            # Aquí podrías asignar el vendedor actual si tienes esa lógica
-            # ej: if hasattr(request.user, 'perfil_vendedor'): producto.vendedor = request.user.perfil_vendedor
+            if request.user.is_authenticated:
+                # Asumiendo que tu modelo Producto tiene un campo 'vendedor' ForeignKey a User
+                # y que puede ser null o tienes un perfil de vendedor.
+                # Si tienes un modelo VendedorProfile relacionado con User:
+                # if hasattr(request.user, 'vendedorprofile'):
+                #     producto.vendedor = request.user.vendedorprofile
+                # Si el campo vendedor en Producto es directamente ForeignKey a User:
+                producto.vendedor = request.user # Ajusta esto según tu modelo Producto
+
             producto.save()
             producto_form.save_m2m() # Guarda las relaciones ManyToMany (artistas, genero_principal)
             
-            messages.success(request, f"Producto '{producto.nombre}' creado exitosamente.")
-            # Idealmente, redirigir a la página del producto o a una lista.
-            # Por ahora, redirigimos de nuevo a la página de creación o a otra página de vendedor.
-            return redirect('ven_crear') # O 'ven_lista_productos' si existe una, o al detalle del producto.
+            # Para AJAX, devolvemos JSON
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True, 'redirect_url': reverse('ven_producto')})
+            else: # Para envíos de formulario no-AJAX (si los hubiera)
+                messages.success(request, f"Producto '{producto.titulo}' creado exitosamente.") # Ajusta 'titulo' si el campo es 'nombre'
+                return redirect('ven_producto')
         else:
-            messages.error(request, "Por favor, corrige los errores en el formulario del producto.")
-            # Si hay errores en producto_form, se re-renderizará la página con producto_form
-            # conteniendo los errores. Los formularios de los modales seguirán vacíos.
+            # Para AJAX, devolvemos JSON con errores
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                # No vamos a re-renderizar todo el formulario principal vía AJAX aquí,
+                # solo indicamos que falló. La validación del lado del cliente o mensajes de error
+                # más detallados en el formulario principal se manejarían de otra forma si es necesario.
+                # Por ahora, un simple mensaje de error.
+                return JsonResponse({'success': False, 'message': 'El formulario principal tiene errores. Por favor, revísalo.'})
+            else: # Para envíos de formulario no-AJAX
+                messages.error(request, "Por favor, corrige los errores en el formulario del producto.")
+                # producto_form con errores se pasará al contexto abajo
 
     else: # GET request
         producto_form = ProductoForm()
-        artista_form_modal = ArtistaForm()
-        productor_form_modal = ProductorForm()
-        genero_form_modal = GeneroForm()
-        cancion_form_modal = CancionForm()
 
     context = {
         'producto_form': producto_form,         # Formulario principal de la página
@@ -840,6 +861,7 @@ def ven_crear(request):
         'productor_form_modal': productor_form_modal, # Para el modal de productor
         'genero_form_modal': genero_form_modal,   # Para el modal de genero
         'cancion_form_modal': cancion_form_modal, # Para el modal de cancion
+        'canciones': canciones, # Pasar la lista de canciones
         'titulo_pagina': 'Crear Nuevo Contenido Musical',
     }
     return render(request, 'paginas/vendedor/ven_crear.html', context)

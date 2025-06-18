@@ -3,6 +3,8 @@
 {% load widget_tweaks %}
 
 {% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css" />
     <!-- <link rel="stylesheet" href="{% static 'css/paginas/vendedor/style_crear.css' %}"> -->
       <style>
     .select2-container--default .select2-results__option {
@@ -37,12 +39,12 @@
 
     <div class="mb-3">
         <label for="id_titulo" class="form-label " style="color: black;">Título del Álbum</label>
-        {{ producto_form.titulo }}
+        {{ producto_form.nombre|add_class:"form-control" }} {# CAMBIADO: Usar 'nombre' que es el nombre del campo en ProductoForm #}
     </div>
 
     <div class="mb-3">
         <label for="id_fecha_lanzamiento" class="form-label" style="color: black;">Fecha de Lanzamiento</label>
-        {{ producto_form.fecha_lanzamiento }}
+        {{ producto_form.lanzamiento|add_class:"form-control" }} {# CAMBIADO: Usar 'lanzamiento' que es el nombre del campo en ProductoForm #}
     </div>
 
     <div class="mb-3">
@@ -57,7 +59,7 @@
 
     <div class="mb-3">
         <label for="id_sello_discografico" class="form-label " style="color: black;" >Sello Discográfico</label>
-        {{ producto_form.sello_discografico|add_class:"form-control" }}
+        {{ producto_form.discografica|add_class:"form-control" }} {# CAMBIADO: Usar 'discografica' que es el nombre del campo en ProductoForm #}
     </div>
 
     <div class="mb-3">
@@ -190,8 +192,8 @@
 {% endblock contenido %}
 
 {% block pie %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
@@ -214,18 +216,21 @@ $(document).ready(function () {
   if ($('#id_artistas').length && !$('#id_artistas').data('select2')) {
     $('#id_artistas').select2({
       placeholder: "Busca y selecciona artista(s) del álbum",
-      width: '100%'
+      width: '100%',
+      theme: "bootstrap-5"
     });
   }
 
   $('.select-genero').select2({
     placeholder: "Selecciona género(s)",
-    width: '100%'
+    width: '100%',
+    theme: "bootstrap-5"
   });
 
   $('.select-productor').select2({
     placeholder: "Busca y selecciona productor(es)",
-    width: '100%'
+    width: '100%',
+    theme: "bootstrap-5"
   });
 
   console.log("✅ Select2 cargado para artista, género y productor");
@@ -264,7 +269,8 @@ function abrirModalArtista(url, desdeCancion = false) {
       $('#modalArtista .select-artista').select2({
         placeholder: "Selecciona artista(s)",
         dropdownParent: modalContent,
-        width: '100%'
+        width: '100%',
+        theme: "bootstrap-5"
       });
     });
 }
@@ -300,12 +306,12 @@ function enviarFormularioArtista(event, form, idSelect = "id_artistas", modalId 
       });
 
       // 2. Reemplazar el contenido del modal con el nuevo HTML que incluye errores
-      document.getElementById("modalContentArtista").innerHTML = data.form_html;
+      document.getElementById(modalId === "modalArtista" ? "modalContentArtista" : "modalContent").innerHTML = data.form_html; // Ajuste por si se usa modalFormulario
 
       // 3. Volver a colocar los valores escritos por el usuario en el nuevo formulario
-      const nuevoForm = document.querySelector(#${modalId} form);
+      const nuevoForm = document.querySelector(`#${modalId} form`);
       Object.keys(valoresActuales).forEach(name => {
-        const campo = nuevoForm.querySelector([name="${name}"]);
+        const campo = nuevoForm.querySelector(`[name="${name}"]`);
         if (campo) {
           campo.value = valoresActuales[name];
         }
@@ -315,6 +321,20 @@ function enviarFormularioArtista(event, form, idSelect = "id_artistas", modalId 
       nuevoForm.addEventListener("submit", function (event) {
         enviarFormularioArtista(event, nuevoForm, idSelect, modalId);
       });
+
+      // Re-inicializar Select2 si hay campos select en el modal de artista
+      const modalContent = $(`#${modalId} .modal-content`);
+      $(`#${modalId} .select-artista`).each(function() { // Asumiendo que podrías tener un select de artista dentro
+        if (!$(this).hasClass('select2-hidden-accessible')) {
+            $(this).select2({
+                placeholder: "Selecciona artista(s)",
+                dropdownParent: modalContent,
+                width: '100%',
+                theme: "bootstrap-5"
+            });
+        }
+      });
+      console.log(`Modal ${modalId} (artista) recargado con errores, Select2 y submit re-inicializados.`);
     }
   });
 }
@@ -355,6 +375,19 @@ function enviarFormularioArtistaDesdeCancion(event, form) {
       nuevoForm.addEventListener("submit", function (event) {
         enviarFormularioArtistaDesdeCancion(event, nuevoForm);
       });
+      // Re-inicializar Select2 si hay campos select en el modal de artista
+      const modalContent = $('#modalArtista .modal-content');
+      $('#modalArtista .select-artista').each(function() {
+        if (!$(this).hasClass('select2-hidden-accessible')) {
+            $(this).select2({
+                placeholder: "Selecciona artista(s)",
+                dropdownParent: modalContent,
+                width: '100%',
+                theme: "bootstrap-5"
+            });
+        }
+      });
+      console.log("Modal Artista (desde canción) recargado con errores, Select2 y submit re-inicializados.");
     }
   });
 }
@@ -372,7 +405,7 @@ function abrirModalGenero(url) {
       const form = document.querySelector("#modalGenero form");
       form.addEventListener("submit", function (event) {
         event.preventDefault();
-        enviarFormularioGenero(event, form, "id_generos", "modalGenero");  // usa el ID real del select en el formulario
+        enviarFormularioGenero(event, form, "id_genero_principal", "modalGenero");  // Corregido: usa el ID del select del formulario principal
       });
     });
 }
@@ -403,10 +436,23 @@ function enviarFormularioGenero(event, form, idSelect = "id_genero_principal", m
       document.getElementById(contentId).innerHTML = data.form_html;
 
       // 💥 Volvemos a enganchar el submit al nuevo form renderizado
-      const nuevoForm = document.querySelector(#${modalId} form);
+      const nuevoForm = document.querySelector(`#${modalId} form`);
       nuevoForm.addEventListener("submit", function (event) {
         enviarFormularioGenero(event, nuevoForm, idSelect, modalId);
       });
+      // Re-inicializar Select2 si hay campos select en el modal de genero
+      const modalContent = $(`#${modalId} .modal-content`);
+      $(`#${modalId} .select-genero`).each(function() { // Asumiendo clase 'select-genero'
+        if (!$(this).hasClass('select2-hidden-accessible')) {
+            $(this).select2({
+                placeholder: "Selecciona género(s)",
+                dropdownParent: modalContent,
+                width: '100%',
+                theme: "bootstrap-5"
+            });
+        }
+      });
+      console.log(`Modal ${modalId} (género) recargado con errores, Select2 y submit re-inicializados.`);
     }
   });
 }
@@ -432,22 +478,25 @@ $('#modalCancion select.select-artista').each(function () {
     $(this).select2({
       placeholder: "Busca y selecciona artista(s)",
       dropdownParent: modalContent,
-      width: '100%'
+      width: '100%',
+      theme: "bootstrap-5"
     });
   }
 });
 
 
-      $('#modalCancion .select-productor').select2({
+      $('#modalCancion .select-productor-modal').select2({ // Corregido para coincidir con la clase en modal_cancion.html
         placeholder: "Busca y selecciona productor(es)",
         dropdownParent: modalContent,
-        width: '100%'
+        width: '100%',
+        theme: "bootstrap-5"
       });
 
       $('#modalCancion .select-genero').select2({
         placeholder: "Selecciona género(s)",
         dropdownParent: modalContent,
-        width: '100%'
+        width: '100%',
+        theme: "bootstrap-5"
       });
 
       // 🔁 Conectar formulario al submit
@@ -498,6 +547,49 @@ function enviarFormularioCancion(event, form) {
       } else {
         // Reemplazar contenido del modal con el formulario con errores
         document.getElementById("modalContentCancion").innerHTML = data.form_html;
+
+        // RE-INICIALIZAR SELECT2 y RE-ASOCIAR EVENTOS
+        const modalContent = $('#modalCancion .modal-content'); 
+
+        $('#modalCancion select.select-artista').each(function () {
+            if (!$(this).hasClass('select2-hidden-accessible')) { 
+                $(this).select2({
+                    placeholder: "Busca y selecciona artista(s)",
+                    dropdownParent: modalContent, 
+                    width: '100%',
+                    theme: "bootstrap-5"
+                });
+            }
+        });
+
+        $('#modalCancion .select-productor-modal').each(function () {
+            if (!$(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2({
+                    placeholder: "Busca y selecciona productor(es)",
+                    dropdownParent: modalContent,
+                    width: '100%',
+                    theme: "bootstrap-5"
+                });
+            }
+        });
+
+        $('#modalCancion .select-genero').each(function () {
+            if (!$(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2({
+                    placeholder: "Selecciona género(s)",
+                    dropdownParent: modalContent,
+                    width: '100%',
+                    theme: "bootstrap-5"
+                });
+            }
+        });
+        const nuevoFormCancion = document.querySelector("#modalCancion form");
+        if (nuevoFormCancion) {
+            nuevoFormCancion.addEventListener("submit", function (event) {
+                enviarFormularioCancion(event, nuevoFormCancion); 
+            });
+        }
+        console.log("Modal de canción recargado con errores, Select2 y submit re-inicializados.");
       }
     });
 }
@@ -512,7 +604,7 @@ function agregarCancion() {
     <div class="cancion-row d-flex align-items-center mb-2">
       <select name="cancion_${cantidadActual}" class="form-control select-cancion me-2" required>
         <option value="">Selecciona una canción</option>
-        ${cancionesDisponibles.map(c => <option value="${c.id}">${c.nombre}</option>).join('')}
+        ${cancionesDisponibles.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('')}
       </select>
       <input type="number" name="pista_${cantidadActual}" class="form-control me-2" value="${cantidadActual + 1}" readonly style="max-width: 100px;">
       <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
@@ -543,8 +635,8 @@ function renumerarPistas() {
     const select = fila.querySelector("select[name^='cancion_']");
 
     pistaInput.value = index + 1;
-    pistaInput.name = pista_${index};
-    select.name = cancion_${index};
+    pistaInput.name = `pista_${index}`;
+    select.name = `cancion_${index}`;
   });
 }
 
@@ -567,7 +659,8 @@ function abrirModalProductorDesdeCancion(url) {
 
       $('#modalProductor select').select2({
         dropdownParent: modalContent,
-        width: '100%'
+        width: '100%',
+        theme: "bootstrap-5"
       });
 
       // Conectar el formulario del modal
@@ -604,6 +697,20 @@ function enviarFormularioProductor(event, form) {
         alert("✅ Productor creado y añadido a la canción.");
       } else {
         document.getElementById("modalContentProductor").innerHTML = data.form_html;
+        // Re-enganchar el formulario y reinicializar select2 si es necesario
+        const nuevoFormProductor = document.querySelector("#modalProductor form");
+        if (nuevoFormProductor) {
+            nuevoFormProductor.addEventListener("submit", function(event) {
+                enviarFormularioProductor(event, nuevoFormProductor);
+            });
+        }
+        const modalContent = $('#modalProductor .modal-content');
+        $('#modalProductor select').select2({ // Asumiendo que podría haber un select
+            dropdownParent: modalContent,
+            width: '100%',
+            theme: "bootstrap-5"
+        });
+        console.log("Modal Productor recargado con errores, Select2 y submit re-inicializados.");
       }
     });
 }
@@ -675,19 +782,22 @@ function enviarFormularioGeneroDesdeCancion(event, form) {
         $('#modalGenero .select-artista').select2({
           placeholder: "Busca y selecciona artista(s)",
           dropdownParent: modalContent,
-          width: '100%'
+          width: '100%',
+          theme: "bootstrap-5"
         });
 
         $('#modalGenero .select-productor').select2({
           placeholder: "Busca y selecciona productor(es)",
           dropdownParent: modalContent,
-          width: '100%'
+          width: '100%',
+          theme: "bootstrap-5"
         });
 
         $('#modalGenero .select-genero').select2({
           placeholder: "Selecciona género(s)",
           dropdownParent: modalContent,
-          width: '100%'
+          width: '100%',
+          theme: "bootstrap-5"
         });
       }
     });
