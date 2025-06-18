@@ -67,48 +67,52 @@
 
     <div class="mb-3">
         <label for="id_genero_principal" class="form-label " style="color: black;">Género(s) Principal(es)</label>
-        {{ producto_form.genero_principal|add_class:"form-control"  }}
+        {{ producto_form.genero_principal|add_class:"form-control select-genero"  }}
     </div>
+
         <div class="input-group">
-  <button type="button" class="btn btn-outline-primary" onclick="abrirModalGenero('{% url 'modal_genero_crear' %}')">
-    + Agregar nuevo género
-  </button>
-</div>
+          <button type="button" class="btn btn-outline-primary" onclick="abrirModalGenero('{% url 'modal_genero_crear' %}')">
+            + Agregar nuevo género
+          </button>
+        </div>
 
-
+<br>
 
     <div class="mb-3">
-        <label for="id_artista_existente" class="form-label " style="color: black;">Seleccionar Artista(s)</label>
-        {{ producto_form.artista_existente|add_class:"form-control"  }}
+        <label for="id_artistas" class="form-label " style="color: black;">Seleccionar Artista(s)</label>
+        {{ producto_form.artistas|add_class:"form-control select-artista"  }}
     </div>
-    <div class="input-group">
-    <button type="button" class="btn btn-outline-primary" onclick="abrirModalArtista('{% url 'modal_artista_crear' %}')">
-      + Agregar nuevo artista
-    </button>
-  </div>
-    
 
-    
+    <div class="input-group">
+      <button type="button" class="btn btn-outline-primary" onclick="abrirModalArtista('{% url 'modal_artista_crear' %}')">
+        + Agregar nuevo artista
+      </button>
+    </div>
+
+<br>
 
     <div id="contenedor-canciones">
-  <div class="cancion-row d-flex align-items-center mb-2">
-    <select name="cancion_0" class="form-control select-cancion me-2" required>
-      <option value="">Selecciona una canción</option>
-      {% for cancion in canciones %}
-        <option value="{{ cancion.id }}">{{ cancion.nombre }}</option>
-      {% endfor %}
-    </select>
-    <input type="number" name="pista_0" class="form-control me-2" value="1" readonly style="max-width: 100px;">
+      <div class="cancion-row d-flex align-items-center mb-2">
+        <select name="cancion_0" class="form-control select-cancion me-2" required>
+          <option value="">Selecciona una canción</option>
+            {% for cancion in canciones %}
+          <option value="{{ cancion.id }}">{{ cancion.nombre }}</option>
+            {% endfor %}
+        </select>
+      <input type="number" name="pista_0" class="form-control me-2" value="1" readonly style="max-width: 100px;">
     <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
   </div>
 </div>
+
+
+
 <div>
 <button type="button" class="btn btn-secondary mt-2" onclick="agregarCancion()">+ Agregar otra canción</button>
 </div>
-
+<br>
 <div>
-    <button type="button" class="btn btn-primary mb-3" onclick="abrirModalCancion('{% url 'modal_cancion_crear' %}')">
-    + Agregar nuevo Cancion
+    <button type="button" class="btn btn-outline-primary " onclick="abrirModalCancion('{% url 'modal_cancion_crear' %}')">
+    + Agregar nueva Cancion
 </button>
 </div>
 
@@ -121,7 +125,7 @@
 
 
     <br><br>
-    <button type="submit" class="btn btn-success">Crear Producto</button>
+    <button type="button" class="btn btn-primary btn-confirmar">Crear Porducto</button>
 </form>
 
 <!-- Modal vacío, se llenará vía fetch -->
@@ -163,6 +167,25 @@
   </div>
 </div>
 
+<div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="modalConfirmacionLabel">¿Guardar cambios?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás segur@ de que quieres guardar estos cambios?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-success" id="confirmarGuardar">Sí, guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 {% endblock contenido %}
 
@@ -185,11 +208,15 @@
 
   //para que funcione el select 2 
 $(document).ready(function () {
-  // Activa todos los select2
-  $('.select-artista').select2({
-    placeholder: "Busca y selecciona artista(s)",
-    width: '100%'
-  });
+  // Inicializar Select2 para el campo de artistas del formulario principal (álbum)
+  // Usamos el ID específico para mayor robustez.
+  // Asumimos que el campo en ProductoForm se llama 'artistas', por lo que su ID es 'id_artistas'.
+  if ($('#id_artistas').length && !$('#id_artistas').data('select2')) {
+    $('#id_artistas').select2({
+      placeholder: "Busca y selecciona artista(s) del álbum",
+      width: '100%'
+    });
+  }
 
   $('.select-genero').select2({
     placeholder: "Selecciona género(s)",
@@ -210,59 +237,127 @@ $(document).ready(function () {
 
 //abre el modal de artista
 // Abre el modal de artista
-function abrirModalArtista(url) {
+
+function abrirModalArtista(url, desdeCancion = false) {
   fetch(url)
     .then(response => response.text())
     .then(html => {
       document.getElementById("modalContentArtista").innerHTML = html;
-      let modal = new
-      bootstrap.Modal(document.getElementById("modalArtista"));
+      let modal = new bootstrap.Modal(document.getElementById('modalArtista'));
       modal.show();
 
       const form = document.querySelector("#modalArtista form");
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        enviarFormularioArtista(event, form, "id_artista_existente", "modalArtista");
+
+      if (desdeCancion) {
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          enviarFormularioArtistaDesdeCancion(event, form);
+        });
+      } else {
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          enviarFormularioArtista(event, form, "id_artistas", "modalArtista");
+        });
+      }
+
+      const modalContent = $('#modalArtista .modal-content');
+      $('#modalArtista .select-artista').select2({
+        placeholder: "Selecciona artista(s)",
+        dropdownParent: modalContent,
+        width: '100%'
       });
     });
 }
-// Envía el formulario del modal de artista
-function enviarFormularioArtista(event, form, idSelect = "id_artista_existente", modalId = "modalFormulario") {
+
+
+function enviarFormularioArtista(event, form, idSelect = "id_artistas", modalId = "modalArtista") {
   event.preventDefault();
   const url = form.action;
   const formData = new FormData(form);
 
   fetch(url, {
-    method: "POST",
+    method: 'POST',
     body: formData,
   })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        const select = document.getElementById(idSelect);
-        const option = new Option(data.nombre, data.id, true, true);
-        select.appendChild(option);
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const select = document.getElementById(idSelect);
+      const option = new Option(data.nombre, data.id, true, true);
+      select.appendChild(option);
+      $('#' + idSelect).trigger('change');
 
-        // Si es select2, fuerza actualización
-        $('#' + idSelect).trigger('change');
+      const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+      modal.hide();
+      alert("✅ Artista creado con éxito");
+    } else {
+      // 1. Guardar los valores escritos por el usuario antes de reemplazar el HTML
+      const valoresActuales = {};
+      form.querySelectorAll("input, textarea, select").forEach(input => {
+        if (input.name) {
+          valoresActuales[input.name] = input.value;
+        }
+      });
 
-        const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
-        modal.hide();
+      // 2. Reemplazar el contenido del modal con el nuevo HTML que incluye errores
+      document.getElementById("modalContentArtista").innerHTML = data.form_html;
 
-        alert("✅ Artista creado con éxito");
-      } else {
-        // Reemplaza el contenido del formulario con errores y vuelve a enganchar el submit
-        const contentId = modalId === "modalFormulario" ? "modalContent" : "modalContentArtista";
-        document.getElementById(contentId).innerHTML = data.form_html;
+      // 3. Volver a colocar los valores escritos por el usuario en el nuevo formulario
+      const nuevoForm = document.querySelector(#${modalId} form);
+      Object.keys(valoresActuales).forEach(name => {
+        const campo = nuevoForm.querySelector([name="${name}"]);
+        if (campo) {
+          campo.value = valoresActuales[name];
+        }
+      });
 
-        const nuevoForm = document.querySelector(`#${modalId} form`);
-        nuevoForm.addEventListener("submit", function (event) {
-          enviarFormularioArtista(event, nuevoForm, idSelect, modalId);
-        });
-      }
-    });
+      // 4. Volver a enganchar el evento submit para que siga funcionando
+      nuevoForm.addEventListener("submit", function (event) {
+        enviarFormularioArtista(event, nuevoForm, idSelect, modalId);
+      });
+    }
+  });
 }
 
+
+function enviarFormularioArtistaDesdeCancion(event, form) {
+  event.preventDefault();
+  const url = form.action;
+  const formData = new FormData(form);
+
+  fetch(url, {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Referencia al select de artista dentro del modal de canción
+      const selectArtista = document.querySelector('#modalCancion .select-artista');
+      
+      // Crear opción y agregarla al select
+      const nuevaOpcion = new Option(data.nombre, data.id, true, true);
+      selectArtista.appendChild(nuevaOpcion);
+
+      // Actualizar select2
+      $(selectArtista).trigger('change');
+
+      // Cerrar solo el modal de artista
+      const modal = bootstrap.Modal.getInstance(document.getElementById("modalArtista"));
+      modal.hide();
+
+      alert("✅ Artista creado con éxito");
+    } else {
+      // Si hay errores, recargar el form con los errores visibles
+      document.getElementById("modalContentArtista").innerHTML = data.form_html;
+
+      const nuevoForm = document.querySelector("#modalArtista form");
+      nuevoForm.addEventListener("submit", function (event) {
+        enviarFormularioArtistaDesdeCancion(event, nuevoForm);
+      });
+    }
+  });
+}
 
 
 //abrir el modal genero 
@@ -308,7 +403,7 @@ function enviarFormularioGenero(event, form, idSelect = "id_genero_principal", m
       document.getElementById(contentId).innerHTML = data.form_html;
 
       // 💥 Volvemos a enganchar el submit al nuevo form renderizado
-      const nuevoForm = document.querySelector(`#${modalId} form`);
+      const nuevoForm = document.querySelector(#${modalId} form);
       nuevoForm.addEventListener("submit", function (event) {
         enviarFormularioGenero(event, nuevoForm, idSelect, modalId);
       });
@@ -331,11 +426,17 @@ function abrirModalCancion(url) {
       const modalContent = $('#modalCancion .modal-content');
 
       // Inicializar Select2 dentro del modal
-      $('#modalCancion .select-artista').select2({
-        placeholder: "Busca y selecciona artista(s)",
-        dropdownParent: modalContent,
-        width: '100%'
-      });
+      // Inicializar Select2 para artista sin romper estilos previos
+$('#modalCancion select.select-artista').each(function () {
+  if (!$(this).hasClass('select2-hidden-accessible')) {
+    $(this).select2({
+      placeholder: "Busca y selecciona artista(s)",
+      dropdownParent: modalContent,
+      width: '100%'
+    });
+  }
+});
+
 
       $('#modalCancion .select-productor').select2({
         placeholder: "Busca y selecciona productor(es)",
@@ -411,7 +512,7 @@ function agregarCancion() {
     <div class="cancion-row d-flex align-items-center mb-2">
       <select name="cancion_${cantidadActual}" class="form-control select-cancion me-2" required>
         <option value="">Selecciona una canción</option>
-        ${cancionesDisponibles.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('')}
+        ${cancionesDisponibles.map(c => <option value="${c.id}">${c.nombre}</option>).join('')}
       </select>
       <input type="number" name="pista_${cantidadActual}" class="form-control me-2" value="${cantidadActual + 1}" readonly style="max-width: 100px;">
       <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
@@ -442,8 +543,8 @@ function renumerarPistas() {
     const select = fila.querySelector("select[name^='cancion_']");
 
     pistaInput.value = index + 1;
-    pistaInput.name = `pista_${index}`;
-    select.name = `cancion_${index}`;
+    pistaInput.name = pista_${index};
+    select.name = cancion_${index};
   });
 }
 
@@ -593,88 +694,40 @@ function enviarFormularioGeneroDesdeCancion(event, form) {
 }
 
 
-//abrir el modal de artista 
-function abrirModalArtista(url, desdeCancion = false) {
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById("modalContentArtista").innerHTML = html;
-      let modal = new 
-bootstrap.Modal(document.getElementById('modalArtista'));
-      modal.show();
+document.addEventListener('DOMContentLoaded', function () {
+  let formularioTemporal = null;
+  const modalConfirmacion = new bootstrap.Modal(document.getElementById('modalConfirmacion'));
 
-      const form = document.querySelector("#modalArtista form");
+  document.querySelectorAll('.btn-confirmar').forEach(boton => {
+    boton.addEventListener('click', function () {
+      const form = boton.closest('form');
+      if (!form) return;
 
-      if (desdeCancion) {
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          enviarFormularioArtistaDesdeCancion(event, form);
-        });
+      if (form.checkValidity()) {
+        formularioTemporal = form;
+        modalConfirmacion.show();
       } else {
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          enviarFormularioArtista(event, form, "id_artista_existente", "modalArtista");
-        });
+        form.reportValidity(); // Muestra errores nativos del navegador
       }
     });
-}
+  });
+
+  document.getElementById('confirmarGuardar').addEventListener('click', function () {
+  if (formularioTemporal) {
+    // Disparamos el evento submit como si el usuario lo hubiera hecho
+    const evento = new Event('submit', { bubbles: true, cancelable: true });
+    formularioTemporal.dispatchEvent(evento);
+    modalConfirmacion.hide();
+    formularioTemporal = null;
+  }
+});
+
+});
 
 
 //enviar el formulario de artista 
-function enviarFormularioArtistaDesdeCancion(event, form) {
-  event.preventDefault();
-  const url = form.action;
-  const formData = new FormData(form);
 
-  fetch(url, {
-    method: 'POST',
-    body: formData,
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalArtista'));
-        modal.hide();
-
-        // Agregar nuevo artista al Select2 dentro del modal de canción
-        const nuevoOption = new Option(data.nombre, data.id, true, true);
-        $('#modalCancion .select-artista').append(nuevoOption).trigger('change');
-
-        alert("✅ Artista creado y añadido al formulario de canción.");
-      } else {
-        // Mostrar los errores del formulario
-        document.getElementById("modalContentArtista").innerHTML = data.form_html;
-
-        // Volver a enlazar el submit
-        const nuevoForm = document.querySelector("#modalArtista form");
-        nuevoForm.addEventListener("submit", function (e) {
-          e.preventDefault();
-          enviarFormularioArtistaDesdeCancion(e, nuevoForm);
-        });
-
-        // Reinicializar los Select2 del modal si hay
-        const modalContent = $('#modalArtista .modal-content');
-
-        $('#modalArtista .select-artista').select2({
-          placeholder: "Busca y selecciona artista(s)",
-          dropdownParent: modalContent,
-          width: '100%'
-        });
-
-        $('#modalArtista .select-productor').select2({
-          placeholder: "Busca y selecciona productor(es)",
-          dropdownParent: modalContent,
-          width: '100%'
-        });
-
-        $('#modalArtista .select-genero').select2({
-          placeholder: "Selecciona género(s)",
-          dropdownParent: modalContent,
-          width: '100%'
-        });
-      }
-    });
-}
 
 </script>
+
 {% endblock pie %}

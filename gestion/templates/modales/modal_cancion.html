@@ -1,6 +1,5 @@
-
 {% load widget_tweaks %}
-
+<div id="modalContentCancion">
   <form method="post" action="{% url 'modal_cancion_crear' %}" enctype="multipart/form-data" style="background-color: lightpink;">
     
     {% csrf_token %}
@@ -32,13 +31,15 @@
 </div>
 
       <div class="mb-3">
-        <label class="form-label text-dark">Artistas</label>
-        {{ form.artistas|add_class:"form-control select-artista-modal" }}
-      </div>
+  <label class="form-label text-dark">Artistas</label>
+  {{ form.artistas|add_class:"form-control select-artista"|attr:"id:id_artistas_modal_cancion" }}
+</div>
 
-      <button type="button" class="btn btn-primary mb-3" onclick='abrirModalArtista("{% url "modal_artista_crear" %}?select_id=id_artistas&modal_id=modalCancion")'>
+<div class="input-group mb-3">
+  <button type="button" class="btn btn-outline-primary" onclick="abrirModalArtista('{% url 'modal_artista_crear' %}', true)">
     + Agregar nuevo artista
   </button>
+</div>
 
 
       <div class="mb-3">
@@ -68,3 +69,4 @@
       <button type="submit" class="btn btn-success">Guardar Canción</button>
     </div>
   </form>
+</div>
