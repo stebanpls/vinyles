@@ -24,8 +24,8 @@ DROP TABLE IF EXISTS `artistas`;
 CREATE TABLE IF NOT EXISTS `artistas` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) NOT NULL,
-  `informacion` longtext DEFAULT NULL,
-  `foto` varchar(100) DEFAULT NULL,
+  `informacion` longtext NOT NULL,
+  `foto` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(1, 'pbkdf2_sha256$1000000$IHl9F1X4p8yHxkfwwwgJTB$ut5YyPEJJ2PdfJ2VZ/TVIHX5LGYg/rtgOOCrqKSJhPM=', '2025-06-06 01:57:09.850898', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-05-30 02:22:23.892608');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-	(2, 'pbkdf2_sha256$1000000$3uLNUO3WxlaOptKesonJEB$pevuoUC4lo5jN0rDv9LV3K6sm6U5b+ZQ97+87vTweq4=', '2025-06-15 01:37:04.787212', 0, 'stebanpls', 'Steban', '', 'stebanpulido@gmail.com', 0, 1, '2025-06-06 00:42:50.616501');
+	(2, 'pbkdf2_sha256$1000000$3uLNUO3WxlaOptKesonJEB$pevuoUC4lo5jN0rDv9LV3K6sm6U5b+ZQ97+87vTweq4=', '2025-06-18 01:27:23.837448', 0, 'stebanpls', 'Steban', '', 'stebanpulido@gmail.com', 0, 1, '2025-06-06 00:42:50.616501');
 
 -- Volcando estructura para tabla vinyles_local.auth_user_groups
 DROP TABLE IF EXISTS `auth_user_groups`;
@@ -385,7 +385,7 @@ CREATE TABLE IF NOT EXISTS `clientes` (
 
 -- Volcando datos para la tabla vinyles_local.clientes: ~1 rows (aproximadamente)
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
-	(2, NULL, NULL, NULL, 'fotos_perfil/user_2/8f55b4dc52444bc68618511dd82b5391.jpg');
+	(2, NULL, NULL, NULL, 'fotos_perfil/user_2/24d51a2db4ab4573a18a25983f375526.jpg');
 
 -- Volcando estructura para tabla vinyles_local.clientes_generos_favoritos
 DROP TABLE IF EXISTS `clientes_generos_favoritos`;
@@ -531,9 +531,9 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~26 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~27 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-05-30 01:52:14.584499');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
@@ -586,6 +586,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(25, 'gestion', '0007_alter_crud_options_alter_cliente_foto_perfil_and_more', '2025-06-12 03:03:05.681229');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(26, 'gestion', '0008_artista_departamento_mediodepago_pais_productor_and_more', '2025-06-17 01:23:59.769130');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(27, 'gestion', '0009_alter_artista_foto_alter_artista_informacion_and_more', '2025-06-18 02:40:45.423345');
 
 -- Volcando estructura para tabla vinyles_local.django_session
 DROP TABLE IF EXISTS `django_session`;
@@ -597,7 +599,7 @@ CREATE TABLE IF NOT EXISTS `django_session` (
   KEY `django_session_expire_date_a5c62663` (`expire_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_session: ~14 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_session: ~16 rows (aproximadamente)
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('1dvxcmft5ji1ogcz0s2qg8kgqxcsv1cp', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uNhTw:1pSTf5z3gEjs5AN4vtxT1yYTBsOXMyZAf5O2LInuWKU', '2025-06-21 00:32:20.172182');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
@@ -615,9 +617,13 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('d0bzx9ihwl95qx9qle2nfcioou5bc9se', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uNj8j:d1xxBauBmbER5RHrErQXr0Zrr-79FYjfmADNhnQANPA', '2025-06-21 02:18:33.726168');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+	('htzel3d6vlr80ffsh4xrmpmhn1rpu6m5', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uRh1g:O3voLEsWhVbVn3-fwWUORetH2jegNqw-nIzhc-0ucT8', '2025-07-02 00:51:40.479461');
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('ija118w66rbpnrje2t8bo22v1tbazup4', '.eJxVjMsOwiAQRf-FtSHyBpfu_QYyMINUDSSlXRn_3TbpQrfnnHvfLMK61LgOmuOE7MIEO_2yBPlJbRf4gHbvPPe2zFPie8IPO_itI72uR_t3UGHUbZ0JCnmwhEFKRI3OpOCcVSAyeOetUEa7fFYejPI-IW7YSocJS9AF2OcLA8c4qw:1uL0ch:qvQwroSRpkC_4OWVcmGfhZcS9zSYjQ_HuoYpvX1MVRg', '2025-06-13 14:22:15.284156');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('kdqm7spw1m4ly2kx2hvmypasaon73djl', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uPZ5G:Y0n4EPaXjivxidHo3Qy_aPDeIlQBtlW1wyLxD2E3Ifc', '2025-06-26 03:58:34.181983');
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+	('kjua7go4ui3ywyxhzfrtepyow0dcp85c', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uRgeF:mR6TDPze7zaSz-4uGVKktMyiKlMMSEZg9RdXFIPV8J4', '2025-07-02 00:27:27.968062');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('qep9uj1e9ow8fkh1ahuqchc9w7munuof', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uNijT:QEYOPomMHGivpVgyLfO8czwE3QcPjhl9242QnSApjKI', '2025-06-21 01:52:27.320475');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES

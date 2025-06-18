@@ -1,8 +1,7 @@
 {% extends "plantillas/plantilla_vendedor.html" %}
 {% load static %}
 
-{% block extra_css %} 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+{% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/paginas/vendedor/style_perfil.css' %}">
 {% endblock extra_css %}
 
@@ -11,11 +10,7 @@
 {% block contenido %}
     <div class="profile-container">
         <div class="profile-picture-container">
-            {% if cliente_instance.foto_perfil %}
-                <img src="{{ cliente_instance.foto_perfil.url }}" alt="Foto de Perfil de {{ user.username }}" class="profile-picture">
-            {% else %}
-                <img src="{% static 'images/utiles/default_avatar.svg' %}" alt="Foto de Perfil por defecto" class="profile-picture">
-            {% endif %}
+            <img src="{{ cliente_instance.foto_perfil.url }}" alt="Foto de Perfil de {{ user.username }}" class="profile-picture">
         </div>
         <h2 class="user-name">Usuario: {{ user.username }}</h2>
         <div class="profile-info">
@@ -50,7 +45,11 @@
         <div class="profile-buttons">
             <a href="{% url 'ven_perfil_editar' %}" class="btn btn-info">Editar Perfil</a>
             <a href="{% url 'com_inicio' %}" class="btn btn-primary">Cambiar a Comprador</a>
-            <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar Sesión</a> {# Corregido a 'logout', idealmente debería ser un POST #}
+            {# Convertir el enlace de Cerrar Sesión a un formulario POST #}
+            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+            </form>
         </div>
     </div>
 {% endblock contenido %}

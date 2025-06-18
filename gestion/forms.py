@@ -15,6 +15,7 @@ class CrudForm(forms.ModelForm):
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repetir Contraseña', widget=forms.PasswordInput)
+    email = forms.EmailField(label='Correo Electrónico', required=True)
     captcha = ReCaptchaField(
         label='Verificación', # Puedes cambiar la etiqueta si lo deseas
         widget=ReCaptchaV2Checkbox(
@@ -29,6 +30,18 @@ class UserRegistrationForm(forms.ModelForm):
             'captcha_invalid': 'Verificación reCAPTCHA inválida. Por favor, inténtalo de nuevo.'
         }
     )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email') # Campos del modelo User que quieres en el form
+
+    def clean_password2(self):
+        cd = self.cleaned_data
+        if cd.get('password') and cd.get('password2') and cd['password'] != cd['password2']:
+            raise forms.ValidationError("Las contraseñas no coinciden.")
+        return cd.get('password2')
+
+    # No es necesario un método save() personalizado aquí si la vista maneja set_password().
 
 #FORMULARIO PARA CREAR ARTISTA 
 class ArtistaForm(forms.ModelForm):
@@ -62,18 +75,18 @@ class ArtistaForm(forms.ModelForm):
     # La validación para 'informacion' y 'foto' puede ser opcional si en el modelo
     # los campos permiten blank=True, null=True.
     # Si son obligatorios en el modelo, el ModelForm ya lo valida.
-    # Estas validaciones personalizadas son útiles para mensajes específicos.
-    # def clean_informacion(self):
-    #     informacion = self.cleaned_data.get('informacion')
-    #     if not informacion or not informacion.strip(): # Solo si es obligatorio
-    #         raise forms.ValidationError("La información del artista es obligatoria.")
-    #     return informacion
+    # Estas validaciones personalizadas son útiles para mensajes de error específicos.
+    def clean_informacion(self):
+        informacion = self.cleaned_data.get('informacion')
+        if not informacion or not informacion.strip(): # Solo si es obligatorio
+            raise forms.ValidationError("La información del artista es obligatoria.")
+        return informacion
 
-    # def clean_foto(self):
-    #     foto = self.cleaned_data.get('foto')
-    #     if not foto: # Solo si es obligatorio
-    #         raise forms.ValidationError("La foto del artista es obligatoria.")
-    #     return foto
+    def clean_foto(self):
+        foto = self.cleaned_data.get('foto')
+        if not foto: # Solo si es obligatorio
+            raise forms.ValidationError("La foto del artista es obligatoria.")
+        return foto
 
 #PARA EL FORMULARIO DE PRODUCTO 
 class ProductoForm(forms.ModelForm):

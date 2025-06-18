@@ -73,7 +73,8 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
         upload_to=user_directory_path, 
         null=True,
         blank=True,
-        verbose_name="Foto de Perfil"
+        verbose_name="Foto de Perfil",
+        default='fotos_perfil/default/default_avatar.png'  # Confirmado con tu ruta
     )
     generos_favoritos = models.ManyToManyField(
         Genero,
@@ -97,29 +98,62 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
 
     def save(self, *args, **kwargs):
         procesar_imagen_nueva = False
-        old_foto_perfil_instance = None
+        eliminar_foto_antigua_del_disco = False
+        ruta_foto_antigua = None
 
-        if self.pk:
+        if self.pk: # El objeto ya existe, estamos actualizando
             try:
                 old_instance = Cliente.objects.get(pk=self.pk)
-                if old_instance.foto_perfil:
-                    old_foto_perfil_instance = old_instance.foto_perfil
-
-                if self.foto_perfil and self.foto_perfil != old_instance.foto_perfil:
+                if old_instance.foto_perfil and hasattr(old_instance.foto_perfil, 'path'): # Si había una foto antigua y tiene ruta
+                    ruta_foto_antigua = old_instance.foto_perfil.path
+                    # Comparamos las instancias de FieldFile. Si son diferentes, significa que
+                    # se subió una nueva foto, o el campo se limpió (self.foto_perfil es None).
+                    if self.foto_perfil != old_instance.foto_perfil:
+                        eliminar_foto_antigua_del_disco = True
+                        if self.foto_perfil: # Se subió una nueva foto
+                            procesar_imagen_nueva = True
+                    # No hay 'else' aquí; si la foto no cambió (sigue siendo la misma instancia o ambas son None), no hacemos nada con la antigua.
+                elif not old_instance.foto_perfil and self.foto_perfil: # No había foto antigua, pero ahora hay una nueva
                     procesar_imagen_nueva = True
-                    if old_foto_perfil_instance and self.foto_perfil.name != old_foto_perfil_instance.name:
-                        old_foto_perfil_instance.delete(save=False)
-                elif not self.foto_perfil and old_foto_perfil_instance:
-                    pass
             except Cliente.DoesNotExist:
-                if self.foto_perfil:
+                # El objeto se está creando por primera vez pero tiene un PK (raro, pero posible si se asigna manualmente)
+                # o la instancia antigua no se pudo recuperar por alguna razón.
+                if self.foto_perfil: # Si hay una foto asignada al nuevo objeto
                     procesar_imagen_nueva = True
-        elif self.foto_perfil:
+        elif self.foto_perfil: # El objeto es nuevo (no tiene self.pk) y se le está asignando una foto
             procesar_imagen_nueva = True
 
+        # Guardar la instancia primero para que self.foto_perfil.path esté disponible si es una nueva subida
+        # y para que la referencia en la BD esté actualizada antes de borrar archivos.
         super().save(*args, **kwargs)
 
-        if procesar_imagen_nueva and self.foto_perfil and hasattr(self.foto_perfil, 'path') and os.path.exists(self.foto_perfil.path):
+        if eliminar_foto_antigua_del_disco and ruta_foto_antigua:
+            # Asegurarse de que la ruta antigua realmente existe y no es la misma que la nueva (si hay nueva)
+            foto_actual_path = self.foto_perfil.path if self.foto_perfil and hasattr(self.foto_perfil, 'path') else None
+            if os.path.exists(ruta_foto_antigua) and ruta_foto_antigua != foto_actual_path:
+                try:
+                    os.remove(ruta_foto_antigua)
+                    logger.info(f"Foto antigua eliminada del disco: {ruta_foto_antigua}")
+
+                    # Opcional: Intentar eliminar el directorio del usuario si está vacío
+                    directorio_usuario = os.path.dirname(ruta_foto_antigua)
+                    if os.path.exists(directorio_usuario) and not os.listdir(directorio_usuario):
+                        try:
+                            os.rmdir(directorio_usuario)
+                            logger.info(f"Directorio de usuario vacío eliminado: {directorio_usuario}")
+                        except OSError as e:
+                            logger.warning(f"No se pudo eliminar el directorio vacío {directorio_usuario}: {e}")
+                except OSError as e:
+                    logger.error(f"Error al eliminar foto antigua {ruta_foto_antigua}: {e}")
+
+        if procesar_imagen_nueva and self.foto_perfil and hasattr(self.foto_perfil, 'path'):
+            # Verificar si el archivo existe físicamente antes de intentar abrirlo con Pillow
+            # Esto es importante porque self.foto_perfil.path podría existir incluso si el archivo fue
+            # eliminado por otro proceso o si hubo un error en la subida.
+            if not os.path.exists(self.foto_perfil.path):
+                logger.warning(f"El archivo de imagen para {self.user.username} no existe en {self.foto_perfil.path}. No se procesará.")
+                return # Salir si el archivo no existe para evitar errores con Pillow
+
             try:
                 img = Image.open(self.foto_perfil.path)
                 width, height = img.size
@@ -131,17 +165,32 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
                     bottom = (height + short_side) / 2
                     img = img.crop((left, top, right, bottom))
 
+                # Manejo de transparencia y conversión a RGB
                 if img.mode == 'RGBA' or img.mode == 'LA' or (img.mode == 'P' and 'transparency' in img.info):
                     background = Image.new('RGB', img.size, (255, 255, 255))
-                    mask = img.convert('RGBA').split()[-1] if (img.mode == 'RGBA' or img.mode == 'LA' or (img.mode == 'P' and 'transparency' in img.info)) else None
-                    background.paste(img, (0, 0), mask)
-                    img = background
+                    mask = None
+                    # Intentar obtener la máscara alfa
+                    if img.mode == 'RGBA':
+                        mask = img.split()[-1] # Obtener el canal Alfa
+                    elif img.mode == 'LA': # Luminancia con Alfa
+                        mask = img.split()[-1]
+                    elif img.mode == 'P' and 'transparency' in img.info: # Paleta con transparencia
+                        # Convertir a RGBA para manejar la transparencia de forma consistente
+                        img_rgba_for_mask = img.convert('RGBA')
+                        mask = img_rgba_for_mask.split()[-1]
+
+                    if mask:
+                        background.paste(img, (0, 0), mask)
+                        img = background
+                    else: # Si no hay máscara o no se pudo obtener, convertir directamente
+                        img = img.convert('RGB')
                 elif img.mode != 'RGB':
                     img = img.convert('RGB')
 
                 img.save(self.foto_perfil.path, format='JPEG', quality=85, optimize=True)
+                logger.info(f"Imagen de perfil procesada y guardada para {self.user.username} en {self.foto_perfil.path}")
             except Exception as e:
-                print(f"Error procesando imagen de perfil para {self.user.username}: {e}")
+                logger.error(f"Error procesando imagen de perfil para {self.user.username} en {self.foto_perfil.path}: {e}")
 
 # Señal para crear automáticamente un ClienteProfile cuando se crea un User
 @receiver(post_save, sender=User)
@@ -158,8 +207,8 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 
 class Artista(models.Model):
     nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Artista")
-    informacion = models.TextField(blank=True, null=True, verbose_name="Información del Artista")
-    foto = models.ImageField(upload_to='artistas/', blank=True, null=True, verbose_name="Foto del Artista")
+    informacion = models.TextField(verbose_name="Información del Artista", default="") # Campo obligatorio con default
+    foto = models.ImageField(upload_to='artistas/', verbose_name="Foto del Artista", default='artistas/default/default_avatar.png') # Apuntando a la subcarpeta 'default'
 
     class Meta:
         db_table = 'artistas' # Convención: plural

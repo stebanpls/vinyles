@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_perfil_editar.css' %}"> {# Considera un CSS específico si es necesario #}
+    <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_perfil_editar.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %}{{ titulo_pagina|default:"Editar Mi Perfil" }} {% endblock titulo %}
@@ -54,7 +54,7 @@
                         <label class="form-label d-block">Foto de Perfil</label> {# d-block para que el botón y error vayan abajo #}
                         <div class="current-profile-image mb-2">
                             <img id="profileImagePreview" 
-                                src="{% if cliente_instance.foto_perfil %}{{ cliente_instance.foto_perfil.url }}{% else %}{% static 'images/utiles/default_avatar.svg' %}{% endif %}" 
+                                src="{{ cliente_instance.foto_perfil.url }}"  {# Esto ahora usará el default del modelo si no hay foto subida #}
                                 alt="Foto de Perfil" class="img-thumbnail" 
                                 style="max-height: 150px; max-width: 150px; object-fit: cover;">
                         </div>
@@ -139,7 +139,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Selecciona el mensaje de error real si existe
     const fotoPerfilErrorMessage = fotoPerfilErrorWrapperInitial ? fotoPerfilErrorWrapperInitial.querySelector('.foto-perfil-error-message') : null;
     const deleteProfilePhotoHiddenInput = document.querySelector('input[name="_delete_profile_photo"]');
-    const defaultAvatarUrl = "{% static 'images/utiles/default_avatar.svg' %}";
+    // Apuntar a la imagen PNG por defecto desde la carpeta 'media'
+    const defaultAvatarUrl = "{{ MEDIA_URL }}fotos_perfil/default/default_avatar.png"; 
 
     if (editPhotoButton && photoEditOptions) {
         editPhotoButton.addEventListener('click', function() {

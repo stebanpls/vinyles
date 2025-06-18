@@ -737,13 +737,13 @@ def com_perfil_editar(request):
         if all_forms_are_valid:
             user_form.save()
             
-            # Manejo de la eliminación de la foto
+            # Antes de guardar cliente_form, verificamos si se debe eliminar la foto.
+            # Accedemos a cliente_form.instance, que es la instancia que el formulario
+            # está a punto de guardar.
             if cliente_form.cleaned_data.get('_delete_profile_photo'):
-                delete_photo_flag = cliente_form.cleaned_data.get('_delete_profile_photo')
-                if delete_photo_flag:
-                    if cliente_instance.foto_perfil:
-                        cliente_instance.foto_perfil.delete(save=False) # Elimina el archivo físico
-                        cliente_instance.foto_perfil = None # Asegura que el campo se limpie en el modelo
+                # Si la bandera es True, establecemos el campo foto_perfil de la instancia del formulario a None.
+                # El método save() personalizado del modelo Cliente se encargará de borrar el archivo físico.
+                cliente_form.instance.foto_perfil = None
 
             cliente_form.save() # Guarda el cliente_form (incluyendo la posible nueva foto o ninguna)
 
@@ -892,11 +892,11 @@ def ven_perfil_editar(request):
         if all_forms_are_valid:
             user_form.save()
             
+            # Antes de guardar cliente_form, verificamos si se debe eliminar la foto.
             if cliente_form.cleaned_data.get('_delete_profile_photo'):
-                if cliente_instance.foto_perfil:
-                    cliente_instance.foto_perfil.delete(save=False)
-                cliente_instance.foto_perfil = None
-            
+                # Si la bandera es True, establecemos el campo foto_perfil de la instancia del formulario a None.
+                cliente_form.instance.foto_perfil = None
+                
             cliente_form.save()
             
             # Este bloque if/else para los mensajes y el guardado de contraseña

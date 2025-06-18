@@ -33,8 +33,8 @@ urlpatterns = [
     # Login y Logout (asumiendo que tienes plantillas para esto o usarás las de Django)
     # Asegúrate que la plantilla 'paginas/publico/pub_login.html' exista o ajusta el nombre.
     path('accounts/login/', auth_views.LoginView.as_view(template_name='paginas/publico/pub_login.html'), name='login'),
-    # Cambia 'pub_index' al nombre de la URL de tu página de inicio si es diferente.
-    path('accounts/logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('pub_index')), name='logout'),
+    # Redirigir a la URL nombrada 'pub_log_out' después del logout, que está definida en gestion.urls
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('pub_log_out')), name='logout'),
 
     # Las URLs estándar para el cambio de contraseña de usuarios autenticados se eliminan,
     # ya que esta funcionalidad se integrará en las vistas de edición de perfil (ej. com_perfil_editar).
