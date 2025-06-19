@@ -539,7 +539,7 @@ def pub_vinilo(request):
             'image': 'images/albumes/bts_love.jpg',
             'audio': 'audio/love_yourself.mp3',
             'song_list': ['Euphoria', 'Trivia 起: Just Dance', 'Serendipity (Full Length Edition)', 'DNA', 'Dimple', 'Trivia 承: Love', 'Her', 'Singularity', 'FAKE LOVE', 'The Truth Untold (feat. Steve Aoki)', 'Trivia 轉: Seesaw', 'Tear', 'Epiphany', 'I\'m Fine', 'IDOL', 'Answer: Love Myself', 'Magic Shop', 'Best of Me', 'Airplane Pt.2', 'Go Go', 'Anpanman', 'MIC Drop', 'DNA (Pedal 2 LA Mix)', 'FAKE LOVE (Rocking Vibe Mix)', 'MIC Drop (Steve Aoki Remix) (Full Length Edition)'],
-            'comments': [{'username': 'ARMYforever', 'comment': 'Un álbum lleno de mensajes hermosos y música increíble. ¡BTS los mejores!'}]
+            'comments': [{'username': 'ARMYforever', 'comment': 'Un álbum lleno de mensajes hermosos y música increíble.'}]
         },
         'frank_sinatra_the_world': {
             'key': 'frank_sinatra_the_world',
