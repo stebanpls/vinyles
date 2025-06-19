@@ -24,6 +24,8 @@ from django.conf.urls.static import static
 # from django.contrib.staticfiles.urls import staticfiles_urlpatterns # Ya no es necesario con WhiteNoise
 from django.contrib.auth import views as auth_views # Necesario para personalizar las vistas de auth
 from django.urls import reverse_lazy # Para success_url
+from gestion import views as gestion_views # Añadir import para las vistas de gestion
+from gestion.forms import CustomPasswordResetForm # Importar el formulario personalizado
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,7 +34,8 @@ urlpatterns = [
     # URLs de autenticación de Django, personalizadas
     # Login y Logout (asumiendo que tienes plantillas para esto o usarás las de Django)
     # Asegúrate que la plantilla 'paginas/publico/pub_login.html' exista o ajusta el nombre.
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='paginas/publico/pub_login.html'), name='login'),
+    # path('accounts/login/', auth_views.LoginView.as_view(template_name='paginas/publico/pub_login.html'), name='login'), # Original
+    path('accounts/login/', gestion_views.pub_login, name='login'), # Modificado para usar tu vista personalizada
     # Redirigir a la URL nombrada 'pub_log_out' después del logout, que está definida en gestion.urls
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('pub_log_out')), name='logout'),
 
@@ -46,7 +49,8 @@ urlpatterns = [
         auth_views.PasswordResetView.as_view(
             template_name='paginas/publico/pub_solicitar_reseteo.html', # Tu plantilla para ingresar email
             email_template_name='registration/password_reset_email.html', # Django usará una por defecto si no existe
-            subject_template_name='registration/password_reset_subject.txt', # Django usará uno por defecto si no existe
+            subject_template_name='registration/password_reset_subject.txt', # Django usará uno por defecto si no existe_
+            form_class=CustomPasswordResetForm, # <- Añadimos esta línea
             success_url=reverse_lazy('password_reset_done')
         ),
         name='password_reset'),

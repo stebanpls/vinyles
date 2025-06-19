@@ -41,19 +41,20 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    # 1. Aplicaciones de terceros (generalmente no las sobrescribes directamente)
+    'django_recaptcha', # Para django-recaptcha.
+    'widget_tweaks', # Si lo vamos a usar
+    'dal',
+    'dal_select2', # dal y dal_select2 usan select2 para autocompletado (más lindo)
+    # 2. Nuestras aplicaciones (aquí sobrescribimos a Django o, si es necesario, a alguna de terceros específica moviéndola antes)
+    'gestion.apps.GestionConfig', # Nuestra aplicación
+    # 3. Aplicaciones de Django (las que más comúnmente se personalizan)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Aplicaciones de Terceros
-    'django_recaptcha', # Para django-recaptcha.
-    'widget_tweaks', # Si lo vamos a usar
-    'dal',
-    'dal_select2', # dal y dal_select2 usan select2 para autocompletado (más lindo)
-    # Nuestras applicaciones
-    'gestion.apps.GestionConfig', # Tu aplicación
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,9 @@
 {% extends "plantillas/plantilla_publico.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/publico/style_codigo_recuperacion.css' %}"> {# Puedes usar el CSS de pub_codigo_recuperacion o crear uno nuevo #}
+    <link rel="stylesheet" href="{% static 'css/paginas/publico/style_login.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Solicitar Reseteo de Contraseña {% endblock titulo %}
@@ -18,21 +19,28 @@
             <form method="post"> {# La action la define la URL de Django #}
                 {% csrf_token %}
                 
-                {{ form.email.errors }}
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-                    <input
-                        type="email"
-                        class="form-control {% if form.email.errors %}is-invalid{% endif %}"
-                        name="{{ form.email.html_name }}"
-                        id="{{ form.email.id_for_label }}"
-                        aria-describedby="emailHelpId"
-                        placeholder="abc@mail.com"
-                        required
-                    />
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in form.non_field_errors %}
+                            <p class="mb-0">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                    {% render_field form.email class="form-control" placeholder="abc@mail.com" required="required" %}
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback d-block" style="color: red;">{{ error }}</div>
+                    {% endfor %}
                 </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Enviar Email de Recuperación</button>
+                <div class="form-group mb-3">
+                    {{ form.captcha.label_tag }} {# Añadido para consistencia con pub_login.html #}
+                    {{ form.captcha }}
+                    {% for error in form.captcha.errors %}<div class="invalid-feedback d-block" style="color: red;">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="form-group mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Enviar Email de Recuperación</button>
                 </div>
             </form>
             <p class="mt-3"><a href="{% url 'login' %}">Volver al inicio de sesión</a></p>

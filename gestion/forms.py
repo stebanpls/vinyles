@@ -2,6 +2,7 @@ from django import forms
 from .models import Crud, Cliente, Genero, Artista, Productor, Producto, Cancion # Importa los modelos
 from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
+from django.contrib.auth.forms import PasswordResetForm as DjangoPasswordResetForm # Renombrar para evitar conflicto
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox # Importar el widget para personalizarlo
 from datetime import timedelta # Para el formulario de Cancion
@@ -31,9 +32,33 @@ class UserRegistrationForm(forms.ModelForm):
         }
     )
 
-    class Meta:
-        model = User
-        fields = ('username', 'email') # Campos del modelo User que quieres en el form
+class CustomPasswordResetForm(DjangoPasswordResetForm): # Hereda del PasswordResetForm de Django
+    email = forms.EmailField(
+        label="Correo Electrónico",
+        max_length=254,
+        widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'form-control', 'placeholder': 'abc@mail.com', 'required': 'required'})
+    )
+    captcha = ReCaptchaField(
+        label='Verificación',
+        widget=ReCaptchaV2Checkbox(
+            api_params={'hl': 'es-419'}, # Idioma para el widget
+            attrs={
+                'data-theme': 'dark', # Tema oscuro
+            }
+        ),
+        error_messages={
+            'required': 'Por favor, completa la verificación reCAPTCHA.',
+            'captcha_invalid': 'Verificación reCAPTCHA inválida. Por favor, inténtalo de nuevo.'
+        }
+    )
+    # No se necesita la clase Meta aquí, ya que PasswordResetForm no es un ModelForm
+    # y los campos se definen directamente o se heredan.
+    # El campo 'username' no es utilizado por el flujo estándar de reseteo de contraseña de Django.
+
+    # El método clean_password2 no es aplicable a PasswordResetForm,
+    # pertenece a formularios donde se establece/cambia una contraseña (ej. SetPasswordForm, UserCreationForm).
+    # PasswordResetForm solo recopila el email. La confirmación de la nueva contraseña
+    # ocurre en PasswordResetConfirmView con su respectivo formulario.
 
     def clean_password2(self):
         cd = self.cleaned_data
