@@ -838,7 +838,7 @@ def ven_crear(request):
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True, 'redirect_url': reverse('ven_producto')})
             else: # Para envíos de formulario no-AJAX (si los hubiera)
-                messages.success(request, f"Producto '{producto.titulo}' creado exitosamente.") # Ajusta 'titulo' si el campo es 'nombre'
+                messages.success(request, f"Producto '{producto.nombre}' creado exitosamente.") # Ajusta 'titulo' si el campo es 'nombre'
                 return redirect('ven_producto')
         else:
             # Para AJAX, devolvemos JSON con errores
