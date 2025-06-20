@@ -50,6 +50,11 @@ class Genero(models.Model):
         db_table = 'generos' # Nombre de tabla corto
         verbose_name = "Género" # Coincide con el concepto de la tabla
         verbose_name_plural = "Géneros" # Plural del verbose_name
+
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.upper()  # 💥 Aquí convierte a mayúscula antes de guardar
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return self.nombre
 
@@ -269,12 +274,12 @@ class Producto(models.Model):
         related_name="productos",
         verbose_name="Artista(s) Principal(es)"
     )
-    lanzamiento = models.DateField(blank=True, null=True, verbose_name="Fecha de Lanzamiento")
+    lanzamiento = models.DateField(verbose_name="Fecha de Lanzamiento")
     precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
     stock = models.PositiveIntegerField(default=0, verbose_name="Cantidad en Stock")
-    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción del Producto")
-    discografica = models.CharField(max_length=200, blank=True, null=True, verbose_name="Compañía Discográfica")
-    imagen_portada = models.ImageField(upload_to='productos_portadas/', blank=True, null=True, verbose_name="Imagen de Portada")
+    descripcion = models.TextField(verbose_name="Descripción del Producto")
+    discografica = models.CharField(max_length=200, verbose_name="Compañía Discográfica")
+    imagen_portada = models.ImageField(upload_to='productos_portadas/',verbose_name="Imagen de Portada")
     genero_principal = models.ManyToManyField(
         Genero,
         related_name="productos_principales",
