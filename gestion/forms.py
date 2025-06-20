@@ -161,22 +161,30 @@ class ProductoForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         artistas = cleaned_data.get('artistas')
-        if not artistas: # Un producto debe tener al menos un artista
+        generos = cleaned_data.get('genero_principal')
+
+        if not artistas:
             self.add_error('artistas', "Debes seleccionar al menos un artista.")
+    
+        if not generos or generos.count() == 0:
+            self.add_error('genero_principal', "Debes seleccionar al menos un género.")
+
         return cleaned_data
 
 #PARA EL FORMULARIO DE CANCION
 class CancionForm(forms.ModelForm):
-    minutos = forms.IntegerField(min_value=0, max_value=120, label="Minutos", required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'placeholder': '00'
-    }))
-    segundos = forms.IntegerField(min_value=0, max_value=59, label="Segundos", required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control', 'placeholder': '00'
-    }))
+    minutos = forms.IntegerField(
+        min_value=0, max_value=120, label="Minutos", required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '00'})
+    )
+    segundos = forms.IntegerField(
+        min_value=0, max_value=59, label="Segundos", required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '00'})
+    )
 
     class Meta:
         model = Cancion
-        fields = ['nombre', 'artistas', 'productores', 'generos'] # 'duracion' se maneja a través de minutos/segundos
+        fields = ['nombre', 'artistas', 'productores', 'generos']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'artistas': forms.SelectMultiple(attrs={'class': 'form-control select-artista'}),
@@ -189,34 +197,33 @@ class CancionForm(forms.ModelForm):
         minutos = cleaned_data.get('minutos')
         segundos = cleaned_data.get('segundos')
 
-        # Si minutos o segundos no se proporcionan o son None, se asumen como 0
         minutos = minutos if minutos is not None else 0
         segundos = segundos if segundos is not None else 0
 
         if minutos == 0 and segundos == 0:
-            # Solo lanzar error si ambos son explícitamente 0 y el campo duracion es obligatorio en el modelo
-            # o si se requiere una duración mínima. Si duracion puede ser null/blank, esto podría ser opcional.
-            # Por ahora, asumimos que una canción debe tener duración.
             self.add_error(None, "La duración de la canción no puede ser 0 minutos y 0 segundos.")
         else:
             cleaned_data['duracion'] = timedelta(minutes=minutos, seconds=segundos)
-        
-        # Validar que los campos M2M no estén vacíos si son requeridos
+
         if not cleaned_data.get('artistas'):
             self.add_error('artistas', "Debes seleccionar al menos un artista.")
-        # Puedes añadir validaciones similares para productores y géneros si son obligatorios
+
+        if not cleaned_data.get('productores'):
+            self.add_error('productores', "Debes seleccionar al menos un productor.")
+
+        if not cleaned_data.get('generos'):
+            self.add_error('generos', "Debes seleccionar al menos un género.")
 
         return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        # Asegurarse de que 'duracion' esté en cleaned_data antes de asignarla
         if 'duracion' in self.cleaned_data:
             instance.duracion = self.cleaned_data['duracion']
-        
+
         if commit:
             instance.save()
-            self.save_m2m() # Necesario para guardar las relaciones ManyToMany
+            self.save_m2m()
         return instance
 
 #FORMULARIO PARA EL PRODCUTOR 
