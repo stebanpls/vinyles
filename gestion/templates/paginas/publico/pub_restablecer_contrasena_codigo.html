@@ -1,0 +1,75 @@
+{% extends "plantillas/plantilla_publico.html" %}
+{% load static %}
+{% load widget_tweaks %} {# Cargar django-widget-tweaks #}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/paginas/publico/style_restablecer_contrasena.css' %}"> {# Reutiliza el CSS si es apropiado #}
+{% endblock extra_css %}
+
+{% block titulo %} Vinyles - Restablecer con Código {% endblock titulo %}
+
+{% block contenido %}
+    <div class="login-container">
+        <div class="login-form">
+            <div class="logo-container">
+                <img src="{% static 'images/utiles/vinilo_240.ico' %}" alt="Logo Vinyles">
+            </div>
+            <h2>Restablece tu Contraseña</h2>
+            {# validlink se pasa como True desde la vista personalizada si el usuario_id está en sesión #}
+            {% if validlink %}
+                <p>Ingresa el código de verificación que te enviamos a tu correo electrónico y tu nueva contraseña.</p>
+                <form method="post">
+                    {% csrf_token %}
+
+                    {# Mostrar errores generales del formulario #}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mt-2">
+                            {% for error in form.non_field_errors %}
+                                <p class="mb-0">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {# Campo para el código de verificación #}
+                    <div class="form-group mb-3">
+                        <label for="{{ form.code.id_for_label }}" class="form-label">{{ form.code.label }}</label>
+                        {% render_field form.code class="form-control" placeholder="Código de 6 dígitos" %}
+                        {% for error in form.code.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    {# Campos para la nueva contraseña (vienen de SetPasswordForm) #}
+                    <div class="form-group mb-3">
+                        <label for="{{ form.new_password1.id_for_label }}" class="form-label">{{ form.new_password1.label }}</label>
+                        {% render_field form.new_password1 class="form-control" placeholder="Nueva Contraseña" %}
+                        {% for error in form.new_password1.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="{{ form.new_password2.id_for_label }}" class="form-label">{{ form.new_password2.label }}</label>
+                        {% render_field form.new_password2 class="form-control" placeholder="Confirmar Nueva Contraseña" %}
+                        {% for error in form.new_password2.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary w-100">Cambiar mi Contraseña</button>
+                    </div>
+                </form>
+            {% else %}
+                {# Este bloque se mostraría si validlink fuera False, lo cual no debería ocurrir con la lógica de sesión #}
+                {# Pero lo mantenemos por si acaso o si decides cambiar la lógica #}
+                <p class="alert alert-danger">Ha ocurrido un error. Por favor, solicita un nuevo restablecimiento de contraseña.</p>
+                <p><a href="{% url 'password_reset_request' %}">Solicitar nuevo reseteo de contraseña</a></p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock contenido %}
+
+{% block pie %}
+
+{% endblock pie %}
