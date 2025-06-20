@@ -1,0 +1,100 @@
+{% load widget_tweaks %}
+
+<div id="contenedorFormularioProducto">
+    <form id="formProducto" method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light">
+    
+    {% csrf_token %}
+    
+        <div class="mb-3">
+            <label for="id_titulo" class="form-label " style="color: black;">Título del Álbum</label>
+            {{ producto_form.nombre|add_class:"form-control" }} {# CAMBIADO: Usar 'nombre' que es el nombre del campo en ProductoForm #}
+        </div>
+    
+        <div class="mb-3">
+            <label for="id_fecha_lanzamiento" class="form-label" style="color: black;">Fecha de Lanzamiento</label>
+            {{ producto_form.lanzamiento|add_class:"form-control" }} {# CAMBIADO: Usar 'lanzamiento' que es el nombre del campo en ProductoForm #}
+        </div>
+    
+        <div class="mb-3">
+            <label for="id_precio" class="form-label " style="color: black;">Precio</label>
+            {{ producto_form.precio|add_class:"form-control" }}
+        </div>
+    
+        <div class="mb-3">
+            <label for="id_stock" class="form-label " style="color: black;">Stock disponible</label>
+            {{ producto_form.stock|add_class:"form-control" }}
+        </div>
+    
+        <div class="mb-3">
+            <label for="id_sello_discografico" class="form-label " style="color: black;" >Sello Discográfico</label>
+            {{ producto_form.discografica|add_class:"form-control" }} {# CAMBIADO: Usar 'discografica' que es el nombre del campo en ProductoForm #}
+        </div>
+    
+        <div class="mb-3">
+            <label for="id_imagen_portada" class="form-label " style="color: black;">Imagen de Portada</label>
+            {{ producto_form.imagen_portada|add_class:"form-control" }}
+        </div>
+    
+        <div class="mb-3">
+            <label for="id_genero_principal" class="form-label " style="color: black;">Género(s) Principal(es)</label>
+            {{ producto_form.genero_principal|add_class:"form-control select-genero"  }}
+        </div>
+    
+            <div class="input-group">
+              <button type="button" class="btn btn-outline-primary" onclick="abrirModalGenero('{% url 'modal_genero_crear' %}')">
+                + Agregar nuevo género
+              </button>
+            </div>
+    
+    <br>
+    
+        <div class="mb-3">
+            <label for="id_artistas" class="form-label " style="color: black;">Seleccionar Artista(s)</label>
+            {{ producto_form.artistas|add_class:"form-control select-artista"  }}
+        </div>
+    
+        <div class="input-group">
+          <button type="button" class="btn btn-outline-primary" onclick="abrirModalArtista('{% url 'modal_artista_crear' %}')">
+            + Agregar nuevo artista
+          </button>
+        </div>
+    
+    <br>
+    
+        <div id="contenedor-canciones">
+          <div class="cancion-row d-flex align-items-center mb-2">
+            <select name="cancion_0" class="form-control select-cancion me-2" required>
+              <option value="">Selecciona una canción</option>
+                {% for cancion in canciones %}
+              <option value="{{ cancion.id }}">{{ cancion.nombre }}</option>
+                {% endfor %}
+            </select>
+          <input type="number" name="pista_0" class="form-control me-2" value="1" readonly style="max-width: 100px;">
+        <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
+      </div>
+    </div>
+    
+    
+    
+    <div>
+    <button type="button" class="btn btn-secondary mt-2" onclick="agregarCancion()">+ Agregar otra canción</button>
+    </div>
+    <br>
+    <div>
+        <button type="button" class="btn btn-outline-primary " onclick="abrirModalCancion('{% url 'modal_cancion_crear' %}')">
+        + Agregar nueva Cancion
+    </button>
+    </div>
+    
+        <div class="mb-3">
+            <label for="id_descripcion" class="form-label " style="color: black;" style="color: black;">Descripción del estado del producto </label>
+            {{ producto_form.descripcion|add_class:"form-control" }}
+        </div>
+    
+    
+    
+    
+        <br><br>
+        <button type="button" class="btn btn-primary btn-confirmar">Crear Porducto</button>
+    </form>
+    </div>
