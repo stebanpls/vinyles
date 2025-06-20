@@ -1,7 +1,7 @@
 {% load widget_tweaks %}
 <div id="modalContentCancion">
-  <form method="post" action="{% url 'modal_cancion_crear' %}" enctype="multipart/form-data" style="background-color: lightpink;">
-    
+  <form method="post" action="{% url 'modal_cancion_crear' %}" enctype="multipart/form-data">
+
     {% csrf_token %}
 
     <div class="modal-header">
@@ -11,57 +11,104 @@
 
     <div class="modal-body">
 
+      {# Nombre de la canción #}
       <div class="mb-3">
         <label class="form-label text-dark">Nombre de la Canción</label>
-        {{ form.nombre|add_class:"form-control" }}
         {% if form.nombre.errors %}
-          <div class="text-danger">{{ form.nombre.errors|join:", " }}</div>
+          {{ form.nombre|add_class:"form-control is-invalid" }}
+        {% else %}
+          {{ form.nombre|add_class:"form-control" }}
         {% endif %}
+        {% for error in form.nombre.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
       </div>
 
-<div class="mb-3">
-  <label class="form-label text-dark">Duración</label>
-  <div class="input-group">
-    <span class="input-group-text">Min</span>
-    {{ form.minutos }}
-    <span class="input-group-text">:</span>
-    <span class="input-group-text">Seg</span>
-    {{ form.segundos }}
-  </div>
-</div>
-
+      {# Duración #}
       <div class="mb-3">
-  <label class="form-label text-dark">Artistas</label>
-  {{ form.artistas|add_class:"form-control select-artista"|attr:"id:id_artistas_modal_cancion" }}
-</div>
+        <label class="form-label text-dark">Duración</label>
+        <div class="input-group">
+          <span class="input-group-text">Min</span>
+          {% if form.minutos.errors %}
+            {{ form.minutos|add_class:"form-control is-invalid" }}
+          {% else %}
+            {{ form.minutos|add_class:"form-control" }}
+          {% endif %}
+          <span class="input-group-text">:</span>
+          <span class="input-group-text">Seg</span>
+          {% if form.segundos.errors %}
+            {{ form.segundos|add_class:"form-control is-invalid" }}
+          {% else %}
+            {{ form.segundos|add_class:"form-control" }}
+          {% endif %}
+        </div>
 
-<div class="input-group mb-3">
-  <button type="button" class="btn btn-outline-primary" onclick="abrirModalArtista('{% url 'modal_artista_crear' %}', true)">
-    + Agregar nuevo artista
-  </button>
-</div>
+        {# Errores individuales #}
+        {% for error in form.minutos.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+        {% for error in form.segundos.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
 
+        {# Error de duración (00:00) u otros generales #}
+        {% for error in form.non_field_errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
 
+      {# Artistas #}
+      <div class="mb-3">
+        <label class="form-label text-dark">Artistas</label>
+        {% if form.artistas.errors %}
+          {{ form.artistas|add_class:"form-control select-artista is-invalid"|attr:"id:id_artistas_modal_cancion" }}
+        {% else %}
+          {{ form.artistas|add_class:"form-control select-artista"|attr:"id:id_artistas_modal_cancion" }}
+        {% endif %}
+        {% for error in form.artistas.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="input-group mb-3">
+        <button type="button" class="btn btn-outline-primary" onclick="abrirModalArtista('{% url 'modal_artista_crear' %}', true)">
+          + Agregar nuevo artista
+        </button>
+      </div>
+
+      {# Productores #}
       <div class="mb-3">
         <label class="form-label text-dark">Productores</label>
-        {{ form.productores|add_class:"form-control select-productor-modal" }}
-
+        {% if form.productores.errors %}
+          {{ form.productores|add_class:"form-control select-productor-modal is-invalid" }}
+        {% else %}
+          {{ form.productores|add_class:"form-control select-productor-modal" }}
+        {% endif %}
+        {% for error in form.productores.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
       </div>
 
       <button type="button" class="btn btn-primary mb-3" onclick="abrirModalProductorDesdeCancion('{% url 'modal_productor_crear' %}?select_id=id_productores&modal_id=modalCancion')">
-  + Agregar nuevo Productor
-</button>
+        + Agregar nuevo Productor
+      </button>
 
+      {# Géneros #}
       <div class="mb-3">
         <label class="form-label text-dark">Géneros</label>
-        {{ form.generos|add_class:"form-control select-genero" }}
+        {% if form.generos.errors %}
+          {{ form.generos|add_class:"form-control select-genero is-invalid" }}
+        {% else %}
+          {{ form.generos|add_class:"form-control select-genero" }}
+        {% endif %}
+        {% for error in form.generos.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
       </div>
 
       <button type="button" class="btn btn-primary" onclick="abrirModalGenero('{% url 'modal_genero_crear' %}', true)">
-  + Agregar nuevo género
-</button>
-
-
+        + Agregar nuevo género
+      </button>
     </div>
 
     <div class="modal-footer">
