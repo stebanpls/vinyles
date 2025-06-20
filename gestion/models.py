@@ -79,7 +79,6 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
         null=True,
         blank=True,
         verbose_name="Foto de Perfil",
-        default='fotos_perfil/default/default_avatar.png'  # Confirmado con tu ruta
     )
     generos_favoritos = models.ManyToManyField(
         Genero,
@@ -212,8 +211,8 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 
 class Artista(models.Model):
     nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Artista")
-    informacion = models.TextField(verbose_name="Información del Artista", default="") # Campo obligatorio con default
-    foto = models.ImageField(upload_to='artistas/', verbose_name="Foto del Artista", default='artistas/default/default_avatar.png') # Apuntando a la subcarpeta 'default'
+    informacion = models.TextField(verbose_name="Información del Artista", blank=True, default="")
+    foto = models.ImageField(upload_to='artistas/', verbose_name="Foto del Artista", null=True, blank=True)
 
     class Meta:
         db_table = 'artistas' # Convención: plural

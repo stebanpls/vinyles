@@ -227,18 +227,12 @@ def pub_registro(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST) # Crea una instancia del formulario con los datos enviados
         if user_form.is_valid():
-            # Crear un nuevo objeto usuario pero sin guardarlo todavía
-            new_user = user_form.save(commit=False)
-            # Establecer la contraseña elegida de forma segura
-            new_user.set_password(user_form.cleaned_data['password'])
-            # Guardar el objeto User en la base de datos
-            new_user.save()
+            # El método .save() de UserCreationForm (del que ahora heredamos)
+            # ya se encarga de hashear la contraseña y guardar el usuario.
+            user_form.save()
 
-            # Crear el perfil de Cliente asociado al nuevo usuario
-            # La señal post_save ya hace esto automáticamente,
-            # pero si no usaras la señal, lo harías aquí:
-            # Cliente.objects.create(user=new_user)
-            # Aquí podrías crear el ClienteProfile si lo tienes: ClienteProfile.objects.create(user=new_user, ...)
+            # La señal post_save que configuramos en models.py se encargará
+            # de crear automáticamente el perfil de Cliente asociado.
             messages.success(request, '¡Registro exitoso! Ahora puedes iniciar sesión.')
             return redirect('pub_login') # Redirigir al login después del registro exitoso
         else:

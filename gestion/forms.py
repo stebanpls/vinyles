@@ -2,7 +2,7 @@ from django import forms
 from .models import Crud, Cliente, Genero, Artista, Productor, Producto, Cancion # Importa los modelos
 from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
-from django.contrib.auth.forms import PasswordResetForm as DjangoPasswordResetForm # Renombrar para evitar conflicto
+from django.contrib.auth.forms import PasswordResetForm as DjangoPasswordResetForm, UserCreationForm as DjangoUserCreationForm, UsernameField
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox # Importar el widget para personalizarlo
 from datetime import timedelta # Para el formulario de Cancion
@@ -12,11 +12,10 @@ class CrudForm(forms.ModelForm):
     class Meta:
         model = Crud # Especifica el modelo que se va a usar en el formulario
         fields = '__all__'
-
-class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repetir Contraseña', widget=forms.PasswordInput)
-    email = forms.EmailField(label='Correo Electrónico', required=True)
+class UserRegistrationForm(DjangoUserCreationForm): # Heredar de UserCreationForm
+    email = forms.EmailField(label='Correo Electrónico', required=True, help_text="Requerido. Se usará para la recuperación de la cuenta.")
+    first_name = forms.CharField(label='Nombres', max_length=150, required=False)
+    last_name = forms.CharField(label='Apellidos', max_length=150, required=False)
     captcha = ReCaptchaField(
         label='Verificación', # Puedes cambiar la etiqueta si lo deseas
         widget=ReCaptchaV2Checkbox(
@@ -31,6 +30,20 @@ class UserRegistrationForm(forms.ModelForm):
             'captcha_invalid': 'Verificación reCAPTCHA inválida. Por favor, inténtalo de nuevo.'
         }
     )
+
+    class Meta(DjangoUserCreationForm.Meta):
+        model = User
+        fields = ("username", "email", "first_name", "last_name")
+        field_classes = {'username': UsernameField}
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Elige un nombre de usuario único'}),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Ya existe un usuario registrado con este correo electrónico.")
+        return email
 
 class CustomPasswordResetForm(DjangoPasswordResetForm): # Hereda del PasswordResetForm de Django
     email = forms.EmailField(
@@ -58,15 +71,7 @@ class CustomPasswordResetForm(DjangoPasswordResetForm): # Hereda del PasswordRes
     # El método clean_password2 no es aplicable a PasswordResetForm,
     # pertenece a formularios donde se establece/cambia una contraseña (ej. SetPasswordForm, UserCreationForm).
     # PasswordResetForm solo recopila el email. La confirmación de la nueva contraseña
-    # ocurre en PasswordResetConfirmView con su respectivo formulario.
-
-    def clean_password2(self):
-        cd = self.cleaned_data
-        if cd.get('password') and cd.get('password2') and cd['password'] != cd['password2']:
-            raise forms.ValidationError("Las contraseñas no coinciden.")
-        return cd.get('password2')
-
-    # No es necesario un método save() personalizado aquí si la vista maneja set_password().
+    # ocurre en PasswordResetConfirmView con su respectivo formulario (SetPasswordForm).
 
 #FORMULARIO PARA CREAR ARTISTA 
 class ArtistaForm(forms.ModelForm):
@@ -96,22 +101,6 @@ class ArtistaForm(forms.ModelForm):
         if not nombre or not nombre.strip():
             raise forms.ValidationError("El nombre del artista es obligatorio.")
         return nombre
-
-    # La validación para 'informacion' y 'foto' puede ser opcional si en el modelo
-    # los campos permiten blank=True, null=True.
-    # Si son obligatorios en el modelo, el ModelForm ya lo valida.
-    # Estas validaciones personalizadas son útiles para mensajes de error específicos.
-    def clean_informacion(self):
-        informacion = self.cleaned_data.get('informacion')
-        if not informacion or not informacion.strip(): # Solo si es obligatorio
-            raise forms.ValidationError("La información del artista es obligatoria.")
-        return informacion
-
-    def clean_foto(self):
-        foto = self.cleaned_data.get('foto')
-        if not foto: # Solo si es obligatorio
-            raise forms.ValidationError("La foto del artista es obligatoria.")
-        return foto
 
 #PARA EL FORMULARIO DE PRODUCTO 
 class ProductoForm(forms.ModelForm):
