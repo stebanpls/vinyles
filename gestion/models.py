@@ -1,6 +1,10 @@
 from typing import Any
 from django.db import models
 from django.contrib.auth.models import User # Importa el modelo User
+from django.utils import timezone
+import datetime
+import random
+import string
 from django.core.exceptions import ValidationError # Para validaciones
 from django.db.models.signals import post_save # Para crear el perfil automáticamente
 from django.dispatch import receiver # Para el decorador de la señal
@@ -195,6 +199,31 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
                 logger.info(f"Imagen de perfil procesada y guardada para {self.user.username} en {self.foto_perfil.path}")
             except Exception as e:
                 logger.error(f"Error procesando imagen de perfil para {self.user.username} en {self.foto_perfil.path}: {e}")
+
+
+class PasswordResetCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_codes', verbose_name="Usuario")
+    code = models.CharField(max_length=6, unique=True, verbose_name="Código")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    expires_at = models.DateTimeField(verbose_name="Fecha de Expiración")
+
+    class Meta:
+        db_table = 'password_reset_codes'
+        verbose_name = "Código de Restablecimiento de Contraseña"
+        verbose_name_plural = "Códigos de Restablecimiento de Contraseña"
+        ordering = ['-created_at']
+
+    def is_valid(self):
+        """Verifica si el código aún es válido."""
+        return timezone.now() < self.expires_at
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.code = ''.join(random.choices(string.digits, k=6))
+            while PasswordResetCode.objects.filter(code=self.code).exists():
+                self.code = ''.join(random.choices(string.digits, k=6))
+            self.expires_at = timezone.now() + datetime.timedelta(minutes=10) # Código válido por 10 minutos
+        super().save(*args, **kwargs)
 
 # Señal para crear automáticamente un ClienteProfile cuando se crea un User
 @receiver(post_save, sender=User)

@@ -88,7 +88,21 @@
 
     {# Popper.js viene incluido en bootstrap.bundle.min.js, por lo que no necesitas cargarlo por separado si usas el bundle #}
     {# El script de Bootstrap JS (bundle) se cargará en el block pie de las plantillas hijas que lo necesiten, como ven_crear.html #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <!-- Modal de pago (opcional) -->
     <script src="{% static 'js/pago.js' %}"></script>
+    <script>
+        // Script para auto-cerrar las alertas de Django Messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.alert.alert-dismissible');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    // Utiliza la API de Bootstrap para cerrar la alerta
+                    const alertInstance = new bootstrap.Alert(message);
+                    alertInstance.close();
+                }, 5000); // 5000 milisegundos = 5 segundos
+            });
+        });
+    </script>
 </body>
 </html>

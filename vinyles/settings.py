@@ -41,20 +41,21 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    # 1. Aplicaciones de terceros (generalmente no las sobrescribes directamente)
-    'django_recaptcha', # Para django-recaptcha.
-    'widget_tweaks', # Si lo vamos a usar
-    'dal',
-    'dal_select2', # dal y dal_select2 usan select2 para autocompletado (más lindo)
-    # 2. Nuestras aplicaciones (aquí sobrescribimos a Django o, si es necesario, a alguna de terceros específica moviéndola antes)
-    'gestion.apps.GestionConfig', # Nuestra aplicación
-    # 3. Aplicaciones de Django (las que más comúnmente se personalizan)
+    # 1. Aplicaciones de Django (las que más comúnmente se personalizan)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
+    # 2. Aplicaciones de terceros (generalmente, no se sobrescriben directamente)
+    'django_recaptcha', # Para django-recaptcha.
+    'widget_tweaks', # Sí lo vamos a usar.
+    'dal',
+    'dal_select2', # dal y dal_select2 usan select2 para autocompletado (más lindo)
+    # 3. Nuestras aplicaciones (aquí sobrescribimos a Django o, si es necesario, a alguna de terceros específica moviéndola antes)
+    'gestion.apps.GestionConfig', # Nuestra aplicación
 ]
 
 MIDDLEWARE = [
@@ -222,3 +223,6 @@ RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
 # Silenciar la advertencia de claves de prueba de reCAPTCHA para desarrollo
 # Dejar comentado en lo posible.
 # SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
+
+# Configuración para la aplicación de sitios
+SITE_ID = 1

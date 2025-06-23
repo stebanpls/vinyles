@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 
+# Se agregó el import de os
 # Se importa el reverse para redireccionar a la vista de crud.
 from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
@@ -7,18 +8,23 @@ from django.contrib.auth.decorators import login_required, user_passes_test # Pa
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
 
 # Se importa los atributos de Crud 
-from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion # Importar modelos necesarios
+from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion
 
 from .forms import (
     CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm,
-    ProductoForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm
+    ProductoForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm,
+    PasswordResetRequestForm, PasswordResetConfirmForm
 ) # Importar formularios
 
 # Importar las funciones de autenticación de Django
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout # Importa las funciones de autenticación
+import os # Importar para obtener variables de entorno
 from django.contrib.auth.models import User # Importar el modelo User estándar
+from django.core.mail import EmailMultiAlternatives # Importar para enviar correos HTML
 from django.contrib import messages # Para mensajes opcionales
 
 # Create your views here.
@@ -574,6 +580,90 @@ def pub_vinilo(request):
     }
     return render(request, 'paginas/publico/pub_vinilo.html', context)
 
+def password_reset_request(request):
+    if request.user.is_authenticated:
+        return redirect('com_inicio')
+
+    if request.method == 'POST':
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            user = User.objects.get(email__iexact=email, is_active=True)
+            
+                        # --- INICIO DE DEPURACIÓN ---
+            print(f"DEBUG: User object: {user}")
+            print(f"DEBUG: User username field: {user.username}")
+            print(f"DEBUG: User get_username() method: {user.get_username()}")
+            # --- FIN DE DEPURACIÓN ---
+
+
+            from .models import PasswordResetCode # Import here to avoid circular dependency
+            # Eliminar códigos antiguos para este usuario
+            PasswordResetCode.objects.filter(user=user).delete()
+            # Crear un nuevo código
+            reset_code = PasswordResetCode.objects.create(user=user)
+
+            current_site = get_current_site(request)
+            # Contexto común para ambas plantillas
+            email_context = {
+                'user': user,
+                'code': reset_code.code,
+                'expiration_minutes': 10, # El modelo ya lo establece, pero lo pasamos para el mensaje
+                'domain': current_site.domain,
+                'site_name': current_site.name,
+                'protocol': 'https' if request.is_secure() else 'http',
+            }
+            
+            # Renderizar el asunto del correo
+            mail_subject = render_to_string('registration/password_reset_subject.txt', email_context).strip()
+            # Renderizar la versión HTML del correo
+            html_message = render_to_string('registration/password_reset_email.html', email_context)
+            # Renderizar la versión de texto plano del correo
+            text_message = render_to_string('registration/password_reset_email.txt', email_context)
+
+            # Enviar el correo multipart
+            email_message = EmailMultiAlternatives(mail_subject, text_message, f"Vinyles <{os.environ.get('EMAIL_HOST_USER')}>", [email])
+            email_message.attach_alternative(html_message, "text/html")
+            email_message.send()
+
+            # Almacenar el ID del usuario en la sesión para el siguiente paso
+            request.session['reset_user_id'] = user.id
+
+            messages.success(request, 'Te hemos enviado un correo con un código de verificación.')
+            return redirect('password_reset_done')
+        else:
+            messages.error(request, "Por favor, corrige los errores en el formulario.")
+    else:
+        form = PasswordResetRequestForm()
+
+    return render(request, 'paginas/publico/pub_solicitar_reseteo.html', {'form': form})
+
+
+def password_reset_confirm_code(request):
+    user_id = request.session.get('reset_user_id')
+    if not user_id:
+        messages.error(request, "La sesión de restablecimiento ha expirado o no es válida. Por favor, inténtalo de nuevo.")
+        return redirect('password_reset') # Redirige al inicio del flujo de reseteo
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        messages.error(request, "Usuario no encontrado. Por favor, solicita un nuevo restablecimiento de contraseña.")
+        return redirect('password_reset')
+
+    if request.method == 'POST':
+        form = PasswordResetConfirmForm(user, request.POST)
+        if form.is_valid():
+            form.save() # Guarda la nueva contraseña y elimina el código
+            del request.session['reset_user_id'] # Limpia la sesión
+            messages.success(request, 'Tu contraseña ha sido restablecida exitosamente. Ahora puedes iniciar sesión.')
+            return redirect('password_reset_complete') # Redirige a la página de éxito
+        else:
+            messages.error(request, "Por favor, corrige los errores señalados.")
+    else:
+        form = PasswordResetConfirmForm(user)
+
+    return render(request, 'paginas/publico/pub_restablecer_contrasena_codigo.html', {'form': form, 'validlink': True})
 
 # VISTAS DE LA CARPETA "COMPRADOR"
 @login_required

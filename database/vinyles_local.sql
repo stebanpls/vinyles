@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Versión del servidor:         11.8.2-MariaDB - mariadb.org binary distribution
 -- SO del servidor:              Win64
--- HeidiSQL Versión:             12.11.0.7067
+-- HeidiSQL Versión:             12.11.0.7069
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `artistas` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) NOT NULL,
   `informacion` longtext NOT NULL,
-  `foto` varchar(100) NOT NULL,
+  `foto` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -68,9 +68,9 @@ CREATE TABLE IF NOT EXISTS `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.auth_permission: ~88 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.auth_permission: ~96 rows (aproximadamente)
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 	(1, 'Can add log entry', 1, 'add_logentry');
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
@@ -247,6 +247,22 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 	(87, 'Can delete Producto del Pedido', 22, 'delete_pedidoproducto');
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 	(88, 'Can view Producto del Pedido', 22, 'view_pedidoproducto');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(89, 'Can add Código de Restablecimiento de Contraseña', 23, 'add_passwordresetcode');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(90, 'Can change Código de Restablecimiento de Contraseña', 23, 'change_passwordresetcode');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(91, 'Can delete Código de Restablecimiento de Contraseña', 23, 'delete_passwordresetcode');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(92, 'Can view Código de Restablecimiento de Contraseña', 23, 'view_passwordresetcode');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(93, 'Can add site', 24, 'add_site');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(94, 'Can change site', 24, 'change_site');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(95, 'Can delete site', 24, 'delete_site');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(96, 'Can view site', 24, 'view_site');
 
 -- Volcando estructura para tabla vinyles_local.auth_user
 DROP TABLE IF EXISTS `auth_user`;
@@ -268,7 +284,7 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
 
 -- Volcando datos para la tabla vinyles_local.auth_user: ~2 rows (aproximadamente)
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-	(1, 'pbkdf2_sha256$1000000$IHl9F1X4p8yHxkfwwwgJTB$ut5YyPEJJ2PdfJ2VZ/TVIHX5LGYg/rtgOOCrqKSJhPM=', '2025-06-06 01:57:09.850898', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-05-30 02:22:23.892608');
+	(1, 'pbkdf2_sha256$1000000$IHl9F1X4p8yHxkfwwwgJTB$ut5YyPEJJ2PdfJ2VZ/TVIHX5LGYg/rtgOOCrqKSJhPM=', '2025-06-23 04:33:14.776299', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-05-30 02:22:23.892608');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(2, 'pbkdf2_sha256$1000000$3uLNUO3WxlaOptKesonJEB$pevuoUC4lo5jN0rDv9LV3K6sm6U5b+ZQ97+87vTweq4=', '2025-06-18 01:27:23.837448', 0, 'stebanpls', 'Steban', '', 'stebanpulido@gmail.com', 0, 1, '2025-06-06 00:42:50.616501');
 
@@ -463,9 +479,11 @@ CREATE TABLE IF NOT EXISTS `django_admin_log` (
   KEY `django_admin_log_user_id_c564eba6_fk_auth_user_id` (`user_id`),
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_admin_log: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_admin_log: ~1 rows (aproximadamente)
+INSERT INTO `django_admin_log` (`id`, `action_time`, `object_id`, `object_repr`, `action_flag`, `change_message`, `content_type_id`, `user_id`) VALUES
+	(1, '2025-06-23 04:38:29.276113', '1', '127.0.0.1:8000', 2, '[{"changed": {"fields": ["Domain name", "Display name"]}}]', 24, 1);
 
 -- Volcando estructura para tabla vinyles_local.django_content_type
 DROP TABLE IF EXISTS `django_content_type`;
@@ -475,9 +493,9 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_content_type: ~22 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_content_type: ~24 rows (aproximadamente)
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(1, 'admin', 'logentry');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
@@ -522,6 +540,10 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(21, 'gestion', 'producto');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(22, 'gestion', 'pedidoproducto');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(23, 'gestion', 'passwordresetcode');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(24, 'sites', 'site');
 
 -- Volcando estructura para tabla vinyles_local.django_migrations
 DROP TABLE IF EXISTS `django_migrations`;
@@ -531,9 +553,9 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~27 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~31 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-05-30 01:52:14.584499');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
@@ -588,6 +610,14 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(26, 'gestion', '0008_artista_departamento_mediodepago_pais_productor_and_more', '2025-06-17 01:23:59.769130');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(27, 'gestion', '0009_alter_artista_foto_alter_artista_informacion_and_more', '2025-06-18 02:40:45.423345');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(28, 'gestion', '0010_alter_producto_descripcion_and_more', '2025-06-22 20:18:15.702223');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(29, 'gestion', '0011_alter_artista_foto_alter_artista_informacion_and_more', '2025-06-22 20:18:16.326290');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(30, 'sites', '0001_initial', '2025-06-23 04:31:00.019228');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(31, 'sites', '0002_alter_domain_unique', '2025-06-23 04:31:00.467858');
 
 -- Volcando estructura para tabla vinyles_local.django_session
 DROP TABLE IF EXISTS `django_session`;
@@ -599,7 +629,7 @@ CREATE TABLE IF NOT EXISTS `django_session` (
   KEY `django_session_expire_date_a5c62663` (`expire_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_session: ~16 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_session: ~17 rows (aproximadamente)
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('1dvxcmft5ji1ogcz0s2qg8kgqxcsv1cp', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uNhTw:1pSTf5z3gEjs5AN4vtxT1yYTBsOXMyZAf5O2LInuWKU', '2025-06-21 00:32:20.172182');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
@@ -632,6 +662,22 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 	('tuy3wbgs55uyhrsege82ixoy9ylg9opb', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uPXZn:sKqs4gfvKkBCkCThWs9l9GW6Eq2Ow9Meh33CZvomtso', '2025-06-26 02:21:59.323981');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('ui7eu8umi3ny1h6ihn9l51glaudnzw2k', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uOpp5:zUoPmXm724Qf9yIXe7qZapn0A6OVp3Q03JDEL6og-9M', '2025-06-24 03:38:51.474837');
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+	('usipjcco3u3knf22g7h1awjnv4h73lvn', '.eJxVjMsOwiAQRf-FtSHyBpfu_QYyMINUDSSlXRn_3TbpQrfnnHvfLMK61LgOmuOE7MIEO_2yBPlJbRf4gHbvPPe2zFPie8IPO_itI72uR_t3UGHUbZ0JCnmwhEFKRI3OpOCcVSAyeOetUEa7fFYejPI-IW7YSocJS9AF2OcLA8c4qw:1uTYrq:Ht37ipeByaXFFA2iP3is0jQ3hJHcvL9Mg0EuCcerPtg', '2025-07-07 04:33:14.787826');
+
+-- Volcando estructura para tabla vinyles_local.django_site
+DROP TABLE IF EXISTS `django_site`;
+CREATE TABLE IF NOT EXISTS `django_site` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `domain` varchar(100) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `django_site_domain_a2e37b91_uniq` (`domain`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.django_site: ~1 rows (aproximadamente)
+INSERT INTO `django_site` (`id`, `domain`, `name`) VALUES
+	(1, '127.0.0.1:8000', 'Vinyles');
 
 -- Volcando estructura para tabla vinyles_local.generos
 DROP TABLE IF EXISTS `generos`;
@@ -664,6 +710,22 @@ CREATE TABLE IF NOT EXISTS `paises` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla vinyles_local.paises: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.password_reset_codes
+DROP TABLE IF EXISTS `password_reset_codes`;
+CREATE TABLE IF NOT EXISTS `password_reset_codes` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `expires_at` datetime(6) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`),
+  KEY `password_reset_codes_user_id_d2e81cee_fk_auth_user_id` (`user_id`),
+  CONSTRAINT `password_reset_codes_user_id_d2e81cee_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Volcando datos para la tabla vinyles_local.password_reset_codes: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla vinyles_local.pedidos
 DROP TABLE IF EXISTS `pedidos`;
@@ -719,12 +781,12 @@ DROP TABLE IF EXISTS `productos`;
 CREATE TABLE IF NOT EXISTS `productos` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) NOT NULL,
-  `lanzamiento` date DEFAULT NULL,
+  `lanzamiento` date NOT NULL,
   `precio` decimal(10,2) NOT NULL,
   `stock` int(10) unsigned NOT NULL CHECK (`stock` >= 0),
-  `descripcion` longtext DEFAULT NULL,
-  `discografica` varchar(200) DEFAULT NULL,
-  `imagen_portada` varchar(100) DEFAULT NULL,
+  `descripcion` longtext NOT NULL,
+  `discografica` varchar(200) NOT NULL,
+  `imagen_portada` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

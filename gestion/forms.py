@@ -2,12 +2,11 @@ from django import forms
 from .models import Crud, Cliente, Genero, Artista, Productor, Producto, Cancion # Importa los modelos
 from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
-from django.contrib.auth.forms import PasswordResetForm as DjangoPasswordResetForm, UserCreationForm as DjangoUserCreationForm, UsernameField
-from django_recaptcha.fields import ReCaptchaField
-from django_recaptcha.widgets import ReCaptchaV2Checkbox # Importar el widget para personalizarlo
+from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm, UsernameField, SetPasswordForm
+from django_recaptcha.fields import ReCaptchaField, ReCaptchaV2Checkbox
 from datetime import timedelta # Para el formulario de Cancion
+from django.utils.translation import gettext_lazy as _
 
-# Create your views here.
 class CrudForm(forms.ModelForm):
     class Meta:
         model = Crud # Especifica el modelo que se va a usar en el formulario
@@ -45,33 +44,54 @@ class UserRegistrationForm(DjangoUserCreationForm): # Heredar de UserCreationFor
             raise forms.ValidationError("Ya existe un usuario registrado con este correo electrónico.")
         return email
 
-class CustomPasswordResetForm(DjangoPasswordResetForm): # Hereda del PasswordResetForm de Django
+class PasswordResetRequestForm(forms.Form):
     email = forms.EmailField(
         label="Correo Electrónico",
         max_length=254,
-        widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'form-control', 'placeholder': 'abc@mail.com', 'required': 'required'})
+        widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'form-control', 'placeholder': 'abc@mail.com'})
     )
     captcha = ReCaptchaField(
         label='Verificación',
         widget=ReCaptchaV2Checkbox(
-            api_params={'hl': 'es-419'}, # Idioma para el widget
-            attrs={
-                'data-theme': 'dark', # Tema oscuro
-            }
+            api_params={'hl': 'es-419'},
+            attrs={'data-theme': 'dark'}
         ),
         error_messages={
             'required': 'Por favor, completa la verificación reCAPTCHA.',
             'captcha_invalid': 'Verificación reCAPTCHA inválida. Por favor, inténtalo de nuevo.'
         }
     )
-    # No se necesita la clase Meta aquí, ya que PasswordResetForm no es un ModelForm
-    # y los campos se definen directamente o se heredan.
-    # El campo 'username' no es utilizado por el flujo estándar de reseteo de contraseña de Django.
 
-    # El método clean_password2 no es aplicable a PasswordResetForm,
-    # pertenece a formularios donde se establece/cambia una contraseña (ej. SetPasswordForm, UserCreationForm).
-    # PasswordResetForm solo recopila el email. La confirmación de la nueva contraseña
-    # ocurre en PasswordResetConfirmView con su respectivo formulario (SetPasswordForm).
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("No existe una cuenta activa con este correo electrónico.")
+        return email
+
+class PasswordResetConfirmForm(SetPasswordForm):
+    code = forms.CharField(
+        label=_("Código de Verificación"),
+        max_length=6, min_length=6,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código de 6 dígitos'}),
+    )
+
+    def clean_code(self):
+        from .models import PasswordResetCode
+        code = self.cleaned_data.get('code')
+        try:
+            reset_code_obj = PasswordResetCode.objects.get(user=self.user, code=code)
+            if not reset_code_obj.is_valid():
+                raise forms.ValidationError(_("El código de verificación ha expirado. Por favor, solicita uno nuevo."))
+        except PasswordResetCode.DoesNotExist:
+            raise forms.ValidationError(_("El código de verificación es incorrecto."))
+        return code
+
+    def save(self, commit=True):
+        from .models import PasswordResetCode
+        user = super().save(commit=commit)
+        if commit:
+            PasswordResetCode.objects.filter(user=self.user).delete()
+        return user
 
 #FORMULARIO PARA CREAR ARTISTA 
 class ArtistaForm(forms.ModelForm):

@@ -25,52 +25,40 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views # Necesario para personalizar las vistas de auth
 from django.urls import reverse_lazy # Para success_url
 from gestion import views as gestion_views # Añadir import para las vistas de gestion
-from gestion.forms import CustomPasswordResetForm # Importar el formulario personalizado
+
+# Importa la instancia del sitio de administración personalizado
+from .admin import custom_admin_site
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include('gestion.urls')), # Accediendo a todo lo que tiene gestion.urls para filtrarlo
+    path('admin/', custom_admin_site.urls), # Usa tu instancia personalizada para la URL del administrador
 
     # URLs de autenticación de Django, personalizadas
-    # Login y Logout (asumiendo que tienes plantillas para esto o usarás las de Django)
-    # Asegúrate que la plantilla 'paginas/publico/pub_login.html' exista o ajusta el nombre.
-    # path('accounts/login/', auth_views.LoginView.as_view(template_name='paginas/publico/pub_login.html'), name='login'), # Original
     path('accounts/login/', gestion_views.pub_login, name='login'), # Modificado para usar tu vista personalizada
     # Redirigir a la URL nombrada 'pub_log_out' después del logout, que está definida en gestion.urls
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('pub_log_out')), name='logout'),
 
-    # Las URLs estándar para el cambio de contraseña de usuarios autenticados se eliminan,
-    # ya que esta funcionalidad se integrará en las vistas de edición de perfil (ej. com_perfil_editar).
-    # path('accounts/password_change/', auth_views.PasswordChangeView.as_view(template_name='registration/password_change_form.html'), name='password_change'),
-    # path('accounts/password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'), name='password_change_done'),
-
-    # Flujo de Reseteo de Contraseña (para usuarios no logueados)
+    # --- NUEVO FLUJO DE RESTABLECIMIENTO DE CONTRASEÑA (BASADO EN CÓDIGO) ---
+    # 1. Solicitar reseteo (ingresar email)
     path('accounts/password_reset/',
-        auth_views.PasswordResetView.as_view(
-            template_name='paginas/publico/pub_solicitar_reseteo.html', # Tu plantilla para ingresar email
-            email_template_name='registration/password_reset_email.html', # Django usará una por defecto si no existe
-            subject_template_name='registration/password_reset_subject.txt', # Django usará uno por defecto si no existe_
-            form_class=CustomPasswordResetForm, # <- Añadimos esta línea
-            success_url=reverse_lazy('password_reset_done')
-        ),
+        gestion_views.password_reset_request, # Usa tu vista personalizada para enviar el código
         name='password_reset'),
+    # 2. Mostrar confirmación de "email enviado"
     path('accounts/password_reset/done/',
         auth_views.PasswordResetDoneView.as_view(
             template_name='paginas/publico/pub_reseteo_enviado.html' # Tu plantilla para "email enviado"
         ),
         name='password_reset_done'),
-    path('accounts/reset/<uidb64>/<token>/', # uidb64 y token vienen del enlace en el email
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name='paginas/publico/pub_restablecer_contrasena.html', # Tu plantilla para ingresar nueva contraseña
-            success_url=reverse_lazy('password_reset_complete')
-        ),
+    # 3. Ingresar código y nueva contraseña
+    path('accounts/reset/code/', # Nueva URL para la confirmación con código
+        gestion_views.password_reset_confirm_code, # Usa tu vista personalizada para verificar el código y cambiar la contraseña
         name='password_reset_confirm'),
+    # 4. Mostrar confirmación de "reseteo completo"
     path('accounts/reset/done/',
         auth_views.PasswordResetCompleteView.as_view(
             template_name='paginas/publico/pub_reseteo_completo.html' # Tu plantilla para "reseteo completo"
         ),
         name='password_reset_complete'),
-
 ]
 
 # Configuración para servir archivos de medios (MEDIA_URL) durante el desarrollo.
