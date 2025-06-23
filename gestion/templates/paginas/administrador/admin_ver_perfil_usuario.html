@@ -1,0 +1,70 @@
+{% extends "plantillas/plantilla_administrador.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/ad_usuarios_perfil.css' %}">
+{% endblock extra_css %}
+
+{% block titulo %} Administrador - Perfil de Usuario {% endblock titulo %}
+
+{% block contenido %} 
+<div class="perfil-container">
+    <h2 class="titulo-perfil">Perfil {{ user.username }}</h2>
+
+    <div class="perfil-card">
+        <div class="perfil-avatar">
+            {% if cliente.foto_perfil %}
+                <img src="{{ cliente.foto_perfil.url }}" alt="Foto de perfil">
+            {% else %}
+                <img src="{% static 'images/default_profile.jpg' %}" alt="Avatar por defecto">
+            {% endif %}
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+        </div>
+
+        <div class="perfil-info">
+            <p><strong>Correo electrónico:</strong> {{ user.email }}</p>
+            <p><strong>Nombre de usuario:</strong> {{ user.username }}</p>
+            <p><strong>Número de documento:</strong> {{ cliente.numero_documento|default:"No registrado" }}</p>
+            <p><strong>Celular:</strong> {{ cliente.celular|default:"No registrado" }}</p>
+            <p><strong>Dirección de residencia:</strong> {{ cliente.direccion_residencia|default:"No registrada" }}</p>
+            <p><strong>Fecha de registro:</strong> {{ user.date_joined|date:"Y-m-d H:i" }}</p>
+            <p><strong>Ultimo inicio de Secion:</strong> {{ user.last_login|date:"Y-m-d H:i" }}</p>
+        </div>
+        </div>
+    </div>
+</div>
+<div class="bloq">
+    <div class="bloq-wrapper">
+        <p id="mensaje-bloqueo" class="mensaje-flotante"></p>
+        <button id="boton-bloqueo" class="bloquear" onclick="toggleBloqueo()">Bloquear usuario</button>
+    </div>
+    <div>
+        <a href="{% url 'admin_user_edit' user.id %}" class="btn btn-primary" style="margin-top: 15px;">
+            Editar perfil ✏️
+        </a>
+    </div>
+</div>
+<script>
+    function toggleBloqueo() {
+        const boton = document.getElementById('boton-bloqueo');
+        const mensaje = document.getElementById('mensaje-bloqueo');
+
+        if (boton.textContent === "Bloquear usuario") {
+            mensaje.textContent = "Usuario bloqueado con éxito ✅";
+            boton.textContent = "Desbloquear usuario";
+            boton.classList.add("desbloquear");
+        } else {
+            mensaje.textContent = "Usuario desbloqueado con éxito ✅";
+            boton.textContent = "Bloquear usuario";
+            boton.classList.remove("desbloquear");
+        }
+
+        mensaje.classList.add("visible");
+        setTimeout(() => {
+            mensaje.classList.remove("visible");
+        }, 2000);
+    }
+</script>
+{% endblock contenido %}
+
+{% block pie %}{% endblock pie %}

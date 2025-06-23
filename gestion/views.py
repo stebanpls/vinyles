@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-
+from django.shortcuts import render, get_object_or_404
 # Se agregó el import de os
 # Se importa el reverse para redireccionar a la vista de crud.
 from django.urls import reverse
@@ -16,7 +16,7 @@ from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion
 
 from .forms import (
     CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm,
-    ProductoForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm,
+    ProductoForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm,ClienteEditForm,UserEditForm,
     PasswordResetRequestForm, PasswordResetConfirmForm
 ) # Importar formularios
 
@@ -1093,7 +1093,47 @@ def admin_generos(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_gestion_users(request):
-  return render(request, 'paginas/administrador/admin_gestion_users.html')
+  usuarios = User.objects.filter(cliente__isnull=False)  # Solo los que tengan perfil Cliente
+  return render(request, 'paginas/administrador/admin_gestion_users.html', {'usuarios': usuarios})
+
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
+def admin_ver_perfil_usuario(request, user_id):
+    usuario = get_object_or_404(User, pk=user_id, cliente__isnull=False)
+    cliente = usuario.cliente  # accedemos al perfil cliente relacionado
+
+    return render(request, 'paginas/administrador/admin_ver_perfil_usuario.html', {
+        'user': usuario,
+        'cliente': cliente
+    })
+
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
+def admin_user_edit(request, user_id):
+    usuario = get_object_or_404(User, pk=user_id, cliente__isnull=False)
+    cliente = usuario.cliente
+
+    if request.method == 'POST':
+        user_form = UserEditForm(request.POST, instance=usuario)
+        cliente_form = ClienteEditForm(request.POST, request.FILES, instance=cliente)
+
+        if user_form.is_valid() and cliente_form.is_valid():
+            user_form.save()
+            cliente_form.save()
+            messages.success(request, "Perfil actualizado con éxito ✅")
+            return redirect('admin_ver_perfil_usuario', user_id=usuario.id)
+    else:
+        user_form = UserEditForm(instance=usuario)
+        cliente_form = ClienteEditForm(instance=cliente)
+
+    return render(request, 'paginas/administrador/admin_user_edit.html', {
+        'user_form': user_form,
+        'cliente_form': cliente_form,
+        'usuario': usuario
+    })
+
+
+
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')

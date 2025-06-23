@@ -1,0 +1,94 @@
+{% extends "plantillas/plantilla_administrador.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_form_user_edit.css' %}">
+{% endblock extra_css %}
+
+{% block titulo %} Editar Perfil Usuario {% endblock titulo %}
+
+{% block contenido %}
+<div class="container-formulario">
+    <h2 class="titulo-editar">Editar perfil de {{ usuario.username }}</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="form-editar-usuario">
+        {% csrf_token %}
+
+        <!-- Errores generales -->
+        {{ user_form.non_field_errors }}
+        {{ cliente_form.non_field_errors }}
+
+        <!-- 🧑 Datos del Usuario -->
+        <div class="form-group">
+            <label for="id_username">Nombre de usuario:</label>
+            {{ user_form.username }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">Correo electrónico:</label>
+            {{ user_form.email }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_first_name">Nombres:</label>
+            {{ user_form.first_name }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_last_name">Apellidos:</label>
+            {{ user_form.last_name }}
+        </div>
+
+        <!-- 🧾 Datos del Cliente -->
+        <div class="form-group">
+            <label for="id_numero_documento">Número de documento:</label>
+            {{ cliente_form.numero_documento }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_celular">Celular:</label>
+            {{ cliente_form.celular }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_direccion_residencia">Dirección:</label>
+            {{ cliente_form.direccion_residencia }}
+        </div>
+
+<div class="form-group text-center">
+    <label for="id_foto_perfil" style="font-weight: bold;">Foto de perfil:</label><br>
+
+    {% if cliente_form.instance.foto_perfil %}
+        <img src="{{ cliente_form.instance.foto_perfil.url }}" alt="Foto actual" width="130" height="130"
+            style="object-fit: cover; border-radius: 10px; margin: 10px auto;"><br>
+
+        <!-- Checkbox de eliminación -->
+        <label style="font-size: 14px; color: #555;">
+            <input type="checkbox" name="foto_perfil-clear" style="margin-right: 6px;">
+            Marcar si deseas eliminar la foto actual
+        </label><br><br>
+    {% endif %}
+
+    <!-- Input de carga de nueva foto -->
+    <input type="file" name="foto_perfil" class="form-control" id="id_foto_perfil">
+</div>
+
+
+
+
+        <div class="form-group">
+            <label for="id_generos_favoritos">Géneros favoritos:</label>
+            {{ cliente_form.generos_favoritos }}
+        </div>
+
+        <!-- Botones -->
+        <div>
+        <button type="submit" class="btn btn-success">Guardar cambios 💾</button>
+        </div>
+        <br>
+        <div>
+        <a href="{% url 'admin_ver_perfil_usuario' usuario.id %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock contenido %}

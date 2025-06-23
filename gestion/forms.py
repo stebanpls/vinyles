@@ -336,3 +336,39 @@ class LoginForm(forms.Form):
             'captcha_invalid': 'Verificación reCAPTCHA inválida. Por favor, inténtalo de nuevo.'
         }
     )
+
+
+
+class ClienteEditForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['numero_documento', 'celular', 'direccion_residencia', 'foto_perfil']
+        labels = {
+            'numero_documento': 'Número de documento',
+            'celular': 'Celular',
+            'direccion_residencia': 'Dirección de residencia',
+            'foto_perfil': 'Foto de perfil',
+        }
+        widgets = {
+            'numero_documento': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa el número de documento'}),
+            'celular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa el número de celular'}),
+            'direccion_residencia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa la dirección'}),
+            'foto_perfil': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+        labels = {
+            'username': 'Nombre de usuario',
+            'email': 'Correo electrónico',
+            'first_name': 'Nombres',
+            'last_name': 'Apellidos',
+        }
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa el nombre de usuario'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa el correo'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa los nombres'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa los apellidos'}),
+        }

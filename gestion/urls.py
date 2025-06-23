@@ -31,6 +31,8 @@ urlpatterns = [
     path('admin_ventas/', views.admin_ventas, name='admin_ventas'),
     path('admin_verificacion/', views.admin_verificacion, name='admin_verificacion'),
     path('admin_mas_vendidos/', views.admin_mas_vendidos, name='admin_mas_vendidos'),
+    path('usuarios/<int:user_id>/', views.admin_ver_perfil_usuario, name='admin_ver_perfil_usuario'),
+    path('ausuarios-admin/<int:user_id>/editar/', views.admin_user_edit, name='admin_user_edit'),
 
 
     # URLS DE LA CARPETA "COMPRADOR"
