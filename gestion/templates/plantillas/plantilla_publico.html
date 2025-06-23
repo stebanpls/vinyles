@@ -7,8 +7,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{% static 'css/paginas/plantillas/style_plantilla_publico.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> {# Todavía es necesario #}
+    <link rel="stylesheet" href="{% static 'css/paginas/plantillas/style_base.css' %}"> {# Nueva base de CSS #}
+    <link rel="stylesheet" href="{% static 'css/paginas/plantillas/style_plantilla_publico.css' %}"> {# El CSS de este template específico #}
     {% block extra_css %}{% endblock %}
     <!-- Variable global para la URL estática -->
     <script>
@@ -17,62 +18,7 @@
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'pub_inicio' %}">VINYLES</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'pub_albumes' %}">Álbumes</a>
-                        </li>
-                        {# Convertir DDL en un Dropdown #}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDDL" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                DDL
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownDDL">
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-normalizacion">Normalización</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#modelo-relacional-container">Modelo Relacional</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diagrama-clases">Diagrama de Clases</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-codigo-sql">Código SQL</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diccionario-datos">Diccionario de Datos</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}">Ver Todo DDL</a></li>
-                            </ul>
-                        </li>
-                        
-                        {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <span class="nav-link">Hola, {{ user.username }}</span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'com_perfil' %}">Mi Perfil</a> {# Asumiendo que tienes una URL 'com_perfil' #}
-                            </li>
-                            <li class="nav-item">
-                                {# Convertir el enlace de Cerrar Sesión a un formulario POST #}
-                                <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="nav-link btn btn-link" style="display: inline; cursor: pointer; padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x); color: rgba(255, 255, 255, 0.65);">Cerrar Sesión</button>
-                                </form>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'pub_login' %}">Iniciar Sesión</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'pub_registro' %}">Registrarse</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+    {% include 'plantillas/_header.html' %}
 
     <main>
         {# Bloque para mostrar mensajes de Django #}

@@ -1,12 +1,12 @@
 -- SQL de Workbench
 -- Eliminar Base de Datos
-DROP DATABASE IF EXISTS vinyles_local;
+DROP DATABASE IF EXISTS vinyles;
 
 -- Crear Base de Datos
-CREATE DATABASE IF NOT EXISTS vinyles_local;
+CREATE DATABASE IF NOT EXISTS vinyles;
 
 -- Ingresar BD
-USE vinyles_local;
+USE vinyles;
 
 -- Crear tabla Ciudad
 CREATE TABLE pais (
