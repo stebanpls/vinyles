@@ -47,7 +47,7 @@
                         <li class="nav-item">
                             <a href="{% url 'com_carrito' %}" class="nav-link cart-icon-link" id="cart-toggle">
                                 <span class="cart-count-badge">{{ cart_count }}</span> {# Contador de ítems en el carrito #}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="26" class="icono" viewBox="0 0 16 16">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icono" viewBox="0 0 16 16">
                                     <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                                 </svg>
                             </a>
@@ -68,11 +68,10 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if user.cliente.foto_perfil %}
-                                <img src="{{ user.cliente.foto_perfil.url }}" alt="Foto de perfil" class="profile-picture me-2">
+                                <img src="{{ user.cliente.foto_perfil.url }}" alt="Foto de perfil" class="profile-picture ms-2">
                             {% else %}                            
-                                <i class="fas fa-user-circle me-2 user-icon"></i>
+                                <i class="fas fa-user-circle ms-2 user-icon"></i>
                             {% endif %}
-                            Hola, {{ user.username }}
                             {% if user.is_staff or user.is_superuser %} (Admin)
                             {# Ya no mostramos (Vendedor) aquí si el rol es unificado #}
                             {% endif %}

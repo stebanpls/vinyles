@@ -9,7 +9,11 @@ header {
   background-color: #121212; /* Fondo oscuro para el encabezado */
   padding: 1rem 0;
   border-bottom: 1px solid #333; /* Borde sutil */
-  /* Para encabezado fijo, si se desea */
+  /* Para encabezado fijo */
+  position: fixed; /* Hace que el encabezado se quede fijo */
+  top: 0; /* Lo posiciona en la parte superior */
+  width: 100%; /* Ocupa todo el ancho */
+  z-index: 1030; /* Asegura que esté por encima de otros elementos (valor común de Bootstrap) */
   transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
 }
 
@@ -28,21 +32,34 @@ body {
   padding: 0;
   background-color: #000000; /* Negro más profundo para el área de contenido principal */
   color: #FFFFFF; /* Texto blanco puro */
+  /* padding-top se manejará con JavaScript para que sea dinámico */
 }
 
 .navbar {
   padding: 0.5rem 1rem;
+  display: flex; /* Convierte la barra de navegación en un contenedor flex */
+  align-items: center; /* Centra verticalmente los elementos dentro de la barra de navegación */
+}
+
+.navbar .container { /* Este es el contenedor interno dentro de la navbar */
+    display: flex;
+    align-items: center; /* Centra verticalmente los elementos dentro de este contenedor */
+    justify-content: space-between; /* Distribuye el espacio entre la marca y los enlaces de navegación */
 }
 
 .navbar-brand {
   font-weight: bold;
   color: #f8f9fa; /* Texto claro para la marca */
   font-size: 1.5rem;
+  display: flex; /* Convierte la marca en un contenedor flex */
+  align-items: center; /* Centra verticalmente el contenido dentro de la marca */
 }
 
 .navbar-nav .nav-link {
   color: #f8f9fa; /* Texto claro para los enlaces */
   margin-right: 1rem;
+  display: flex; /* Convierte los enlaces de navegación en contenedores flex */
+  align-items: center; /* Centra verticalmente el contenido dentro de los enlaces de navegación (ej. foto de perfil y texto) */
 }
 
 .navbar-nav .nav-link:hover {
@@ -56,11 +73,16 @@ body {
 }
 
 /* Estilos para la foto de perfil (tamaño por defecto para el header) */
-.profile-picture {
+/* Aumentamos la especificidad para la foto de perfil dentro de la navbar */
+.navbar .profile-picture {
     width: 32px; /* SIN !important */
     height: 32px; /* SIN !important */
     border-radius: 50%; /* Hacerlo circular */
     object-fit: cover; /* Asegurar que la imagen cubra el área */
+    border: 2px solid white; /* Borde blanco para la foto de perfil (cambiado de #eee a white) */
+}
+.profile-picture {
+    /* Esta regla ahora es menos específica y será sobrescrita por .navbar .profile-picture */
 }
 
 /* Estilos para el enlace del icono del carrito */
@@ -69,12 +91,13 @@ body {
     align-items: center;
     padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x); /* Heredar el padding de Bootstrap */
     color: #f8f9fa; /* Asegurar que el color del icono sea claro */
+    position: relative; /* Necesario para el posicionamiento absoluto del badge */
 }
 
 .nav-link.cart-icon-link .icono {
     fill: #f8f9fa; /* Asegurar que el color de relleno del SVG sea claro */
-    width: 1.5em; /* Ajustar tamaño según sea necesario */
-    height: 1.5em;
+    width: 1.5em; /* Aseguramos un ancho consistente */
+    height: 1.5em; /* Aseguramos una altura consistente */
 }
 
 .nav-link.cart-icon-link:hover .icono {
@@ -86,16 +109,29 @@ body {
     background-color: #dc3545; /* Color rojo de Bootstrap para alertas/errores */
     color: white;
     border-radius: 50%; /* Circular */
-    padding: 0.2em 0.6em;
     font-size: 0.7em;
-    position: relative;
-    top: -0.8em; /* Ajustar posición vertical */
-    right: 0.5em; /* Ajustar posición horizontal */
-    min-width: 1.5em; /* Asegurar que sea circular incluso con un solo dígito */
+    min-width: 1.2em; /* Ajustado para un mejor ajuste de dígitos */
+    height: 1.2em; /* Altura fija para el badge */
+    width: 1.2em; /* Establecemos un ancho fijo para el badge */
+    padding: 0 0.4em; /* Ajuste de padding horizontal */
+    line-height: 1.2em; /* Centrado vertical del texto */
     text-align: center;
-    line-height: 1;
+    white-space: nowrap; /* Evita que el texto se envuelva */
+    box-sizing: border-box; /* Incluye padding y borde en el tamaño total */
     display: inline-block;
-    vertical-align: middle;
+    flex-shrink: 0; /* Evita que el elemento se encoja o estire más allá de su tamaño */
+    flex-grow: 0; /* Evita que el elemento crezca */
+}
+
+/* Añadir estas reglas para asegurar la alineación vertical de los elementos de navegación */
+.navbar-nav { /* Este es el <ul> */
+    display: flex;
+    align-items: center; /* Asegura la alineación vertical de los elementos <li> cuando flex-direction es row (pantallas grandes) */
+}
+
+.navbar-nav .nav-item { /* Este es el <li> */
+    display: flex; /* Hace que cada elemento de navegación sea un contenedor flex */
+    align-items: center; /* Centra verticalmente el contenido dentro de cada elemento de navegación (el <a>.nav-link) */
 }
 
 /* Estilos del menú desplegable */

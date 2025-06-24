@@ -32,3 +32,19 @@
         </header>
     {% endwith %}
 {% endif %} {# Cierra el bloque if del usuario autenticado #}
+
+{# Script para ajustar dinámicamente el padding-top del body. Se coloca aquí para que esté centralizado. #}
+<script>
+    function adjustBodyPadding() {
+        const header = document.querySelector('header');
+        if (header) {
+            // Establece el padding-top del body igual a la altura del header
+            document.body.style.paddingTop = header.offsetHeight + 'px';
+        }
+    }
+
+    // Ejecutar en diferentes momentos para asegurar que se ajuste correctamente
+    window.addEventListener('load', adjustBodyPadding);
+    window.addEventListener('resize', adjustBodyPadding);
+    document.addEventListener('DOMContentLoaded', adjustBodyPadding);
+</script>
