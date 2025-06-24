@@ -81,14 +81,10 @@
             {{ cliente_form.generos_favoritos }}
         </div>
 
-        <!-- Botones -->
-        <div>
-        <button type="submit" class="btn btn-success">Guardar cambios 💾</button>
-        </div>
-        <br>
-        <div>
-        <a href="{% url 'admin_ver_perfil_usuario' usuario.id %}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+<!-- Botones -->
+<div class="botones-editar d-flex justify-content-between">
+    <button type="submit" class="btn btn-success">Guardar cambios 💾</button>
+    <a href="{% url 'admin_ver_perfil_usuario' usuario.id %}" class="btn btn-secondary cancelar">Cancelar</a>
 </div>
+
 {% endblock contenido %}

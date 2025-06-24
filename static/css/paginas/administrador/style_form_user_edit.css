@@ -33,8 +33,41 @@
 }
 
 .form-editar-usuario button {
-    width: 100%;
+    width: 45%;
     padding: 10px;
     margin-top: 15px;
+}
+
+.cancelar{
+    width: 45%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: rgb(116, 115, 115);
+    border-radius: 10px;
+}
+
+.botones-editar {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.botones-editar .btn {
+    flex: 1;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.cancelar {
+    background-color: rgb(116, 115, 115) !important;
+    color: white !important;
+}
+
+.cancelar:hover {
+    background-color: #5c5b5b !important;
 }
 
