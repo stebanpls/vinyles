@@ -3,6 +3,7 @@ from django.urls import path, include
 from . import views
 # Importar settings y los archivos estáticos
 # from django.conf import settings # Ya no es necesario aquí si se maneja en urls.py del proyecto
+# from django.urls import re_path # Import re_path
 # from django.conf.urls.static import static # Ya no es necesario aquí
 
 urlpatterns = [

@@ -6,7 +6,7 @@
   color: #ccc;
 }
 
-.carrito-container {
+body .carrito-container { /* Aumenta la especificidad para asegurar que este estilo prevalezca */
   background-color: #1e1e1e;
   padding: 20px;
   border-radius: 8px;

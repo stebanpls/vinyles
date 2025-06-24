@@ -89,6 +89,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media', # Añadido para que MEDIA_URL esté disponible
+                'gestion.context_processors.cart_item_count', # Añadido para el contador del carrito
             ],
         },
     },

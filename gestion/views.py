@@ -23,14 +23,14 @@ from .forms import (
 # Importar las funciones de autenticación de Django
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout # Importa las funciones de autenticación
 import os # Importar para obtener variables de entorno
-from django.contrib.auth.models import User # Importar el modelo User estándar
+from django.contrib.auth.models import User, Group # Importar el modelo User y Group estándar
 from django.core.mail import EmailMultiAlternatives # Importar para enviar correos HTML
 from django.contrib import messages # Para mensajes opcionales
 
 # Create your views here.
 """
 def saludo(request):
-  return HttpResponse("<h1>Hasta Mañana, babys!</h1>")
+    return HttpResponse("<h1>Hasta Mañana, babys!</h1>")
 """
 
 # Vistas para los modales de creación
@@ -109,13 +109,13 @@ def modal_cancion(request): # Esta vista es para crear una canción individualme
 
 # VISTAS DE LA CARPETA "PUBLICO"
 def pub_inicio(request):
-  return render(request, 'paginas/publico/pub_inicio.html')
+    return render(request, 'paginas/publico/pub_inicio.html')
 
 def pub_albumes(request):
-  return render(request, 'paginas/publico/pub_albumes.html')
-  
+    return render(request, 'paginas/publico/pub_albumes.html')
+
 def pub_ddl(request):
-  return render(request, 'paginas/publico/pub_ddl.html')
+    return render(request, 'paginas/publico/pub_ddl.html')
 
 def pub_login(request):
     # Datos del álbum (si se pasan por GET para pre-llenar o mantener)
@@ -179,11 +179,14 @@ def pub_login(request):
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
 
                 # Redirigir al usuario a la página 'next' si existe,
-                # de lo contrario, redirigir según su rol.
+                # de lo contrario, redirigir según su rol (usando grupos).
+                default_redirect_url_name = 'com_inicio' # Default para usuarios normales
+                if user.is_staff or user.is_superuser:
+                    default_redirect_url_name = 'admin_administrador'
+                # No se necesita un 'elif' para vendedores, ya que todos los usuarios autenticados son compradores/vendedores
+                    
                 if next_url:
                     return redirect(next_url)
-                # Si no hay 'next', redirigir según el rol llamando a redirect()
-                default_redirect_url_name = 'admin_administrador' if user.is_staff or user.is_superuser else 'com_inicio'
                 return redirect(default_redirect_url_name)
             else:
                 # Login fallido. Solo mostrar el error genérico si no hubo un error más específico.
@@ -589,13 +592,6 @@ def password_reset_request(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             user = User.objects.get(email__iexact=email, is_active=True)
-            
-                        # --- INICIO DE DEPURACIÓN ---
-            print(f"DEBUG: User object: {user}")
-            print(f"DEBUG: User username field: {user.username}")
-            print(f"DEBUG: User get_username() method: {user.get_username()}")
-            # --- FIN DE DEPURACIÓN ---
-
 
             from .models import PasswordResetCode # Import here to avoid circular dependency
             # Eliminar códigos antiguos para este usuario
@@ -866,30 +862,29 @@ def com_perfil_editar(request):
 @login_required
 def com_progreso_envio(request):
     return render(request, 'paginas/comprador/com_progreso_envio.html')
-  
+
 @login_required
 def com_reembolsos(request):
-  return render(request, 'paginas/publico/pub_reembolsos.html')
+    return render(request, 'paginas/publico/pub_reembolsos.html')
 
 @login_required
 def com_soporte(request):
-  return render(request, 'paginas/comprador/com_soporte.html')
+    return render(request, 'paginas/comprador/com_soporte.html')
 
 @login_required
 def com_terminos(request):
-  return render(request, 'paginas/comprador/com_terminos.html')
+    return render(request, 'paginas/comprador/com_terminos.html')
 
 
 # VISTAS DE LA CARPETA "VENDEDOR"
 # Para estas vistas, además de @login_required, probablemente necesites
 # un @user_passes_test para verificar que el usuario es un vendedor.
 # Por ahora, solo añadiremos @login_required.
-@login_required
-# @user_passes_test(lambda u: u.es_vendedor, login_url='com_inicio') # Ejemplo si tuvieras u.es_vendedor
+@login_required # Solo requiere que el usuario esté autenticado
 def ven_bad(request):
-  return render(request, 'paginas/vendedor/vinilos/ven_bad.html')
+    return render(request, 'paginas/vendedor/vinilos/ven_bad.html')
 
-@login_required
+@login_required # Solo requiere que el usuario esté autenticado
 def ven_crear(request):
     artista_form_modal = ArtistaForm()
     productor_form_modal = ProductorForm()
@@ -946,9 +941,9 @@ def ven_crear(request):
     }
     return render(request, 'paginas/vendedor/ven_crear.html', context)
 
-@login_required
+@login_required # Solo requiere que el usuario esté autenticado
 def ven_notificaciones(request):
-  return render(request, 'paginas/vendedor/ven_notificaciones.html')
+    return render(request, 'paginas/vendedor/ven_notificaciones.html')
 
 # Vista para MOSTRAR el perfil del vendedor
 @login_required
@@ -963,8 +958,9 @@ def ven_perfil(request):
     }
     # Esta vista ahora solo muestra la información del perfil.
     return render(request, 'paginas/vendedor/ven_perfil.html', context)
+
 # Vista para EDITAR el perfil del vendedor
-@login_required
+@login_required # Solo requiere que el usuario esté autenticado
 def ven_perfil_editar(request):
     user = request.user
     cliente_instance, created = Cliente.objects.get_or_create(user=user)
@@ -1026,17 +1022,17 @@ def ven_perfil_editar(request):
     }
     return render(request, 'paginas/vendedor/ven_perfil_editar.html', context)
 
-@login_required
+@login_required # Solo requiere que el usuario esté autenticado
 def ven_producto(request):
-  return render(request, 'paginas/vendedor/ven_producto.html')
+    return render(request, 'paginas/vendedor/ven_producto.html')
 
-@login_required
+@login_required # Solo requiere que el usuario esté autenticado
 def ven_nosotros(request):
-  return render(request, 'paginas/vendedor/ven_nosotros.html')
+    return render(request, 'paginas/vendedor/ven_nosotros.html')
 
-@login_required
+@login_required # Solo requiere que el usuario esté autenticado
 def ven_terminos(request):
-  return render(request, 'paginas/vendedor/ven_terminos.html')
+    return render(request, 'paginas/vendedor/ven_terminos.html')
 
 
 # VISTAS DE LA CARPETA "ADMINISTRADOR"

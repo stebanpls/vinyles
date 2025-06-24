@@ -1,120 +1,34 @@
 {% load static %}
 
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            {# Brand link - dynamic based on user role #}
-            {% if user.is_authenticated %}
-                {% if user.is_staff or user.is_superuser %}
-                    <a class="navbar-brand" href="{% url 'admin_administrador' %}">VINYLES</a>
-                {% elif user.username == 'stebanpls' %} {# Example: check for a specific vendor username #}
-                    <a class="navbar-brand" href="{% url 'ven_crear' %}">VINYLES</a>
-                {% else %} {# Default for other authenticated users (comprador) #}
-                    <a class="navbar-brand" href="{% url 'com_inicio' %}">VINYLES</a>
-                {% endif %}
-            {% else %}
-                <a class="navbar-brand" href="{% url 'pub_inicio' %}">VINYLES</a>
+{% comment %} Determinar clase del encabezado basado en el rol del usuario {% endcomment %}
+{% if user.is_authenticated %}
+    {% with usuario_es_staff=user.is_staff usuario_es_superuser=user.is_superuser nombre_usuario=user.username %} {# Define las propiedades del usuario una vez #}
+        {% if usuario_es_staff or usuario_es_superuser %} {# Admin #}
+            {% with header_class="header-admin" %}
+                <header class="{{ header_class }}">
+                    {% include "plantillas/_header_nav_content.html" %} {# Incluir contenido de la barra de navegación #}
+                </header>
+            {% endwith %}
+        {% else %} {# Not admin, check for vendor or buyer #}
+            {% if user_username == 'stebanpls' %} {# Vendor (example with specific username) #}
+                {% with header_class="header-vendor" %}
+                    <header class="{{ header_class }}">
+                        {% include "plantillas/_header_nav_content.html" %}
+                    </header>
+                {% endwith %}
+            {% else %} {# Buyer (default authenticated user) #}
+                {% with header_class="header-buyer" %}
+                    <header class="{{ header_class }}">
+                        {% include "plantillas/_header_nav_content.html" %}
+                    </header>
+                {% endwith %}
             {% endif %}
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {# Navigation links based on user role #}
-                    {% if user.is_authenticated %}
-                        {% if user.is_staff or user.is_superuser %}
-                            {# Admin Links #}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'admin_producto' %}">Productos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'admin_usuario' %}">Usuarios</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'admin_pedido' %}">Pedidos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'admin_verificacion' %}">Verificación</a>
-                            </li>
-                        {% elif user.username == 'stebanpls' %} {# Example: Vendor Links #}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'ven_crear' %}">Crear</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'ven_producto' %}">Productos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'ven_notificaciones' %}">Notificaciones</a>
-                            </li>
-                        {% else %} {# Comprador Links #}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'com_albumes' %}">Álbumes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'com_carrito' %}" class="nav-link cart-icon-link" id="cart-toggle">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="26" class="icono" viewBox="0 0 16 16">
-                                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                                    </svg>
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        {# User Profile Dropdown for Authenticated Users #}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-2 user-icon"></i>
-                                Hola, {{ user.username }}
-                                {% if user.is_staff or user.is_superuser %} (Admin)
-                                {% elif user.username == 'stebanpls' %} (Vendedor)
-                                {% endif %}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownUser">
-                                {% if user.is_staff or user.is_superuser %}
-                                    <li><a class="dropdown-item" href="{% url 'admin_administrador' %}">Panel Admin</a></li>
-                                {% elif user.username == 'stebanpls' %}
-                                    <li><a class="dropdown-item" href="{% url 'ven_perfil' %}">Mi Perfil</a></li>
-                                {% else %}
-                                    <li><a class="dropdown-item" href="{% url 'com_perfil' %}">Mi Perfil</a></li>
-                                {% endif %}
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{% url 'logout' %}" method="post" class="dropdown-item-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-link dropdown-item-button">Cerrar Sesión</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        {# Public Links (Unauthenticated) #}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'pub_albumes' %}">Álbumes</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDDL" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                DDL
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownDDL">
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-normalizacion">Normalización</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#modelo-relacional-container">Modelo Relacional</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diagrama-clases">Diagrama de Clases</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-codigo-sql">Código SQL</a></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diccionario-datos">Diccionario de Datos</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'pub_ddl' %}">Ver Todo DDL</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'pub_login' %}">Iniciar Sesión</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'pub_registro' %}">Registrarse</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
+        {% endif %}
+    {% endwith %} {# Cierra el bloque with de usuario_es_staff, usuario_es_superuser, nombre_usuario #}
+{% else %}
+    {% with header_class="header-public" %}
+        <header class="{{ header_class }}">
+            {% include "plantillas/_header_nav_content.html" %}
+        </header>
+    {% endwith %}
+{% endif %} {# Cierra el bloque if del usuario autenticado #}

@@ -12,7 +12,8 @@
   margin-bottom: 20px;
 }
 
-.profile-picture {
+/* Estilos para la foto de perfil en la página de perfil */
+.profile-container .profile-picture {
   width: 150px;
   height: 150px;
   border-radius: 50%;

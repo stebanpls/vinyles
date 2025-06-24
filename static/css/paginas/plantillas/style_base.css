@@ -1,0 +1,311 @@
+/* Estilos generales para toda la página */
+
+html {
+  height: 100%;
+}
+
+/* Estilos del encabezado basados en el rol del usuario */
+header {
+  background-color: #121212; /* Fondo oscuro para el encabezado */
+  padding: 1rem 0;
+  border-bottom: 1px solid #333; /* Borde sutil */
+  /* Para encabezado fijo, si se desea */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+/* Se eliminaron los colores específicos por rol, se aplicará el #121212 por defecto */
+/* .header-admin, .header-vendor, .header-buyer, .header-public {
+  background-color: #121212;
+} */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  padding: 0;
+  background-color: #000000; /* Negro más profundo para el área de contenido principal */
+  color: #FFFFFF; /* Texto blanco puro */
+}
+
+.navbar {
+  padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  color: #f8f9fa; /* Texto claro para la marca */
+  font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
+  color: #f8f9fa; /* Texto claro para los enlaces */
+  margin-right: 1rem;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #adb5bd; /* Ligeramente más oscuro al pasar el ratón */
+}
+
+/* Estilos específicos para el icono de usuario en la barra de navegación */
+.navbar-nav .nav-link .user-icon {
+    font-size: 1.2em; /* Ajustar tamaño según sea necesario */
+    vertical-align: middle;
+}
+
+/* Estilos para la foto de perfil (tamaño por defecto para el header) */
+.profile-picture {
+    width: 32px; /* SIN !important */
+    height: 32px; /* SIN !important */
+    border-radius: 50%; /* Hacerlo circular */
+    object-fit: cover; /* Asegurar que la imagen cubra el área */
+}
+
+/* Estilos para el enlace del icono del carrito */
+.nav-link.cart-icon-link {
+    display: flex;
+    align-items: center;
+    padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x); /* Heredar el padding de Bootstrap */
+    color: #f8f9fa; /* Asegurar que el color del icono sea claro */
+}
+
+.nav-link.cart-icon-link .icono {
+    fill: #f8f9fa; /* Asegurar que el color de relleno del SVG sea claro */
+    width: 1.5em; /* Ajustar tamaño según sea necesario */
+    height: 1.5em;
+}
+
+.nav-link.cart-icon-link:hover .icono {
+    fill: #adb5bd; /* Cambiar relleno al pasar el ratón */
+}
+
+/* Estilos para el contador de ítems en el carrito */
+.cart-count-badge {
+    background-color: #dc3545; /* Color rojo de Bootstrap para alertas/errores */
+    color: white;
+    border-radius: 50%; /* Circular */
+    padding: 0.2em 0.6em;
+    font-size: 0.7em;
+    position: relative;
+    top: -0.8em; /* Ajustar posición vertical */
+    right: 0.5em; /* Ajustar posición horizontal */
+    min-width: 1.5em; /* Asegurar que sea circular incluso con un solo dígito */
+    text-align: center;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Estilos del menú desplegable */
+.dropdown-menu {
+    background-color: #212529; /* Fondo oscuro para el desplegable */
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+    color: #f8f9fa; /* Texto claro para los elementos del desplegable */
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #343a40; /* Fondo más oscuro al pasar el ratón/enfocar */
+    color: #f8f9fa;
+}
+
+.dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Estilos para el botón de cerrar sesión dentro del menú desplegable */
+.dropdown-item-form {
+    display: inline; /* Asegurar que el formulario no rompa el diseño */
+    width: 100%; /* Hacer que el formulario ocupe todo el ancho del elemento del desplegable */
+}
+
+.dropdown-item-button {
+    width: 100%; /* Hacer que el botón ocupe todo el ancho del formulario */
+    text-align: left; /* Alinear texto a la izquierda */
+    padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x); /* Heredar el padding de Bootstrap */
+    color: #f8f9fa; /* Texto claro para el botón */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-item-button:hover, .dropdown-item-button:focus {
+    background-color: #343a40; /* Fondo más oscuro al pasar el ratón/enfocar */
+    color: #f8f9fa;
+    text-decoration: none; /* Quitar subrayado al pasar el ratón */
+}
+
+/* Estilos para las alertas de Django Messages (Bootstrap) */
+.alert {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.25rem;
+    color: #fff; /* Texto blanco para todas las alertas */
+    border: 1px solid transparent;
+}
+
+/* Alerta de éxito (verde claro por defecto) */
+.alert-success {
+    background-color: #198754; /* Verde más oscuro */
+    border-color: #198754;
+}
+
+/* Alerta de información (azul claro por defecto) */
+.alert-info {
+    background-color: #0d6efd; /* Azul más oscuro */
+    border-color: #0d6efd;
+}
+
+/* Alerta de error/peligro (rojo claro por defecto) */
+.alert-danger, .alert-error { /* alert-error es un tag común de Django messages */
+    background-color: #dc3545; /* Rojo más oscuro */
+    border-color: #dc3545;
+}
+
+/* Estilos generales de los botones (si no están definidos en otro lugar) */
+.btn-primary {
+  background-color: #121212;
+  border-color: #6c757d;
+}
+
+.btn-primary:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+}
+
+.icono {
+  fill: #f8f9fa;
+}
+
+main {
+  padding: 2rem;
+  flex-grow: 1;
+}
+
+.main-content-wrapper {
+    max-width: 1200px; /* Ancho máximo para el contenido principal */
+    margin: 0 auto; /* Centra el contenido horizontalmente */
+}
+
+pie {
+  background-color: #121212; /* Fondo oscuro para el pie de página */
+  color: #f8f9fa; /* Texto claro para el pie de página */
+  padding-top: 0;
+  padding-bottom: 0;
+  text-align: center;
+  border-top: 1px solid #333; /* Borde sutil */
+  flex-shrink: 0;
+}
+
+/* Estilos del pie de página - MODO OSCURO */
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 30px 15px 10px 15px;
+  background-color: #121212;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 180px;
+  padding: 0 15px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-column h4 {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  color: #f8f9fa;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.footer-column ul li {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.footer-column ul li:last-child {
+    margin-bottom: -10px;
+}
+
+.footer-column ul li a {
+  color: #adb5bd;
+  font-size: 0.9em;
+}
+.footer-column ul li a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background-color: #0a0a0a;
+  font-size: 0.9em;
+  color: #adb5bd;
+  border-top: 1px solid #333;
+  box-sizing: border-box;
+}
+
+.footer-bottom a {
+    color: inherit;
+    margin: 0 5px;
+}
+
+.footer-bottom a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Ajustes responsivos (de publico.css, aplicar a base si es general) */
+@media (max-width: 768px) {
+  .footer-column {
+      min-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-content {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+  }
+  .footer-column {
+      text-align: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+  }
+  .footer-column:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+  }
+  .footer-column h4 {
+      border-bottom: none;
+      padding-bottom: 5px;
+  }
+}
