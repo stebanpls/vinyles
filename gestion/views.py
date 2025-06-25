@@ -10,7 +10,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
-
+from django.utils import timezone # Importar timedelta también
 # Se importa los atributos de Crud 
 from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion
 
@@ -26,6 +26,7 @@ import os # Importar para obtener variables de entorno
 from django.contrib.auth.models import User, Group # Importar el modelo User y Group estándar
 from django.core.mail import EmailMultiAlternatives # Importar para enviar correos HTML
 from django.contrib import messages # Para mensajes opcionales
+from datetime import timedelta # Importar timedelta
 
 # Create your views here.
 """
@@ -1037,9 +1038,20 @@ def ven_terminos(request):
 
 # VISTAS DE LA CARPETA "ADMINISTRADOR"
 @login_required
-@user_passes_test(lambda u: u.is_staff, login_url='pub_login') # Redirige a pub_login si no es staff
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_administrador(request):
-  return render(request, 'paginas/Administrador/admin_administrador.html')
+    now_local = timezone.localtime()
+    today_start = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timedelta(days=1)
+
+    usuarios_hoy = User.objects.filter(
+        date_joined__gte=today_start,
+        date_joined__lt=today_end
+    ).count()
+
+    return render(request, 'paginas/Administrador/admin_administrador.html', {
+        'usuarios_hoy': usuarios_hoy
+    })
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
@@ -1166,7 +1178,16 @@ def admin_bloquear_usuario(request, usuario_id):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_new_users(request):
-  return render(request, 'paginas/Administrador/admin_new_users.html')
+    now_local = timezone.localtime()
+    today_start = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timedelta(days=1)
+    usuarios = User.objects.filter(
+        date_joined__gte=today_start,
+        date_joined__lt=today_end
+    ).select_related('cliente')
+    return render(request, 'paginas/Administrador/admin_new_users.html', {
+        'usuarios': usuarios
+    })
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')

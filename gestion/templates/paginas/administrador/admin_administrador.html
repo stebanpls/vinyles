@@ -23,11 +23,12 @@
         <div class="desc">Total: $1.230.000</div>
     </a>
 
-    <a href="{% url 'admin_new_users' %}" class="nota azul">
-        <h3>👤 Nuevos usuarios</h3>
-        <div class="value">3</div>
-        <div class="desc">Registrados hoy</div>
-    </a>
+<a href="{% url 'admin_new_users' %}" class="nota azul">
+    <h3>👤 Nuevos usuarios</h3>
+    <div class="value">{{ usuarios_hoy }}</div>
+    <div class="desc">Registrados hoy</div>
+</a>
+
 
 
     <a href="{% url 'admin_notificaciones' %}" class="nota piel">
