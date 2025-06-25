@@ -1079,7 +1079,10 @@ def admin_adPro(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_bloq_users(request):
-  return render(request, 'paginas/administrador/admin_bloq_users.html')
+    usuarios_bloqueados = User.objects.filter(cliente__isnull=False, is_active=False)
+    return render(request, 'paginas/administrador/admin_bloq_users.html', {
+        'usuarios': usuarios_bloqueados
+    })
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
@@ -1089,18 +1092,17 @@ def admin_generos(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_gestion_users(request):
-  usuarios = User.objects.filter(cliente__isnull=False)  # Solo los que tengan perfil Cliente
-  return render(request, 'paginas/administrador/admin_gestion_users.html', {'usuarios': usuarios})
+    usuarios = User.objects.filter(cliente__isnull=False, is_active=True)  # Solo clientes activos
+    return render(request, 'paginas/administrador/admin_gestion_users.html', {'usuarios': usuarios})
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_ver_perfil_usuario(request, user_id):
-    usuario = get_object_or_404(User, pk=user_id, cliente__isnull=False)
-    cliente = usuario.cliente  # accedemos al perfil cliente relacionado
-
+    usuario = get_object_or_404(User, id=user_id)
+    cliente = getattr(usuario, 'cliente', None)
     return render(request, 'paginas/administrador/admin_ver_perfil_usuario.html', {
-        'user': usuario,
-        'cliente': cliente
+        'usuario': usuario,
+        'cliente': cliente,
     })
 
 @login_required
@@ -1129,6 +1131,36 @@ def admin_user_edit(request, user_id):
     })
 
 
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
+def admin_eliminar_usuario(request, usuario_id):
+    if request.method == 'POST':
+        usuario = get_object_or_404(User, id=usuario_id)
+        nombre = f"{usuario.first_name} {usuario.last_name}"
+        usuario.delete()
+        messages.success(request, f"El usuario {nombre} fue eliminado exitosamente.")
+        return redirect('admin_gestion_users')  # Cambia esto por la vista real donde muestras los usuarios
+    else:
+        messages.error(request, "Acceso no permitido.")
+        return redirect('admin_gestion_users')
+
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
+def admin_bloquear_usuario(request, usuario_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=usuario_id)
+        user.is_active = not user.is_active  # invierte estado
+        user.save()
+
+        estado = "desbloqueado" if user.is_active else "bloqueado"
+        # Usamos `get_full_name() or user.username` para tener un fallback si el nombre no está completo.
+        messages.success(request, f"El usuario {user.get_full_name() or user.username} ha sido {estado} correctamente.")
+        # CORRECCIÓN: El argumento en la URL se llama 'user_id', no 'usuario_id'.
+        return redirect('admin_ver_perfil_usuario', user_id=usuario_id)
+    
+    messages.error(request, "Acción no permitida.")
+    # CORRECCIÓN: También se debe corregir el argumento aquí.
+    return redirect('admin_gestion_users', user_id=usuario_id)
 
 
 @login_required

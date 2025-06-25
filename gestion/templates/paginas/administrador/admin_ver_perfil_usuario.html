@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/ad_usuarios_perfil.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/style_ver_perfil_usuario.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Administrador - Perfil de Usuario {% endblock titulo %}
 
 {% block contenido %} 
 <div class="perfil-container">
-    <h2 class="titulo-perfil">Perfil {{ user.username }}</h2>
+    <h2 class="titulo-perfil">Perfil {{ usuario.username }}</h2>
 
     <div class="perfil-card">
         <div class="perfil-avatar">
@@ -18,53 +18,54 @@
             {% else %}
                 <img src="{% static 'images/default_profile.jpg' %}" alt="Avatar por defecto">
             {% endif %}
-            <h3>{{ user.get_full_name|default:user.username }}</h3>
+            <h3>{{ usuario.get_full_name|default:usuario.username }}</h3>
         </div>
 
         <div class="perfil-info">
-            <p><strong>Correo electrónico:</strong> {{ user.email }}</p>
-            <p><strong>Nombre de usuario:</strong> {{ user.username }}</p>
+            <p><strong>Correo electrónico:</strong> {{ usuario.email }}</p>
+            <p><strong>Nombre de usuario:</strong> {{ usuario.username }}</p>
             <p><strong>Número de documento:</strong> {{ cliente.numero_documento|default:"No registrado" }}</p>
             <p><strong>Celular:</strong> {{ cliente.celular|default:"No registrado" }}</p>
             <p><strong>Dirección de residencia:</strong> {{ cliente.direccion_residencia|default:"No registrada" }}</p>
-            <p><strong>Fecha de registro:</strong> {{ user.date_joined|date:"Y-m-d H:i" }}</p>
-            <p><strong>Ultimo inicio de Secion:</strong> {{ user.last_login|date:"Y-m-d H:i" }}</p>
-        </div>
+            <p><strong>Fecha de registro:</strong> {{ usuario.date_joined|date:"Y-m-d H:i" }}</p>
+            <p><strong>Ultimo inicio de Sesión:</strong> {{ usuario.last_login|date:"Y-m-d H:i" }}</p>
         </div>
     </div>
 </div>
+
 <div class="bloq">
-    <div class="bloq-wrapper">
-        <p id="mensaje-bloqueo" class="mensaje-flotante"></p>
-        <button id="boton-bloqueo" class="bloquear" onclick="toggleBloqueo()">Bloquear usuario</button>
-    </div>
-    <div>
-        <a href="{% url 'admin_user_edit' user.id %}" class="btn btn-primary" style="margin-top: 15px;">
-            Editar perfil ✏️
-        </a>
+    <div class="acciones-usuario">
+        <form method="POST" action="{% url 'admin_bloquear_usuario' usuario.id %}" onsubmit="return confirmarBloqueo('{{ usuario.get_full_name|default:usuario.username }}', {{ usuario.is_active|yesno:"true,false" }})">
+            {% csrf_token %}
+            {% if usuario.is_active %}
+                <button type="submit" class="bloquear">Bloquear usuario 🔒</button>
+            {% else %}
+                <button type="submit" class="bloquear desbloquear">Desbloquear usuario 🔓</button>
+            {% endif %}
+        </form>
+
+        <a href="{% url 'admin_user_edit' usuario.id %}" class="editar-btn">Editar perfil ✏️</a>
+
+        <form method="POST" action="{% url 'admin_eliminar_usuario' usuario.id %}" onsubmit="return confirmarEliminacion('{{ usuario.get_full_name|default:usuario.username }}')">
+            {% csrf_token %}
+            <button type="submit" class="eliminar-btn">Eliminar usuario 🗑️</button>
+        </form>
     </div>
 </div>
-<script>
-    function toggleBloqueo() {
-        const boton = document.getElementById('boton-bloqueo');
-        const mensaje = document.getElementById('mensaje-bloqueo');
-
-        if (boton.textContent === "Bloquear usuario") {
-            mensaje.textContent = "Usuario bloqueado con éxito ✅";
-            boton.textContent = "Desbloquear usuario";
-            boton.classList.add("desbloquear");
-        } else {
-            mensaje.textContent = "Usuario desbloqueado con éxito ✅";
-            boton.textContent = "Bloquear usuario";
-            boton.classList.remove("desbloquear");
-        }
-
-        mensaje.classList.add("visible");
-        setTimeout(() => {
-            mensaje.classList.remove("visible");
-        }, 2000);
-    }
-</script>
 {% endblock contenido %}
 
-{% block pie %}{% endblock pie %}
+{% block pie %}
+<script>
+function confirmarBloqueo(nombreUsuario, estaActivo) {
+    if (estaActivo) {
+        return confirm(`¿Estás segur@ de que quieres bloquear a ${nombreUsuario}? Esta acción evitará que pueda iniciar sesión.`);
+    } else {
+        return confirm(`¿Deseas desbloquear a ${nombreUsuario}? Podrá volver a iniciar sesión.`);
+    }
+}
+
+function confirmarEliminacion(nombreUsuario) {
+    return confirm(`¿Estás segur@ de que quieres eliminar a ${nombreUsuario}? Esta acción es permanente.`);
+}
+</script>
+{% endblock pie %}

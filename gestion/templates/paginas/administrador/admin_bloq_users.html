@@ -2,69 +2,62 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_bloq_users.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_users.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} Vinyles - Álbumes {% endblock titulo %}
+{% block titulo %} Vinyles - Gestión de Usuarios {% endblock titulo %}
 
-{% block contenido %} 
-    <section class="section">
-        <div class="textos">
-            <h1 class="bienvenida">Usuarios bloqueados</h1>
-            <p class="bien">Revisión de cuentas bloqueadas – Mantén el orden en la plataforma.</p>
-        </div>
-        <div class="usuariosbloque">
-            <!-- 🔍 Barra de búsqueda -->
-            <input type="text" id="buscador" placeholder="🔎Buscar usuario..." class="busqueda">
-        
-        
-            <ul class="usuarios">
-                <!-- Usuario 1 -->
-                <li>
-                    <div class="avatar">
-                        <img src="{% static 'images/fotos_perfil/sofia_ramirez.jpg' %}" alt="Sofia Ramirez"
-                            onerror="this.outerHTML='<div class=\'avatar\' style=\'background-color: black;\'><i class=\'fa-solid fa-user\'></i></div>'">
-                    </div>
-                    <a href="{% url 'sofia_ramirez' %}" class="nombre-usuario">Sofia Ramirez</a>
-                </li>
+{% block contenido %}
+<section class="section">
+    <div class="textos">
+        <h1 class="bienvenida">Usuarios en la plataforma</h1>
+        <p class="bien">Gestiona todos los perfiles de los usuarios para un control más efectivo. 👤</p>
+    </div>
 
-                <!-- Usuario 2 -->
-                <li>
-                    <div class="avatar">
-                        <img src="{% static 'images/fotos_perfil/esperanza_barrera.jpg' %}" alt="esperanza Barrera"
-                            onerror="this.outerHTML='<div class=\'avatar\' style=\'background-color: pink;\'><i class=\'fa-solid fa-user\'></i></div>'">
-                    </div>
-                    <a href="{% url 'esperanza_barrera' %}" class="nombre-usuario">Esperanza Barrera</a>
-                </li>
+    <div class="usuariosbloque">
+        <!-- 🔍 Barra de búsqueda -->
+        <input type="text" id="buscador" placeholder="🔎Buscar usuario..." class="busqueda">
 
-                <!-- Usuario 3 -->
-                <li>
-                    <div class="avatar">
-                        <img src="{% static 'images/fotos_perfil/fernando_molina.jpg' %}" alt="Fernando Molina"
-                            onerror="this.outerHTML='<div class=\'avatar\' style=\'background-color: darkred;\'><i class=\'fa-solid fa-user\'></i></div>'">
-                    </div>
-                    <a href="{% url 'fernando_molina' %}" class="nombre-usuario">Fernando Molina </a>
-                </li>
-            </ul>
-        </div>
-    </section>
-    <script>
-        const input = document.getElementById('buscador');
-        const usuarios = document.querySelectorAll('.usuarios li');
+        <!-- Lista de usuarios -->
+        <ul class="usuarios">
+            {% for usuario in usuarios %}
+            <li>
+                <div class="avatar">
+                    {% if usuario.cliente.foto_perfil %}
+                        <img src="{{ usuario.cliente.foto_perfil.url }}" alt="{{ usuario.username }}"
+                            onerror="this.outerHTML='<div class=\'avatar\' style=\'background-color: gray;\'><i class=\'fa-solid fa-user\'></i></div>'">
+                    {% else %}
+                        <div class="avatar" style="background-color: gray;">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <span class="nombre-usuario">
+                    <a href="{% url 'admin_ver_perfil_usuario' usuario.id %}" class="nombre-usuario">
+                        {{ usuario.username }}
+                    </a>
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
 
-        input.addEventListener('keyup', () => {
-            const filtro = input.value.toLowerCase();
+<script>
+    const input = document.getElementById('buscador');
+    const usuarios = document.querySelectorAll('.usuarios li');
 
-            usuarios.forEach(usuario => {
-                const nombre = usuario.textContent.toLowerCase();
-                usuario.style.display = nombre.includes(filtro) ? 'flex' : 'none';
-            });
+    input.addEventListener('keyup', () => {
+        const filtro = input.value.toLowerCase();
+        usuarios.forEach(usuario => {
+            const nombre = usuario.textContent.toLowerCase();
+            usuario.style.display = nombre.includes(filtro) ? 'flex' : 'none';
         });
-    </script>
-
+    });
+</script>
 {% endblock contenido %}
 
 {% block pie %}
-
 {% endblock pie %}
+    
