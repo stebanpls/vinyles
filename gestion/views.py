@@ -1218,8 +1218,22 @@ def admin_generos(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_gestion_users(request):
-    usuarios = User.objects.filter(cliente__isnull=False, is_active=True)  # Solo clientes activos
+    usuarios = User.objects.filter(
+        cliente__isnull=False,
+        is_active=True,
+        is_staff=False  # 👈 Solo usuarios que NO son staff
+    )
     return render(request, 'paginas/administrador/admin_gestion_users.html', {'usuarios': usuarios})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
+def admin_gestion_administradores(request):
+    # Solo admins con perfil de cliente creado
+    admins = User.objects.filter(is_staff=True).select_related('cliente')
+    return render(request, 'paginas/administrador/admin_gestion_administradores.html', {
+        'admins': admins
+    })
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')

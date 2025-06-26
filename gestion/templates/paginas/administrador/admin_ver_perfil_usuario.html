@@ -38,34 +38,83 @@
         <form method="POST" action="{% url 'admin_bloquear_usuario' usuario.id %}" onsubmit="return confirmarBloqueo('{{ usuario.get_full_name|default:usuario.username }}', {{ usuario.is_active|yesno:"true,false" }})">
             {% csrf_token %}
             {% if usuario.is_active %}
-                <button type="submit" class="bloquear">Bloquear usuario 🔒</button>
+                <button type="submit" class="bloquear">Bloquear usuario </button>
             {% else %}
-                <button type="submit" class="bloquear desbloquear">Desbloquear usuario 🔓</button>
+                <button type="submit" class="bloquear desbloquear">Desbloquear usuario </button>
             {% endif %}
         </form>
 
-        <a href="{% url 'admin_user_edit' usuario.id %}" class="editar-btn">Editar perfil ✏️</a>
+        <a href="{% url 'admin_user_edit' usuario.id %}" class="editar-btn">Editar perfil </a>
 
         <form method="POST" action="{% url 'admin_eliminar_usuario' usuario.id %}" onsubmit="return confirmarEliminacion('{{ usuario.get_full_name|default:usuario.username }}')">
             {% csrf_token %}
-            <button type="submit" class="eliminar-btn">Eliminar usuario 🗑️</button>
+            <button type="submit" class="eliminar-btn">Eliminar usuario </button>
         </form>
     </div>
 </div>
 {% endblock contenido %}
 
 {% block pie %}
+<!-- Asegúrate de tener SweetAlert2 cargado -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 function confirmarBloqueo(nombreUsuario, estaActivo) {
-    if (estaActivo) {
-        return confirm(`¿Estás segur@ de que quieres bloquear a ${nombreUsuario}? Esta acción evitará que pueda iniciar sesión.`);
-    } else {
-        return confirm(`¿Deseas desbloquear a ${nombreUsuario}? Podrá volver a iniciar sesión.`);
-    }
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: estaActivo ? '¿Bloquear usuario?' : '¿Desbloquear usuario?',
+            text: estaActivo 
+                ? `¿Estás segur@ de que quieres bloquear a ${nombreUsuario}? Esta acción evitará que pueda iniciar sesión.` 
+                : `¿Deseas desbloquear a ${nombreUsuario}? Podrá volver a iniciar sesión.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: estaActivo ? 'Sí, bloquear' : 'Sí, desbloquear',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            resolve(result.isConfirmed);
+        });
+    });
 }
 
 function confirmarEliminacion(nombreUsuario) {
-    return confirm(`¿Estás segur@ de que quieres eliminar a ${nombreUsuario}? Esta acción es permanente.`);
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: '¿Eliminar usuario?',
+            text: `¿Estás segur@ de que quieres eliminar a ${nombreUsuario}? Esta acción es permanente.`,
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            resolve(result.isConfirmed);
+        });
+    });
 }
+
+// ✅ Interceptar envío de formularios
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("form").forEach((form) => {
+        const action = form.getAttribute("action");
+
+        if (action.includes("bloquear_usuario")) {
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
+                const activo = {{ usuario.is_active|yesno:"true,false" }};
+                const confirmar = await confirmarBloqueo(nombre, activo);
+                if (confirmar) form.submit();
+            });
+        }
+
+        if (action.includes("eliminar_usuario")) {
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
+                const confirmar = await confirmarEliminacion(nombre);
+                if (confirmar) form.submit();
+            });
+        }
+    });
+});
 </script>
 {% endblock pie %}

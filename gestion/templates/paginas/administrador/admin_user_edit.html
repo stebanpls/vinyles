@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_form_user_edit.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_form_usuario_edit.css' %}">
+
 {% endblock extra_css %}
 
 {% block titulo %} Editar Perfil Usuario {% endblock titulo %}
@@ -11,10 +12,8 @@
 <div class="container-formulario">
     <h2 class="titulo-editar">Editar perfil de {{ usuario.username }}</h2>
 
-    <form method="POST" enctype="multipart/form-data" class="form-editar-usuario">
+    <form method="POST" enctype="multipart/form-data" class="form-editar-usuario" id="formEditarUsuario">
         {% csrf_token %}
-
-        <!-- Errores generales -->
         {{ user_form.non_field_errors }}
         {{ cliente_form.non_field_errors }}
 
@@ -55,36 +54,134 @@
             {{ cliente_form.direccion_residencia }}
         </div>
 
-<div class="form-group text-center">
-    <label for="id_foto_perfil" style="font-weight: bold;">Foto de perfil:</label><br>
-
-    {% if cliente_form.instance.foto_perfil %}
-        <img src="{{ cliente_form.instance.foto_perfil.url }}" alt="Foto actual" width="130" height="130"
-            style="object-fit: cover; border-radius: 10px; margin: 10px auto;"><br>
-
-        <!-- Checkbox de eliminación -->
-        <label style="font-size: 14px; color: #555;">
-            <input type="checkbox" name="foto_perfil-clear" style="margin-right: 6px;">
-            Marcar si deseas eliminar la foto actual
-        </label><br><br>
-    {% endif %}
-
-    <!-- Input de carga de nueva foto -->
-    <input type="file" name="foto_perfil" class="form-control" id="id_foto_perfil">
-</div>
-
-
-
+        <div class="form-group text-center">
+            <label for="id_foto_perfil" style="font-weight: bold;">Foto de perfil:</label><br>
+            {% if cliente_form.instance.foto_perfil %}
+                <img src="{{ cliente_form.instance.foto_perfil.url }}" alt="Foto actual" width="130" height="130"
+                    style="object-fit: cover; border-radius: 10px; margin: 10px auto;"><br>
+                <label style="font-size: 14px; color: #555;">
+                    <input type="checkbox" name="foto_perfil-clear" style="margin-right: 6px;">
+                    Marcar si deseas eliminar la foto actual
+                </label><br><br>
+            {% endif %}
+            <input type="file" name="foto_perfil" class="form-control" id="id_foto_perfil">
+        </div>
 
         <div class="form-group">
             <label for="id_generos_favoritos">Géneros favoritos:</label>
             {{ cliente_form.generos_favoritos }}
         </div>
 
-<!-- Botones -->
+<!-- ⚙️ Permiso como Staff (acceso al panel admin) -->
+<!-- ⚙️ Permiso como Staff (acceso al panel admin) -->
+<div class="form-group">
+    <label for="id_is_staff">Permisos del sistema:</label>
+    <div class="permiso-wrapper">
+        <input type="checkbox" id="id_is_staff" name="is_staff" {% if user_form.instance.is_staff %}checked{% endif %} style="display: none;">
+        <button type="button" class="permiso-boton {% if user_form.instance.is_staff %}activo{% else %}inactivo{% endif %}" id="permisoToggle" aria-label="Permiso Staff">
+            <span class="checkbox-icon">{% if user_form.instance.is_staff %}✔{% else %}&nbsp;{% endif %}</span>
+        </button>
+        <span id="permisoEstado" class="permiso-texto">
+            {% if user_form.instance.is_staff %}
+                Acceso activo
+            {% else %}
+                Sin acceso
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+<!-- ✅ Botones -->
 <div class="botones-editar d-flex justify-content-between">
-    <button type="submit" class="btn btn-success">Guardar cambios 💾</button>
+    <button type="submit" class="btn btn-success">Guardar cambios</button>
     <a href="{% url 'admin_ver_perfil_usuario' usuario.id %}" class="btn btn-secondary cancelar">Cancelar</a>
 </div>
 
+    </form>
+</div>
 {% endblock contenido %}
+
+{% block pie %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const checkbox = document.getElementById("id_is_staff");
+    const toggleBtn = document.getElementById("permisoToggle");
+    const iconSpan = toggleBtn.querySelector(".checkbox-icon");
+    const textoEstado = document.getElementById("permisoEstado");
+    const form = document.getElementById("formEditarUsuario");
+
+    const estadoInicial = checkbox.checked;
+    let formModificado = false;
+
+    // Detectar cambios en cualquier input del formulario
+    form.querySelectorAll("input, select, textarea").forEach(el => {
+        el.addEventListener("change", () => {
+            formModificado = true;
+        });
+    });
+
+    // ✅ Cambiar el botón de permisos
+    toggleBtn.addEventListener("click", function () {
+        checkbox.checked = !checkbox.checked;
+        formModificado = true;
+
+        if (checkbox.checked) {
+            toggleBtn.classList.add("activo");
+            toggleBtn.classList.remove("inactivo");
+            iconSpan.textContent = "✔";
+            textoEstado.textContent = "Acceso activo";
+            textoEstado.style.color = "#0d6efd";
+        } else {
+            toggleBtn.classList.remove("activo");
+            toggleBtn.classList.add("inactivo");
+            iconSpan.textContent = "";
+            textoEstado.textContent = "Sin acceso";
+            textoEstado.style.color = "#888";
+        }
+    });
+
+    // ✅ Confirmación antes de enviar el formulario
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let titulo = "¿Guardar cambios?";
+        let mensaje = "¿Estás segurx de guardar los cambios?";
+        let icono = "question";
+
+        if (checkbox.checked !== estadoInicial) {
+            titulo = "Permisos modificados";
+            mensaje = checkbox.checked
+                ? "Has otorgado acceso al panel administrativo. ¿Deseas guardar los cambios?"
+                : "Has quitado el acceso al panel administrativo. ¿Deseas guardar los cambios?";
+            icono = "warning";
+        }
+
+        Swal.fire({
+            title: titulo,
+            text: mensaje,
+            icon: icono,
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.removeEventListener("beforeunload", confirmExit);
+                form.submit();
+            }
+        });
+    });
+
+    // ✅ Confirmación al recargar o salir con cambios no guardados
+    function confirmExit(e) {
+        if (formModificado) {
+            e.preventDefault();
+            e.returnValue = "Tienes cambios sin guardar. ¿Estás segurx de salir?";
+            return e.returnValue;
+        }
+    }
+
+    window.addEventListener("beforeunload", confirmExit);
+});
+</script>
+
+{% endblock pie %}

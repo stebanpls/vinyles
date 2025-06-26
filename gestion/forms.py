@@ -359,14 +359,21 @@ class ClienteEditForm(forms.ModelForm):
         }
 
 class UserEditForm(forms.ModelForm):
+    is_staff = forms.BooleanField(
+        label="¿Puede acceder al panel administrativo?",
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name']
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_staff']
         labels = {
             'username': 'Nombre de usuario',
             'email': 'Correo electrónico',
             'first_name': 'Nombres',
             'last_name': 'Apellidos',
+            'is_staff': '¿Puede acceder al panel administrativo?',
         }
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa el nombre de usuario'}),

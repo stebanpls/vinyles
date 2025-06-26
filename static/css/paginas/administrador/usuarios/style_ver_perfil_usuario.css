@@ -290,3 +290,8 @@
 .eliminar-btn:hover {
   background-color: #7f1d1d;
 }
+
+body.swal2-shown {
+    padding-right: 0 !important;
+    overflow-y: scroll !important;
+}

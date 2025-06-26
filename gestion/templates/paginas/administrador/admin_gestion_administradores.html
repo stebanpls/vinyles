@@ -6,39 +6,41 @@
 <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_users.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} Vinyles - Gestión de Usuarios Bloqueados {% endblock titulo %}
+{% block titulo %} Vinyles - Gestión de Administradores {% endblock titulo %}
 
 {% block contenido %}
 <section class="section">
     <div class="textos">
-        <h1 class="bienvenida">Usuarios bloqueados en la plataforma</h1>
-        <p class="bien">Gestiona todos los perfiles de los usuarios para un control más efectivo.</p>
+        <h1 class="bienvenida">Administradores del sistema</h1>
+        <p class="bien">Visualiza, edita o gestiona a los administradores de la plataforma. 👨‍💼</p>
     </div>
 
     <div class="usuariosbloque">
-        <!-- Barra de búsqueda -->
-        <input type="text" id="buscador" placeholder="Buscar usuario..." class="busqueda">
+        <!-- 🔍 Barra de búsqueda -->
+        <input type="text" id="buscador" placeholder="🔎 Buscar administrador..." class="busqueda">
 
-        <!-- Lista de usuarios -->
+        <!-- Lista de administradores -->
         <ul class="usuarios">
-            {% for usuario in usuarios %}
+            {% for admin in admins %}
             <li>
                 <div class="avatar">
-                    {% if usuario.cliente.foto_perfil %}
-                        <img src="{{ usuario.cliente.foto_perfil.url }}" alt="{{ usuario.username }}"
-                            onerror="this.outerHTML='<div class=\'avatar\' style=\'background-color: gray;\'><i class=\'fa-solid fa-user\'></i></div>'">
+                    {% if admin.cliente.foto_perfil %}
+                        <img src="{{ admin.cliente.foto_perfil.url }}" alt="{{ admin.username }}"
+                            onerror="this.outerHTML='<div class=\'avatar\' style=\'background-color: gray;\'><i class=\'fa-solid fa-user-shield\'></i></div>'">
                     {% else %}
                         <div class="avatar" style="background-color: gray;">
-                            <i class="fa-solid fa-user"></i>
+                            <i class="fa-solid fa-user-shield"></i>
                         </div>
                     {% endif %}
                 </div>
                 <span class="nombre-usuario">
-                    <a href="{% url 'admin_ver_perfil_usuario' usuario.id %}" class="nombre-usuario">
-                        {{ usuario.username }}
+                    <a href="{% url 'admin_ver_perfil_usuario' admin.id %}" class="nombre-usuario">
+                        {{ admin.username }}
                     </a>
                 </span>
             </li>
+            {% empty %}
+            <li>No hay administradores registrados con perfil completo.</li>
             {% endfor %}
         </ul>
     </div>
@@ -60,4 +62,3 @@
 
 {% block pie %}
 {% endblock pie %}
-    
