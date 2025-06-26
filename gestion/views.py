@@ -60,7 +60,7 @@ def artista_form_modal(request):
 
 def modal_genero(request):
     if request.method == "POST":
-        form = GeneroForm(request.POST) # No necesita request.FILES si no hay subida de archivos
+        form = GeneroForm(request.POST, request.FILES) # Ahora sí puede recibir archivos
         if form.is_valid():
             genero = form.save()
             return JsonResponse({
@@ -255,13 +255,13 @@ def pub_registro(request):
     return render(request, 'paginas/publico/pub_registro.html', {'user_form': user_form})
 
 def pub_reembolsos(request):
-  return render(request, 'paginas/publico/pub_reembolsos.html')
+    return render(request, 'paginas/publico/pub_reembolsos.html')
 
 def pub_soporte(request):
-  return render(request, 'paginas/publico/pub_soporte.html')
+    return render(request, 'paginas/publico/pub_soporte.html')
 
 def pub_terminos(request):
-  return render(request, 'paginas/publico/pub_terminos.html')
+    return render(request, 'paginas/publico/pub_terminos.html')
 
 def pub_vinilo(request):
     album_key = request.GET.get('album', '')  # ejemplo: 'michael_jackson_bad', 'metallica_master', etc.
@@ -573,10 +573,10 @@ def pub_vinilo(request):
         'price': 0,
         'genre': '',
         'release_date': '',
-        'label': '',
+        'label': 'Desconocida',
         'producers': '',
         'artist_info': '',
-        'image': 'images/default.jpg', # Considera tener una imagen por defecto
+        'image': '/media/albumes/default/default_album.png', # Ruta directa a la imagen por defecto en media
         'audio': '',
         'song_list': [],
         'comments': []
@@ -775,7 +775,7 @@ def com_checkout(request):
     
 @login_required
 def com_nosotros(request):
-  return render(request, 'paginas/comprador/com_nosotros.html')
+    return render(request, 'paginas/comprador/com_nosotros.html')
 # Vista para MOSTRAR el perfil del comprador
 @login_required
 def com_perfil(request):
@@ -1213,7 +1213,7 @@ def admin_bloq_users(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_generos(request):
-  return render(request, 'paginas/administrador/admin_generos.html')
+    return render(request, 'paginas/administrador/admin_generos.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
@@ -1306,40 +1306,40 @@ def admin_new_users(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido_pendiente(request):
-  return render(request, 'paginas/administrador/admin_pedido_pendiente.html')
+    return render(request, 'paginas/administrador/admin_pedido_pendiente.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido_realizado(request):
-  return render(request, 'paginas/administrador/admin_pedido_realizado.html')
+    return render(request, 'paginas/administrador/admin_pedido_realizado.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_ventas(request):
-  return render(request, 'paginas/Administrador/admin_ventas.html')
+    return render(request, 'paginas/Administrador/admin_ventas.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_nosotros(request):
-  return render(request, 'paginas/administrador/admin_nosotros.html')
+    return render(request, 'paginas/administrador/admin_nosotros.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_terminos(request):
-  return render(request, 'paginas/administrador/admin_terminos.html')
+    return render(request, 'paginas/administrador/admin_terminos.html')
 
 # Vista placeholder para "Más Vendidos" (Asegúrate de que esta plantilla exista)
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_mas_vendidos(request):
-  return render(request, 'paginas/administrador/admin_mas_vendidos.html')
+    return render(request, 'paginas/administrador/admin_mas_vendidos.html')
 
 
 # VISTAS DE VINILOS, SUBCARPETA DE ADMINISTRADOR
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def bts(request):
-  return render(request, 'paginas/administrador/ventas/bts.html')
+    return render(request, 'paginas/administrador/ventas/bts.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
@@ -1349,7 +1349,7 @@ def carti_music(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def eminem_show(request):
-  return render(request, 'paginas/administrador/ventas/eminem_show.html')
+    return render(request, 'paginas/administrador/ventas/eminem_show.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
@@ -1369,7 +1369,7 @@ def master(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def mj_bad(request):
-  return render(request, 'paginas/administrador/ventas/mj_bad.html')
+    return render(request, 'paginas/administrador/ventas/mj_bad.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
@@ -1379,146 +1379,146 @@ def mj_thriller(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def nirvana(request):
-  return render(request, 'paginas/administrador/ventas/nirvana.html')
+    return render(request, 'paginas/administrador/ventas/nirvana.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def the_beatles(request):
-  return render(request, 'paginas/administrador/ventas/the_beatles.html')
+    return render(request, 'paginas/administrador/ventas/the_beatles.html')
 
 
 # VISTAS DE LOS USUARIOS
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def laura_g(request):
-  return render(request, 'paginas/administrador/usuarios/laura_g.html')
+    return render(request, 'paginas/administrador/usuarios/laura_g.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def carlos_r(request):
-  return render(request, 'paginas/administrador/usuarios/carlos_r.html')
+    return render(request, 'paginas/administrador/usuarios/carlos_r.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def camila_q(request):
-  return render(request, 'paginas/administrador/usuarios/camila_q.html')
+    return render(request, 'paginas/administrador/usuarios/camila_q.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def john_m(request):
-  return render(request, 'paginas/administrador/usuarios/john_m.html')
+    return render(request, 'paginas/administrador/usuarios/john_m.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def alex_r(request):
-  return render(request, 'paginas/administrador/usuarios/alex_r.html')
+    return render(request, 'paginas/administrador/usuarios/alex_r.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def andrea_villalobos(request):
-  return render(request, 'paginas/administrador/usuarios/andrea_villalobos.html')
+    return render(request, 'paginas/administrador/usuarios/andrea_villalobos.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def benjamin_castro(request):
-  return render(request, 'paginas/administrador/usuarios/benjamin_castro.html')
+    return render(request, 'paginas/administrador/usuarios/benjamin_castro.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def cristian_dominguez(request):
-  return render(request, 'paginas/administrador/usuarios/cristian_dominguez.html')
+    return render(request, 'paginas/administrador/usuarios/cristian_dominguez.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def angela_torres(request):
-  return render(request, 'paginas/administrador/usuarios/angela_torres.html')
+    return render(request, 'paginas/administrador/usuarios/angela_torres.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def elisa_naranjo(request):
-  return render(request, 'paginas/administrador/usuarios/elisa_naranjo.html')
+    return render(request, 'paginas/administrador/usuarios/elisa_naranjo.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def emilio_torres(request):
-  return render(request, 'paginas/administrador/usuarios/emilio_torres.html')
+    return render(request, 'paginas/administrador/usuarios/emilio_torres.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def andrea_villalobos_2(request):
-  return render(request, 'paginas/administrador/usuarios/andrea_villalobos_2.html')
+    return render(request, 'paginas/administrador/usuarios/andrea_villalobos_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def benjamin_castro_2(request):
-  return render(request, 'paginas/administrador/usuarios/benjamin_castro_2.html')
+    return render(request, 'paginas/administrador/usuarios/benjamin_castro_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def cristian_dominguez_2(request):
-  return render(request, 'paginas/administrador/usuarios/cristian_dominguez_2.html')
+    return render(request, 'paginas/administrador/usuarios/cristian_dominguez_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def angela_torres_2(request):
-  return render(request, 'paginas/administrador/usuarios/angela_torres_2.html')
+    return render(request, 'paginas/administrador/usuarios/angela_torres_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def elisa_naranjo_2(request):
-  return render(request, 'paginas/administrador/usuarios/elisa_naranjo_2.html')
+    return render(request, 'paginas/administrador/usuarios/elisa_naranjo_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def emilio_torres_2(request):
-  return render(request, 'paginas/administrador/usuarios/emilio_torres_2.html')
+    return render(request, 'paginas/administrador/usuarios/emilio_torres_2.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def sofia_ramirez(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/sofia_ramirez.html')
+    return render(request, 'paginas/administrador/usuarios/bloqueados/sofia_ramirez.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def esperanza_barrera(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/esperanza_barrera.html')
+    return render(request, 'paginas/administrador/usuarios/bloqueados/esperanza_barrera.html')
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def fernando_molina(request):
-  return render(request, 'paginas/administrador/usuarios/bloqueados/fernando_molina.html')
+    return render(request, 'paginas/administrador/usuarios/bloqueados/fernando_molina.html')
 
 
 # VISTAS DE LA CARPETA "CRUD"
 def crud(request):
-  elementos_crud = Crud.objects.all() # Obtiene todos los elementos del modelo Crud
-  # print(elementos_crud)  # Imprime en la consola los elementos del modelo Crud
-  return render(request, 'crud/crud_inicio.html', { 'elementos_crud': elementos_crud })
+    elementos_crud = Crud.objects.all() # Obtiene todos los elementos del modelo Crud
+    # print(elementos_crud)  # Imprime en la consola los elementos del modelo Crud
+    return render(request, 'crud/crud_inicio.html', { 'elementos_crud': elementos_crud })
 
 def crud_crear(request):
-  if request.method == 'POST':
-    formulario = CrudForm(request.POST, request.FILES) # Se crea el formulario con los datos POST
-    if formulario.is_valid():
-      formulario.save() # Se guarda el formulario
-      return redirect('crud') # Se redirecciona a la página de listado del CRUD
-  else: # Si es una solicitud GET
-    formulario = CrudForm() # Se crea un formulario vacío
-  return render(request, 'crud/crud_crear.html', { 'formulario': formulario })
+    if request.method == 'POST':
+        formulario = CrudForm(request.POST, request.FILES) # Se crea el formulario con los datos POST
+        if formulario.is_valid():
+            formulario.save() # Se guarda el formulario
+            return redirect('crud') # Se redirecciona a la página de listado del CRUD
+    else: # Si es una solicitud GET
+        formulario = CrudForm() # Se crea un formulario vacío
+    return render(request, 'crud/crud_crear.html', { 'formulario': formulario })
 
 def crud_editar(request, id):
-  editar_elemento = Crud.objects.get(id = id) # Obtiene el elemento del modelo Crud por su ID
-  if request.method == 'POST':
-    # Se crea el formulario con los datos POST y la instancia existente
-    formulario = CrudForm(request.POST, request.FILES, instance = editar_elemento)
-    if formulario.is_valid():
-      formulario.save() # Se guarda el formulario
-      return redirect('crud') # Se redirecciona a la página de listado del CRUD
-  else: # Si es una solicitud GET
-    # Se crea un formulario pre-poblado con los datos de la instancia
-    formulario = CrudForm(instance = editar_elemento)
-  return render(request, 'crud/crud_editar.html', {'formulario': formulario})
+    editar_elemento = Crud.objects.get(id = id) # Obtiene el elemento del modelo Crud por su ID
+    if request.method == 'POST':
+        # Se crea el formulario con los datos POST y la instancia existente
+        formulario = CrudForm(request.POST, request.FILES, instance = editar_elemento)
+        if formulario.is_valid():
+            formulario.save() # Se guarda el formulario
+            return redirect('crud') # Se redirecciona a la página de listado del CRUD
+    else: # Si es una solicitud GET
+        # Se crea un formulario pre-poblado con los datos de la instancia
+        formulario = CrudForm(instance = editar_elemento)
+    return render(request, 'crud/crud_editar.html', {'formulario': formulario})
 
 def crud_eliminar(request, id):
-  eliminar_elemento = Crud.objects.get(id = id)
-  eliminar_elemento.delete()
-  return redirect('crud') # Redirecciona a la lista del CRUD
+    eliminar_elemento = Crud.objects.get(id = id)
+    eliminar_elemento.delete()
+    return redirect('crud') # Redirecciona a la lista del CRUD

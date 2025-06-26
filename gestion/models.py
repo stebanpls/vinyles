@@ -13,6 +13,7 @@ from uuid import uuid4 # Para generar nombres de archivo únicos
 from PIL import Image # Importar Pillow
 from django.core.files.base import ContentFile # Para guardar la imagen procesada
 import io # Para manejar el stream de bytes de la imagen
+from django.conf import settings # Añadido para que la lógica de Cliente.save() funcione correctamente
 
 import logging # Añadir al inicio del archivo
 logger = logging.getLogger(__name__) # Añadir al inicio del archivo, después de los imports
@@ -49,6 +50,7 @@ class Crud(models.Model): # Es mejor nombrar la clase con mayúscula inicial, si
 class Genero(models.Model):
     # id = models.AutoField(primary_key=True) # Django lo añade automáticamente
     nombre = models.CharField(max_length=100, unique=True, verbose_name="Nombre del Género")
+    foto = models.ImageField(upload_to='generos/', verbose_name="Foto del Género", null=True, blank=True, default='generos/default/default_genero.png') # Nuevo campo para la foto del género
 
     class Meta:
         db_table = 'generos' # Nombre de tabla corto
@@ -57,7 +59,20 @@ class Genero(models.Model):
 
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.upper()  # 💥 Aquí convierte a mayúscula antes de guardar
+
+        old_foto = None
+        if self.pk:
+            try:
+                old_instance = Genero.objects.get(pk=self.pk)
+                old_foto = old_instance.foto
+            except Genero.DoesNotExist:
+                pass # El objeto es nuevo, no hay foto antigua.
+
         super().save(*args, **kwargs)
+
+        if old_foto and self.foto != old_foto:
+            if old_foto.name != 'generos/default/default_genero.png':
+                old_foto.delete(save=False)
     
     def __str__(self):
         return self.nombre
@@ -83,6 +98,7 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
         null=True,
         blank=True,
         verbose_name="Foto de Perfil",
+        default='fotos_perfil/default/default_avatar.png' # Asegúrate de que esta ruta sea correcta
     )
     generos_favoritos = models.ManyToManyField(
         Genero,
@@ -154,13 +170,54 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
                 except OSError as e:
                     logger.error(f"Error al eliminar foto antigua {ruta_foto_antigua}: {e}")
 
-        if procesar_imagen_nueva and self.foto_perfil and hasattr(self.foto_perfil, 'path'):
+        # --- Lógica de eliminación de archivos antiguos ---
+        if eliminar_foto_antigua_del_disco and ruta_foto_antigua:
+            # Rutas relativas de las imágenes por defecto que NUNCA deben ser eliminadas
+            default_avatar_relative_path = 'fotos_perfil/default/default_avatar.png'
+            
+            # Convertir la ruta antigua a una ruta relativa para una comparación segura
+            # Esto asume que ruta_foto_antigua está dentro de MEDIA_ROOT
+            ruta_foto_antigua_relative = os.path.relpath(ruta_foto_antigua, settings.MEDIA_ROOT)
+
+            # Si la ruta antigua es una de las imágenes por defecto, NO la eliminamos.
+            if ruta_foto_antigua_relative == default_avatar_relative_path:
+                logger.warning(f"Intento de eliminar imagen por defecto: {ruta_foto_antigua_relative}. Operación abortada.")
+                eliminar_foto_antigua_del_disco = False # Desactivar la bandera de eliminación
+            else:
+                # Si no es una imagen por defecto, procedemos con la eliminación
+                # Asegurarse de que la ruta antigua realmente existe y no es la misma que la nueva (si hay nueva)
+                foto_actual_path = self.foto_perfil.path if self.foto_perfil and hasattr(self.foto_perfil, 'path') else None
+                if os.path.exists(ruta_foto_antigua) and ruta_foto_antigua != foto_actual_path:
+                    try:
+                        os.remove(ruta_foto_antigua)
+                        logger.info(f"Foto antigua eliminada del disco: {ruta_foto_antigua}")
+
+                        # Opcional: Intentar eliminar el directorio del usuario si está vacío
+                        directorio_usuario = os.path.dirname(ruta_foto_antigua)
+                        # Asegurarse de no eliminar directorios base como 'fotos_perfil' o 'fotos_perfil/default'
+                        if os.path.exists(directorio_usuario) and not os.listdir(directorio_usuario) and \
+                           directorio_usuario != os.path.join(settings.MEDIA_ROOT, 'fotos_perfil') and \
+                           directorio_usuario != os.path.join(settings.MEDIA_ROOT, 'fotos_perfil', 'default'):
+                            try:
+                                os.rmdir(directorio_usuario)
+                                logger.info(f"Directorio de usuario vacío eliminado: {directorio_usuario}")
+                            except OSError as e:
+                                logger.warning(f"No se pudo eliminar el directorio vacío {directorio_usuario}: {e}")
+                    except OSError as e:
+                        logger.error(f"Error al eliminar foto antigua {ruta_foto_antigua}: {e}")
+
+        # --- Lógica de procesamiento de imagen (recorte, conversión, etc.) ---
+        # Solo procesar si es una imagen nueva Y NO es la imagen por defecto.
+        # Esta condición ya estaba y es correcta para evitar procesar la default.
+        if (procesar_imagen_nueva and self.foto_perfil and hasattr(self.foto_perfil, 'path') and
+                self.foto_perfil.name != 'fotos_perfil/default/default_avatar.png'): # Asegúrate de que esta ruta sea correcta
+
             # Verificar si el archivo existe físicamente antes de intentar abrirlo con Pillow
             # Esto es importante porque self.foto_perfil.path podría existir incluso si el archivo fue
             # eliminado por otro proceso o si hubo un error en la subida.
             if not os.path.exists(self.foto_perfil.path):
                 logger.warning(f"El archivo de imagen para {self.user.username} no existe en {self.foto_perfil.path}. No se procesará.")
-                return # Salir si el archivo no existe para evitar errores con Pillow
+                return # Salir si el archivo no existe para evitar errores con Pillow.
 
             try:
                 img = Image.open(self.foto_perfil.path)
@@ -241,7 +298,7 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 class Artista(models.Model):
     nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Artista")
     informacion = models.TextField(verbose_name="Información del Artista", blank=True, default="")
-    foto = models.ImageField(upload_to='artistas/', verbose_name="Foto del Artista", null=True, blank=True)
+    foto = models.ImageField(upload_to='artistas/', verbose_name="Foto del Artista", null=True, blank=True, default='artistas/default/default_avatar.png')
     discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
 
     class Meta:
@@ -249,6 +306,21 @@ class Artista(models.Model):
         verbose_name = "Artista"
         verbose_name_plural = "Artistas"
         ordering = ['nombre']
+
+    def save(self, *args, **kwargs):
+        old_foto = None
+        if self.pk:
+            try:
+                old_instance = Artista.objects.get(pk=self.pk)
+                old_foto = old_instance.foto
+            except Artista.DoesNotExist:
+                pass # El objeto es nuevo, no hay foto antigua.
+
+        super().save(*args, **kwargs)
+
+        if old_foto and self.foto != old_foto:
+            if old_foto.name != 'artistas/default/default_avatar.png':
+                old_foto.delete(save=False)
 
     def __str__(self):
         return self.nombre
@@ -310,7 +382,7 @@ class Producto(models.Model):
     stock = models.PositiveIntegerField(default=0, verbose_name="Cantidad en Stock")
     descripcion = models.TextField(verbose_name="Descripción del Producto")
     discografica = models.CharField(max_length=200, verbose_name="Compañía Discográfica")
-    imagen_portada = models.ImageField(upload_to='productos_portadas/',verbose_name="Imagen de Portada")
+    imagen_portada = models.ImageField(upload_to='productos_portadas/', verbose_name="Imagen de Portada", default='albumes/default/default_album.png')
     genero_principal = models.ManyToManyField(
         Genero,
         related_name="productos_principales",
@@ -323,6 +395,21 @@ class Producto(models.Model):
         verbose_name = "Producto (Vinilo/Álbum)"
         verbose_name_plural = "Productos (Vinilos/Álbumes)"
         ordering = ['nombre']
+
+    def save(self, *args, **kwargs):
+        old_imagen_portada = None
+        if self.pk:
+            try:
+                old_instance = Producto.objects.get(pk=self.pk)
+                old_imagen_portada = old_instance.imagen_portada
+            except Producto.DoesNotExist:
+                pass # El objeto es nuevo, no hay imagen antigua.
+
+        super().save(*args, **kwargs)
+
+        if old_imagen_portada and self.imagen_portada != old_imagen_portada:
+            if old_imagen_portada.name != 'albumes/default/default_album.png':
+                old_imagen_portada.delete(save=False)
 
     def __str__(self):
         artistas_nombres = ", ".join(art.nombre for art in self.artistas.all())

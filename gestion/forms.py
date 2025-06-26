@@ -257,12 +257,14 @@ class ProductorForm(forms.ModelForm):
 class GeneroForm(forms.ModelForm):
     class Meta:
         model = Genero
-        fields = ['nombre']
+        fields = ['nombre', 'foto']
         labels = {
             'nombre': 'Nombre del Género',
+            'foto': 'Foto del Género (Opcional)',
         }
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Salsa'}),
+            'foto': MinimalFileInput(attrs={'class': 'form-control-file mb-2', 'accept': 'image/*'}),
         }
 
     def clean_nombre(self):
