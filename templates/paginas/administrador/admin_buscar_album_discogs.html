@@ -1,0 +1,209 @@
+{% extends "plantillas/plantilla_administrador.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        /* Estilos básicos para la página de búsqueda */
+        .search-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .search-input {
+            width: calc(100% - 100px);
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #3a3a3a;
+            color: #eee;
+            margin-right: 10px;
+        }
+        .search-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+        .results-container {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .album-card {
+            background-color: #3a3a3a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+        }
+        .album-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .album-card h3 {
+            color: #fff;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        .album-card p {
+            color: #bbb;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .album-card .import-button {
+            padding: 8px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        .album-card .import-button:hover {
+            background-color: #218838;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block titulo %} Vinyles - Buscar Álbumes Discogs {% endblock titulo %}
+
+{% block contenido %}
+<section class="section">
+    <div class="textos">
+        <h1 class="bienvenida">Buscar Álbumes en Discogs</h1>
+        <p class="bien">Encuentra y importa información de álbumes directamente desde la base de datos de Discogs.</p>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="discogs-search-input" class="search-input" placeholder="Buscar álbum por título o artista..." value="{{ query }}">
+        <button id="discogs-search-button" class="search-button">Buscar</button>
+    </div>
+
+    <div id="discogs-results" class="results-container">
+        {% if results %}
+            {% for album in results %}
+                <div class="album-card">
+                    <img src="{{ album.image }}" alt="{{ album.title }}">
+                    <h3>{{ album.title }}</h3>
+                    <p>Artista: {{ album.artist }}</p>
+                    <p>Año: {{ album.year }}</p>
+                    <p>Formato: {{ album.formats }}</p>
+                    <button class="import-button" data-discogs-id="{{ album.id }}">Importar</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: #bbb; text-align: center; grid-column: 1 / -1;">No hay resultados para mostrar. ¡Realiza una búsqueda!</p>
+        {% endif %}
+    </div>
+
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('discogs-search-input');
+        const searchButton = document.getElementById('discogs-search-button');
+        const resultsContainer = document.getElementById('discogs-results');
+
+        searchButton.addEventListener('click', function() {
+            const query = searchInput.value;
+            if (query) {
+                fetch(`/admin/buscar-album-discogs/?q=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Indica que es una petición AJAX
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer.innerHTML = ''; // Limpiar resultados anteriores
+                    if (data.results && data.results.length > 0) {
+                        data.results.forEach(album => {
+                            const card = `
+                                <div class="album-card">
+                                    <img src="${album.image}" alt="${album.title}">
+                                    <h3>${album.title}</h3>
+                                    <p>Artista: ${album.artist}</p>
+                                    <p>Año: ${album.year}</p>
+                                    <p>Formato: ${album.formats}</p>
+                                    <button class="import-button" data-discogs-id="${album.id}">Importar</button>
+                                </div>
+                            `;
+                            resultsContainer.innerHTML += card;
+                        });
+                    } else {
+                        resultsContainer.innerHTML = '<p style="color: #bbb; text-align: center; grid-column: 1 / -1;">No se encontraron resultados.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al buscar en Discogs:', error);
+                    resultsContainer.innerHTML = '<p style="color: red; text-align: center; grid-column: 1 / -1;">Error al realizar la búsqueda. Inténtalo de nuevo.</p>';
+                });
+            }
+        });
+
+        // Manejar clics en los botones de "Importar"
+        resultsContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('import-button')) {
+                const discogsId = event.target.dataset.discogsId;
+                if (discogsId) {
+                    // Deshabilitar el botón para evitar múltiples clics
+                    event.target.disabled = true;
+                    event.target.textContent = 'Importando...';
+
+                    fetch('/admin/importar-album-discogs/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}', // Importante para peticiones POST en Django
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `release_id=${encodeURIComponent(discogsId)}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Álbum importado exitosamente!');
+                            // Opcional: redirigir o actualizar la UI
+                            if (data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            }
+                        } else {
+                            alert('Error al importar álbum: ' + data.error);
+                            event.target.disabled = false;
+                            event.target.textContent = 'Importar';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al importar álbum:', error);
+                        alert('Error de red al importar álbum.');
+                        event.target.disabled = false;
+                        event.target.textContent = 'Importar';
+                    });
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock contenido %}
+
+{% block pie %}
+
+{% endblock pie %}

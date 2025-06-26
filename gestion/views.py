@@ -26,6 +26,9 @@ import os # Importar para obtener variables de entorno
 from django.contrib.auth.models import User, Group # Importar el modelo User y Group estándar
 from django.core.mail import EmailMultiAlternatives # Importar para enviar correos HTML
 from django.contrib import messages # Para mensajes opcionales
+from django.core.files.base import ContentFile # Para guardar archivos
+from django.core.files.storage import default_storage # Para guardar archivos
+import requests # Para descargar imágenes
 from datetime import timedelta # Importar timedelta
 
 # Create your views here.
@@ -1086,7 +1089,118 @@ def admin_verificacion(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_adPro(request):
-  return render(request, 'paginas/administrador/admin_adPro.html')
+    return render(request, 'paginas/administrador/admin_adPro.html')
+
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
+def admin_buscar_album_discogs(request):
+    from .discogs_api_utils import discogs_api # Importa tu utilidad aquí
+
+    query = request.GET.get('q', '')
+    results = []
+    if query:
+        discogs_results = discogs_api.search_releases(query, type='release', per_page=10)
+        if discogs_results:
+            for release in discogs_results:
+                # Adapta los datos de Discogs a un formato que tu frontend pueda usar
+                # Asegúrate de que los campos existan en el objeto 'release' antes de acceder a ellos
+                results.append({
+                    'id': release.id,
+                    'title': release.title,
+                    'artist': ', '.join([a.name for a in release.artists]) if hasattr(release, 'artists') and release.artists else 'Desconocido',
+                    'year': release.year if hasattr(release, 'year') else 'N/A',
+                    'image': release.images[0]['uri'] if hasattr(release, 'images') and release.images else '',
+                    'formats': ', '.join(release.formats) if hasattr(release, 'formats') and release.formats else 'N/A',
+                })
+        else:
+            messages.warning(request, "No se pudieron obtener resultados de Discogs. Inténtalo de nuevo más tarde.")
+
+    # Si es una petición AJAX, devuelve JSON
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'results': results})
+    
+    # Si no es AJAX, renderiza una plantilla (ej. para una página de búsqueda)
+    return render(request, 'paginas/administrador/admin_buscar_album_discogs.html', {'query': query, 'results': results})
+
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url='pub_login')
+def admin_importar_album_discogs(request):
+    from .discogs_api_utils import discogs_api # Importa tu utilidad aquí
+    
+    if request.method == 'POST':
+        release_id = request.POST.get('release_id')
+        if release_id:
+            release_details = discogs_api.get_release_details(int(release_id))
+            if release_details:
+                try:
+                    # 1. Verificar si el producto ya existe por discogs_id
+                    if Producto.objects.filter(discogs_id=release_details.id).exists():
+                        messages.warning(request, f"El álbum '{release_details.title}' ya ha sido importado.")
+                        return JsonResponse({'success': False, 'error': 'Álbum ya existe'})
+
+                    # 2. Crear o obtener el artista(s)
+                    artistas_objs = []
+                    if hasattr(release_details, 'artists') and release_details.artists:
+                        for artist_data in release_details.artists:
+                            artist_obj, created = Artista.objects.get_or_create(
+                                nombre=artist_data.name,
+                                defaults={'discogs_id': artist_data.id if hasattr(artist_data, 'id') else None}
+                            )
+                            if created:
+                                messages.info(request, f"Artista '{artist_data.name}' creado.")
+                            artistas_objs.append(artist_obj)
+
+                    # 3. Crear o obtener el género(s) principal(es)
+                    generos_objs = []
+                    if hasattr(release_details, 'genres') and release_details.genres:
+                        for genre_name in release_details.genres:
+                            # Tu modelo Genero convierte a mayúsculas al guardar
+                            genero_obj, created = Genero.objects.get_or_create(nombre=genre_name.upper())
+                            if created:
+                                messages.info(request, f"Género '{genre_name}' creado.")
+                            generos_objs.append(genero_obj)
+
+                    # 4. Descargar y guardar la imagen de portada
+                    image_path = None
+                    if hasattr(release_details, 'images') and release_details.images:
+                        image_url = release_details.images[0]['uri']
+                        image_path = discogs_api.download_image(image_url, filename_prefix=f"{release_details.id}")
+                        if not image_path:
+                            messages.warning(request, f"No se pudo descargar la imagen para '{release_details.title}'.")
+
+                    # 5. Crear el Producto
+                    producto = Producto.objects.create(
+                        nombre=release_details.title,
+                        lanzamiento=f"{release_details.year}-01-01" if hasattr(release_details, 'year') else '2000-01-01', # Discogs a menudo solo da el año
+                        precio=0, # Precio inicial, el admin lo ajustará
+                        stock=0,  # Stock inicial
+                        descripcion=f"Álbum importado desde Discogs. Formato(s): {', '.join(release_details.formats) if hasattr(release_details, 'formats') else 'N/A'}",
+                        discografica=release_details.labels[0].name if hasattr(release_details, 'labels') and release_details.labels else 'Desconocida',
+                        imagen_portada=image_path,
+                        discogs_id=str(release_details.id)
+                    )
+                    producto.artistas.set(artistas_objs) # Asigna los artistas
+                    producto.genero_principal.set(generos_objs) # Asigna los géneros
+
+                    # 6. Lógica para las canciones (más compleja, requiere iterar tracklist y crear Cancion y ProductoCancion)
+                    # Esto lo puedes implementar después, si lo necesitas.
+                    # for track_data in release_details.tracklist:
+                    #    cancion_obj, _ = Cancion.objects.get_or_create(nombre=track_data.title, defaults={'discogs_id': track_data.id if hasattr(track_data, 'id') else None})
+                    #    ProductoCancion.objects.create(producto=producto, cancion=cancion_obj, numero_pista=track_data.position)
+
+                    messages.success(request, f"Álbum '{producto.nombre}' importado exitosamente desde Discogs.")
+                    return JsonResponse({'success': True, 'redirect_url': reverse('admin_adPro')}) # Redirige a la página de edición del producto
+                except Exception as e:
+                    messages.error(request, f"Error al importar el álbum: {e}")
+                    logger.exception("Error durante la importación de álbum desde Discogs")
+                    return JsonResponse({'success': False, 'error': str(e)})
+            else:
+                messages.error(request, "No se pudieron obtener los detalles del lanzamiento de Discogs.")
+                return JsonResponse({'success': False, 'error': 'Detalles no encontrados'})
+        else:
+            messages.error(request, "ID de lanzamiento no proporcionado.")
+            return JsonResponse({'success': False, 'error': 'ID no proporcionado'})
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')

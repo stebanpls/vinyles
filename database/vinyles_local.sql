@@ -26,8 +26,10 @@ CREATE TABLE IF NOT EXISTS `artistas` (
   `nombre` varchar(200) NOT NULL,
   `informacion` longtext NOT NULL,
   `foto` varchar(100) DEFAULT NULL,
+  `discogs_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `nombre` (`nombre`)
+  UNIQUE KEY `nombre` (`nombre`),
+  UNIQUE KEY `discogs_id` (`discogs_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla vinyles_local.artistas: ~0 rows (aproximadamente)
@@ -324,7 +326,9 @@ CREATE TABLE IF NOT EXISTS `canciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) NOT NULL,
   `duracion` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `discogs_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `discogs_id` (`discogs_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla vinyles_local.canciones: ~0 rows (aproximadamente)
@@ -553,9 +557,9 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~31 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~32 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-05-30 01:52:14.584499');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
@@ -618,6 +622,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(30, 'sites', '0001_initial', '2025-06-23 04:31:00.019228');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(31, 'sites', '0002_alter_domain_unique', '2025-06-23 04:31:00.467858');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(32, 'gestion', '0012_artista_discogs_id_cancion_discogs_id_and_more', '2025-06-26 14:44:50.889151');
 
 -- Volcando estructura para tabla vinyles_local.django_session
 DROP TABLE IF EXISTS `django_session`;
@@ -770,8 +776,10 @@ DROP TABLE IF EXISTS `productores`;
 CREATE TABLE IF NOT EXISTS `productores` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) NOT NULL,
+  `discogs_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `nombre` (`nombre`)
+  UNIQUE KEY `nombre` (`nombre`),
+  UNIQUE KEY `discogs_id` (`discogs_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla vinyles_local.productores: ~0 rows (aproximadamente)

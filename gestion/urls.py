@@ -37,6 +37,8 @@ urlpatterns = [
     path('admin_eliminar_usuario/<int:usuario_id>/', views.admin_eliminar_usuario, name='admin_eliminar_usuario'),
     path('admin_bloquear_usuario/<int:usuario_id>/', views.admin_bloquear_usuario, name='admin_bloquear_usuario'),
 
+    path('admin/buscar-album-discogs/', views.admin_buscar_album_discogs, name='admin_buscar_album_discogs'),
+    path('admin/importar-album-discogs/', views.admin_importar_album_discogs, name='admin_importar_album_discogs'),
 
 
     # URLS DE LA CARPETA "COMPRADOR"

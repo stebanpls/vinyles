@@ -242,6 +242,7 @@ class Artista(models.Model):
     nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Artista")
     informacion = models.TextField(verbose_name="Información del Artista", blank=True, default="")
     foto = models.ImageField(upload_to='artistas/', verbose_name="Foto del Artista", null=True, blank=True)
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
 
     class Meta:
         db_table = 'artistas' # Convención: plural
@@ -254,6 +255,7 @@ class Artista(models.Model):
 
 class Productor(models.Model):
     nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Productor")
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
 
     class Meta:
         db_table = 'productores' # Convención: plural
@@ -284,6 +286,7 @@ class Cancion(models.Model):
         blank=True,
         verbose_name="Géneros"
     )
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
     duracion = models.DurationField(verbose_name="Duración (ej: 00:03:46)", blank=True, null=True)
 
     class Meta:
