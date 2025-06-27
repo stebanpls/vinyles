@@ -833,12 +833,16 @@ def com_perfil_editar(request):
         if all_forms_are_valid:
             user_form.save()
             
-            # Antes de guardar cliente_form, verificamos si se debe eliminar la foto.
-            # Accedemos a cliente_form.instance, que es la instancia que el formulario
-            # está a punto de guardar.
-            if cliente_form.cleaned_data.get('_delete_profile_photo'):
-                # Si la bandera es True, establecemos el campo foto_perfil de la instancia del formulario a None.
-                # El método save() personalizado del modelo Cliente se encargará de borrar el archivo físico.
+            # Lógica para manejar la foto de perfil
+            # Priorizamos la subida de una nueva foto sobre la eliminación.
+            new_profile_photo_uploaded = request.FILES.get('foto_perfil')
+            delete_profile_photo_flag = cliente_form.cleaned_data.get('_delete_profile_photo')
+
+            if new_profile_photo_uploaded:
+                # Si se sube una nueva foto, el formulario ya la tiene en cleaned_data
+                # y la guardará automáticamente. Ignoramos la bandera de eliminación.
+                pass
+            elif delete_profile_photo_flag:
                 cliente_form.instance.foto_perfil = None
 
             cliente_form.save() # Guarda el cliente_form (incluyendo la posible nueva foto o ninguna)

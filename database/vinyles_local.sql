@@ -284,11 +284,15 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.auth_user: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.auth_user: ~4 rows (aproximadamente)
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(1, 'pbkdf2_sha256$1000000$IHl9F1X4p8yHxkfwwwgJTB$ut5YyPEJJ2PdfJ2VZ/TVIHX5LGYg/rtgOOCrqKSJhPM=', '2025-06-23 04:33:14.776299', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-05-30 02:22:23.892608');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-	(2, 'pbkdf2_sha256$1000000$3uLNUO3WxlaOptKesonJEB$pevuoUC4lo5jN0rDv9LV3K6sm6U5b+ZQ97+87vTweq4=', '2025-06-27 16:34:04.253047', 0, 'stebanpls', 'Steban', '', 'stebanpulido@gmail.com', 0, 1, '2025-06-06 00:42:50.616501');
+	(2, 'pbkdf2_sha256$1000000$3uLNUO3WxlaOptKesonJEB$pevuoUC4lo5jN0rDv9LV3K6sm6U5b+ZQ97+87vTweq4=', '2025-06-27 17:26:10.888234', 0, 'stebanpls', 'Steban', '', 'stebanpulido@gmail.com', 0, 1, '2025-06-06 00:42:50.616501');
+INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
+	(3, 'pbkdf2_sha256$1000000$lrTydbNbq4bjUFtYsLa2Mu$fQj0dnSdou8/GG+58iGubUTuVj3m2VGVV0XfOq2JHqw=', '2025-06-27 17:39:41.773789', 0, 'Angelita', 'Angela', 'Forero', 'angkitty0.0@gmail.com', 0, 1, '2025-06-27 17:38:56.356567');
+INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
+	(4, 'pbkdf2_sha256$1000000$ReQjqaTBK2grk9wXhncsAu$bmElFhgVwwDbVqiU4vHrF/JSzbn6DYUJOXO/CqTyNHE=', '2025-06-27 17:43:56.376003', 0, 'Aerizzu', 'Giselle', 'Gomez', 'shatian@gmail.com', 0, 1, '2025-06-27 17:43:32.592867');
 
 -- Volcando estructura para tabla vinyles_local.auth_user_groups
 DROP TABLE IF EXISTS `auth_user_groups`;
@@ -403,9 +407,13 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   CONSTRAINT `clientes_user_id_2e92d62d_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla vinyles_local.clientes: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.clientes: ~3 rows (aproximadamente)
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
-	(2, NULL, NULL, NULL, 'fotos_perfil/user_2/7e61360be4f5476d998ecce4cbf3479b.jpg');
+	(2, NULL, NULL, NULL, 'fotos_perfil/user_2/5fa75ea8a8f142f39c42b66fb09cadc8.jpg');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
+	(3, NULL, NULL, NULL, 'fotos_perfil/user_3/0d458c7e6a2c48198b8c400e5984c0e4.jpg');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
+	(4, NULL, NULL, NULL, 'fotos_perfil/user_4/0b58f71e7c9e4f7989cedeaf729ce97d.jpg');
 
 -- Volcando estructura para tabla vinyles_local.clientes_generos_favoritos
 DROP TABLE IF EXISTS `clientes_generos_favoritos`;
@@ -653,6 +661,8 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('7at0tgb22w0vjpsflcckd6v6kd79y8ce', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uPYNq:gHzhFz_vO5rlY2NzGXX2tia4pLZ7YwemOl9HCqN-cDc', '2025-06-26 03:13:42.735023');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+	('88ykree3zlm8hz04f7a4cauxz4k3957g', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uVCJi:DnNpqVYO8U6IKsWwnnLuy5EYiP4Br8pSe05S9wyXoao', '2025-07-11 16:52:46.702858');
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('9gs7n6s4ny52e6wgubrylkola0j2laya', '.eJxVjMsOwiAQRf-FtSHyBpfu_QYyMINUDSSlXRn_3TbpQrfnnHvfLMK61LgOmuOE7MIEO_2yBPlJbRf4gHbvPPe2zFPie8IPO_itI72uR_t3UGHUbZ0JCnmwhEFKRI3OpOCcVSAyeOetUEa7fFYejPI-IW7YSocJS9AF2OcLA8c4qw:1uKpP2:0x47VD61OcSqbmZbznEgnSgSPJMHGTYpeg0nQA176x0', '2025-06-13 02:23:24.420717');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('bb2ao6ajh36g86a5p31iqgjbujkkhxby', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uPRK5:n9juK0ZHoATuYCgzItxxR4Qu8TW4wZlcJoeUDXd6DQ8', '2025-06-25 19:41:21.708170');
@@ -668,6 +678,8 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 	('i09b8bo8apel4bmlvon82tm9wdv392mb', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uUqyU:GRQAQAB_ZKpEQI6jij_EPsLBhJCSIbGXJwgj5k1WSKY', '2025-07-10 18:05:26.581958');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('ija118w66rbpnrje2t8bo22v1tbazup4', '.eJxVjMsOwiAQRf-FtSHyBpfu_QYyMINUDSSlXRn_3TbpQrfnnHvfLMK61LgOmuOE7MIEO_2yBPlJbRf4gHbvPPe2zFPie8IPO_itI72uR_t3UGHUbZ0JCnmwhEFKRI3OpOCcVSAyeOetUEa7fFYejPI-IW7YSocJS9AF2OcLA8c4qw:1uL0ch:qvQwroSRpkC_4OWVcmGfhZcS9zSYjQ_HuoYpvX1MVRg', '2025-06-13 14:22:15.284156');
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+	('j5bkkkyh9sz5s04dc97n18fzyie8uyg3', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uVCq2:S29FyKhFWgucoxrFJjzJg9SEgQucfqJ4qbIpapQadAs', '2025-07-11 17:26:10.892015');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('kdqm7spw1m4ly2kx2hvmypasaon73djl', '.eJxVjDsOwjAQBe_iGllafzaYkp4zWOv1GgeQI8VJFXF3iJQC2jczb1OR1qXGtcscx6wuyqjT75aIn9J2kB_U7pPmqS3zmPSu6IN2fZuyvK6H-3dQqddvzSIueQ-FeUBAy64goQvGFGesScE64ACckMuAnMGfLQKRp5ycEKr3B-naOCk:1uPZ5G:Y0n4EPaXjivxidHo3Qy_aPDeIlQBtlW1wyLxD2E3Ifc', '2025-06-26 03:58:34.181983');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
