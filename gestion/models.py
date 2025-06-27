@@ -121,87 +121,82 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
         return f"Cliente: {self.user.username}"
 
     def save(self, *args, **kwargs):
-        # Guardar una referencia a la instancia antigua para poder comparar la foto
-        old_instance = None
-        if self.pk:
-            try:
-                old_instance = Cliente.objects.get(pk=self.pk)
-            except Cliente.DoesNotExist:
-                pass # Es una instancia nueva aunque tenga PK, no hay foto antigua que borrar.
-
-        # Determinar si la imagen se va a procesar (es nueva o ha cambiado)
-        process_new_image = True
-        if old_instance and old_instance.foto_perfil == self.foto_perfil:
-            process_new_image = False
-
         # Guardar la instancia en la base de datos ANTES de manipular archivos
         super().save(*args, **kwargs)
 
-        # 1. Lógica para eliminar la foto antigua si ha cambiado
-        if old_instance and old_instance.foto_perfil and old_instance.foto_perfil != self.foto_perfil:
-            # No eliminar el archivo si es la imagen por defecto
-            if 'default' not in old_instance.foto_perfil.name:
-                if os.path.isfile(old_instance.foto_perfil.path):
-                    try:
-                        os.remove(old_instance.foto_perfil.path)
-                        logger.info(f"Foto de perfil antigua eliminada: {old_instance.foto_perfil.path}")
-                        # Opcional: eliminar directorio si está vacío
-                        dir_path = os.path.dirname(old_instance.foto_perfil.path)
-                        if not os.listdir(dir_path):
-                            os.rmdir(dir_path)
-                            logger.info(f"Directorio de usuario vacío eliminado: {dir_path}")
-                    except OSError as e:
-                        logger.error(f"Error al eliminar foto antigua {old_instance.foto_perfil.path}: {e}")
+        # --- Lógica de limpieza de archivos de perfil antiguos ---
+        # Define la ruta base para las fotos de perfil de este usuario
+        user_photo_dir = os.path.join(settings.MEDIA_ROOT, 'fotos_perfil', f'user_{self.user.id}')
+        
+        # Define la ruta relativa de la imagen por defecto (que nunca debe ser eliminada)
+        default_avatar_relative_path = 'fotos_perfil/default/default_avatar.png'
+
+        # Obtiene el nombre del archivo de la foto de perfil actual (si existe)
+        # Si self.foto_perfil es None (ej. se eliminó la foto), current_photo_name será None.
+        current_photo_name = self.foto_perfil.name if self.foto_perfil else None
+
+        # Si el directorio del usuario existe, procede a limpiarlo
+        if os.path.exists(user_photo_dir):
+            for filename in os.listdir(user_photo_dir):
+                file_path = os.path.join(user_photo_dir, filename)
+                
+                # Construye la ruta relativa del archivo para una comparación segura
+                relative_file_path = os.path.relpath(file_path, settings.MEDIA_ROOT)
+
+                # Verifica si el archivo no es la foto actual y no es la foto por defecto
+                # (la foto por defecto no debería estar en directorios de usuario, pero es una doble verificación)
+                if relative_file_path != current_photo_name and relative_file_path != default_avatar_relative_path:
+                    if os.path.isfile(file_path):
+                        try:
+                            os.remove(file_path)
+                            logger.info(f"Archivo de perfil antiguo no utilizado eliminado: {file_path}")
+                        except OSError as e:
+                            logger.error(f"Error al eliminar archivo antiguo no utilizado {file_path}: {e}")
+            
+            # Después de la limpieza, si el directorio del usuario está vacío, elimínalo.
+            # Asegúrate de no eliminar directorios base como 'fotos_perfil' o 'fotos_perfil/default'.
+            if not os.listdir(user_photo_dir) and \
+               user_photo_dir != os.path.join(settings.MEDIA_ROOT, 'fotos_perfil') and \
+               user_photo_dir != os.path.join(settings.MEDIA_ROOT, 'fotos_perfil', 'default'):
+                try:
+                    os.rmdir(user_photo_dir)
+                    logger.info(f"Directorio de usuario vacío eliminado: {user_photo_dir}")
+                except OSError as e:
+                    logger.warning(f"No se pudo eliminar el directorio vacío {user_photo_dir}: {e}")
 
         # --- Lógica de procesamiento de imagen (recorte, conversión, etc.) ---
-        # Solo procesar si la imagen es nueva/ha cambiado y no es la de por defecto.
-        if process_new_image and self.foto_perfil and hasattr(self.foto_perfil, 'path'):
-            # No procesar la imagen por defecto
-            if 'default' in self.foto_perfil.name:
-                return
-
+        # Solo procesar si hay una foto de perfil y no es la de por defecto.
+        if self.foto_perfil and hasattr(self.foto_perfil, 'path') and \
+           'default' not in self.foto_perfil.name:
+            
             # Verificar si el archivo existe físicamente antes de intentar abrirlo
-            if not os.path.exists(self.foto_perfil.path):
-                logger.warning(f"El archivo de imagen para {self.user.username} no existe en {self.foto_perfil.path}. No se procesará.")
-                return
+            if os.path.exists(self.foto_perfil.path):
+                try:
+                    img = Image.open(self.foto_perfil.path)
+                    width, height = img.size
+                    if width != height:
+                        short_side = min(width, height)
+                        left = (width - short_side) / 2
+                        top = (height - short_side) / 2
+                        right = (width + short_side) / 2
+                        bottom = (height + short_side) / 2
+                        img = img.crop((left, top, right, bottom))
 
-            try:
-                img = Image.open(self.foto_perfil.path)
-                width, height = img.size
-                if width != height:
-                    short_side = min(width, height)
-                    left = (width - short_side) / 2
-                    top = (height - short_side) / 2
-                    right = (width + short_side) / 2
-                    bottom = (height + short_side) / 2
-                    img = img.crop((left, top, right, bottom))
-
-                # Manejo de transparencia y conversión a RGB
-                if img.mode == 'RGBA' or img.mode == 'LA' or (img.mode == 'P' and 'transparency' in img.info):
-                    background = Image.new('RGB', img.size, (255, 255, 255))
-                    mask = None
-                    # Intentar obtener la máscara alfa
-                    if img.mode == 'RGBA':
-                        mask = img.split()[-1] # Obtener el canal Alfa
-                    elif img.mode == 'LA': # Luminancia con Alfa
-                        mask = img.split()[-1]
-                    elif img.mode == 'P' and 'transparency' in img.info: # Paleta con transparencia
-                        # Convertir a RGBA para manejar la transparencia de forma consistente
-                        img_rgba_for_mask = img.convert('RGBA')
-                        mask = img_rgba_for_mask.split()[-1]
-
-                    if mask:
+                    # Manejo de transparencia y conversión a RGB
+                    if img.mode in ['RGBA', 'LA'] or (img.mode == 'P' and 'transparency' in img.info):
+                        background = Image.new('RGB', img.size, (255, 255, 255))
+                        mask = img.split()[-1] if img.mode in ['RGBA', 'LA'] else img.convert('RGBA').split()[-1]
                         background.paste(img, (0, 0), mask)
                         img = background
-                    else: # Si no hay máscara o no se pudo obtener, convertir directamente
+                    elif img.mode != 'RGB':
                         img = img.convert('RGB')
-                elif img.mode != 'RGB':
-                    img = img.convert('RGB')
 
-                img.save(self.foto_perfil.path, format='JPEG', quality=85, optimize=True)
-                logger.info(f"Imagen de perfil procesada y guardada para {self.user.username} en {self.foto_perfil.path}")
-            except Exception as e:
-                logger.error(f"Error procesando imagen de perfil para {self.user.username} en {self.foto_perfil.path}: {e}")
+                    img.save(self.foto_perfil.path, format='JPEG', quality=85, optimize=True)
+                    logger.info(f"Imagen de perfil procesada y guardada para {self.user.username} en {self.foto_perfil.path}")
+                except Exception as e:
+                    logger.error(f"Error procesando imagen de perfil para {self.user.username} en {self.foto_perfil.path}: {e}")
+            else:
+                logger.warning(f"El archivo de imagen para {self.user.username} no existe en {self.foto_perfil.path}. No se procesará.")
 
 
 class PasswordResetCode(models.Model):
