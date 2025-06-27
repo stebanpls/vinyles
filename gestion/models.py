@@ -121,103 +121,49 @@ class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
         return f"Cliente: {self.user.username}"
 
     def save(self, *args, **kwargs):
-        procesar_imagen_nueva = False
-        eliminar_foto_antigua_del_disco = False
-        ruta_foto_antigua = None
-
-        if self.pk: # El objeto ya existe, estamos actualizando
+        # Guardar una referencia a la instancia antigua para poder comparar la foto
+        old_instance = None
+        if self.pk:
             try:
                 old_instance = Cliente.objects.get(pk=self.pk)
-                if old_instance.foto_perfil and hasattr(old_instance.foto_perfil, 'path'): # Si había una foto antigua y tiene ruta
-                    ruta_foto_antigua = old_instance.foto_perfil.path
-                    # Comparamos las instancias de FieldFile. Si son diferentes, significa que
-                    # se subió una nueva foto, o el campo se limpió (self.foto_perfil es None).
-                    if self.foto_perfil != old_instance.foto_perfil:
-                        eliminar_foto_antigua_del_disco = True
-                        if self.foto_perfil: # Se subió una nueva foto
-                            procesar_imagen_nueva = True
-                    # No hay 'else' aquí; si la foto no cambió (sigue siendo la misma instancia o ambas son None), no hacemos nada con la antigua.
-                elif not old_instance.foto_perfil and self.foto_perfil: # No había foto antigua, pero ahora hay una nueva
-                    procesar_imagen_nueva = True
             except Cliente.DoesNotExist:
-                # El objeto se está creando por primera vez pero tiene un PK (raro, pero posible si se asigna manualmente)
-                # o la instancia antigua no se pudo recuperar por alguna razón.
-                if self.foto_perfil: # Si hay una foto asignada al nuevo objeto
-                    procesar_imagen_nueva = True
-        elif self.foto_perfil: # El objeto es nuevo (no tiene self.pk) y se le está asignando una foto
-            procesar_imagen_nueva = True
+                pass # Es una instancia nueva aunque tenga PK, no hay foto antigua que borrar.
 
-        # Guardar la instancia primero para que self.foto_perfil.path esté disponible si es una nueva subida
-        # y para que la referencia en la BD esté actualizada antes de borrar archivos.
+        # Determinar si la imagen se va a procesar (es nueva o ha cambiado)
+        process_new_image = True
+        if old_instance and old_instance.foto_perfil == self.foto_perfil:
+            process_new_image = False
+
+        # Guardar la instancia en la base de datos ANTES de manipular archivos
         super().save(*args, **kwargs)
 
-        if eliminar_foto_antigua_del_disco and ruta_foto_antigua:
-            # Asegurarse de que la ruta antigua realmente existe y no es la misma que la nueva (si hay nueva)
-            foto_actual_path = self.foto_perfil.path if self.foto_perfil and hasattr(self.foto_perfil, 'path') else None
-            if os.path.exists(ruta_foto_antigua) and ruta_foto_antigua != foto_actual_path:
-                try:
-                    os.remove(ruta_foto_antigua)
-                    logger.info(f"Foto antigua eliminada del disco: {ruta_foto_antigua}")
-
-                    # Opcional: Intentar eliminar el directorio del usuario si está vacío
-                    directorio_usuario = os.path.dirname(ruta_foto_antigua)
-                    if os.path.exists(directorio_usuario) and not os.listdir(directorio_usuario):
-                        try:
-                            os.rmdir(directorio_usuario)
-                            logger.info(f"Directorio de usuario vacío eliminado: {directorio_usuario}")
-                        except OSError as e:
-                            logger.warning(f"No se pudo eliminar el directorio vacío {directorio_usuario}: {e}")
-                except OSError as e:
-                    logger.error(f"Error al eliminar foto antigua {ruta_foto_antigua}: {e}")
-
-        # --- Lógica de eliminación de archivos antiguos ---
-        if eliminar_foto_antigua_del_disco and ruta_foto_antigua:
-            # Rutas relativas de las imágenes por defecto que NUNCA deben ser eliminadas
-            default_avatar_relative_path = 'fotos_perfil/default/default_avatar.png'
-            
-            # Convertir la ruta antigua a una ruta relativa para una comparación segura
-            # Esto asume que ruta_foto_antigua está dentro de MEDIA_ROOT
-            ruta_foto_antigua_relative = os.path.relpath(ruta_foto_antigua, settings.MEDIA_ROOT)
-
-            # Si la ruta antigua es una de las imágenes por defecto, NO la eliminamos.
-            if ruta_foto_antigua_relative == default_avatar_relative_path:
-                logger.warning(f"Intento de eliminar imagen por defecto: {ruta_foto_antigua_relative}. Operación abortada.")
-                eliminar_foto_antigua_del_disco = False # Desactivar la bandera de eliminación
-            else:
-                # Si no es una imagen por defecto, procedemos con la eliminación
-                # Asegurarse de que la ruta antigua realmente existe y no es la misma que la nueva (si hay nueva)
-                foto_actual_path = self.foto_perfil.path if self.foto_perfil and hasattr(self.foto_perfil, 'path') else None
-                if os.path.exists(ruta_foto_antigua) and ruta_foto_antigua != foto_actual_path:
+        # 1. Lógica para eliminar la foto antigua si ha cambiado
+        if old_instance and old_instance.foto_perfil and old_instance.foto_perfil != self.foto_perfil:
+            # No eliminar el archivo si es la imagen por defecto
+            if 'default' not in old_instance.foto_perfil.name:
+                if os.path.isfile(old_instance.foto_perfil.path):
                     try:
-                        os.remove(ruta_foto_antigua)
-                        logger.info(f"Foto antigua eliminada del disco: {ruta_foto_antigua}")
-
-                        # Opcional: Intentar eliminar el directorio del usuario si está vacío
-                        directorio_usuario = os.path.dirname(ruta_foto_antigua)
-                        # Asegurarse de no eliminar directorios base como 'fotos_perfil' o 'fotos_perfil/default'
-                        if os.path.exists(directorio_usuario) and not os.listdir(directorio_usuario) and \
-                           directorio_usuario != os.path.join(settings.MEDIA_ROOT, 'fotos_perfil') and \
-                           directorio_usuario != os.path.join(settings.MEDIA_ROOT, 'fotos_perfil', 'default'):
-                            try:
-                                os.rmdir(directorio_usuario)
-                                logger.info(f"Directorio de usuario vacío eliminado: {directorio_usuario}")
-                            except OSError as e:
-                                logger.warning(f"No se pudo eliminar el directorio vacío {directorio_usuario}: {e}")
+                        os.remove(old_instance.foto_perfil.path)
+                        logger.info(f"Foto de perfil antigua eliminada: {old_instance.foto_perfil.path}")
+                        # Opcional: eliminar directorio si está vacío
+                        dir_path = os.path.dirname(old_instance.foto_perfil.path)
+                        if not os.listdir(dir_path):
+                            os.rmdir(dir_path)
+                            logger.info(f"Directorio de usuario vacío eliminado: {dir_path}")
                     except OSError as e:
-                        logger.error(f"Error al eliminar foto antigua {ruta_foto_antigua}: {e}")
+                        logger.error(f"Error al eliminar foto antigua {old_instance.foto_perfil.path}: {e}")
 
         # --- Lógica de procesamiento de imagen (recorte, conversión, etc.) ---
-        # Solo procesar si es una imagen nueva Y NO es la imagen por defecto.
-        # Esta condición ya estaba y es correcta para evitar procesar la default.
-        if (procesar_imagen_nueva and self.foto_perfil and hasattr(self.foto_perfil, 'path') and
-                self.foto_perfil.name != 'fotos_perfil/default/default_avatar.png'): # Asegúrate de que esta ruta sea correcta
+        # Solo procesar si la imagen es nueva/ha cambiado y no es la de por defecto.
+        if process_new_image and self.foto_perfil and hasattr(self.foto_perfil, 'path'):
+            # No procesar la imagen por defecto
+            if 'default' in self.foto_perfil.name:
+                return
 
-            # Verificar si el archivo existe físicamente antes de intentar abrirlo con Pillow
-            # Esto es importante porque self.foto_perfil.path podría existir incluso si el archivo fue
-            # eliminado por otro proceso o si hubo un error en la subida.
+            # Verificar si el archivo existe físicamente antes de intentar abrirlo
             if not os.path.exists(self.foto_perfil.path):
                 logger.warning(f"El archivo de imagen para {self.user.username} no existe en {self.foto_perfil.path}. No se procesará.")
-                return # Salir si el archivo no existe para evitar errores con Pillow.
+                return
 
             try:
                 img = Image.open(self.foto_perfil.path)
