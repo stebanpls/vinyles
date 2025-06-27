@@ -69,7 +69,7 @@
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if user.cliente.foto_perfil %}
                                 <img src="{{ user.cliente.foto_perfil.url }}" alt="Foto de perfil" class="profile-picture ms-2">
-                            {% else %}                            
+                            {% else %}
                                 <i class="fas fa-user-circle ms-2 user-icon"></i>
                             {% endif %}
                             {% if user.is_staff or user.is_superuser %} (Admin)
