@@ -1,4 +1,11 @@
-/* Estilos para el modo oscuro del formulario de edición de perfil del comprador */
+/* Wrapper para centrar la página de edición */
+.profile-edit-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinear al principio */
+    padding: 40px 20px;
+    min-height: 80vh;
+}
 
 .profile-edit-form-container {
     /* Definición de variables de color para este componente */
@@ -9,16 +16,16 @@
     --text-secondary: #e9ecef;
     --text-muted: #adb5bd;
     --border-color: #495057;
-    --accent-color: #007bff;
-    --accent-color-hover: #0056b3;
-    --error-color: #ff6b6b; /* Rojo para errores, similar a Bootstrap .is-invalid */
+    --accent-color: #0d6efd; /* Bootstrap 5 Blue */
+    --accent-color-hover: #0b5ed7;
+    --error-color: #dc3545; /* Bootstrap 5 Danger */
 
     background-color: var(--bg-main);
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    max-width: 700px;
-    margin: 40px auto;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    max-width: 800px;
+    width: 100%;
     color: var(--text-primary);
 }
 
@@ -26,20 +33,30 @@
 .profile-edit-form-container h2 {
     color: var(--text-primary);
     text-align: center;
-    margin-bottom: 25px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 15px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 .profile-edit-form-container hr {
     border-top-color: var(--border-color);
     margin-top: 0;
-    margin-bottom: 25px;
+    margin-bottom: 2rem;
+}
+
+/* Grid para campos lado a lado */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
 }
 
 /* Estilos para los campos del formulario */
-.profile-edit-form-container .form-group, /* Para Bootstrap form-group */
-.profile-edit-form-container p { /* Para formularios Django renderizados con {{ form.as_p }} */
-    margin-bottom: 20px;
+.form-group,
+.profile-edit-form-container .mb-3 {
+    margin-bottom: 1.5rem !important;
 }
 .profile-edit-form-container form p:last-of-type { /* Evitar doble margen si el último elemento es un <p> antes de los botones */
     margin-bottom: 0; 
@@ -47,7 +64,7 @@
 
 .profile-edit-form-container label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: .5rem;
     color: var(--text-secondary);
     font-weight: bold;
 }
@@ -71,6 +88,12 @@
     box-sizing: border-box;
 }
 
+.profile-edit-form-container input::placeholder,
+.profile-edit-form-container textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8; /* Un poco más visible que el valor por defecto */
+}
+
 .profile-edit-form-container input[type="text"]:focus,
 .profile-edit-form-container input[type="email"]:focus,
 .profile-edit-form-container input[type="password"]:focus,
@@ -82,7 +105,7 @@
 .profile-edit-form-container select:focus {
     border-color: var(--accent-color);
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(var(--accent-color-rgb, 0, 123, 255), 0.25); /* Definir --accent-color-rgb si es necesario o usar un color fijo para la sombra */
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
 .profile-edit-form-container input[type="file"] {
@@ -114,7 +137,7 @@
 
 .profile-edit-form-container select {
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='var(--text-secondary)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); /* Idealmente, el color del stroke sería una variable, pero es complejo en data URI */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e9ecef' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     background-size: 16px 12px;
@@ -160,18 +183,16 @@
 }
 
 /* Botones */
-.profile-edit-form-container .btn {
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-transform: uppercase;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px; /* Espacio arriba de los botones */
-    margin-right: 10px; /* Espacio entre botones */
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
 }
-/* Si necesitas forzar colores oscuros para botones específicos de Bootstrap: */
-.profile-edit-form-container .btn-primary {
+
+.form-buttons .btn-primary {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
     color: #fff;
@@ -180,7 +201,7 @@
     background-color: var(--accent-color-hover);
     border-color: var(--accent-color-hover);
 }
-.profile-edit-form-container .btn-secondary {
+.form-buttons .btn-secondary {
     background-color: #5a6268; /* Un gris un poco más oscuro para secundario */
     border-color: #5a6268;
     color: #fff;
@@ -189,15 +210,18 @@
     background-color: #4e555b;
     border-color: #4e555b;
 }
+.form-buttons .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
 /* Imagen de perfil actual (usando .img-thumbnail de Bootstrap) */
 .profile-edit-form-container .img-thumbnail {
-    display: block;
-    /* max-width y max-height son controlados por inline style en el HTML */
-    /* object-fit es controlado por inline style en el HTML */
-    border-radius: var(--bs-border-radius, 0.375rem); /* Usa el radio de Bootstrap o uno personalizado */
+    border-radius: 50%; /* Hacer la previsualización circular */
     margin-left: auto;
     margin-right: auto;
+    display: block;
     margin-bottom: 20px; /* Espacio inferior */
     border: 3px solid var(--border-color); /* Borde personalizado */
     background-color: var(--bg-input); /* Fondo por si la imagen es transparente o no carga */
@@ -206,8 +230,6 @@
 
 /* Mensajes de Django (alertas) dentro del contenedor del formulario */
 .profile-edit-form-container .alert {
-    /* Los estilos de alerta de Bootstrap deberían funcionar, pero puedes personalizarlos más si es necesario */
-    /* Ejemplo: asegurar que el botón de cierre sea visible */
     position: relative; /* Necesario para el posicionamiento del botón de cierre si se personaliza mucho */
 }
 
@@ -227,18 +249,21 @@
 .profile-edit-form-container .card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    margin-bottom: 25px; /* Espacio entre cards */
+    margin-bottom: 2rem; /* Espacio entre cards */
 }
 
 .profile-edit-form-container .card-header {
     background-color: var(--bg-input);
     color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
-    padding: 0.75rem 1.25rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 .profile-edit-form-container .card-header h4 {
     margin-bottom: 0;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
 }
 .profile-edit-form-container .card-header .text-muted {
     color: var(--text-muted) !important;
@@ -246,8 +271,17 @@
 }
 
 .profile-edit-form-container .card-body {
-    padding: 1.25rem;
+    padding: 1.5rem;
     color: var(--text-primary);
+}
+
+/* Estilos para la sección de contraseña (generada por .as_p) */
+.card-body p {
+    margin-bottom: 1rem;
+}
+.card-body p label {
+    display: block;
+    margin-bottom: .5rem;
 }
 
 /* Estilos para el campo de géneros favoritos .checkbox-list */
@@ -264,7 +298,6 @@
 .profile-edit-form-container .checkbox-list input[type="checkbox"] {
     margin-right: 0.75rem; /* Aumentar un poco el espacio */
     width: auto; /* Ancho automático para checkboxes */
-    /* Reutilizar estilos de .form-check-input */
     flex-shrink: 0; /* Evitar que el checkbox se encoja */
 }
 .profile-edit-form-container .checkbox-list label {
@@ -275,52 +308,52 @@
 
 /* Estilos para la nueva sección de edición de foto de perfil */
 .profile-edit-form-container .profile-picture-section {
-    margin-bottom: 1.5rem; /* Espacio alrededor de la sección de la foto */
     padding: 15px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    background-color: var(--bg-card); /* Usar el color de fondo de las tarjetas para consistencia */
-}
-
-.profile-edit-form-container .profile-picture-section .form-label {
-    /* El label "Foto de Perfil" ya hereda estilos generales, no necesita cambios específicos aquí */
+    text-align: center;
 }
 
 .profile-edit-form-container .current-profile-image img.img-thumbnail {
     display: block; 
     margin-bottom: 0.75rem; /* Espacio entre la imagen y el botón "Editar Foto" */
-    /* Los estilos de .img-thumbnail ya están definidos arriba y son adecuados */
 }
 
 .profile-edit-form-container #editPhotoButton {
-    /* Hereda estilos de .btn, pero podemos ser más específicos si es necesario */
-    /* Por ejemplo, si quieres que sea un botón secundario: */
-    background-color: var(--bs-secondary-bg, #495057); /* Usar una variable de Bootstrap o un color oscuro */
-    border-color: var(--bs-secondary-border-color, #495057);
-    color: var(--bs-secondary-color, #fff);
+    background-color: #5a6268;
+    border-color: #5a6268;
+    color: #fff;
 }
 .profile-edit-form-container #editPhotoButton:hover {
-    background-color: #5a6268; /* Un poco más claro al pasar el mouse */
-    border-color: #5a6268;
+    background-color: #4e555b;
+    border-color: #4e555b;
 }
 
 .profile-edit-form-container #photoEditOptions {
-    /* background-color: #f8f9fa;  Ya definido en el HTML, pero podemos usar variables CSS */
-    background-color: var(--bg-input); /* Un fondo ligeramente diferente al de la tarjeta */
-    border: 1px solid var(--border-color); 
-    /* padding, margin-top, border-radius ya están en el style inline del HTML, pero se pueden mover aquí */
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175); /* Sombra sutil */
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.profile-edit-form-container #photoEditOptions .small.text-muted {
+    color: var(--text-secondary) !important; /* Un color más claro para el texto, !important para sobreescribir Bootstrap */
 }
 
 .profile-edit-form-container #removeProfilePhotoButton {
-    /* Hereda estilos de .btn y .btn-danger (si Bootstrap está disponible y se usa esa clase) */
-    /* Si no, puedes definirlo aquí: */
     background-color: var(--error-color);
     border-color: var(--error-color);
     color: #fff;
     margin-top: 0.5rem; 
 }
 .profile-edit-form-container #removeProfilePhotoButton:hover {
-    background-color: #d9534f; /* Un rojo más oscuro al pasar el mouse */
-    border-color: #d9534f;
+    background-color: #c82333;
+    border-color: #b02a37;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0; /* Sin espacio entre filas en móvil */
+    }
 }

@@ -79,9 +79,7 @@ urlpatterns = [
     path('ven_crear/', views.ven_crear, name='ven_crear'),
     path('ven_nosotros/', views.ven_nosotros, name='ven_nosotros'),
     path('ven_notificaciones/', views.ven_notificaciones, name='ven_notificaciones'),
-    # URLs para el perfil del vendedor
-    path('ven_perfil/', views.ven_perfil, name='ven_perfil'),
-    path('ven_perfil/editar/', views.ven_perfil_editar, name='ven_perfil_editar'),
+    path('ven_perfil/', views.com_perfil, {'user_mode': 'vendedor'}, name='ven_perfil'), # Reutiliza la vista com_perfil
     path('ven_producto/', views.ven_producto, name='ven_producto'),
     path('ven_terminos/', views.ven_terminos, name='ven_terminos'),
 

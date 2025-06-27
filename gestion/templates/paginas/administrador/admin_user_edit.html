@@ -55,16 +55,8 @@
         </div>
 
         <div class="form-group text-center">
-            <label for="id_foto_perfil" style="font-weight: bold;">Foto de perfil:</label><br>
-            {% if cliente_form.instance.foto_perfil %}
-                <img src="{{ cliente_form.instance.foto_perfil.url }}" alt="Foto actual" width="130" height="130"
-                    style="object-fit: cover; border-radius: 10px; margin: 10px auto;"><br>
-                <label style="font-size: 14px; color: #555;">
-                    <input type="checkbox" name="foto_perfil-clear" style="margin-right: 6px;">
-                    Marcar si deseas eliminar la foto actual
-                </label><br><br>
-            {% endif %}
-            <input type="file" name="foto_perfil" class="form-control" id="id_foto_perfil">
+            <label for="id_foto_perfil" style="font-weight: bold;">Foto de perfil:</label>
+            {{ cliente_form.foto_perfil }}
         </div>
 
         <div class="form-group">

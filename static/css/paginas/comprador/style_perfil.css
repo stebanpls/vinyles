@@ -1,15 +1,30 @@
+/* Wrapper para centrar la página */
+.profile-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: 80vh;
+}
+
 .profile-container {
-  background-color: #212121;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  padding: 30px;
-  width: 400px;
-  max-width: 90%;
+  background-color: #2a2a2a; /* Un poco más claro que el anterior */
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  padding: 40px;
+  width: 100%;
+  max-width: 650px; /* Más ancho para más info */
   text-align: center;
+  border: 1px solid #444;
+}
+
+/* --- Cabecera del Perfil --- */
+.profile-header {
+  margin-bottom: 30px;
 }
 
 .profile-picture-container {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 /* Estilos para la foto de perfil en la página de perfil */
@@ -18,56 +33,144 @@
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid #eee;
+  border: 5px solid #eee; /* Borde blanco/claro */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 .user-name {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #eee;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  color: #f0f0f0;
 }
 
+.user-since {
+  font-size: 1rem;
+  color: #aaa;
+  margin-top: 5px;
+}
+
+/* --- Información Detallada --- */
 .profile-info {
   text-align: left;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas */
+  gap: 25px; /* Espacio entre items */
+  border-top: 1px solid #444;
+  padding-top: 25px;
 }
 
 .info-item {
-  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  background-color: #333;
+  padding: 15px;
+  border-radius: 8px;
 }
 
-label {
+.info-item.full-width {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+}
+
+.info-item .icon {
+  font-size: 1.5rem;
+  color: #eee; /* Iconos de color blanco/claro */
+  margin-right: 15px;
+  margin-top: 5px;
+  width: 25px; /* Ancho fijo para alinear */
+  text-align: center;
+}
+
+.info-content label {
   font-weight: bold;
-  color: #eee;
+  color: #ccc;
   display: block;
   margin-bottom: 5px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
 }
 
-span {
-  color: #eee;
+.info-content span {
+  color: #f0f0f0;
+  font-size: 1rem;
 }
 
+.info-content .genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.genre-tag {
+  background-color: #444;
+  color: #ddd;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+.history-link {
+  color: #8ab4f8; /* Un azul claro para enlaces */
+  text-decoration: none;
+  font-weight: 500;
+}
+.history-link:hover {
+  text-decoration: underline;
+}
+
+/* --- Botones de Acción --- */
 .profile-buttons {
   display: flex;
-  justify-content: space-around;
-  gap: 10px;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap; /* Para que se ajusten en pantallas pequeñas */
+  border-top: 1px solid #444;
+  padding-top: 25px;
 }
 
 .btn {
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 25px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 500;
   text-decoration: none;
-  display: inline-block;
-  width: 100%;
-  text-align: center;
+  display: inline-flex; /* Para alinear icono y texto */
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Espacio entre icono y texto */
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.btn-info { background-color: #17a2b8; }
+.btn-info:hover { background-color: #138496; }
+
+.btn-primary { background-color: #007bff; }
+.btn-primary:hover { background-color: #0056b3; }
+
+.btn-success { background-color: #198754; }
+.btn-success:hover { background-color: #157347; }
+
+.btn-secondary { background-color: #6c757d; }
+.btn-secondary:hover { background-color: #5a6268; }
+
+.btn-danger { background-color: #dc3545; }
+.btn-danger:hover { background-color: #c82333; }
+
 /* Responsive Design */
+@media (max-width: 768px) {
+  .profile-info {
+    grid-template-columns: 1fr; /* Una columna en pantallas más pequeñas */
+  }
+}
+
 @media (max-width: 500px) {
   .profile-container {
       padding: 20px;
@@ -80,5 +183,9 @@ span {
 
   .user-name {
       font-size: 20px;
+  }
+
+  .btn {
+    width: 100%; /* Botones ocupan todo el ancho */
   }
 }

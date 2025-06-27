@@ -1,57 +1,96 @@
-{% extends "plantillas/plantilla_comprador.html" %}
+{% extends base_template %}
 {% load static %}
 
-{% block extra_css %} 
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_perfil.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} {{ titulo_pagina|default:"Mi Perfil" }} - Vinyles {% endblock titulo %}
 
 {% block contenido %}
+<div class="profile-page-wrapper">
     <div class="profile-container">
-        <div class="profile-picture-container">
-            <img src="{{ cliente_instance.foto_perfil.url }}" alt="Foto de Perfil de {{ user.username }}" class="profile-picture">
+        <div class="profile-header">
+            <div class="profile-picture-container">
+                {% if cliente_instance.foto_perfil %}
+                    <img src="{{ cliente_instance.foto_perfil.url }}" alt="Foto de Perfil de {{ user.username }}" class="profile-picture">
+                {% else %}
+                    <img src="{{ MEDIA_URL }}fotos_perfil/default/default_avatar.png" alt="Avatar por defecto" class="profile-picture">
+                {% endif %}
+            </div>
+            <h2 class="user-name">{{ user.get_full_name|default:user.username }}</h2>
+            <p class="user-since">Miembro desde {{ user.date_joined|date:"F Y" }}</p>
         </div>
-        <h2 class="user-name">Usuario: {{ user.username }}</h2>
+
         <div class="profile-info">
             <div class="info-item">
-                <label>Email:</label>
-                <span>{{ user.email|default:"-" }}</span>
+                <i class="fas fa-user-tag icon"></i>
+                <div class="info-content">
+                    <label>Nombre de Usuario</label>
+                    <span>{{ user.username }}</span>
+                </div>
             </div>
             <div class="info-item">
-                <label>Celular:</label>
-                {# Asumiendo que 'celular' está en tu modelo Cliente #}
-                <span>{{ cliente_instance.celular|default:"-" }}</span>
+                <i class="fas fa-envelope icon"></i>
+                <div class="info-content">
+                    <label>Email</label>
+                    <span>{{ user.email|default:"No especificado" }}</span>
+                </div>
             </div>
             <div class="info-item">
-                <label>Géneros Favoritos:</label>
-                <span>
-                    {% if cliente_instance.generos_favoritos.all %}
-                        {% for genero in cliente_instance.generos_favoritos.all %}
-                            {{ genero.nombre }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        -
-                    {% endif %}
-                </span>
+                <i class="fas fa-mobile-alt icon"></i>
+                <div class="info-content">
+                    <label>Celular</label>
+                    <span>{{ cliente_instance.celular|default:"No especificado" }}</span>
+                </div>
             </div>
             <div class="info-item">
-                <label>Historial de Compra:</label>
-                {# Asumiendo que 'historial' es un campo o método que necesitas implementar #}
-                {# Por ahora, lo dejamos como estaba si no está en el modelo Cliente directamente #}
-                <span>{{ cliente_instance.historial_compra|default:"-" }}</span> {# O como se llame el campo/método #}
+                <i class="fas fa-map-marker-alt icon"></i>
+                <div class="info-content">
+                    <label>Dirección</label>
+                    <span>{{ cliente_instance.direccion_residencia|default:"No especificada" }}</span>
+                </div>
+            </div>
+            <div class="info-item full-width">
+                <i class="fas fa-music icon"></i>
+                <div class="info-content">
+                    <label>Géneros Favoritos</label>
+                    <span class="genres">
+                        {% if cliente_instance.generos_favoritos.all %}
+                            {% for genero in cliente_instance.generos_favoritos.all %}
+                                <span class="genre-tag">{{ genero.nombre }}</span>
+                            {% endfor %}
+                        {% else %}
+                            No has especificado géneros.
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="info-item full-width">
+                <i class="fas fa-history icon"></i>
+                <div class="info-content">
+                    <label>Historial de Compra</label>
+                    <span>
+                        {% if cliente_instance.pedidos.all %}
+                            <a href="#" class="history-link">Ver mis {{ cliente_instance.pedidos.count }} pedido(s)</a>
+                        {% else %}
+                            Aún no has realizado compras.
+                        {% endif %}
+                    </span>
+                </div>
             </div>
         </div>
+
         <div class="profile-buttons">
-            <a href="{% url 'com_perfil_editar' %}" class="btn btn-info">Editar Perfil</a>
-            <a href="{% url 'ven_producto' %}" class="btn btn-primary">Cambiar a Vendedor</a>
-            {# Convertir el enlace de Cerrar Sesión a un formulario POST #}
-            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            <a href="{% url 'com_perfil_editar' %}?from={{ user_mode|default:'comprador' }}" class="btn btn-success"><i class="fas fa-pencil-alt"></i> Editar Perfil</a>
+            <form action="{% url 'logout' %}" method="post" style="display: contents;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+                <button type="submit" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
             </form>
         </div>
     </div>
+</div>
 {% endblock contenido %}
 
 {% block pie %}

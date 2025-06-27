@@ -1,128 +1,135 @@
-{% extends "plantillas/plantilla_comprador.html" %}
+{% extends base_template %}
 {% load static %}
 {% load widget_tweaks %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_perfil_editar.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %}{{ titulo_pagina|default:"Editar Mi Perfil" }} {% endblock titulo %}
 
 {% block contenido %}
-<div class="profile-edit-form-container"> {# Cambiado de "container mt-5 mb-5" #}
-    <h2>{{ titulo_pagina|default:"Editar Mi Perfil" }}</h2>
-    <hr>
+<div class="profile-edit-page-wrapper">
+    <div class="profile-edit-form-container">
+        <h2><i class="fas fa-user-edit"></i> {{ titulo_pagina|default:"Editar Mi Perfil" }}</h2>
+        <hr>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show mb-3" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show mb-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
 
-    <form method="post" enctype="multipart/form-data" novalidate>
-        {% csrf_token %}
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4>Información Personal y de Usuario</h4>
-            </div>
-            <div class="card-body">
-                {{ user_form.non_field_errors }}
-                {% for field in user_form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        {{ field|add_class:"form-control" }}
-                        {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
-                        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4><i class="fas fa-id-card"></i> Información Personal y de Usuario</h4>
+                </div>
+                <div class="card-body">
+                    {{ user_form.non_field_errors }}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="{{ user_form.first_name.id_for_label }}">{{ user_form.first_name.label }}</label>
+                            {{ user_form.first_name|add_class:"form-control" }}
+                            {% for error in user_form.first_name.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ user_form.last_name.id_for_label }}">{{ user_form.last_name.label }}</label>
+                            {{ user_form.last_name|add_class:"form-control" }}
+                            {% for error in user_form.last_name.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                        </div>
                     </div>
-                {% endfor %}
+                    <div class="form-group">
+                        <label for="{{ user_form.username.id_for_label }}">{{ user_form.username.label }}</label>
+                        {{ user_form.username|add_class:"form-control" }}
+                        {% for error in user_form.username.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}</label>
+                        {{ user_form.email|add_class:"form-control" }}
+                        {% for error in user_form.email.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4>Detalles del Perfil de Cliente</h4>
-            </div>
-            <div class="card-body">
-                {{ cliente_form.non_field_errors }}
-                {% for field in cliente_form %}
-                    {% if field.name == 'foto_perfil' %}
-                    <div class="mb-3 profile-picture-section">
-                        <label class="form-label d-block">Foto de Perfil</label> {# d-block para que el botón y error vayan abajo #}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4><i class="fas fa-address-book"></i> Detalles del Perfil de Cliente</h4>
+                </div>
+                <div class="card-body">
+                    {{ cliente_form.non_field_errors }}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="{{ cliente_form.numero_documento.id_for_label }}">{{ cliente_form.numero_documento.label }}</label>
+                            {{ cliente_form.numero_documento|add_class:"form-control" }}
+                            {% for error in cliente_form.numero_documento.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ cliente_form.celular.id_for_label }}">{{ cliente_form.celular.label }}</label>
+                            {{ cliente_form.celular|add_class:"form-control" }}
+                            {% for error in cliente_form.celular.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ cliente_form.direccion_residencia.id_for_label }}">{{ cliente_form.direccion_residencia.label }}</label>
+                        {{ cliente_form.direccion_residencia|add_class:"form-control" }}
+                        {% for error in cliente_form.direccion_residencia.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="form-group profile-picture-section">
+                        <label class="form-label d-block">Foto de Perfil</label>
                         <div class="current-profile-image mb-2">
-                            <img id="profileImagePreview" 
-                                src="{{ cliente_instance.foto_perfil.url }}"  {# Esto ahora usará el default del modelo si no hay foto subida #}
-                                alt="Foto de Perfil" class="img-thumbnail" 
-                                style="max-height: 150px; max-width: 150px; object-fit: cover;">
+                            <img id="profileImagePreview" src="{% if cliente_instance.foto_perfil %}{{ cliente_instance.foto_perfil.url }}{% else %}{{ MEDIA_URL }}fotos_perfil/default/default_avatar.png{% endif %}" alt="Foto de Perfil" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;">
                         </div>
-                        <button type="button" id="editPhotoButton" class="btn btn-outline-secondary btn-sm mb-2">Editar Foto</button>
-
-                        {# Contenedor inicial para el error de foto_perfil, se mostrará debajo de "Editar Foto" #}
-                        <div id="fotoPerfilErrorWrapperInitial">
-                            {% if field.errors %}
-                                <div class="invalid-feedback d-block foto-perfil-error-message">
-                                    {% for error in field.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div id="photoEditOptions" style="display: none; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-top:10px; background-color: #f9f9f9;">
+                        <button type="button" id="editPhotoButton" class="btn btn-sm mb-2">Editar Foto</button>
+                        <div id="fotoPerfilErrorWrapperInitial">{% for error in cliente_form.foto_perfil.errors %}<div class="invalid-feedback d-block foto-perfil-error-message">{{ error }}</div>{% endfor %}</div>
+                        <div id="photoEditOptions" style="display: none;">
                             <p class="mb-2 small text-muted">Sube una nueva foto o elimina la actual.</p>
-                            {{ field|add_class:"form-control-file mb-3" }} {# foto_perfil input #}
-                            
-                            {% if cliente_instance.foto_perfil %}
-                            <button type="button" id="removeProfilePhotoButton" class="btn btn-danger btn-sm">Eliminar foto actual</button>
-                            {% endif %}
-                            {# Contenedor para el error de foto_perfil cuando las opciones están visibles, se mostrará debajo de "Eliminar foto actual" #}
-                            <div id="fotoPerfilErrorWrapperMoved" class="mt-2">
-                                <!-- El mensaje de error se moverá aquí con JS -->
-                            </div>
+                            {{ cliente_form.foto_perfil|add_class:"form-control-file mb-3" }}
+                            {% if cliente_instance.foto_perfil %}<button type="button" id="removeProfilePhotoButton" class="btn btn-danger btn-sm">Eliminar foto actual</button>{% endif %}
+                            <div id="fotoPerfilErrorWrapperMoved" class="mt-2"></div>
                         </div>
                     </div>
-                    {% elif field.name == '_delete_profile_photo' %}
-                        {# Este es nuestro campo oculto, se renderizará pero no será visible #}
-                        <div style="display:none;">{{ field }}</div>
-                    {% elif field.name == 'generos_favoritos' %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        <div class="checkbox-list"> {{ field }} </div>
-                        {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
-                        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
-                    </div>
-                    {% else %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        {{ field|add_class:"form-control" }}
-                        {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
-                        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
-                    </div>
-                    {% endif %} {# Cierre del if/elif/else principal para cada field #}
-                {% endfor %} {# Cierre del bucle cliente_form #}
-            </div>
-        </div>
+                    {% for hidden in cliente_form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4>Cambiar Contraseña</h4>
-                <small class="text-muted">Deja estos campos en blanco si no deseas cambiar tu contraseña.</small>
+                    <div class="form-group">
+                        <label for="{{ cliente_form.generos_favoritos.id_for_label }}">{{ cliente_form.generos_favoritos.label }}</label>
+                        <div class="checkbox-list">{{ cliente_form.generos_favoritos }}</div>
+                        {% if cliente_form.generos_favoritos.help_text %}<small class="form-text text-muted">{{ cliente_form.generos_favoritos.help_text }}</small>{% endif %}
+                        {% for error in cliente_form.generos_favoritos.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
             </div>
-            {% if password_form.non_field_errors or password_form.errors %}
-            <div class="alert alert-danger m-3" role="alert">
-                Hubo problemas al intentar cambiar tu contraseña. Por favor, revisa los mensajes de error junto a los campos.
-                {{ password_form.non_field_errors }}
-            </div>
-            {% endif %}
-            <div class="card-body">
-                {{ password_form.as_p }}
-            </div>
-        </div>
 
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-        <a href="{% url 'com_perfil' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4><i class="fas fa-key"></i> Cambiar Contraseña</h4>
+                    <small class="text-muted">Opcional</small>
+                </div>
+                <div class="card-body">
+                    {% if password_form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ password_form.non_field_errors }}</div>{% endif %}
+                    {{ password_form.as_p }}
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                {% if user_mode == 'vendedor' %}
+                    <a href="{% url 'ven_perfil' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                {% else %}
+                    <a href="{% url 'com_perfil' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
 </div>
 
 {% block extra_js %}

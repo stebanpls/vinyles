@@ -778,14 +778,18 @@ def com_nosotros(request):
     return render(request, 'paginas/comprador/com_nosotros.html')
 # Vista para MOSTRAR el perfil del comprador
 @login_required
-def com_perfil(request):
+def com_perfil(request, user_mode='comprador'): # Acepta user_mode
     user = request.user
     # Asegurarse de que el perfil del cliente exista o crearlo
     cliente_instance, created = Cliente.objects.get_or_create(user=user)
+    titulo_pagina = 'Mi Perfil de Vendedor' if user_mode == 'vendedor' else 'Mi Perfil' # Título dinámico
+    base_template = "plantillas/plantilla_vendedor.html" if user_mode == 'vendedor' else "plantillas/plantilla_comprador.html"
     context = {
         'cliente_instance': cliente_instance, # Pasar la instancia para mostrar datos del cliente
         'user': user, # Pasar el objeto user para mostrar datos como email, nombre, etc.
-        'titulo_pagina': 'Mi Perfil'
+        'titulo_pagina': titulo_pagina,
+        'user_mode': user_mode, # Pasar el modo a la plantilla para que sepa qué botones/base usar
+        'base_template': base_template,
     }
     # Esta vista ahora solo muestra la información del perfil.
     return render(request, 'paginas/comprador/com_perfil.html', context)
@@ -847,19 +851,27 @@ def com_perfil_editar(request):
             else: # No hubo intento de cambiar contraseña, y user_form/cliente_form fueron válidos
                 messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
 
-            return redirect('com_perfil')
+            # Redirige a la vista de perfil correcta basándose en el parámetro 'from'
+            if request.GET.get('from') == 'vendedor':
+                return redirect('ven_perfil')
+            else:
+                return redirect('com_perfil')
         else:
             # Si algún formulario no es válido, los errores se mostrarán.
             # password_form (vinculado si hubo intento) se pasará al contexto con sus errores.
             messages.error(request, 'Por favor, corrige los errores señalados en el formulario.')
     # Para GET request, los formularios ya están inicializados arriba (user_form, cliente_form no vinculados, password_form no vinculado)
-
+    
+    user_mode = request.GET.get('from', 'comprador')
+    base_template = "plantillas/plantilla_vendedor.html" if user_mode == 'vendedor' else "plantillas/plantilla_comprador.html"
     context = {
         'user_form': user_form,
         'cliente_form': cliente_form,
         'password_form': password_form,
         'titulo_pagina': 'Editar Mi Perfil',
-        'cliente_instance': cliente_instance
+        'cliente_instance': cliente_instance,
+        'user_mode': user_mode, # Pasa el modo a la plantilla de edición
+        'base_template': base_template,
     }
     return render(request, 'paginas/comprador/com_perfil_editar.html', context)
 
@@ -948,83 +960,6 @@ def ven_crear(request):
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_notificaciones(request):
     return render(request, 'paginas/vendedor/ven_notificaciones.html')
-
-# Vista para MOSTRAR el perfil del vendedor
-@login_required
-def ven_perfil(request):
-    user = request.user
-    # Asegurarse de que el perfil del cliente exista o crearlo
-    cliente_instance, created = Cliente.objects.get_or_create(user=user)
-    context = {
-        'cliente_instance': cliente_instance,
-        'user': user,
-        'titulo_pagina': 'Mi Perfil de Vendedor'
-    }
-    # Esta vista ahora solo muestra la información del perfil.
-    return render(request, 'paginas/vendedor/ven_perfil.html', context)
-
-# Vista para EDITAR el perfil del vendedor
-@login_required # Solo requiere que el usuario esté autenticado
-def ven_perfil_editar(request):
-    user = request.user
-    cliente_instance, created = Cliente.objects.get_or_create(user=user)
-    
-    # Inicializar formularios para la solicitud GET y para el contexto si el POST falla
-    user_form = UserUpdateForm(instance=user)
-    cliente_form = ClienteUpdateForm(instance=cliente_instance)
-    password_form = PasswordChangeForm(user=user) # No vinculado inicialmente
-
-    if request.method == 'POST':
-        user_form = UserUpdateForm(request.POST, instance=user)
-        cliente_form = ClienteUpdateForm(request.POST, request.FILES, instance=cliente_instance)
-        
-        intent_to_change_password = bool(
-            request.POST.get('old_password') or \
-            request.POST.get('new_password1') or \
-            request.POST.get('new_password2')
-        )
-
-        forms_to_validate = [user_form, cliente_form]
-        if intent_to_change_password:
-            password_form = PasswordChangeForm(user=user, data=request.POST) # Vincular si hay intento
-            forms_to_validate.append(password_form)
-        
-        all_forms_are_valid = all(f.is_valid() for f in forms_to_validate)
-
-        if all_forms_are_valid:
-            user_form.save()
-            
-            # Antes de guardar cliente_form, verificamos si se debe eliminar la foto.
-            if cliente_form.cleaned_data.get('_delete_profile_photo'):
-                # Si la bandera es True, establecemos el campo foto_perfil de la instancia del formulario a None.
-                cliente_form.instance.foto_perfil = None
-                
-            cliente_form.save()
-            
-            # Este bloque if/else para los mensajes y el guardado de contraseña
-            # debe estar DENTRO del if all_forms_are_valid:
-            if intent_to_change_password:
-                password_form.save() # Ya está validado
-                update_session_auth_hash(request, password_form.user)
-                messages.success(request, '¡Tu perfil y contraseña han sido actualizados exitosamente!')
-            else: # Solo perfil actualizado, sin intento de cambiar contraseña
-                messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
-            return redirect('ven_perfil') # La redirección ocurre solo si todo fue válido y guardado
-        # El siguiente else corresponde al if all_forms_are_valid:
-
-        else: # Si algún formulario no es válido
-            messages.error(request, 'Por favor corrige los errores señalados en el formulario.')
-    
-    # Para GET request, los formularios ya están inicializados arriba
-
-    context = {
-        'user_form': user_form,
-        'cliente_form': cliente_form,
-        'password_form': password_form, # Pasará la instancia correcta (vinculada con errores o no vinculada)
-        'titulo_pagina': 'Editar Perfil de Vendedor', # Ajustado el título
-        'cliente_instance': cliente_instance
-    }
-    return render(request, 'paginas/vendedor/ven_perfil_editar.html', context)
 
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_producto(request):

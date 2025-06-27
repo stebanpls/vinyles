@@ -79,8 +79,12 @@
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownUser">
                             {% if user.is_staff or user.is_superuser %}
                                 <li><a class="dropdown-item" href="{% url 'admin_administrador' %}">Panel Admin</a></li>
-                            {% else %} {# Todos los usuarios autenticados van a su perfil de comprador #}
-                                <li><a class="dropdown-item" href="{% url 'com_perfil' %}">Mi Perfil</a></li>
+                            {% else %}
+                                {% if request.resolver_match.url_name|slice:"0:4" == 'ven_' %}
+                                    <li><a class="dropdown-item" href="{% url 'ven_perfil' %}">Mi Perfil</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{% url 'com_perfil' %}">Mi Perfil</a></li>
+                                {% endif %}
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li>
