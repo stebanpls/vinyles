@@ -35,14 +35,15 @@
 
 <div class="bloq">
     <div class="acciones-usuario">
-        <form method="POST" action="{% url 'admin_bloquear_usuario' usuario.id %}" onsubmit="return confirmarBloqueo('{{ usuario.get_full_name|default:usuario.username }}', {{ usuario.is_active|yesno:"true,false" }})">
-            {% csrf_token %}
-            {% if usuario.is_active %}
-                <button type="submit" class="bloquear">Bloquear usuario </button>
-            {% else %}
-                <button type="submit" class="bloquear desbloquear">Desbloquear usuario </button>
-            {% endif %}
-        </form>
+            <form method="post" action="{% url 'admin_bloquear_usuario' usuario.id %}" data-bloqueado="{{ esta_bloqueado|yesno:'true,false' }}">
+                {% csrf_token %}
+                {% if esta_bloqueado %}
+                    <button type="submit" class="bloquear desbloquear">Desbloquear usuario</button>
+                {% else %}
+                    <button type="submit" class="bloquear">Bloquear usuario</button>
+                {% endif %}
+            </form>
+
 
         <a href="{% url 'admin_user_edit' usuario.id %}" class="editar-btn">Editar perfil </a>
 
@@ -59,62 +60,60 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-function confirmarBloqueo(nombreUsuario, estaActivo) {
-    return new Promise((resolve) => {
-        Swal.fire({
-            title: estaActivo ? '¿Bloquear usuario?' : '¿Desbloquear usuario?',
-            text: estaActivo 
-                ? `¿Estás segur@ de que quieres bloquear a ${nombreUsuario}? Esta acción evitará que pueda iniciar sesión.` 
-                : `¿Deseas desbloquear a ${nombreUsuario}? Podrá volver a iniciar sesión.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: estaActivo ? 'Sí, bloquear' : 'Sí, desbloquear',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            resolve(result.isConfirmed);
-        });
-    });
-}
-
-function confirmarEliminacion(nombreUsuario) {
-    return new Promise((resolve) => {
-        Swal.fire({
-            title: '¿Eliminar usuario?',
-            text: `¿Estás segur@ de que quieres eliminar a ${nombreUsuario}? Esta acción es permanente.`,
-            icon: 'error',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            resolve(result.isConfirmed);
-        });
-    });
-}
-
-// ✅ Interceptar envío de formularios
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("form").forEach((form) => {
-        const action = form.getAttribute("action");
+    const form = document.querySelector("form[action*='admin_bloquear_usuario']");
+    if (!form) return;
 
-        if (action.includes("bloquear_usuario")) {
-            form.addEventListener("submit", async function (e) {
-                e.preventDefault();
-                const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
-                const activo = {{ usuario.is_active|yesno:"true,false" }};
-                const confirmar = await confirmarBloqueo(nombre, activo);
-                if (confirmar) form.submit();
-            });
-        }
+    const boton = form.querySelector("button.bloquear");
 
-        if (action.includes("eliminar_usuario")) {
-            form.addEventListener("submit", async function (e) {
-                e.preventDefault();
-                const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
-                const confirmar = await confirmarEliminacion(nombre);
-                if (confirmar) form.submit();
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const bloqueado = form.getAttribute("data-bloqueado") === "true";
+        const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
+
+        const confirmar = await confirmarBloqueo(nombre, bloqueado);
+
+        if (confirmar) {
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload(); // 🔄 Recarga para reflejar cambios en el botón y el atributo
+                } else {
+                    Swal.fire('Error', 'No se pudo cambiar el estado del usuario.', 'error');
+                }
+            })
+            .catch(() => {
+                Swal.fire('Error', 'Algo salió mal al conectar con el servidor.', 'error');
             });
         }
     });
 });
+
+function confirmarBloqueo(nombreUsuario, estaBloqueado) {
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: estaBloqueado ? '¿Desbloquear usuario?' : '¿Bloquear usuario?',
+            text: estaBloqueado
+                ? `¿Deseas desbloquear a ${nombreUsuario}? Podrá volver a iniciar sesión.`
+                : `¿Estás segur@ de que quieres bloquear a ${nombreUsuario}? Esta acción evitará que pueda iniciar sesión.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: estaBloqueado ? 'Sí, desbloquear' : 'Sí, bloquear',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            resolve(result.isConfirmed);
+        });
+    });
+}
 </script>
+
+
 {% endblock pie %}

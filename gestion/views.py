@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
+from django.views.decorators.cache import never_cache # Importar never_cache
+
 # Se agregó el import de os
 # Se importa el reverse para redireccionar a la vista de crud.
 from django.urls import reverse
@@ -12,7 +15,7 @@ from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils import timezone # Importar timedelta también
 # Se importa los atributos de Crud 
-from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion
+from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion,EstadoUsuario
 
 from .forms import (
     CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm,
@@ -179,6 +182,15 @@ def pub_login(request):
                     specific_auth_error_occurred = True # Marcar que este error específico ocurrió
             
             if user is not None:
+
+                # Verificamos si el usuario tiene estado y está bloqueado
+                estado = getattr(user, 'estado', None)
+
+                if estado and estado.bloqueado:
+                    # ⚠️ Mostramos el alert SOLO si está bloqueado
+                    request.session['mostrar_alerta_bloqueado'] = True
+
+
                 auth_login(request, user)
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
 
@@ -220,8 +232,12 @@ def pub_log_out(request):
     # Esta vista es el destino de LOGOUT_REDIRECT_URL en settings.py.
     # La LogoutView de Django ya ha cerrado la sesión antes de redirigir aquí.
     # Simplemente renderiza la página de confirmación y muestra un mensaje.
+
+    auth_logout(request)  # 🔒 Cierra la sesión del usuario
+    request.session.flush()  # 💥 Limpia completamente la sesión
+
     messages.info(request, "Has cerrado sesión exitosamente. ¡Hasta luego!")
-    return render(request, 'paginas/publico/pub_log_out.html') # Renderiza tu página de sesión cerrada
+    return render(request, 'paginas/publico/pub_log_out.html')  # Página de sesión cerrada
 
 def pub_nosotros(request):
   return render(request, 'paginas/publico/pub_nosotros.html') # Se crea un renderizado de este archivo HTML.
@@ -666,14 +682,40 @@ def password_reset_confirm_code(request):
     return render(request, 'paginas/publico/pub_restablecer_contrasena_codigo.html', {'form': form, 'validlink': True})
 
 # VISTAS DE LA CARPETA "COMPRADOR"
+@never_cache
 @login_required
 def com_inicio(request):
-  return render(request, 'paginas/comprador/com_inicio.html')
+    usuario = request.user
+    cliente = getattr(usuario, 'cliente', None)
 
+    # Validamos si está bloqueado por EstadoUsuario o si is_active es False
+    try:
+        estado_usuario = EstadoUsuario.objects.get(user=usuario)
+        esta_bloqueado = estado_usuario.bloqueado
+    except EstadoUsuario.DoesNotExist:
+        esta_bloqueado = False
+
+    mostrar_alerta = esta_bloqueado or not usuario.is_active
+
+# Guardamos la alerta en la sesión para que el template la vea como tú la estás preguntando
+    if mostrar_alerta:
+        request.session['mostrar_alerta_bloqueado'] = True
+    else:
+        request.session.pop('mostrar_alerta_bloqueado', None)
+
+    return render(request, 'paginas/comprador/com_inicio.html', {
+        'usuario': usuario,
+        'cliente': cliente,
+    })
+
+
+
+@never_cache
 @login_required
 def com_albumes(request):
   return render(request, 'paginas/comprador/com_albumes.html')
 
+@never_cache
 @login_required
 def com_carrito(request):
     # 1) Mini-diccionario de álbumes
@@ -755,6 +797,8 @@ def com_carrito(request):
         'total': total
     })
   
+
+@never_cache
 @login_required
 def com_checkout(request):
     # 1) Recupera el carrito de la sesión (puede estar vacío)
@@ -773,10 +817,15 @@ def com_checkout(request):
         'total': total
     })
     
+
+@never_cache
 @login_required
 def com_nosotros(request):
     return render(request, 'paginas/comprador/com_nosotros.html')
 # Vista para MOSTRAR el perfil del comprador
+
+
+@never_cache
 @login_required
 def com_perfil(request, user_mode='comprador'): # Acepta user_mode
     user = request.user
@@ -794,6 +843,8 @@ def com_perfil(request, user_mode='comprador'): # Acepta user_mode
     # Esta vista ahora solo muestra la información del perfil.
     return render(request, 'paginas/comprador/com_perfil.html', context)
 # Vista para EDITAR el perfil del comprador
+
+@never_cache
 @login_required
 def com_perfil_editar(request):
     user = request.user
@@ -879,18 +930,22 @@ def com_perfil_editar(request):
     }
     return render(request, 'paginas/comprador/com_perfil_editar.html', context)
 
+@never_cache
 @login_required
 def com_progreso_envio(request):
     return render(request, 'paginas/comprador/com_progreso_envio.html')
 
+@never_cache
 @login_required
 def com_reembolsos(request):
     return render(request, 'paginas/publico/pub_reembolsos.html')
 
+@never_cache
 @login_required
 def com_soporte(request):
     return render(request, 'paginas/comprador/com_soporte.html')
 
+@never_cache
 @login_required
 def com_terminos(request):
     return render(request, 'paginas/comprador/com_terminos.html')
@@ -900,10 +955,13 @@ def com_terminos(request):
 # Para estas vistas, además de @login_required, probablemente necesites
 # un @user_passes_test para verificar que el usuario es un vendedor.
 # Por ahora, solo añadiremos @login_required.
+
+@never_cache
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_bad(request):
     return render(request, 'paginas/vendedor/vinilos/ven_bad.html')
 
+@never_cache
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_crear(request):
     artista_form_modal = ArtistaForm()
@@ -961,24 +1019,30 @@ def ven_crear(request):
     }
     return render(request, 'paginas/vendedor/ven_crear.html', context)
 
+@never_cache
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_notificaciones(request):
     return render(request, 'paginas/vendedor/ven_notificaciones.html')
 
+@never_cache
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_producto(request):
     return render(request, 'paginas/vendedor/ven_producto.html')
 
+@never_cache
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_nosotros(request):
     return render(request, 'paginas/vendedor/ven_nosotros.html')
 
+@never_cache
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_terminos(request):
     return render(request, 'paginas/vendedor/ven_terminos.html')
 
 
 # VISTAS DE LA CARPETA "ADMINISTRADOR"
+
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_administrador(request):
@@ -995,41 +1059,49 @@ def admin_administrador(request):
         'usuarios_hoy': usuarios_hoy
     })
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_notificaciones(request):
   return render(request, 'paginas/administrador/admin_notificaciones.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido(request):
   return render(request, 'paginas/administrador/admin_pedido.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_producto(request):
   return render(request, 'paginas/administrador/admin_producto.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_reembolsos(request):
   return render(request, 'paginas/administrador/admin_reembolsos.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_usuario(request):
   return render(request, 'paginas/Administrador/admin_usuario.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_verificacion(request):
   return render(request, 'paginas/Administrador/admin_verificacion.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_adPro(request):
     return render(request, 'paginas/administrador/admin_adPro.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_buscar_album_discogs(request):
@@ -1061,6 +1133,7 @@ def admin_buscar_album_discogs(request):
     # Si no es AJAX, renderiza una plantilla (ej. para una página de búsqueda)
     return render(request, 'paginas/administrador/admin_buscar_album_discogs.html', {'query': query, 'results': results})
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_importar_album_discogs(request):
@@ -1141,19 +1214,27 @@ def admin_importar_album_discogs(request):
             return JsonResponse({'success': False, 'error': 'ID no proporcionado'})
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
+
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_bloq_users(request):
-    usuarios_bloqueados = User.objects.filter(cliente__isnull=False, is_active=False)
+    usuarios_bloqueados = User.objects.filter(
+        Q(is_active=False) | Q(estado_usuario__bloqueado=True),
+        cliente__isnull=False
+    ).distinct()
+
     return render(request, 'paginas/administrador/admin_bloq_users.html', {
         'usuarios': usuarios_bloqueados
     })
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_generos(request):
     return render(request, 'paginas/administrador/admin_generos.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_gestion_users(request):
@@ -1165,6 +1246,7 @@ def admin_gestion_users(request):
     return render(request, 'paginas/administrador/admin_gestion_users.html', {'usuarios': usuarios})
 
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_gestion_administradores(request):
@@ -1174,16 +1256,24 @@ def admin_gestion_administradores(request):
         'admins': admins
     })
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_ver_perfil_usuario(request, user_id):
-    usuario = get_object_or_404(User, id=user_id)
-    cliente = getattr(usuario, 'cliente', None)
+    user = get_object_or_404(User, id=user_id)
+    cliente = Cliente.objects.filter(user=user).first()
+    estado_usuario = EstadoUsuario.objects.filter(user=user).first()
+    esta_bloqueado = estado_usuario.bloqueado if estado_usuario else False
+
     return render(request, 'paginas/administrador/admin_ver_perfil_usuario.html', {
-        'usuario': usuario,
+        'usuario': user,
         'cliente': cliente,
+        'esta_bloqueado': esta_bloqueado,
     })
 
+
+
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_user_edit(request, user_id):
@@ -1210,6 +1300,7 @@ def admin_user_edit(request, user_id):
     })
 
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_eliminar_usuario(request, usuario_id):
@@ -1223,25 +1314,53 @@ def admin_eliminar_usuario(request, usuario_id):
         messages.error(request, "Acceso no permitido.")
         return redirect('admin_gestion_users')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_bloquear_usuario(request, usuario_id):
     if request.method == 'POST':
         user = get_object_or_404(User, id=usuario_id)
-        user.is_active = not user.is_active  # invierte estado
-        user.save()
+        estado_usuario, _ = EstadoUsuario.objects.get_or_create(user=user)
 
-        estado = "desbloqueado" if user.is_active else "bloqueado"
-        # Usamos `get_full_name() or user.username` para tener un fallback si el nombre no está completo.
-        messages.success(request, f"El usuario {user.get_full_name() or user.username} ha sido {estado} correctamente.")
-        # CORRECCIÓN: El argumento en la URL se llama 'user_id', no 'usuario_id'.
+        if estado_usuario.bloqueado:
+            estado_usuario.bloqueado = False
+            estado_usuario.save()
+            # 👇 Verifica si también estaba inactivo y lo activa
+            if not user.is_active:
+                user.is_active = True
+                user.save()
+            mensaje_estado = "desbloqueado"
+        
+        elif not user.is_active:
+            user.is_active = True
+            user.save()
+            mensaje_estado = "activado"
+
+        else:
+            estado_usuario.bloqueado = True
+            estado_usuario.save()
+            mensaje_estado = "bloqueado"
+
+        messages.success(request, f"El usuario {user.get_full_name() or user.username} ha sido {mensaje_estado}.")
         return redirect('admin_ver_perfil_usuario', user_id=usuario_id)
-    
+
     messages.error(request, "Acción no permitida.")
-    # CORRECCIÓN: También se debe corregir el argumento aquí.
-    return redirect('admin_gestion_users', user_id=usuario_id)
+    return redirect('admin_gestion_users')
 
 
+@never_cache
+@login_required
+def desactivar_usuario_y_logout(request):
+    if request.user.is_authenticated:
+        # Cambia is_active a False
+        request.user.is_active = False
+        request.user.save()
+        # Hace logout
+        auth_logout(request)
+    return redirect('pub_login')  # Cambia esto si tu login tiene otro nombre
+
+
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_new_users(request):
@@ -1256,32 +1375,39 @@ def admin_new_users(request):
         'usuarios': usuarios
     })
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido_pendiente(request):
     return render(request, 'paginas/administrador/admin_pedido_pendiente.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_pedido_realizado(request):
     return render(request, 'paginas/administrador/admin_pedido_realizado.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_ventas(request):
     return render(request, 'paginas/Administrador/admin_ventas.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_nosotros(request):
     return render(request, 'paginas/administrador/admin_nosotros.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_terminos(request):
     return render(request, 'paginas/administrador/admin_terminos.html')
 
 # Vista placeholder para "Más Vendidos" (Asegúrate de que esta plantilla exista)
+
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_mas_vendidos(request):
@@ -1289,51 +1415,62 @@ def admin_mas_vendidos(request):
 
 
 # VISTAS DE VINILOS, SUBCARPETA DE ADMINISTRADOR
+
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def bts(request):
     return render(request, 'paginas/administrador/ventas/bts.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def carti_music(request):
     return render(request, 'paginas/administrador/ventas/carti_music.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def eminem_show(request):
     return render(request, 'paginas/administrador/ventas/eminem_show.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def exitos_joe(request):
     return render(request, 'paginas/administrador/ventas/exitos_joe.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def gnr_appetite(request):
     return render(request, 'paginas/administrador/ventas/gnr_appetite.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def master(request):
     return render(request, 'paginas/administrador/ventas/master.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def mj_bad(request):
     return render(request, 'paginas/administrador/ventas/mj_bad.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def mj_thriller(request):
     return render(request, 'paginas/administrador/ventas/mj_thriller.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def nirvana(request):
     return render(request, 'paginas/administrador/ventas/nirvana.html')
 
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def the_beatles(request):

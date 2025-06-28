@@ -256,6 +256,28 @@
             
         </div>
     </section>
+
+    <!-- SWEETALERT2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if request.session.mostrar_alerta_bloqueado %}
+<script>
+Swal.fire({
+    title: 'Cuenta bloqueada',
+    text: 'Tu cuenta fue bloqueada. Esta fue tu última vez entrando al sistema.',
+    icon: 'error',
+    confirmButtonText: 'Cerrar sesión',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    allowEnterKey: false,
+    backdrop: true
+}).then(() => {
+    window.location.href = "{% url 'desactivar_usuario' %}";
+});
+</script>
+{% endif %}
+
+
 {% endblock contenido %}
 
 {% block pie %}

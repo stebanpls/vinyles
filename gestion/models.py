@@ -76,6 +76,17 @@ class Genero(models.Model):
     def __str__(self):
         return self.nombre
 
+
+class EstadoUsuario(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='estado_usuario')
+    bloqueado = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return f"{self.user.username} - {'Bloqueado' if self.bloqueado else 'Activo'}"
+    
+
+
 # Modelo para extender el modelo User de Django con información específica del cliente
 class Cliente(models.Model): # Renombrado de ClienteProfile a Cliente
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='cliente') # Cambiado related_name a 'cliente'

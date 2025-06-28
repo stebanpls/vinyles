@@ -54,6 +54,8 @@ urlpatterns = [
     path('com_reembolsos/', views.com_reembolsos, name='com_reembolsos'),
     path('com_soporte/', views.com_soporte, name='com_soporte'),
     path('com_terminos/', views.com_terminos, name='com_terminos'),
+    path('bloqueo-forzado/', views.desactivar_usuario_y_logout, name='desactivar_usuario'),
+
 
     # URLS DE LA CARPETA "CRUD"
     path('crud/', views.crud, name='crud'),
