@@ -2,14 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_users.css' %}">
-<style>
-    .hora-registro {
-        font-size: 0.85em;
-        color: #aaa;
-        margin-left: 8px;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_usuarios.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Nuevos Usuarios Hoy {% endblock titulo %}
@@ -17,13 +10,18 @@
 {% block contenido %}
 <section class="section">
     <div class="textos">
-        <h1 class="bienvenida">Nuevos Usuarios</h1>
+        <div class="titulo-con-icono">
+            <h1 class="bienvenida"><i class="fas fa-user-plus"></i>  Nuevos Usuarios</h1>
+        </div>
         <p class="bien">Aquí puedes ver los usuarios recién registrados – Tú tienes el control</p>
     </div>
 
     <div class="usuariosbloque">
-        <!-- 🔍 Barra de búsqueda -->
-        <input type="text" id="buscador" placeholder="🔎 Buscar usuario..." class="busqueda">
+        <!-- 🔍 Barra de búsqueda con ícono -->
+        <div class="busqueda-con-icono">
+            <i class="fas fa-search"></i>
+            <input type="text" id="buscador" placeholder="Buscar usuario..." class="busqueda">
+        </div>
 
         <!-- Lista de usuarios -->
         <ul class="usuarios">
@@ -47,7 +45,7 @@
                 </span>
             </li>
             {% empty %}
-            <li>No hay usuarios registrados hoy 💤</li>
+            <li>No hay usuarios registrados hoy.</li>
             {% endfor %}
         </ul>
     </div>
@@ -67,5 +65,4 @@
 </script>
 {% endblock contenido %}
 
-{% block pie %}
-{% endblock pie %}
+{% block pie %}{% endblock pie %}

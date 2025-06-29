@@ -1,0 +1,48 @@
+{% extends "plantillas/plantilla_administrador.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_registrar_staff.css' %}">
+{% endblock extra_css %}
+
+{% block contenido %}
+<main class="login-container">
+    <div class="login-form">
+<div class="admin-icon-container">
+    <div class="admin-icon">
+        <i class="fa-solid fa-user-shield"></i>
+    </div>
+</div>
+
+
+        <h2>Registrar administrador</h2>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="form-group">
+                <button type="submit" class="w-100">Crear administrador</button>
+            </div>
+        </form>
+
+        <p>
+            <a href="{% url 'admin_gestion_administradores' %}">← Volver a la lista</a>
+        </p>
+    </div>
+</main>
+{% endblock contenido %}

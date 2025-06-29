@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_users.css' %}">
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_usuarios.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Gestión de Administradores {% endblock titulo %}
@@ -10,14 +10,21 @@
 {% block contenido %}
 <section class="section">
     <div class="textos">
-        <h1 class="bienvenida">Administradores del sistema</h1>
+        <h1 class="bienvenida"> <i class="fa-solid fa-user-shield"></i> Administradores del sistema</h1>
         <p class="bien">Visualiza, edita o gestiona a los administradores de la plataforma. </p>
     </div>
+<div class="acciones-admin mb-4">
+    <a href="{% url 'admin_registrar_staff' %}" class="btn btn-success">
+        <i class="fa-solid fa-user-plus"></i> Crear nuevo administrador
+    </a>
+</div>
 
     <div class="usuariosbloque">
         <!-- 🔍 Barra de búsqueda -->
-        <input type="text" id="buscador" placeholder=" Buscar administrador..." class="busqueda">
-
+        <div class="busqueda-con-icono">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" id="buscador" placeholder="Buscar usuario..." class="busqueda">
+        </div>
         <!-- Lista de administradores -->
         <ul class="usuarios">
             {% for admin in admins %}

@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
 from django_recaptcha.fields import ReCaptchaField, ReCaptchaV2Checkbox
 from datetime import timedelta # Para el formulario de Cancion
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.forms import UserCreationForm
 
 class CrudForm(forms.ModelForm):
     class Meta:
@@ -381,3 +382,46 @@ class UserEditForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa los nombres'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa los apellidos'}),
         }
+
+class CrearUsuarioStaffForm(UserCreationForm):
+    email = forms.EmailField(
+        label='Correo Electrónico',
+        required=True,
+        widget=forms.EmailInput(attrs={'placeholder': 'Correo del nuevo administrador'})
+    )
+    first_name = forms.CharField(
+        label='Nombres',
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Nombres del administrador'})
+    )
+    last_name = forms.CharField(
+        label='Apellidos',
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Apellidos del administrador'})
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ("username", "email", "first_name", "last_name", "password1", "password2")
+        field_classes = {'username': UsernameField}
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Nombre de usuario del administrador'}),
+            'password1': forms.PasswordInput(attrs={'placeholder': 'Contraseña de acceso'}),
+            'password2': forms.PasswordInput(attrs={'placeholder': 'Confirmar contraseña'}),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Este correo ya está registrado.")
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_staff = True
+        user.is_superuser = False
+        if commit:
+            user.save()
+        return user

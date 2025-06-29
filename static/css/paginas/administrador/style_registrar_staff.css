@@ -1,0 +1,161 @@
+/*  Contenedor general centrado */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px); 
+  padding: 30px 10px;
+  
+}
+
+/*  Formulario principal */
+.login-form {
+  background-color: #121212;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+/*  Icono animado de admin */
+.admin-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.admin-icon {
+  background: linear-gradient(145deg, #1c1c1c, #2e2e2e);
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow:
+    0 0 15px rgba(135, 206, 235, 0.3),
+    0 0 30px rgba(135, 206, 235, 0.2) inset;
+  animation: pulse-shadow 2s infinite ease-in-out, float 4s ease-in-out infinite;
+}
+
+.admin-icon i {
+  color: #87ceeb;
+  font-size: 38px;
+}
+
+/*  Animaciones */
+@keyframes pulse-shadow {
+  0%, 100% {
+    box-shadow:
+      0 0 10px rgba(135, 206, 235, 0.3),
+      0 0 20px rgba(135, 206, 235, 0.2) inset;
+  }
+  50% {
+    box-shadow:
+      0 0 18px rgba(135, 206, 235, 0.6),
+      0 0 30px rgba(135, 206, 235, 0.4) inset;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+/* 🖋 Título */
+.login-form h2 {
+  color: #fff;
+  margin-bottom: 25px;
+}
+
+/* Campos del formulario */
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #dedede;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+  font-size: 0.95rem;
+}
+
+.form-group input:focus {
+  border-color: #0d6efd;
+  outline: none;
+  background-color: #333;
+}
+
+/*  Textos de ayuda y reglas */
+/* ✅ Textos sueltos de ayuda (como los que se ven mal alineados) */
+.form-text.text-muted,
+.form-group > small {
+  font-size: 0.85rem;
+  color: #b0b0b0 !important;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  padding-left: 0; /* ⛔️ quitamos esto para que no se desalineen */
+  list-style-type: none; /* por si acaso */
+}
+
+/* ✅ Textos en lista (como los de la contraseña) */
+.form-group ul,
+.form-group ul li {
+  padding-left: 18px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  list-style-type: disc;
+  font-size: 0.85rem;
+  color: #b0b0b0 !important;
+  line-height: 1.4;
+}
+/* 🔘 Botón de enviar sin sombra */
+button[type="submit"] {
+  background-color: #0d6efd; /* azul Bootstrap */
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  width: 100%;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0a58ca; /* azul más oscuro */
+  cursor: pointer;
+}
+/* 🔙 Link "Volver a la lista" */
+.login-form p a {
+  display: inline-block;
+  color: #87ceeb; /* azul pastel */
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 8px 0;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.login-form p a:hover {
+  color: #b3e5fc; /* azul más clarito al pasar el mouse */
+  text-decoration: underline;
+  transform: translateX(-2px); /* se mueve un poquito hacia la izquierda */
+}

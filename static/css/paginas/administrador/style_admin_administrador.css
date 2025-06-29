@@ -1,11 +1,11 @@
 /* 🌌 Sección general */
 .section {
-  background-color: #000000;
+  background-color: #000;
   font-family: 'Poppins', sans-serif;
   padding: 2rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 2.5rem;
+  gap: 2rem; /* ← Antes era 2.5rem */
   justify-content: center;
   text-align: center;
 }
@@ -28,7 +28,7 @@
   color: #c0c0c0;
 }
 
-/* ✨ Tarjeta estilo glassmorphism */
+/* ✨ Tarjeta glassmorphism */
 .nota {
   backdrop-filter: blur(10px);
   background: rgba(80, 79, 79, 0.167);
@@ -49,30 +49,36 @@
   transform: translateY(0);
 }
 
-/* Hover suave con glow pastel */
+/* Hover con brillo suave */
 .nota:hover {
   transform: translateY(-4px);
 }
 
-/* 🔸 Contenido */
-.nota .value {
-  font-size: 1.7rem;
-  font-weight: 700;
-  margin-bottom: 0.6rem;
-}
-
-.nota h3 {
-  font-size: 1rem;
-  font-weight: 400;
-  margin-top: auto;
-  color: #d3d3d3;
-}
-
+/* Icono */
 .icono-nota {
   font-size: 2.3rem;
   margin-bottom: 1rem;
   color: inherit;
   opacity: 0.9;
+}
+
+/* 🔹 Contenido */
+.nota h3 {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #d3d3d3;
+  margin-bottom: 0.5rem;
+}
+
+.nota .value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.nota .desc {
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
 /* 🎀 ROSITA */
@@ -87,18 +93,6 @@
   box-shadow: 0 0 10px rgba(255, 201, 220, 0.25), 0 0 15px rgba(255, 201, 220, 0.15);
 }
 
-/* 💜 LILA */
-.nota.lila {
-  animation-name: glowLila;
-}
-.nota.lila .value {
-  color: #ecd8fde0;
-}
-.nota.lila:hover {
-  animation: none;
-  box-shadow: 0 0 10px rgba(228, 198, 253, 0.25), 0 0 15px rgba(228, 198, 253, 0.15);
-}
-
 /* 💙 AZUL */
 .nota.azul {
   animation-name: glowAzul;
@@ -111,20 +105,50 @@
   box-shadow: 0 0 10px rgba(194, 236, 253, 0.25), 0 0 15px rgba(194, 236, 253, 0.15);
 }
 
+/* ✨ PIEL */
+.nota.piel {
+  animation-name: glowPiel;
+}
+.nota.piel .value {
+  color: #fff3b8;
+}
+.nota.piel:hover {
+  animation: none;
+  box-shadow: 0 0 10px rgba(255, 243, 184, 0.25), 0 0 15px rgba(255, 243, 184, 0.15);
+}
+
+/* 💚 VERDE MENTA */
+.nota.verde {
+  animation-name: glowVerde;
+}
+.nota.verde .value {
+  color: #c8fadc;
+}
+.nota.verde:hover {
+  animation: none;
+  box-shadow: 0 0 10px rgba(200, 250, 220, 0.25), 0 0 15px rgba(200, 250, 220, 0.15);
+}
+
+@keyframes glowVerde {
+  0%, 100% { box-shadow: 0 0 6px rgba(200, 250, 220, 0.1); }
+  50%      { box-shadow: 0 0 10px rgba(200, 250, 220, 0.2); }
+}
+
+
 /* 🌠 Animaciones suaves */
 @keyframes glowRosita {
   0%, 100% { box-shadow: 0 0 6px rgba(255, 201, 220, 0.1); }
   50%      { box-shadow: 0 0 10px rgba(255, 201, 220, 0.2); }
 }
 
-@keyframes glowLila {
-  0%, 100% { box-shadow: 0 0 6px rgba(228, 198, 253, 0.1); }
-  50%      { box-shadow: 0 0 10px rgba(228, 198, 253, 0.2); }
-}
-
 @keyframes glowAzul {
   0%, 100% { box-shadow: 0 0 6px rgba(194, 236, 253, 0.1); }
   50%      { box-shadow: 0 0 10px rgba(194, 236, 253, 0.2); }
+}
+
+@keyframes glowPiel {
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 243, 184, 0.1); }
+  50%      { box-shadow: 0 0 10px rgba(255, 243, 184, 0.2); }
 }
 
 /* 🚫 Quitar subrayado heredado */

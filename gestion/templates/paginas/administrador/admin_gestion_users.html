@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_users.css' %}">
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_gestion_usuarios.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Gestión de Usuarios {% endblock titulo %}
@@ -10,13 +10,17 @@
 {% block contenido %}
 <section class="section">
     <div class="textos">
-        <h1 class="bienvenida">Usuarios en la plataforma</h1>
+        <h1 class="bienvenida"><i class="fas fa-users"></i> Usuarios en la plataforma</h1>
         <p class="bien">Gestiona todos los perfiles de los usuarios para un control más efectivo. </p>
     </div>
 
     <div class="usuariosbloque">
-        <!-- 🔍 Barra de búsqueda -->
-        <input type="text" id="buscador" placeholder="Buscar usuario..." class="busqueda">
+
+        <!-- 🔍 Barra de búsqueda con ícono al lado -->
+        <div class="busqueda-con-icono">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" id="buscador" placeholder="Buscar usuario..." class="busqueda">
+        </div>
 
         <!-- Lista de usuarios -->
         <ul class="usuarios">

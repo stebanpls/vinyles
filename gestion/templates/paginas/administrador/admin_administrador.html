@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_administrador.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_admin_administrador.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinlyles - Administrador{% endblock titulo %}
@@ -16,32 +16,37 @@
         <p class="bien">Todo lo que pasa en la plataforma, al instante. Tu centro de mando está listo, Admin.</p>
     </div>
     
+    <!-- Ventas -->
     <a href="{% url 'admin_ventas' %}" class="nota rosita">
+        <i class="fas fa-cash-register icono-nota"></i>
         <h3>Ventas hoy</h3>
         <div class="value">5</div>
         <div class="desc">Total: $1.230.000</div>
     </a>
 
-<a href="{% url 'admin_new_users' %}" class="nota azul">
-    <h3>Nuevos usuarios</h3>
-    <div class="value">{{ usuarios_hoy }}</div>
-    <div class="desc">Registrados hoy</div>
-</a>
+    <!-- Nuevos usuarios -->
+    <a href="{% url 'admin_new_users' %}" class="nota azul">
+        <i class="fas fa-user-plus icono-nota"></i>
+        <h3>Nuevos usuarios</h3>
+        <div class="value">{{ usuarios_hoy }}</div>
+        <div class="desc">Registrados hoy</div>
+    </a>
 
-
-
+    <!-- Notificaciones -->
     <a href="{% url 'admin_notificaciones' %}" class="nota piel">
-        <h3> Notificaciones</h3>
+        <i class="fas fa-bell icono-nota"></i>
+        <h3>Notificaciones</h3>
         <div class="value">2</div>
         <div class="desc">Soporte necesita respuesta</div>
     </a>
 
-    <a href="{% url 'admin_mas_vendidos' %}" class="nota piel">
-        <h3>  Más vendidos</h3>
+    <!-- Más vendidos -->
+    <a href="{% url 'admin_mas_vendidos' %}" class="nota verde">
+        <i class="fas fa-star icono-nota"></i>
+        <h3>Más vendidos</h3>
         <div class="value">5</div>
         <div class="desc">productos más vendidos</div>
     </a>
-
 </section>
 {% endblock contenido %}
 

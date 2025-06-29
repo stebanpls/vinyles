@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_pedido.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_admin_pedido.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Administrador{% endblock titulo %}
@@ -14,20 +15,23 @@
         <h1 class="bienvenida">¡Control total en tus manos!</h1>
         <p class="bien">Lleva el control total de tus pedidos: revisa los pendientes, monitorea los realizados y gestiona reembolsos sin perder detalle.</p>
     </div>
-    
+
     <a href="{% url 'admin_pedido_pendiente' %}" class="nota rosita">
-        <div class= "value"> Pedidos pendientes</div>
+        <i class="fas fa-truck-loading icono-nota"></i>
+        <div class="value">Pedidos pendientes</div>
         <h3>Haz clic para revisar los pedidos pendientes.</h3>
     </a>
 
     <a href="{% url 'admin_pedido_realizado' %}" class="nota azul">
-        <div class= "value"> Pedidos Realizados</div>
-        <h3> Haz clic para ver pedidos Realizados.</h3>
+        <i class="fas fa-clipboard-check icono-nota"></i>
+        <div class="value">Pedidos realizados</div>
+        <h3>Haz clic para ver pedidos realizados.</h3>
     </a>
 
     <a href="{% url 'admin_reembolsos' %}" class="nota lila">
-        <div class= "value"> Reembolsos</div>
-        <h3> Haz clic para ver reembolsos.</h3>
+        <i class="fas fa-undo icono-nota"></i>
+        <div class="value">Reembolsos</div>
+        <h3>Haz clic para ver reembolsos.</h3>
     </a>
 </section>
 
@@ -35,4 +39,4 @@
 
 {% block pie %}
 
-{% endblock pie %}  
+{% endblock pie %}

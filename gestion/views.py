@@ -20,7 +20,7 @@ from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion
 from .forms import (
     CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm,
     ProductoForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm,ClienteEditForm,UserEditForm,
-    PasswordResetRequestForm, PasswordResetConfirmForm
+    PasswordResetRequestForm, PasswordResetConfirmForm, CrearUsuarioStaffForm
 ) # Importar formularios
 
 # Importar las funciones de autenticación de Django
@@ -1255,6 +1255,18 @@ def admin_gestion_administradores(request):
     return render(request, 'paginas/administrador/admin_gestion_administradores.html', {
         'admins': admins
     })
+
+
+def admin_registrar_staff(request):
+    if request.method == 'POST':
+        form = CrearUsuarioStaffForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_gestion_administradores')  # o cualquier vista de confirmación
+    else:
+        form = CrearUsuarioStaffForm()
+    return render(request, 'paginas/administrador/admin_registrar_staff.html', {'form': form})
+
 
 @never_cache
 @login_required

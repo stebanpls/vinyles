@@ -10,26 +10,33 @@
 {% block contenido %} 
 
 <section class="section">
-    <div class="textos">
-        <h1 class="bienvenida">¡Control total en tus manos!</h1>
-        <p class="bien">Accede a la lista de usuarios, bloquea cuentas sospechosas y ¡asegura un entorno confiable para todos!</p>
-    </div>
-    
-    <a href="{% url 'admin_gestion_users' %}" class="nota rosita">
-        <div class= "value"> Lista <br>de Usuarios</div>
-        <h3>Haz clic para gestionar Lista de usuarios.</h3>
-    </a>
+  <div class="textos">
+    <h1 class="bienvenida">¡Control total en tus manos!</h1>
+    <p class="bien">Accede a la lista de usuarios, bloquea cuentas sospechosas y ¡asegura un entorno confiable para todos!</p>
+  </div>
 
-    <a href="{% url 'admin_bloq_users' %}" class="nota lila">
-        <div class= "value"> Usuarios bloqueados</div>
-        <h3>Haz clic para gestionar Usuarios bloqueados.</h3>
-    </a>
+  <!-- Lista de usuarios -->
+  <a href="{% url 'admin_gestion_users' %}" class="nota rosita">
+    <i class="fas fa-users icono-nota"></i>
+    <div class="value">Lista <br>de Usuarios</div>
+    <h3>Haz clic para gestionar Lista de usuarios.</h3>
+  </a>
 
-    <a href="{% url 'admin_gestion_administradores' %}" class="nota rosita">
-        <div class= "value"> Lista <br>de Admins</div>
-        <h3>Haz clic para gestionar Lista de administradores.</h3>
-    </a>
+  <!-- Usuarios bloqueados -->
+  <a href="{% url 'admin_bloq_users' %}" class="nota lila">
+    <i class="fas fa-user-slash icono-nota"></i>
+    <div class="value">Usuarios bloqueados</div><br>
+    <h3>Haz clic para gestionar Usuarios bloqueados.</h3>
+  </a>
+
+  <!-- Lista de admins -->
+  <a href="{% url 'admin_gestion_administradores' %}" class="nota azul">
+    <i class="fas fa-user-shield icono-nota"></i>
+    <div class="value">Lista <br>de Admins</div>
+    <h3>Haz clic para gestionar Lista de administradores.</h3>
+  </a>
 </section>
+
 
 {% endblock contenido %}
 

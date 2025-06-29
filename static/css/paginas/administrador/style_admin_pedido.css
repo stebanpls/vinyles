@@ -1,11 +1,11 @@
 /* 🌌 Sección general */
 .section {
-  background-color: #000000;
+  background-color: #000;
   font-family: 'Poppins', sans-serif;
   padding: 2rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 2.5rem;
+  gap: 2.5rem; /* Espacio entre tarjetas */
   justify-content: center;
   text-align: center;
 }
@@ -87,18 +87,6 @@
   box-shadow: 0 0 10px rgba(255, 201, 220, 0.25), 0 0 15px rgba(255, 201, 220, 0.15);
 }
 
-/* 💜 LILA */
-.nota.lila {
-  animation-name: glowLila;
-}
-.nota.lila .value {
-  color: #ecd8fde0;
-}
-.nota.lila:hover {
-  animation: none;
-  box-shadow: 0 0 10px rgba(228, 198, 253, 0.25), 0 0 15px rgba(228, 198, 253, 0.15);
-}
-
 /* 💙 AZUL */
 .nota.azul {
   animation-name: glowAzul;
@@ -111,20 +99,32 @@
   box-shadow: 0 0 10px rgba(194, 236, 253, 0.25), 0 0 15px rgba(194, 236, 253, 0.15);
 }
 
+/* 💜 LILA */
+.nota.lila {
+  animation-name: glowLila;
+}
+.nota.lila .value {
+  color: #ecd8fde0;
+}
+.nota.lila:hover {
+  animation: none;
+  box-shadow: 0 0 10px rgba(228, 198, 253, 0.25), 0 0 15px rgba(228, 198, 253, 0.15);
+}
+
 /* 🌠 Animaciones suaves */
 @keyframes glowRosita {
   0%, 100% { box-shadow: 0 0 6px rgba(255, 201, 220, 0.1); }
   50%      { box-shadow: 0 0 10px rgba(255, 201, 220, 0.2); }
 }
 
-@keyframes glowLila {
-  0%, 100% { box-shadow: 0 0 6px rgba(228, 198, 253, 0.1); }
-  50%      { box-shadow: 0 0 10px rgba(228, 198, 253, 0.2); }
-}
-
 @keyframes glowAzul {
   0%, 100% { box-shadow: 0 0 6px rgba(194, 236, 253, 0.1); }
   50%      { box-shadow: 0 0 10px rgba(194, 236, 253, 0.2); }
+}
+
+@keyframes glowLila {
+  0%, 100% { box-shadow: 0 0 6px rgba(228, 198, 253, 0.1); }
+  50%      { box-shadow: 0 0 10px rgba(228, 198, 253, 0.2); }
 }
 
 /* 🚫 Quitar subrayado heredado */
