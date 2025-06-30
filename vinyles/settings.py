@@ -227,3 +227,6 @@ RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
 
 # Configuración para la aplicación de sitios
 SITE_ID = 1
+
+# Configuración de la API de Discogs
+DISCOGS_TOKEN = os.environ.get('DISCOGS_USER_TOKEN', '')

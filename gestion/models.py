@@ -300,10 +300,14 @@ class Cancion(models.Model):
         verbose_name = "Canción"
         verbose_name_plural = "Canciones"
         ordering = ['nombre']
+        # Evitar duplicados basados en nombre y duración, que es un buen proxy
+        # para la unicidad antes de tener IDs de Discogs para todo.
+        unique_together = (('nombre', 'duracion'),)
 
     def __str__(self):
         return self.nombre
 
+# --- MODELO PRODUCTO (CATÁLOGO MAESTRO) ---
 class Producto(models.Model):
     nombre = models.CharField(max_length=255, verbose_name="Nombre del Producto/Álbum")
     artistas = models.ManyToManyField(
@@ -311,11 +315,9 @@ class Producto(models.Model):
         related_name="productos",
         verbose_name="Artista(s) Principal(es)"
     )
-    lanzamiento = models.DateField(verbose_name="Fecha de Lanzamiento")
-    precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
-    stock = models.PositiveIntegerField(default=0, verbose_name="Cantidad en Stock")
-    descripcion = models.TextField(verbose_name="Descripción del Producto")
-    discografica = models.CharField(max_length=200, verbose_name="Compañía Discográfica")
+    lanzamiento = models.DateField(verbose_name="Fecha de Lanzamiento", null=True, blank=True)
+    descripcion = models.TextField(verbose_name="Descripción del Producto", blank=True)
+    discografica = models.CharField(max_length=200, verbose_name="Compañía Discográfica", blank=True)
     imagen_portada = models.ImageField(upload_to='productos_portadas/', verbose_name="Imagen de Portada", default='albumes/default/default_album.png')
     genero_principal = models.ManyToManyField(
         Genero,
@@ -323,11 +325,12 @@ class Producto(models.Model):
         verbose_name="Género(s) Principal(es) del Álbum",
         blank=True
     )
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
 
     class Meta:
-        db_table = 'productos' # Convención: plural
-        verbose_name = "Producto (Vinilo/Álbum)"
-        verbose_name_plural = "Productos (Vinilos/Álbumes)"
+        db_table = 'productos'
+        verbose_name = "Producto (Catálogo)"
+        verbose_name_plural = "Productos (Catálogo)"
         ordering = ['nombre']
 
     def save(self, *args, **kwargs):
@@ -336,7 +339,7 @@ class Producto(models.Model):
             try:
                 old_instance = Producto.objects.get(pk=self.pk)
             except Producto.DoesNotExist:
-                pass # El objeto es nuevo, no hay imagen antigua.
+                pass
 
         super().save(*args, **kwargs)
 
@@ -347,6 +350,40 @@ class Producto(models.Model):
     def __str__(self):
         artistas_nombres = ", ".join(art.nombre for art in self.artistas.all())
         return f"{self.nombre} - {artistas_nombres}"
+
+# --- NUEVO MODELO: PUBLICACION (OFERTA DEL VENDEDOR) ---
+class Publicacion(models.Model):
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.CASCADE,
+        related_name='publicaciones',
+        verbose_name="Producto del Catálogo"
+    )
+    vendedor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='publicaciones',
+        verbose_name="Vendedor"
+    )
+    precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio de Venta")
+    stock = models.PositiveIntegerField(default=1, verbose_name="Cantidad en Venta")
+    descripcion_condicion = models.TextField(
+        verbose_name="Descripción de la Condición",
+        help_text="Ej: 'Casi nuevo, solo se usó una vez.' o 'La portada tiene un ligero desgaste en la esquina.'"
+    )
+    fecha_publicacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Publicación")
+    activa = models.BooleanField(default=True, verbose_name="Publicación Activa")
+
+    class Meta:
+        db_table = 'publicaciones'
+        verbose_name = "Publicación (Oferta)"
+        verbose_name_plural = "Publicaciones (Ofertas)"
+        ordering = ['-fecha_publicacion']
+        unique_together = (('producto', 'vendedor'),) # Un vendedor solo puede tener una publicación activa por producto
+
+    def __str__(self):
+        return f"Oferta de {self.vendedor.username} para {self.producto.nombre} por ${self.precio}"
+
 
 class ProductoCancion(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="tracks", verbose_name="Producto")
@@ -424,7 +461,8 @@ class Pedido(models.Model):
     ciudad_envio = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos_enviados_aqui', verbose_name="Ciudad de Envío")
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pedidos', verbose_name="Cliente")
     medio_de_pago = models.ForeignKey(MedioDePago, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos_pagados_con', verbose_name="Medio de Pago")
-    productos = models.ManyToManyField(Producto, through='PedidoProducto', related_name='en_pedidos', verbose_name="Productos en el Pedido")
+    # AHORA UN PEDIDO SE RELACIONA CON PUBLICACIONES, NO CON PRODUCTOS
+    publicaciones = models.ManyToManyField('Publicacion', through='PedidoPublicacion', related_name='en_pedidos', verbose_name="Publicaciones en el Pedido")
 
     class Meta:
         db_table = 'pedidos'
@@ -435,21 +473,23 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.pk} de {self.cliente.user.username} - {self.fecha}"
 
-class PedidoProducto(models.Model): # Modelo intermedio para Pedido <-> Producto
+# MODELO INTERMEDIO PARA PEDIDO <-> PUBLICACION
+class PedidoPublicacion(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items_pedido", verbose_name="Pedido")
-    producto = models.ForeignKey(Producto, on_delete=models.PROTECT, related_name="lineas_de_pedido", verbose_name="Producto")
+    publicacion = models.ForeignKey('Publicacion', on_delete=models.PROTECT, related_name="lineas_de_pedido", verbose_name="Publicación")
     cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
     valor_unitario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor Unitario en el Momento de la Compra")
 
     class Meta:
-        db_table = 'pedido_productos'
-        verbose_name = "Producto del Pedido"
-        verbose_name_plural = "Productos del Pedido"
-        ordering = ['pedido', 'producto']
-        unique_together = (('pedido', 'producto'),)
+        db_table = 'pedido_publicaciones'
+        verbose_name = "Publicación del Pedido"
+        verbose_name_plural = "Publicaciones del Pedido"
+        ordering = ['pedido', 'publicacion']
+        unique_together = (('pedido', 'publicacion'),)
 
     def __str__(self):
-        return f"{self.cantidad} x {self.producto.nombre} en Pedido #{self.pedido.pk}"
+        return f"{self.cantidad} x {self.publicacion.producto.nombre} en Pedido #{self.pedido.pk}"
+
 
 # --- Modelo para Soporte ---
 
@@ -485,3 +525,7 @@ class TicketSoporte(models.Model):
 
     def __str__(self):
         return f"Ticket #{self.pk} de {self.cliente.user.username} ({self.get_estado_display()})" # get_estado_display() es útil aquí
+
+# ELIMINAMOS EL MODELO PedidoProducto PORQUE AHORA USAMOS PedidoPublicacion
+# class PedidoProducto(models.Model):
+#     ...

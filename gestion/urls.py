@@ -36,7 +36,7 @@ urlpatterns = [
     path('ausuarios-admin/<int:user_id>/editar/', views.admin_user_edit, name='admin_user_edit'),
     path('admin_eliminar_usuario/<int:usuario_id>/', views.admin_eliminar_usuario, name='admin_eliminar_usuario'),
     path('admin_bloquear_usuario/<int:usuario_id>/', views.admin_bloquear_usuario, name='admin_bloquear_usuario'),
-    path('/admin_gestion_administradores', views.admin_gestion_administradores, name='admin_gestion_administradores'),
+    path('admin_gestion_administradores/', views.admin_gestion_administradores, name='admin_gestion_administradores'),
     path('admin/buscar-album-discogs/', views.admin_buscar_album_discogs, name='admin_buscar_album_discogs'),
     path('admin/importar-album-discogs/', views.admin_importar_album_discogs, name='admin_importar_album_discogs'),
     path('admin_registrar_staff', views.admin_registrar_staff, name='admin_registrar_staff'),
@@ -80,7 +80,9 @@ urlpatterns = [
 
     # URLS DE LA CARPETA "VENDEDOR"
     path('ven_bad/', views.ven_bad, name='ven_bad'),
-    path('ven_crear/', views.ven_crear, name='ven_crear'),
+    path('vendedor/crear/', views.ven_crear, name='ven_crear'), # Cambiado para consistencia
+    # NUEVA URL para el paso 2: seleccionar una versión y mostrar el formulario de publicación
+    path('vendedor/crear/<int:release_id>/', views.ven_seleccionar_version, name='ven_seleccionar_version'),
     path('ven_nosotros/', views.ven_nosotros, name='ven_nosotros'),
     path('ven_notificaciones/', views.ven_notificaciones, name='ven_notificaciones'),
     path('ven_perfil/', views.com_perfil, {'user_mode': 'vendedor'}, name='ven_perfil'), # Reutiliza la vista com_perfil

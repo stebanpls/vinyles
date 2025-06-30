@@ -1,5 +1,5 @@
 from django import forms
-from .models import Crud, Cliente, Genero, Artista, Productor, Producto, Cancion # Importa los modelos
+from .models import Crud, Cliente, Genero, Artista, Productor, Publicacion, Cancion # Importa los modelos actualizados
 from .widgets import MinimalFileInput # Importar el widget personalizado
 from django.contrib.auth.models import User # Importa el modelo User estándar de Django
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm, UsernameField, SetPasswordForm
@@ -94,7 +94,7 @@ class PasswordResetConfirmForm(SetPasswordForm):
             PasswordResetCode.objects.filter(user=self.user).delete()
         return user
 
-#FORMULARIO PARA CREAR ARTISTA 
+#FORMULARIO PARA CREAR ARTISTA
 class ArtistaForm(forms.ModelForm):
     class Meta:
         model = Artista
@@ -123,63 +123,36 @@ class ArtistaForm(forms.ModelForm):
             raise forms.ValidationError("El nombre del artista es obligatorio.")
         return nombre
 
-#PARA EL FORMULARIO DE PRODUCTO 
-class ProductoForm(forms.ModelForm):
+# --- NUEVO: Formulario para crear una Publicacion (oferta) ---
+class PublicacionForm(forms.ModelForm):
     class Meta:
-        model = Producto
-        fields = [
-            'nombre', # 'titulo' cambiado a 'nombre'
-            'artistas', # Mapeado desde 'artista_existente'
-            'lanzamiento', # 'fecha_lanzamiento' cambiado a 'lanzamiento'
-            'precio',
-            'stock',
-            'descripcion',
-            'discografica', # 'sello_discografico' cambiado a 'discografica'
-            'imagen_portada',
-            'genero_principal',
-        ]
+        model = Publicacion
+        fields = ['precio', 'stock', 'descripcion_condicion']
         labels = {
-            'nombre': 'Nombre del Producto/Álbum',
-            'artistas': 'Artista(s) Principal(es)',
-            'lanzamiento': 'Fecha de Lanzamiento',
-            'discografica': 'Compañía Discográfica',
+            'precio': 'Precio de tu copia',
+            'stock': 'Cantidad disponible',
+            'descripcion_condicion': 'Describe la condición de tu vinilo (portada, disco, etc.)'
         }
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Thriller'}),
-            'artistas': forms.SelectMultiple(attrs={'class': 'form-control select-artista'}), # Para ManyToManyField
-            'lanzamiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'genero_principal': forms.SelectMultiple(attrs={'class': 'form-control select-genero'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.01', 'placeholder': 'Ej: 100000'}),
-            'stock': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1', 'placeholder': 'Ej: 10'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'discografica': forms.TextInput(attrs={'class': 'form-control'}),
-            'imagen_portada': MinimalFileInput(attrs={'class': 'form-control-file mb-2', 'accept': 'image/*'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'placeholder': 'Ej: 120000'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'placeholder': 'Ej: 1'}),
+            'descripcion_condicion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Ej: Portada en excelente estado, disco con ligeras marcas superficiales que no afectan el sonido.'}),
         }
 
     def clean_precio(self):
         precio = self.cleaned_data.get('precio')
-        if precio is not None and precio < 0:
-            raise forms.ValidationError("El precio no puede ser negativo.")
+        if precio is not None and precio <= 0:
+            raise forms.ValidationError("El precio debe ser un valor positivo.")
         return precio
 
     def clean_stock(self):
         stock = self.cleaned_data.get('stock')
-        if stock is not None and stock < 0:
-            raise forms.ValidationError("El stock no puede ser negativo.")
+        if stock is not None and stock < 1:
+            raise forms.ValidationError("Debes tener al menos 1 en stock.")
         return stock
 
-    def clean(self):
-        cleaned_data = super().clean()
-        artistas = cleaned_data.get('artistas')
-        generos = cleaned_data.get('genero_principal')
-
-        if not artistas:
-            self.add_error('artistas', "Debes seleccionar al menos un artista.")
-    
-        if not generos or generos.count() == 0:
-            self.add_error('genero_principal', "Debes seleccionar al menos un género.")
-
-        return cleaned_data
+# ELIMINADO: ProductoForm ya no se usa para la creación por parte del vendedor.
+# La información del Producto se obtendrá de Discogs.
 
 #PARA EL FORMULARIO DE CANCION
 class CancionForm(forms.ModelForm):
@@ -236,7 +209,7 @@ class CancionForm(forms.ModelForm):
             self.save_m2m()
         return instance
 
-#FORMULARIO PARA EL PRODCUTOR 
+#FORMULARIO PARA EL PRODCUTOR
 class ProductorForm(forms.ModelForm):
     class Meta:
         model = Productor

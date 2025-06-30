@@ -15,11 +15,13 @@ from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils import timezone # Importar timedelta también
 # Se importa los atributos de Crud 
-from .models import Crud, Cliente, Genero, Producto, Artista, Productor, Cancion,EstadoUsuario
+from .models import (
+    Crud, Cliente, Genero, Producto, Publicacion, Artista, Productor, Cancion, EstadoUsuario
+)
 
 from .forms import (
     CrudForm, UserRegistrationForm, UserUpdateForm, ClienteUpdateForm, LoginForm,
-    ProductoForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm,ClienteEditForm,UserEditForm,
+    PublicacionForm, CancionForm, ArtistaForm, GeneroForm, ProductorForm, ClienteEditForm, UserEditForm,
     PasswordResetRequestForm, PasswordResetConfirmForm, CrearUsuarioStaffForm
 ) # Importar formularios
 
@@ -30,6 +32,7 @@ from django.contrib.auth.models import User, Group # Importar el modelo User y G
 from django.core.mail import EmailMultiAlternatives # Importar para enviar correos HTML
 from django.contrib import messages # Para mensajes opcionales
 from django.core.files.base import ContentFile # Para guardar archivos
+from django.conf import settings # Para acceder a settings.py
 from django.core.files.storage import default_storage # Para guardar archivos
 import requests # Para descargar imágenes
 from datetime import timedelta # Importar timedelta
@@ -796,7 +799,7 @@ def com_carrito(request):
         'cart_items': cart,
         'total': total
     })
-  
+
 
 @never_cache
 @login_required
@@ -964,58 +967,38 @@ def ven_bad(request):
 @never_cache
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_crear(request):
-    artista_form_modal = ArtistaForm()
-    productor_form_modal = ProductorForm()
-    genero_form_modal = GeneroForm()
-    cancion_form_modal = CancionForm()
-    canciones = Cancion.objects.all()
+    """
+    Paso 1 del flujo de venta: Buscar un álbum en Discogs.
+    """
+    from .discogs_api_utils import discogs_api # Importamos la utilidad de la API
 
-    if request.method == 'POST':
-        producto_form = ProductoForm(request.POST, request.FILES)
-
-        if producto_form.is_valid():
-            producto = producto_form.save(commit=False)
-
-            if request.user.is_authenticated:
-                producto.vendedor = request.user  # Ajusta si tienes modelo VendedorProfile
-
-            producto.save()
-            producto_form.save_m2m()  # Guarda relaciones ManyToMany
-
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success': True,
-                    'redirect_url': reverse('ven_producto')
-                })
+    query = request.GET.get('q', '')
+    results = []
+    
+    if query:
+        try:
+            # Llama a la función de búsqueda de la API de Discogs
+            discogs_results = discogs_api.search_releases(query, type='release', per_page=20)
+            if discogs_results:
+                for release in discogs_results:
+                    # Adaptamos los datos para que sean fáciles de usar en la plantilla
+                    results.append({
+                        'id': release.id,
+                        'title': release.title,
+                        'artist': ', '.join([a.name for a in release.artists]) if hasattr(release, 'artists') and release.artists else 'Desconocido',
+                        'year': release.year if hasattr(release, 'year') else 'N/A',
+                        'image': release.thumb or settings.STATIC_URL + 'images/albumes/default/default_album.png', # Usar thumb y un fallback
+                        'country': release.country if hasattr(release, 'country') else 'N/A',
+                    })
             else:
-                messages.success(request, f"Producto '{producto.nombre}' creado exitosamente.")
-                return redirect('ven_producto')
-
-        else:
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                form_html = render_to_string(
-                    'vendedor/ven_crear_formulario.html',
-                    {
-                        'producto_form': producto_form,
-                        'canciones': canciones,
-                    },
-                    request=request
-                )
-                return JsonResponse({'success': False, 'form_html': form_html})
-            else:
-                messages.error(request, "Por favor, corrige los errores en el formulario del producto.")
-
-    else:
-        producto_form = ProductoForm()
+                messages.warning(request, "No se encontraron resultados para tu búsqueda en Discogs.")
+        except Exception as e:
+            messages.error(request, f"Ocurrió un error al conectar con Discogs: {e}")
 
     context = {
-        'producto_form': producto_form,
-        'artista_form_modal': artista_form_modal,
-        'productor_form_modal': productor_form_modal,
-        'genero_form_modal': genero_form_modal,
-        'cancion_form_modal': cancion_form_modal,
-        'canciones': canciones,
-        'titulo_pagina': 'Crear Nuevo Contenido Musical',
+        'titulo_pagina': 'Vender un Vinilo - Paso 1: Buscar',
+        'query': query,
+        'results': results,
     }
     return render(request, 'paginas/vendedor/ven_crear.html', context)
 
@@ -1023,6 +1006,15 @@ def ven_crear(request):
 @login_required # Solo requiere que el usuario esté autenticado
 def ven_notificaciones(request):
     return render(request, 'paginas/vendedor/ven_notificaciones.html')
+
+@never_cache
+@login_required
+def ven_seleccionar_version(request, release_id):
+    # Esta es la vista para el Paso 2.
+    # Por ahora, solo es un placeholder.
+    # Aquí importaremos los datos de Discogs, crearemos el Producto si no existe,
+    # y mostraremos el PublicacionForm.
+    return HttpResponse(f"Paso 2: Seleccionaste el release con ID {release_id}. Aquí irá el formulario de publicación.")
 
 @never_cache
 @login_required # Solo requiere que el usuario esté autenticado
