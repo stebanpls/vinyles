@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_admin_administrador.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_administrador.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinlyles - Administrador{% endblock titulo %}
@@ -51,5 +51,34 @@
 {% endblock contenido %}
 
 {% block pie %}
+        <!-- SWEETALERT2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if request.session.mostrar_alerta_bloqueado %}
+<script>
+Swal.fire({
+    title: 'Cuenta bloqueada',
+    html: 'Tu cuenta fue <b>bloqueada</b>. Esta fue tu última vez entrando al sistema.<br><small>Contacta con el administrador si crees que es un error.</small>',
+    icon: 'error',
+    confirmButtonText: 'Cerrar sesión',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    allowEnterKey: false,
+    backdrop: true,
+    background: '#0f172a',
+    color: '#ffffff',
+    customClass: {
+        popup: 'mi-alerta-azul',
+        title: 'titulo-alerta',
+        htmlContainer: 'contenido-alerta',
+        confirmButton: 'btn-confirmar',
+        actions: 'acciones-alerta'
+    },
+    buttonsStyling: false
+}).then(() => {
+    window.location.href = "{% url 'desactivar_usuario' %}";
+});
+</script>
+{% endif %}
 
 {% endblock pie %}

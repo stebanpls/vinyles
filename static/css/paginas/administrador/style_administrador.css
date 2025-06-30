@@ -155,3 +155,44 @@
 .nota * {
   text-decoration: none !important;
 }
+
+.mi-alerta-azul {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-radius: 1rem;
+  padding: 20px;
+  border: 1px solid #334155;
+}
+
+.titulo-alerta {
+  color: #e2e8f0 !important;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.contenido-alerta {
+  color: #cbd5e1 !important;
+  font-size: 1rem;
+}
+
+.btn-confirmar {
+  background-color: #3b82f6;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.btn-confirmar:hover {
+  background-color: #2563eb;
+}
+
+.acciones-alerta {
+  display: flex !important;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}

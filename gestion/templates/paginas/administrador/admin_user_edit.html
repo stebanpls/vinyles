@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_form_usuario_edit.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_usuario_edit.css' %}">
 
 {% endblock extra_css %}
 
@@ -16,7 +16,6 @@
         {% csrf_token %}
         {{ user_form.non_field_errors }}
         {{ cliente_form.non_field_errors }}
-
         <!-- 🧑 Datos del Usuario -->
         <div class="form-group">
             <label for="id_username">Nombre de usuario:</label>
@@ -54,10 +53,19 @@
             {{ cliente_form.direccion_residencia }}
         </div>
 
-        <div class="form-group text-center">
-            <label for="id_foto_perfil" style="font-weight: bold;">Foto de perfil:</label>
-            {{ cliente_form.foto_perfil }}
-        </div>
+<div class="contenedor-foto-perfil">
+    <label class="label-foto">Foto de perfil:</label><br>
+
+    {% if cliente_form.instance.foto_perfil %}
+        <img src="{{ cliente_form.instance.foto_perfil.url }}" alt="Foto actual" class="img-preview">
+    {% endif %}
+<br>
+    <input type="file" id="id_foto_perfil" name="foto_perfil" style="display: none;">
+    <button type="button" class="btn btn-outline-primary mt-2" id="btnCambiarFoto">Cambiar foto</button>
+</div>
+
+
+
 
         <div class="form-group">
             <label for="id_generos_favoritos">Géneros favoritos:</label>
@@ -96,23 +104,22 @@
 {% block pie %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("formEditarUsuario");
     const checkbox = document.getElementById("id_is_staff");
     const toggleBtn = document.getElementById("permisoToggle");
     const iconSpan = toggleBtn.querySelector(".checkbox-icon");
     const textoEstado = document.getElementById("permisoEstado");
-    const form = document.getElementById("formEditarUsuario");
-
     const estadoInicial = checkbox.checked;
     let formModificado = false;
 
-    // Detectar cambios en cualquier input del formulario
+    // 🔄 Detectar cambios en el formulario
     form.querySelectorAll("input, select, textarea").forEach(el => {
         el.addEventListener("change", () => {
             formModificado = true;
         });
     });
 
-    // ✅ Cambiar el botón de permisos
+    // 🔘 Toggle del permiso staff
     toggleBtn.addEventListener("click", function () {
         checkbox.checked = !checkbox.checked;
         formModificado = true;
@@ -132,12 +139,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // ✅ Confirmación antes de enviar el formulario
+    // ✅ Confirmación al guardar
     form.addEventListener("submit", function (e) {
         e.preventDefault();
 
         let titulo = "¿Guardar cambios?";
-        let mensaje = "¿Estás segurx de guardar los cambios?";
+        let mensaje = "¿Estás seguro de guardar los cambios?";
         let icono = "question";
 
         if (checkbox.checked !== estadoInicial) {
@@ -152,28 +159,117 @@ document.addEventListener("DOMContentLoaded", function () {
             title: titulo,
             text: mensaje,
             icon: icono,
+            background: '#0f172a',
+            color: '#ffffff',
             showCancelButton: true,
             confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar'
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                popup: 'mi-alerta-azul',
+                confirmButton: 'btn-confirmar',
+                cancelButton: 'btn-cancelar',
+                actions: 'acciones-alerta'
+            },
+            buttonsStyling: false
         }).then((result) => {
             if (result.isConfirmed) {
+                const inputFoto = document.getElementById("id_foto_perfil");
+                if (inputFoto && inputFoto.files.length === 0) {
+                    const yaTieneInputClear = document.querySelector("input[name='foto_perfil-clear']");
+                    if (!yaTieneInputClear) {
+                        inputFoto.disabled = true;
+                    }
+                }
                 window.removeEventListener("beforeunload", confirmExit);
                 form.submit();
             }
         });
     });
 
-    // ✅ Confirmación al recargar o salir con cambios no guardados
+    // 🛑 Advertencia al salir si hay cambios
     function confirmExit(e) {
         if (formModificado) {
             e.preventDefault();
-            e.returnValue = "Tienes cambios sin guardar. ¿Estás segurx de salir?";
+            e.returnValue = "Tienes cambios sin guardar. ¿Estás seguro de salir?";
             return e.returnValue;
         }
     }
 
     window.addEventListener("beforeunload", confirmExit);
 });
+
+// 📷 Cambiar o eliminar foto de perfil
+document.addEventListener("DOMContentLoaded", function () {
+    const btnCambiarFoto = document.getElementById("btnCambiarFoto");
+    const inputFoto = document.getElementById("id_foto_perfil");
+
+    btnCambiarFoto.addEventListener("click", function () {
+        const tieneFotoPersonalizada = {{ tiene_foto_personalizada|yesno:"true,false" }};
+
+        if (!tieneFotoPersonalizada) {
+            inputFoto.click();
+            return;
+        }
+
+        Swal.fire({
+            title: "¿Qué quieres hacer?",
+            icon: "question",
+            background: '#0f172a',
+            color: '#ffffff',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: "Subir nueva foto",
+            denyButtonText: "Eliminar foto",
+            cancelButtonText: "Cancelar",
+            customClass: {
+                popup: 'mi-alerta-azul',
+                confirmButton: "btn-confirmar",
+                denyButton: "btn-eliminar-foto",
+                cancelButton: "btn-cancelar",
+                actions: "acciones-alerta"
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                inputFoto.click();
+            } else if (result.isDenied) {
+                inputFoto.value = "";
+
+                const imgPreview = document.querySelector("img[alt='Foto actual']");
+                if (imgPreview) {
+                    imgPreview.src = "/media/fotos_perfil/default/default_avatar.png";
+                }
+
+                const hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "foto_perfil-clear";
+                hiddenInput.value = "on";
+                document.getElementById("formEditarUsuario").appendChild(hiddenInput);
+            }
+        });
+    });
+});
+
+// 👀 Previsualizar nueva imagen
+document.addEventListener("DOMContentLoaded", function () {
+    const inputFoto = document.getElementById("id_foto_perfil");
+    const imgPreview = document.querySelector("img[alt='Foto actual']");
+
+    if (inputFoto && imgPreview) {
+        inputFoto.addEventListener("change", function () {
+            const file = inputFoto.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imgPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
 </script>
+
+
 
 {% endblock pie %}

@@ -1,0 +1,271 @@
+.container-formulario {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #191919;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.titulo-editar {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #d0d0d0;
+}
+
+.form-editar-usuario .form-group {
+    margin-bottom: 15px;
+}
+
+.form-editar-usuario label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-editar-usuario input,
+.form-editar-usuario select,
+.form-editar-usuario textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+}
+
+/* ✅ Botones de guardar y cancelar */
+.botones-editar {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.botones-editar .btn,
+.cancelar {
+    flex: 1;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.cancelar {
+    background-color: rgb(116, 115, 115) !important;
+    color: white !important;
+}
+
+.cancelar:hover {
+    background-color: #5c5b5b !important;
+}
+
+/* ✅ Estilo base del botón de permiso */
+.permiso-boton {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #aaa;
+    background-color: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 0px 4px rgba(0,0,0,0.2);
+    padding: 0;
+}
+
+.permiso-boton .checkbox-icon {
+    font-size: 20px;
+    color: #fff;
+}
+
+.permiso-boton.activo {
+    background-color: #1e90ff;
+    border-color: #1c86ee;
+    background-image: linear-gradient(145deg, #3ba4ff, #1e90ff);
+    box-shadow: 0 4px 4px rgba(30, 144, 255, 0.4);
+}
+
+
+
+
+.permiso-boton.activo .checkbox-icon {
+    color: white;
+}
+
+.permiso-boton.inactivo {
+    background-color: white;
+    border-color: #aaa;
+}
+
+.permiso-boton.inactivo .checkbox-icon {
+    color: transparent;
+}
+.permiso-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.permiso-texto {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.permiso-boton.activo + .permiso-texto {
+    color: #0da5fd;
+}
+
+.permiso-boton.inactivo + .permiso-texto {
+    color: #888;
+}
+
+
+body.swal2-shown {
+    padding-right: 0 !important;
+    overflow-y: scroll !important;
+}
+.contenedor-foto-perfil {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.label-foto {
+    font-weight: bold;
+    font-size: 16px;
+    color: #ffffff;
+    margin-bottom: 15px;
+    text-align: start;
+}
+
+.img-preview {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #8a8a8a;
+    box-shadow: 0 0 8px rgba(82, 82, 82, 0.3);
+    margin-bottom: 15px;
+}
+
+/* 🎯 Botón debajo con espaciado */
+#btnCambiarFoto {
+    padding: 10px 18px;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 2px solid #1e90ff;
+    background-color: transparent;
+    color: #1e90ff;
+    transition: all 0.3s ease;
+}
+
+#btnCambiarFoto:hover {
+    background-color: #1e90ff;
+    color: white;
+}
+
+
+.form-editar-usuario input,
+.form-editar-usuario select,
+.form-editar-usuario textarea {
+    background-color: #292929;
+    color: #e6e6e6;
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-editar-usuario input:focus,
+.form-editar-usuario select:focus,
+.form-editar-usuario textarea:focus {
+    outline: none;
+    border-color: #1e90ff;
+    box-shadow: 0 0 6px #1e90ff55;
+    color: #e6e6e6; /* 🔥 Esto mantiene el texto claro al hacer focus */
+    background-color: #292929; /* Por si el navegador cambia el fondo al enfocar */
+}
+.form-editar-usuario input::placeholder,
+.form-editar-usuario textarea::placeholder {
+    color: #a1a1a1c2;
+    opacity: 1; /* Esto evita que algunos navegadores lo pongan translúcido */
+}
+
+.mi-alerta-azul {
+  background-color: #0f172a !important; /* Azul bien oscuro, casi negro azulado */
+  color: #ffffff !important;
+  border-radius: 1rem;
+  padding: 20px;
+  border: 1px solid #334155;
+}
+
+.titulo-alerta {
+  color: #e2e8f0 !important;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.contenido-alerta {
+  color: #cbd5e1 !important;
+  font-size: 1rem;
+}
+.btn-confirmar {
+  background-color: #3b82f6; /* Azul más claro */
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.btn-confirmar:hover {
+  background-color: #2563eb; /* Un azul más intenso */
+}
+
+.btn-cancelar {
+  background-color: #334155; /* Gris azulado oscuro */
+  color: #e2e8f0;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.btn-cancelar:hover {
+  background-color: #1e293b; /* Más oscuro al hover */
+}
+
+.acciones-alerta {
+  display: flex !important;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.btn-eliminar-foto {
+  background-color: #7f1d1d; /* rojo vino oscuro */
+  color: #e2e8f0;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.btn-eliminar-foto:hover {
+  background-color: #991b1b; /* tono más brillante al pasar el mouse */
+}

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/style_ver_perfil_usuario.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/administrador/usuarios/style_ver_perfil_usuarios.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Administrador - Perfil de Usuario {% endblock titulo %}
@@ -22,98 +22,164 @@
         </div>
 
         <div class="perfil-info">
-            <p><strong>Correo electrónico:</strong> {{ usuario.email }}</p>
-            <p><strong>Nombre de usuario:</strong> {{ usuario.username }}</p>
-            <p><strong>Número de documento:</strong> {{ cliente.numero_documento|default:"No registrado" }}</p>
-            <p><strong>Celular:</strong> {{ cliente.celular|default:"No registrado" }}</p>
-            <p><strong>Dirección de residencia:</strong> {{ cliente.direccion_residencia|default:"No registrada" }}</p>
-            <p><strong>Fecha de registro:</strong> {{ usuario.date_joined|date:"Y-m-d H:i" }}</p>
-            <p><strong>Ultimo inicio de Sesión:</strong> {{ usuario.last_login|date:"Y-m-d H:i" }}</p>
+            <div class="info-item full-row">
+                <i class="fas fa-envelope icon"></i>
+                <p><strong>Correo electrónico:</strong> <span>{{ usuario.email }}</span></p>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-user icon"></i>
+                <p><strong>Nombre de usuario:</strong> <span>{{ usuario.username }}</span></p>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-id-card icon"></i>
+                <p><strong>Número de documento:</strong> <span>{{ cliente.numero_documento|default:"No registrado" }}</span></p>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-phone icon"></i>
+                <p><strong>Celular:</strong> <span>{{ cliente.celular|default:"No registrado" }}</span></p>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt icon"></i>
+                <p><strong>Dirección de residencia:</strong> <span>{{ cliente.direccion_residencia|default:"No registrada" }}</span></p>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-calendar-plus icon"></i>
+                <p><strong>Fecha de registro:</strong> <span>{{ usuario.date_joined|date:"Y-m-d H:i" }}</span></p>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-clock icon"></i>
+                <p><strong>Último inicio de sesión:</strong> <span>{{ usuario.last_login|date:"Y-m-d H:i" }}</span></p>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="bloq">
     <div class="acciones-usuario">
-            <form method="post" action="{% url 'admin_bloquear_usuario' usuario.id %}" data-bloqueado="{{ esta_bloqueado|yesno:'true,false' }}">
-                {% csrf_token %}
-                {% if esta_bloqueado %}
-                    <button type="submit" class="bloquear desbloquear">Desbloquear usuario</button>
-                {% else %}
-                    <button type="submit" class="bloquear">Bloquear usuario</button>
-                {% endif %}
-            </form>
-
-
-        <a href="{% url 'admin_user_edit' usuario.id %}" class="editar-btn">Editar perfil </a>
-
-        <form method="POST" action="{% url 'admin_eliminar_usuario' usuario.id %}" onsubmit="return confirmarEliminacion('{{ usuario.get_full_name|default:usuario.username }}')">
+        <form id="formBloquear" method="post" action="{% url 'admin_bloquear_usuario' usuario.id %}" data-bloqueado="{{ esta_bloqueado|yesno:'true,false' }}">
             {% csrf_token %}
-            <button type="submit" class="eliminar-btn">Eliminar usuario </button>
+            {% if esta_bloqueado %}
+                <button type="submit" class="bloquear desbloquear">Desbloquear usuario</button>
+            {% else %}
+                <button type="submit" class="bloquear">Bloquear usuario</button>
+            {% endif %}
+        </form>
+
+        <a href="{% url 'admin_user_edit' usuario.id %}" class="editar-btn">Editar perfil</a>
+
+        <form method="POST" action="{% url 'admin_eliminar_usuario' usuario.id %}" id="formEliminar">
+            {% csrf_token %}
+            <button type="submit" class="eliminar-btn">Eliminar usuario</button>
         </form>
     </div>
 </div>
 {% endblock contenido %}
 
 {% block pie %}
-<!-- Asegúrate de tener SweetAlert2 cargado -->
+<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form[action*='admin_bloquear_usuario']");
-    if (!form) return;
+    const formBloquear = document.getElementById("formBloquear");
+    if (formBloquear) {
+        formBloquear.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const bloqueado = formBloquear.getAttribute("data-bloqueado") === "true";
+            const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
 
-    const boton = form.querySelector("button.bloquear");
-
-    form.addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const bloqueado = form.getAttribute("data-bloqueado") === "true";
-        const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
-
-        const confirmar = await confirmarBloqueo(nombre, bloqueado);
-
-        if (confirmar) {
-            const formData = new FormData(form);
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+            Swal.fire({
+                title: bloqueado ? '¿Desbloquear usuario?' : '¿Bloquear usuario?',
+                html: bloqueado
+                    ? `¿Deseas desbloquear a <b>${nombre}</b>?<br><small>Podrá volver a iniciar sesión.</small>`
+                    : `¿Estás seguro de que quieres bloquear a <b>${nombre}</b>?<br><small>No podrá iniciar sesión.</small>`,
+                icon: 'warning',
+                background: '#0f172a',
+                color: '#ffffff',
+                showCancelButton: true,
+                confirmButtonText: bloqueado ? 'Sí, desbloquear' : 'Sí, bloquear',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'mi-alerta-azul',
+                    title: 'titulo-alerta',
+                    htmlContainer: 'contenido-alerta',
+                    confirmButton: 'btn-confirmar',
+                    cancelButton: 'btn-cancelar',
+                    actions: 'acciones-alerta'
                 },
-            })
-            .then(response => {
-                if (response.ok) {
-                    location.reload(); // 🔄 Recarga para reflejar cambios en el botón y el atributo
-                } else {
-                    Swal.fire('Error', 'No se pudo cambiar el estado del usuario.', 'error');
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData(formBloquear);
+                    fetch(formBloquear.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                        }
+                    })
+                    .then(res => {
+                        if (res.ok) location.reload();
+                        else throw new Error();
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo cambiar el estado del usuario.',
+                            icon: 'error',
+                            background: '#0f172a',
+                            color: '#ffffff',
+                            customClass: {
+                                popup: 'mi-alerta-azul',
+                                confirmButton: 'btn-confirmar',
+                                actions: 'acciones-alerta'
+                            },
+                            buttonsStyling: false
+                        });
+                    });
                 }
-            })
-            .catch(() => {
-                Swal.fire('Error', 'Algo salió mal al conectar con el servidor.', 'error');
             });
-        }
-    });
-});
-
-function confirmarBloqueo(nombreUsuario, estaBloqueado) {
-    return new Promise((resolve) => {
-        Swal.fire({
-            title: estaBloqueado ? '¿Desbloquear usuario?' : '¿Bloquear usuario?',
-            text: estaBloqueado
-                ? `¿Deseas desbloquear a ${nombreUsuario}? Podrá volver a iniciar sesión.`
-                : `¿Estás segur@ de que quieres bloquear a ${nombreUsuario}? Esta acción evitará que pueda iniciar sesión.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: estaBloqueado ? 'Sí, desbloquear' : 'Sí, bloquear',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            resolve(result.isConfirmed);
         });
-    });
-}
+    }
+
+    const formEliminar = document.getElementById("formEliminar");
+    if (formEliminar) {
+        formEliminar.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const nombre = "{{ usuario.get_full_name|default:usuario.username }}";
+
+            Swal.fire({
+                title: '¿Eliminar usuario?',
+                text: `¿Estás seguro de que deseas eliminar a ${nombre}? Esta acción no se puede deshacer.`,
+                icon: 'warning',
+                background: '#0f172a',
+                color: '#ffffff',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'mi-alerta-azul',
+                    title: 'titulo-alerta',
+                    htmlContainer: 'contenido-alerta',
+                    confirmButton: 'btn-confirmar',
+                    cancelButton: 'btn-cancelar',
+                    actions: 'acciones-alerta'
+                },
+                buttonsStyling: false
+            }).then(result => {
+                if (result.isConfirmed) {
+                    formEliminar.submit();
+                }
+            });
+        });
+    }
+});
 </script>
-
-
 {% endblock pie %}
+    

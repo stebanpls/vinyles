@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_inicio.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_com_inicio.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - La Música {% endblock titulo %}
@@ -257,29 +257,39 @@
         </div>
     </section>
 
-    <!-- SWEETALERT2 CDN -->
+
+
+{% endblock contenido %}
+
+{% block pie %}
+        <!-- SWEETALERT2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 {% if request.session.mostrar_alerta_bloqueado %}
 <script>
 Swal.fire({
     title: 'Cuenta bloqueada',
-    text: 'Tu cuenta fue bloqueada. Esta fue tu última vez entrando al sistema.',
+    html: 'Tu cuenta fue <b>bloqueada</b>. Esta fue tu última vez entrando al sistema.<br><small>Contactate con el nosotros si crees que es un error.</small>',
     icon: 'error',
     confirmButtonText: 'Cerrar sesión',
     allowOutsideClick: false,
     allowEscapeKey: false,
     allowEnterKey: false,
-    backdrop: true
+    backdrop: true,
+    background: '#0f172a',
+    color: '#ffffff',
+    customClass: {
+        popup: 'mi-alerta-azul',
+        title: 'titulo-alerta',
+        htmlContainer: 'contenido-alerta',
+        confirmButton: 'btn-confirmar',
+        actions: 'acciones-alerta'
+    },
+    buttonsStyling: false
 }).then(() => {
     window.location.href = "{% url 'desactivar_usuario' %}";
 });
 </script>
 {% endif %}
 
-
-{% endblock contenido %}
-
-{% block pie %}
-    
 {% endblock pie %}

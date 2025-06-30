@@ -1047,6 +1047,19 @@ def admin_administrador(request):
         date_joined__lt=today_end
     ).count()
 
+    # 🔒 Verificamos si está bloqueado
+    usuario = request.user
+    try:
+        estado = EstadoUsuario.objects.get(user=usuario)
+        bloqueado = estado.bloqueado
+    except EstadoUsuario.DoesNotExist:
+        bloqueado = False
+
+    if bloqueado or not usuario.is_active:
+        request.session['mostrar_alerta_bloqueado'] = True
+    else:
+        request.session.pop('mostrar_alerta_bloqueado', None)
+
     return render(request, 'paginas/Administrador/admin_administrador.html', {
         'usuarios_hoy': usuarios_hoy
     })
@@ -1233,7 +1246,9 @@ def admin_gestion_users(request):
     usuarios = User.objects.filter(
         cliente__isnull=False,
         is_active=True,
-        is_staff=False  # 👈 Solo usuarios que NO son staff
+        is_staff=False
+    ).exclude(
+        estado_usuario__bloqueado=True  # 🔥 Excluir bloqueados
     )
     return render(request, 'paginas/administrador/admin_gestion_users.html', {'usuarios': usuarios})
 
@@ -1242,8 +1257,17 @@ def admin_gestion_users(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url='pub_login')
 def admin_gestion_administradores(request):
-    # Solo admins con perfil de cliente creado
-    admins = User.objects.filter(is_staff=True).select_related('cliente')
+    admins = User.objects.filter(
+        is_staff=True,
+        is_active=True,
+        cliente__isnull=False
+    ).exclude(
+        estado_usuario__bloqueado=True
+    ).select_related('cliente')
+
+    # 👉 Si NO quieres mostrar al superusuario, descomenta esta línea:
+    # admins = admins.exclude(is_superuser=True)
+
     return render(request, 'paginas/administrador/admin_gestion_administradores.html', {
         'admins': admins
     })
@@ -1290,6 +1314,10 @@ def admin_user_edit(request, user_id):
 
         if user_form.is_valid() and cliente_form.is_valid():
             user_form.save()
+
+            if not cliente_form.cleaned_data.get('foto_perfil'):
+                cliente.foto_perfil = 'fotos_perfil/default/default_avatar.png'
+
             cliente_form.save()
             messages.success(request, "Perfil actualizado con éxito ✅")
             return redirect('admin_ver_perfil_usuario', user_id=usuario.id)
@@ -1297,10 +1325,14 @@ def admin_user_edit(request, user_id):
         user_form = UserEditForm(instance=usuario)
         cliente_form = ClienteEditForm(instance=cliente)
 
+    # 👇 Aquí defines si tiene una foto personalizada o la default
+    tiene_foto_personalizada = cliente.foto_perfil and cliente.foto_perfil.name != 'fotos_perfil/default/default_avatar.png'
+
     return render(request, 'paginas/administrador/admin_user_edit.html', {
         'user_form': user_form,
         'cliente_form': cliente_form,
-        'usuario': usuario
+        'usuario': usuario,
+        'tiene_foto_personalizada': tiene_foto_personalizada,  # 👈 se manda al template
     })
 
 
