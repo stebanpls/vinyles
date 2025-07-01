@@ -3,14 +3,14 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_albumes.css' %}">
-    <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_inicio.css' %}"> {# <-- AÑADIR ESTA LÍNEA PARA REUTILIZAR ESTILOS DE TARJETAS #}
+    <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_com_inicio.css' %}"> {# <-- AÑADIR ESTA LÍNEA PARA REUTILIZAR ESTILOS DE TARJETAS #}
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Álbumes {% endblock titulo %}
 
 {% block contenido %}
   <div class="container-albumes">
-      
+
     <aside class="aside-clasificacion">
       <h2>Clasificación</h2>
       <ul>
@@ -32,9 +32,9 @@
       </ul>
     </aside>
 
-    
+
     <main class="main-albumes">
-      
+
       {# INICIO: EJEMPLO DE CÓMO CAMBIAR UNA TARJETA #}
       <div class="product-card" data-genre="rock"> {# Cambiado de album-card a product-card #}
         <a href="{% url 'pub_vinilo' %}?album=michael_jackson_bad" class="product-image-link"> {# Añadido product-image-link #}
@@ -51,7 +51,7 @@
       </div>
       {# FIN: EJEMPLO DE CÓMO CAMBIAR UNA TARJETA #}
 
-      
+
       <div class="product-card" data-genre="rock">
         <a href="{% url 'pub_vinilo' %}?album=metallica_master" class="product-image-link">
           <img src="{% static 'images/albumes/metallica_master.jpg' %}" alt="Álbum Master of Puppets - Metallica" class="product-image" />
@@ -80,7 +80,7 @@
         </div>
       </div>
 
-      
+
       <div class="product-card" data-genre="pop">
         <a href="{% url 'pub_vinilo' %}?album=michael_jackson_thriller" class="product-image-link">
           <img src="{% static 'images/albumes/michael_jackson_thriller.jpg' %}" alt="Álbum Thriller - Michael Jackson" class="product-image" />
@@ -257,19 +257,19 @@
       const genreLinks = document.querySelectorAll('.aside-clasificacion ul li a');
       // Seleccionamos todas las tarjetas de álbum (ahora product-card)
       const albumCards = document.querySelectorAll('.product-card'); // <-- CAMBIADO A product-card
-    
+
       genreLinks.forEach(link => {
         link.addEventListener('click', (e) => {
           e.preventDefault();
           // Obtenemos el género seleccionado y lo forzamos en minúsculas
           const selectedGenre = link.getAttribute('data-genre').trim().toLowerCase();
           console.log("Género seleccionado:", selectedGenre);
-    
+
           albumCards.forEach(card => {
             // Obtenemos el género de la tarjeta y lo comparamos en minúsculas
             const cardGenre = card.getAttribute('data-genre').trim().toLowerCase();
             console.log("Tarjeta con género:", cardGenre);
-            
+
             if (selectedGenre === 'todos') {
               // Restauramos el display a su valor original (vacío)
               card.style.display = "";
