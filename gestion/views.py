@@ -337,6 +337,19 @@ def pub_terminos(request):
 
 
 def pub_vinilo(request):
+    # --- Ejemplo de cómo se vería con la base de datos ---
+    # producto_id = request.GET.get('id')
+    # try:
+    #     producto = Producto.objects.select_related('...').prefetch_related('...').get(pk=producto_id)
+    #     context = {'album_data': producto}
+    #     return render(request, 'paginas/publico/pub_vinilo.html', context)
+    # except Producto.DoesNotExist:
+    #     # Manejar el caso en que el producto no existe
+    #     # Por ahora, mantenemos la lógica antigua como fallback
+    #     pass
+    #
+    # --- Lógica antigua (a ser reemplazada) ---
+
     album_key = request.GET.get(
         "album", ""
     )  # ejemplo: 'michael_jackson_bad', 'metallica_master', etc.
