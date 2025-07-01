@@ -1,8 +1,11 @@
 # Vinyles 🎶
 
-<h1>Sistema de Información para la compra y venta de vinilos.</h1>
+[![Django CI](https://github.com/stebanpls/vinyles/actions/workflows/ci.yml/badge.svg)](https://github.com/stebanpls/vinyles/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Un proyecto desarrollado para facilitar la interacción entre coleccionistas y vendedores de discos de vinilo, ofreciendo una plataforma para descubrir, comprar y vender música en este formato clásico.
+Sistema de Información para la compra y venta de vinilos. Un proyecto desarrollado para facilitar la interacción entre coleccionistas y vendedores de discos de vinilo, ofreciendo una plataforma para descubrir, comprar y vender música en este formato clásico.
+
+![Captura de pantalla de la aplicación](URL_A_LA_IMAGEN_O_GIF_AQUI)
 
 ## Estado del Proyecto
 
@@ -29,8 +32,8 @@ Actualmente en desarrollo activo (Versión 25.06.14 - puedes poner tu versión a
 
 ## Requisitos Previos (Para Desarrolladores) 📋
 
-*   Python (versión 3.13.5 o compatible)
-*   Pip (gestor de paquetes de Python)
+*   Python (versión 3.11 o compatible)
+*   Pip (gestor de paquetes de Python, usualmente viene con Python)
 *   Git (para control de versiones)
 *   Una instancia de MariaDB (versión 11.8.2 o compatible) en ejecución.
 *   Un navegador web moderno.
@@ -41,7 +44,7 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone https://[URL_DE_TU_REPOSITORIO_GIT]
+    git clone https://github.com/stebanpls/vinyles.git
     cd vinyles
     ```
 
@@ -55,13 +58,23 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
     ```
 
 3.  **Instala las dependencias:**
+    El proyecto usa un único archivo `requirements.txt` para simplificar.
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Configura las variables de entorno:**
-    *   Crea un archivo `.env` en la raíz del proyecto (al mismo nivel que `manage.py`).
-    *   Copia el contenido de `.env.example` (si tienes uno) o añade las siguientes variables con tus propios valores:
+4.  **Configura los ganchos (hooks) de pre-commit (¡Muy recomendado!)**
+    Esto instalará un asistente que revisará y formateará tu código automáticamente antes de cada commit, asegurando la calidad y consistencia.
+    ```bash
+    # Instala la herramienta (ya debería estar en requirements.txt)
+    pip install pre-commit
+    # Instala los ganchos en tu repositorio local de Git
+    pre-commit install
+    ```
+
+5.  **Configura las variables de entorno:**
+    *   Crea un archivo `.env` en la raíz del proyecto (al mismo nivel que `manage.py`) a partir del archivo de ejemplo `.env.example` (si lo tienes).
+    *   Rellena las siguientes variables con tus propios valores:
         ```env
         DJANGO_SECRET_KEY='tu_super_secreto_aqui'
         DJANGO_DEBUG='True'
@@ -77,17 +90,17 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
         RECAPTCHA_SECRET_KEY='tu_secret_key_de_recaptcha_v2_checkbox'
         ```
 
-5.  **Aplica las migraciones de la base de datos:**
+6.  **Aplica las migraciones de la base de datos:**
     ```bash
     python manage.py migrate
     ```
 
-6.  **Crea un superusuario (opcional, para acceder al admin de Django):**
+7.  **Crea un superusuario (opcional, para acceder al admin de Django):**
     ```bash
     python manage.py createsuperuser
     ```
 
-7.  **Ejecuta el servidor de desarrollo:**
+8.  **Ejecuta el servidor de desarrollo:**
     ```bash
     python manage.py runserver
     ```

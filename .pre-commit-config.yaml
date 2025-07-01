@@ -1,0 +1,26 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      # Elimina espacios en blanco innecesarios al final de las líneas.
+      - id: trailing-whitespace
+      # Asegura que todos los archivos terminen con una sola línea en blanco.
+      - id: end-of-file-fixer
+      # Revisa que los archivos YAML (como este) tengan una sintaxis válida.
+      - id: check-yaml
+      # Evita que se suban archivos con marcadores de conflictos de merge.
+      - id: check-merge-conflict
+      # Evita que accidentalmente se suban archivos muy grandes al repositorio.
+      - id: check-added-large-files
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    # Asegúrate de usar una versión reciente de ruff
+    rev: v0.5.0
+    hooks:
+      # Ejecuta el linter y auto-corrige lo que pueda
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      # Ejecuta el formateador de código
+      - id: ruff-format

@@ -6,6 +6,25 @@
 version: 2
 updates:
   - package-ecosystem: "pip" # Para proyectos de Python con requirements.txt
-    directory: "/vinyles" # La carpeta donde está tu requirements.txt
+    directory: "/" # La raíz del repositorio, donde está tu requirements.txt
     schedule:
       interval: "weekly"
+    # Opcional: Limita el número de PRs abiertos por Dependabot a 5 para no saturar.
+    open-pull-requests-limit: 5
+    # Opcional: Asigna automáticamente a un revisor (cambia 'stebanpls' por tu usuario o el de un compañero).
+    reviewers:
+      - "Aerizzu"
+      - "Angtty"
+      - "CristiamSkull"
+      - "Koshka_Nikke"
+      - "stebanpls"
+    # Opcional: Añade una etiqueta a los PRs para una mejor organización.
+    labels:
+      - "dependencies"
+    # Opcional: Agrupa las actualizaciones de paquetes relacionados en un solo Pull Request.
+    groups:
+      # Nombra el grupo como quieras, por ejemplo "django-framework".
+      django-framework:
+        patterns:
+          - "django"
+          - "django-*"
