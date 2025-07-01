@@ -1,0 +1,67 @@
+{% extends "plantillas/plantilla_vendedor.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/paginas/vendedor/style_seleccionar_version.css' %}">
+{% endblock extra_css %}
+
+{% block titulo %}Editar: {{ publicacion.producto.nombre }}{% endblock titulo %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">Editar Publicación</h1>
+            <p class="text-center text-muted">Modifica el precio, stock o la descripción de tu copia de este álbum.</p>
+
+            <div class="card mb-4 shadow-sm">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        {% if publicacion.producto.imagen_portada %}
+                            <img src="{{ publicacion.producto.imagen_portada.url }}" class="img-fluid rounded-start" alt="Portada de {{ publicacion.producto.nombre }}">
+                        {% else %}
+                            <img src="{% static 'images/albumes/default/default_album.png' %}" class="img-fluid rounded-start" alt="Portada no disponible">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ publicacion.producto.nombre }}</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ publicacion.producto.artistas.all|join:", " }}</h6>
+                            <p class="card-text">
+                                <strong>Año:</strong> {{ publicacion.producto.lanzamiento|date:"Y"|default:"N/A" }} <br>
+                                <strong>Sello:</strong> {{ publicacion.producto.discografica|default:"N/A" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="mt-5 mb-3">Tu Oferta</h3>
+            <form method="post" class="p-4 border rounded bg-light">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field|add_class:"form-control" }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ field.errors|striptags }}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">Guardar Cambios</button>
+                    <a href="{% url 'ven_producto' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

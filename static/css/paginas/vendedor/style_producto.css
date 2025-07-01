@@ -1,66 +1,42 @@
-.container-albumes {
-  display: flex;
-  min-height: 50vh; 
-  margin: 0 auto;
-  width: 90%;
-  max-width: 1200px;
-}
-
-.aside-clasificacion {
-  width: 250px;
-  background-color: #111; 
-  padding: 1rem;
-  margin-right: 1rem; 
-  border-radius: 4px;
-}
-
-.aside-clasificacion h2 {
-  color: #fff;
-  margin-bottom: 0.5rem;
-}
-
-.aside-clasificacion ul {
-  list-style: none;
-  padding-left: 0;
-  margin-bottom: 1rem;
-}
-
-.aside-clasificacion ul li {
-  margin: 0.3rem 0;
-}
-
-.aside-clasificacion ul li a {
-  color: #ccc;
-  text-decoration: none;
-}
-
-.aside-clasificacion ul li a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-
-.main-albumes {
-  flex: 1; 
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 1rem;
-}
-
 .album-card {
-  background-color: #222; 
-  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
   text-align: center;
-  color: #fff;
+  color: #212529;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.album-card img {
+.album-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.album-card .card-img-top {
   width: 100%;
-  height: auto;
+  aspect-ratio: 1 / 1; /* Mantiene la imagen cuadrada */
+  object-fit: cover;
   border-radius: 4px;
   margin-bottom: 0.5rem;
 }
 
-.album-card p {
-  margin: 0.3rem 0;
+.album-card .card-body {
+  padding: 1rem;
+}
+
+.album-card .card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  /* Limitar a 2 líneas y cortar con puntos suspensivos */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2rem; /* Altura mínima para 2 líneas */
+}
+
+.album-card .price, .album-card .stock {
+    font-size: 0.9rem;
 }

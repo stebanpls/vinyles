@@ -1,0 +1,86 @@
+{% extends "plantillas/plantilla_vendedor.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block extra_css %}
+    {# Puedes añadir un CSS específico si lo necesitas #}
+    <link rel="stylesheet" href="{% static 'css/paginas/vendedor/style_seleccionar_version.css' %}">
+{% endblock extra_css %}
+
+{% block titulo %}Vender: {{ producto.nombre }}{% endblock titulo %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">Paso 2: Describe tu copia</h1>
+            <p class="text-center text-muted">Estás a punto de vender una copia de este álbum. Por favor, indica el precio y describe su estado.</p>
+
+            <div class="card mb-4 shadow-sm">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        {% if producto.imagen_portada %}
+                            <img src="{{ producto.imagen_portada.url }}" class="img-fluid rounded-start" alt="Portada de {{ producto.nombre }}">
+                        {% else %}
+                            <img src="{% static 'images/albumes/default/default_album.png' %}" class="img-fluid rounded-start" alt="Portada no disponible">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ producto.nombre }}</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ producto.artistas.all|join:", " }}</h6>
+                            <p class="card-text">
+                                <strong>Año:</strong> {{ producto.lanzamiento|date:"Y"|default:"N/A" }} <br>
+                                <strong>Sello:</strong> {{ producto.discografica|default:"N/A" }} <br>
+                                <strong>Géneros:</strong> {{ producto.genero_principal.all|join:", "|default:"N/A" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="mt-5 mb-3">Tu Oferta</h3>
+            <form method="post" class="p-4 border rounded bg-light">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="{{ form.precio.id_for_label }}" class="form-label">{{ form.precio.label }}</label>
+                    {{ form.precio|add_class:"form-control" }}
+                    {% if form.precio.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.precio.errors|striptags }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.stock.id_for_label }}" class="form-label">{{ form.stock.label }}</label>
+                    {{ form.stock|add_class:"form-control" }}
+                     {% if form.stock.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.stock.errors|striptags }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.descripcion_condicion.id_for_label }}" class="form-label">{{ form.descripcion_condicion.label }}</label>
+                    {{ form.descripcion_condicion|add_class:"form-control" }}
+                    <div class="form-text">{{ form.descripcion_condicion.help_text }}</div>
+                     {% if form.descripcion_condicion.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.descripcion_condicion.errors|striptags }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">Poner en Venta</button>
+                    <a href="{% url 'ven_crear' %}" class="btn btn-secondary">Cancelar y buscar de nuevo</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

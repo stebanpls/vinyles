@@ -18,7 +18,7 @@ from django.contrib.auth.models import User  # Importar el modelo User y Group e
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives  # Importar para enviar correos HTML
 from django.db.models import Q
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 
@@ -40,6 +40,7 @@ from .forms import (
     PasswordResetConfirmForm,
     PasswordResetRequestForm,
     ProductorForm,
+    PublicacionForm,
     UserEditForm,
     UserRegistrationForm,
     UserUpdateForm,
@@ -47,7 +48,7 @@ from .forms import (
 
 # Importar formularios
 # Se importa los atributos de Crud
-from .models import Artista, Cliente, Crud, EstadoUsuario, Genero, Producto
+from .models import Artista, Cliente, Crud, EstadoUsuario, Genero, Producto, Publicacion
 
 logger = logging.getLogger(__name__)
 
@@ -1498,19 +1499,163 @@ def ven_notificaciones(request):
 @never_cache
 @login_required
 def ven_seleccionar_version(request, release_id):
-    # Esta es la vista para el Paso 2.
-    # Por ahora, solo es un placeholder.
-    # Aquí importaremos los datos de Discogs, crearemos el Producto si no existe,
-    # y mostraremos el PublicacionForm.
-    return HttpResponse(
-        f"Paso 2: Seleccionaste el release con ID {release_id}. Aquí irá el formulario de publicación."
-    )
+    """
+    Paso 2 del flujo de venta: Crear una publicación para un release de Discogs.
+    """
+    from .discogs_api_utils import discogs_api
+
+    # 1. Buscar si el producto ya existe en nuestro catálogo
+    try:
+        producto = Producto.objects.get(discogs_id=str(release_id))
+        # Si ya existe, verificamos si el vendedor ya tiene una publicación para este producto.
+        if Publicacion.objects.filter(producto=producto, vendedor=request.user).exists():
+            messages.warning(
+                request,
+                f"Ya tienes una publicación para '{producto.nombre}'. Puedes editarla desde 'Mis Productos'.",
+            )
+            return redirect("ven_producto")  # Redirigir a la lista de productos del vendedor
+
+    except Producto.DoesNotExist:
+        # 2. Si no existe, obtener detalles de Discogs para crearlo
+        release_details = discogs_api.get_release_details(release_id)
+        if not release_details:
+            messages.error(
+                request,
+                "No se pudieron obtener los detalles de este álbum desde Discogs. Inténtalo de nuevo.",
+            )
+            return redirect("ven_crear")
+
+        try:
+            # Crear o obtener Artistas
+            artistas_objs = []
+            if hasattr(release_details, "artists"):
+                for artist_data in release_details.artists:
+                    artista, _ = Artista.objects.get_or_create(
+                        nombre=artist_data.name, defaults={"discogs_id": str(artist_data.id)}
+                    )
+                    artistas_objs.append(artista)
+
+            # Crear o obtener Géneros
+            generos_objs = []
+            if hasattr(release_details, "genres"):
+                for genre_name in release_details.genres:
+                    genero, _ = Genero.objects.get_or_create(nombre=genre_name.upper())
+                    generos_objs.append(genero)
+
+            # Descargar imagen
+            image_path = None
+            if hasattr(release_details, "images") and release_details.images:
+                image_url = release_details.images[0].get("uri")
+                if image_url:
+                    image_path = discogs_api.download_image(
+                        image_url, filename_prefix=f"release_{release_id}"
+                    )
+
+            # Crear el nuevo Producto en nuestro catálogo
+            producto = Producto(
+                nombre=release_details.title,
+                lanzamiento=f"{release_details.year}-01-01"
+                if release_details.year and release_details.year > 0
+                else None,
+                discografica=release_details.labels[0].name
+                if hasattr(release_details, "labels") and release_details.labels
+                else "Desconocida",
+                imagen_portada=image_path,
+                discogs_id=str(release_id),
+            )
+            producto.save()  # Guardar para poder establecer relaciones M2M
+            producto.artistas.set(artistas_objs)
+            producto.genero_principal.set(generos_objs)
+            messages.info(request, f"Se ha añadido '{producto.nombre}' al catálogo de Vinyles.")
+
+        except Exception as e:
+            logger.error(f"Error al crear el producto desde Discogs release {release_id}: {e}")
+            messages.error(request, "Hubo un error al guardar la información del álbum.")
+            return redirect("ven_crear")
+
+    # 3. Manejar el formulario de publicación
+    if request.method == "POST":
+        form = PublicacionForm(request.POST)
+        if form.is_valid():
+            # Crear la publicación pero sin guardarla aún en la BD
+            nueva_publicacion = form.save(commit=False)
+            nueva_publicacion.producto = producto
+            nueva_publicacion.vendedor = request.user
+            nueva_publicacion.save()  # Ahora sí, guardar en la BD
+            messages.success(request, f"¡Has publicado '{producto.nombre}' para la venta!")
+            return redirect("ven_producto")  # Redirigir a la lista de productos del vendedor
+    else:
+        form = PublicacionForm()
+
+    context = {"titulo_pagina": f"Vender: {producto.nombre}", "producto": producto, "form": form}
+    return render(request, "paginas/vendedor/ven_seleccionar_version.html", context)
 
 
 @never_cache
 @login_required  # Solo requiere que el usuario esté autenticado
 def ven_producto(request):
-    return render(request, "paginas/vendedor/ven_producto.html")
+    # Consultamos todas las publicaciones que pertenecen al usuario logueado.
+    # Usamos select_related y prefetch_related para optimizar la consulta a la BD,
+    # evitando múltiples queries en el template.
+    publicaciones = (
+        Publicacion.objects.filter(vendedor=request.user)
+        .select_related("producto")
+        .prefetch_related("producto__artistas")
+    )
+    context = {"publicaciones": publicaciones}
+    return render(request, "paginas/vendedor/ven_producto.html", context)
+
+
+@never_cache
+@login_required
+def ven_editar_producto(request, publicacion_id):
+    """
+    Permite a un vendedor editar una de sus publicaciones existentes.
+    """
+    # get_object_or_404 asegura que la publicación exista y que pertenezca al usuario logueado.
+    # ¡Esto es una medida de seguridad crucial!
+    publicacion = get_object_or_404(Publicacion, pk=publicacion_id, vendedor=request.user)
+
+    if request.method == "POST":
+        # Pasamos la instancia para que el formulario sepa que estamos editando.
+        form = PublicacionForm(request.POST, instance=publicacion)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, f"La publicación de '{publicacion.producto.nombre}' ha sido actualizada."
+            )
+            return redirect("ven_producto")
+        else:
+            messages.error(request, "Por favor, corrige los errores en el formulario.")
+    else:
+        # Para una solicitud GET, mostramos el formulario con los datos actuales.
+        form = PublicacionForm(instance=publicacion)
+
+    context = {
+        "titulo_pagina": f"Editar: {publicacion.producto.nombre}",
+        "form": form,
+        "publicacion": publicacion,
+    }
+    return render(request, "paginas/vendedor/ven_editar_producto.html", context)
+
+
+@never_cache
+@login_required
+def ven_eliminar_producto(request, publicacion_id):
+    """
+    Elimina una publicación. Solo acepta peticiones POST por seguridad.
+    """
+    # Asegurarnos de que la publicación existe y pertenece al usuario.
+    publicacion = get_object_or_404(Publicacion, pk=publicacion_id, vendedor=request.user)
+
+    if request.method == "POST":
+        nombre_producto = publicacion.producto.nombre
+        publicacion.delete()
+        messages.success(request, f"La publicación de '{nombre_producto}' ha sido eliminada.")
+        return redirect("ven_producto")
+
+    # Si se intenta acceder por GET, simplemente redirigir.
+    return redirect("ven_producto")
 
 
 @never_cache

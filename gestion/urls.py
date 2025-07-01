@@ -92,24 +92,27 @@ urlpatterns = [
     path("pub_registro/", views.pub_registro, name="pub_registro"),
     path("pub_soporte/", views.pub_soporte, name="pub_soporte"),
     path("pub_terminos/", views.pub_terminos, name="pub_terminos"),
-    path("pub_vinilo/", views.pub_vinilo, name="pub_vinilo"),
+    path("vinilo/<int:producto_id>/", views.pub_vinilo, name="pub_vinilo"),
     # URLS DE LA CARPETA "VENDEDOR"
     path("ven_bad/", views.ven_bad, name="ven_bad"),
-    path("vendedor/crear/", views.ven_crear, name="ven_crear"),  # Cambiado para consistencia
-    # NUEVA URL para el paso 2: seleccionar una versión y mostrar el formulario de publicación
+    path("vendedor/crear/", views.ven_crear, name="ven_crear"),
     path(
-        "vendedor/crear/<int:release_id>/",
+        "vendedor/seleccionar/<int:release_id>/",
         views.ven_seleccionar_version,
         name="ven_seleccionar_version",
     ),
-    path("ven_nosotros/", views.ven_nosotros, name="ven_nosotros"),
-    path("ven_notificaciones/", views.ven_notificaciones, name="ven_notificaciones"),
+    path("vendedor/producto/", views.ven_producto, name="ven_producto"),
+    # La línea que añadimos en el paso anterior:
     path(
-        "ven_perfil/", views.com_perfil, {"user_mode": "vendedor"}, name="ven_perfil"
-    ),  # Reutiliza la vista com_perfil
-    path("ven_producto/", views.ven_producto, name="ven_producto"),
-    path("ven_terminos/", views.ven_terminos, name="ven_terminos"),
-    # URLS DE LOS ÁLBUMES (Considerar si deben estar prefijadas, ej: 'admin/albumes/bts/')
+        "vendedor/producto/<int:publicacion_id>/editar/",
+        views.ven_editar_producto,
+        name="ven_editar_producto",
+    ),
+    path("vendedor/notificaciones/", views.ven_notificaciones, name="ven_notificaciones"),
+    path("vendedor/nosotros/", views.ven_nosotros, name="ven_nosotros"),
+    path("vendedor/terminos/", views.ven_terminos, name="ven_terminos"),
+    path("ven_perfil/", views.com_perfil, {"user_mode": "vendedor"}, name="ven_perfil"),
+    # URLS DE LOS ÁLBUMES
     path("bts/", views.bts, name="bts"),
     path("carti_music/", views.carti_music, name="carti_music"),
     path("eminem_show/", views.eminem_show, name="eminem_show"),
@@ -120,7 +123,7 @@ urlpatterns = [
     path("mj_thriller/", views.mj_thriller, name="mj_thriller"),
     path("nirvana/", views.nirvana, name="nirvana"),
     path("the_beatles/", views.the_beatles, name="the_beatles"),
-    # URLS DE LOS USUARIOS (Considerar si deben estar prefijadas, ej: 'admin/usuarios/lauraG/')
+    # URLS DE LOS USUARIOS
     path("alex_r/", views.alex_r, name="alex_r"),
     path("andrea_villalobos/", views.andrea_villalobos, name="andrea_villalobos"),
     path("andrea_villalobos_2/", views.andrea_villalobos_2, name="andrea_villalobos_2"),
