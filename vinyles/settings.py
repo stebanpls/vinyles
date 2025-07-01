@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 # Se agregó el import de os
 import os
 from pathlib import Path
+
 # Importar python-dotenv
 from dotenv import load_dotenv
 
@@ -26,76 +27,77 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure--byrce+$%&e!-0xl%$40w=-hry&3oc09wvsyd^9l9bk-g0%h20') # Valor por defecto si no está en .env
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY", "django-insecure--byrce+$%&e!-0xl%$40w=-hry&3oc09wvsyd^9l9bk-g0%h20"
+)  # Valor por defecto si no está en .env
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True' # Convertir string a Boolean
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"  # Convertir string a Boolean
 # DEBUG = False # FORZAR DEBUG A FALSE PARA PRUEBAS DE ESTÁTICOS
 
 # Cuando DEBUG es False, debes especificar los hosts permitidos.
 # Para desarrollo local, esto es usualmente suficiente.
 # En producción, reemplaza esto con tu dominio real.
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     # 1. Aplicaciones de Django (las que más comúnmente se personalizan)
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.sites',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.sites",
+    "django.contrib.staticfiles",
     # 2. Aplicaciones de terceros (generalmente, no se sobrescriben directamente)
-    'django_recaptcha', # Para django-recaptcha.
-    'widget_tweaks', # Sí lo vamos a usar.
-    'dal',
-    'dal_select2', # dal y dal_select2 usan select2 para autocompletado (más lindo)
+    "django_recaptcha",  # Para django-recaptcha.
+    "widget_tweaks",  # Sí lo vamos a usar.
+    "dal",
+    "dal_select2",  # dal y dal_select2 usan select2 para autocompletado (más lindo)
     # 3. Nuestras aplicaciones (aquí sobrescribimos a Django o, si es necesario, a alguna de terceros específica moviéndola antes)
-    'gestion.apps.GestionConfig', # Nuestra aplicación
+    "gestion.apps.GestionConfig",  # Nuestra aplicación
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # WhiteNoise va aquí
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware', # Permite la internacionalización
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # WhiteNoise va aquí
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # Permite la internacionalización
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'vinyles.urls'
+ROOT_URLCONF = "vinyles.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
         # Aquí le decimos a Django que busque plantillas en una carpeta 'templates'
         # en la raíz de tu proyecto (al mismo nivel que manage.py).
         # Aquí es donde deberías poner tu 404.html, 500.html, etc.
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
                 # Se agregó el debug
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media', # Añadido para que MEDIA_URL esté disponible
-                'gestion.context_processors.cart_item_count', # Añadido para el contador del carrito
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.media",  # Añadido para que MEDIA_URL esté disponible
+                "gestion.context_processors.cart_item_count",  # Añadido para el contador del carrito
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'vinyles.wsgi.application'
+WSGI_APPLICATION = "vinyles.wsgi.application"
 
 
 # Database
@@ -112,29 +114,30 @@ DATABASES = {
 
 # Leer configuraciones de la base de datos desde variables de entorno
 # Se pueden poner valores por defecto si se desea.
-DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.mysql')
-DB_NAME = os.environ.get('DB_NAME') # Obligatorio en .env
-DB_USER = os.environ.get('DB_USER') # Obligatorio en .env
-DB_PASSWORD = os.environ.get('DB_PASSWORD') # Obligatorio en .env
-DB_HOST = os.environ.get('DB_HOST', 'localhost') # Valor por defecto común para desarrollo
-DB_PORT = os.environ.get('DB_PORT', '3307') # Valor por defecto común para desarrollo (ajusta si es necesario). El puerto por defecto de MySQL es 3306, pero aquí se usa 3307.
+DB_ENGINE = os.environ.get("DB_ENGINE", "django.db.backends.mysql")
+DB_NAME = os.environ.get("DB_NAME")  # Obligatorio en .env
+DB_USER = os.environ.get("DB_USER")  # Obligatorio en .env
+DB_PASSWORD = os.environ.get("DB_PASSWORD")  # Obligatorio en .env
+DB_HOST = os.environ.get("DB_HOST", "localhost")  # Valor por defecto común para desarrollo
+DB_PORT = os.environ.get(
+    "DB_PORT", "3307"
+)  # Valor por defecto común para desarrollo (ajusta si es necesario). El puerto por defecto de MySQL es 3306, pero aquí se usa 3307.
 
 DATABASES = {
-    'default': {
-        'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'use_unicode': True,
+    "default": {
+        "ENGINE": DB_ENGINE,
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "use_unicode": True,
             # 'read_default_file': os.path.join(BASE_DIR, 'my.cnf'), # Puedes comentar o quitar esto si usas .env exclusivamente
         },
     }
 }
-
 
 
 # Password validation
@@ -142,16 +145,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -159,44 +162,48 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'es-co' # o 'es-es', 'es-ar', 'es-mx', etc.
+LANGUAGE_CODE = "es-co"  # o 'es-es', 'es-ar', 'es-mx', etc.
 
 # Configura esto a tu zona horaria local. Para Colombia, sería 'America/Bogota'.
-TIME_ZONE = 'America/Bogota' # Por defecto, Django usa UTC, pero puedes cambiarlo a tu zona horaria local.
+TIME_ZONE = (
+    "America/Bogota"  # Por defecto, Django usa UTC, pero puedes cambiarlo a tu zona horaria local.
+)
 
-USE_I18N = True # Esto activa la internacionalización, permitiendo que Django use traducciones y formatos localizados.
+USE_I18N = True  # Esto activa la internacionalización, permitiendo que Django use traducciones y formatos localizados.
 
-USE_L10N = True # Importante para que los formatos localizados funcionen
+USE_L10N = True  # Importante para que los formatos localizados funcionen
 
-USE_TZ = True # Esto permite que Django maneje las zonas horarias correctamente.
+USE_TZ = True  # Esto permite que Django maneje las zonas horarias correctamente.
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 # Se agregó la ruta de los archivos estáticos
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-] # Todos los archivos estáticos se busquen dentro de la carpeta "static"
+]  # Todos los archivos estáticos se busquen dentro de la carpeta "static"
 
 # STATIC_ROOT es donde `collectstatic` copiará los archivos para producción.
 # WhiteNoise también puede usarlo si DEBUG = False.
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 # MEDIA_ROOT es donde se guardarán los archivos subidos por los usuarios.
-MEDIA_ROOT = BASE_DIR / 'media'  # Carpeta 'media' en la raíz del proyecto
-MEDIA_URL = '/media/' # URL base para acceder a estos archivos
+MEDIA_ROOT = BASE_DIR / "media"  # Carpeta 'media' en la raíz del proyecto
+MEDIA_URL = "/media/"  # URL base para acceder a estos archivos
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CONFIGURACIÓN DE AUTENTICACIÓN
-LOGIN_REDIRECT_URL = 'com_inicio'  # O 'dashboard' como en el video, apunta a tu vista post-login
-LOGIN_URL = 'pub_login'            # URL de tu vista de login principal
-LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out' después de cerrar sesión
+LOGIN_REDIRECT_URL = "com_inicio"  # O 'dashboard' como en el video, apunta a tu vista post-login
+LOGIN_URL = "pub_login"  # URL de tu vista de login principal
+LOGOUT_REDIRECT_URL = (
+    "pub_log_out"  # Redirigir a la URL nombrada 'pub_log_out' después de cerrar sesión
+)
 
 
 # Configuración para que los emails se muestren en la consola durante el desarrollo
@@ -204,13 +211,17 @@ LOGOUT_REDIRECT_URL = 'pub_log_out'  # Redirigir a la URL nombrada 'pub_log_out'
 
 
 # 2) Si quieres usar Gmail (en modo real), comentas la línea anterior y descomentas estas:
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587 # Puerto estándar para TLS
-EMAIL_USE_TLS = True # Usar Transport Layer Security (recomendado)
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') # Lee tu email desde .env
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') # Lee tu contraseña de aplicación desde .env
-DEFAULT_FROM_EMAIL = f"Vinyles <{os.environ.get('EMAIL_HOST_USER')}>" # Email que aparecerá como remitente
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587  # Puerto estándar para TLS
+EMAIL_USE_TLS = True  # Usar Transport Layer Security (recomendado)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # Lee tu email desde .env
+EMAIL_HOST_PASSWORD = os.environ.get(
+    "EMAIL_HOST_PASSWORD"
+)  # Lee tu contraseña de aplicación desde .env
+DEFAULT_FROM_EMAIL = (
+    f"Vinyles <{os.environ.get('EMAIL_HOST_USER')}>"  # Email que aparecerá como remitente
+)
 
 # Opcional: si quieres que el nombre del remitente sea fijo y no dependa del EMAIL_HOST_USER
 # DEFAULT_FROM_EMAIL = 'Vinyles <tu_correo_de_soporte@example.com>'
@@ -218,8 +229,8 @@ DEFAULT_FROM_EMAIL = f"Vinyles <{os.environ.get('EMAIL_HOST_USER')}>" # Email qu
 # CONFIGURACIÓN DE reCAPTCHA
 # Estas variables se leen desde tu archivo .env
 # Asegúrate de haber definido RECAPTCHA_SITE_KEY y RECAPTCHA_SECRET_KEY en .env
-RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_SITE_KEY', '')
-RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
+RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_SITE_KEY", "")
+RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_SECRET_KEY", "")
 
 # Silenciar la advertencia de claves de prueba de reCAPTCHA para desarrollo
 # Dejar comentado en lo posible.
@@ -229,4 +240,4 @@ RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
 SITE_ID = 1
 
 # Configuración de la API de Discogs
-DISCOGS_TOKEN = os.environ.get('DISCOGS_USER_TOKEN', '')
+DISCOGS_TOKEN = os.environ.get("DISCOGS_USER_TOKEN", "")

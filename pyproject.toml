@@ -1,12 +1,6 @@
 [tool.ruff]
-# Habilita las reglas de Pyflakes (F), pycodestyle (E, W), isort (I) y Bugbear (B).
-select = ["E", "F", "W", "I", "B"]
-# Ignora reglas específicas. E501 es "línea demasiado larga", por si quieres ser flexible.
-ignore = ["E501"]
-
 # Permite una longitud de línea de hasta 99 caracteres.
 line-length = 99
-
 # Excluye directorios que no quieres que se revisen.
 exclude = [
     ".git",
@@ -15,10 +9,16 @@ exclude = [
     "migrations",
 ]
 
+[tool.ruff.lint]
+# Habilita las reglas de Pyflakes (F), pycodestyle (E, W), isort (I) y Bugbear (B).
+select = ["E", "F", "W", "I", "B"]
+# Ignora reglas específicas. E501 es "línea demasiado larga", por si quieres ser flexible.
+ignore = ["E501"]
+
 [tool.ruff.lint.isort]
 # Le dice a isort que tus apps de Django son "first-party" para agrupar los imports correctamente.
 # Añade aquí los nombres de tus apps.
-known-first-party = ["core", "usuarios"] # Ejemplo, pon tus apps aquí
+known-first-party = ["gestion", "core", "usuarios"]
 
 [tool.ruff.format]
 # Habilita el formateador de código (similar a Black) para mantener un estilo consistente.
