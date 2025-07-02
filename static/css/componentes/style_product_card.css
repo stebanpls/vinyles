@@ -1,0 +1,226 @@
+/* ==========================================================================
+  Componente: Tarjeta de Producto, Grid y Hero Banner. Este archivo contiene estilos compartidos para mostrar productos.
+  ========================================================================== */
+
+/* Estilos base para enlaces (pueden estar en un archivo CSS base general) */
+a {
+  text-decoration: none;
+  color: #007bff; /* Standard link blue, adjust if needed */
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- Estilos de Botones --- */
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-primary {
+  background-color: rgba(255, 255, 255, 0);
+  color: #f8f9fa;
+  border-color: #f8f9fa;
+}
+.btn-primary:hover {
+  background-color: #0056b3;
+  text-decoration: none;
+}
+
+.btn-add-to-cart {
+  /* Mantenemos el verde para contraste, común en e-commerce */
+  background-color: rgba(255, 255, 255, 0);
+  color: #f8f9fa;
+  border-color: #f8f9fa;
+  width: 100%; /* Make button full width of its container */
+  margin-top: 10px;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.btn-add-to-cart:hover {
+  background-color: #218838;
+  border-color: #1c7430; /* Añadido para consistencia */
+  text-decoration: none;
+}
+
+/* --- Hero Banner --- */
+.hero-banner-section {
+  margin-bottom: 30px; /* Space below banner */
+}
+
+.hero-banner {
+  position: relative; /* Needed for absolute positioning of text overlay if used */
+  width: 100%;
+  max-height: 450px; /* Adjust as needed */
+  overflow: hidden; /* Hide parts of image that overflow */
+}
+
+.hero-banner img {
+  display: block;
+  width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Cover the area, might crop */
+  object-position: center center; /* Center the image */
+}
+
+/* Optional Hero Text Overlay Styling */
+.hero-text {
+  position: absolute;
+  top: 50%;
+  left: 10%; /* Adjust positioning */
+  transform: translateY(-50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semi-transparente */
+  padding: 20px;
+  border-radius: 5px;
+}
+.hero-text h2 {
+  margin: 0 0 10px 0;
+  font-size: 2.5em;
+}
+.hero-text p {
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+}
+
+
+/* --- Product Grid --- */
+.product-grid-section {
+  max-width: 1200px; /* Limit width like laMusica */
+  margin: 0 auto 40px auto; /* Center the section and add bottom margin */
+  padding: 0 15px; /* Add padding on the sides */
+}
+
+.section-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #eee;
+  margin-bottom: 20px;
+  text-align: left;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between grid items */
+}
+
+/* --- Product Card --- */
+.product-card {
+  background-color: #222; /* Fondo oscuro para la tarjeta */
+  border: 1px solid #444; /* Borde oscuro sutil */
+  border-radius: 5px;
+  overflow: hidden; /* Ensure image corners are rounded if needed */
+  display: flex;
+  flex-direction: column; /* Stack image and info vertically */
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* Transición suave */
+}
+
+.product-card:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
+.product-image-link {
+  display: block;
+  text-align: center;
+  padding: 10px; /* Padding around image */
+  background-color: #333; /* Fondo para la imagen para que resalte */
+  border-bottom: 1px solid #444; /* Separador */
+}
+
+.product-image {
+  max-width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 180px; /* Limit image height */
+  object-fit: contain; /* Show whole image, don't crop */
+}
+
+.product-info {
+  padding: 15px;
+  text-align: left; /* Align text to the left */
+  flex-grow: 1; /* Allow info section to grow */
+  display: flex;
+  flex-direction: column; /* Stack info elements */
+}
+
+.product-title {
+  font-size: 1em; /* Slightly larger font for title */
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
+  height: 2.6em; /* Approx 2 lines */
+  overflow: hidden;
+}
+.product-title a {
+  color: #f8f9fa; /* Texto claro para el título */
+}
+.product-title a:hover {
+  color: #fff; /* Blanco más brillante en hover */
+  text-decoration: underline;
+}
+
+.product-artist {
+  font-size: 0.9em;
+  color: #adb5bd; /* Gris claro para el artista */
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+  height: 1.3em; /* Approx 1 line */
+  overflow: hidden;
+}
+
+.product-price {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #f0f0f0; /* Color claro para el precio */
+  margin: auto 0 10px 0; /* Push price down before button */
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+  }
+  .section-title {
+      font-size: 1.5em;
+  }
+  .product-title {
+      font-size: 0.95em;
+  }
+  .product-price {
+      font-size: 1em;
+  }
+  .btn-add-to-cart {
+      font-size: 12px;
+      padding: 6px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+  }
+  .hero-text {
+      left: 5%;
+      right: 5%;
+      text-align: center;
+  }
+  .hero-text h2 {
+      font-size: 1.8em;
+  }
+  .hero-text p {
+      font-size: 1em;
+  }
+}

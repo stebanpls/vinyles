@@ -41,7 +41,8 @@
                 {% for field in form %}
                 <div class="mb-4">
                     <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                    {% render_field field class="form-control" %}
+                    {# Ya no necesitamos añadir la clase aquí, el formulario se encarga de ello #}
+                    {% render_field field %}
                     {% if field.help_text %}
                         <div class="form-text text-muted mt-1">{{ field.help_text }}</div>
                     {% endif %}
@@ -70,27 +71,48 @@
 {% block pie %}
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    {# Añadimos el archivo de idioma español para Select2 #}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/es.js"></script>
 
     <script>
     $(document).ready(function() {
         $('#id_artista').select2({
             theme: "bootstrap-5",
-            placeholder: "-- Elige un artista --",
+            language: "es", // Usar el idioma español
+            ajax: {
+                url: $('#id_artista').data('ajax-url'), // URL desde el atributo data-*
+                dataType: 'json',
+                delay: 250, // Esperar 250ms después de que el usuario deje de escribir
+                data: function (params) {
+                    return {
+                        term: params.term // Término de búsqueda
+                    };
+                },
+                processResults: function (data) {
+                    // Transforma la respuesta JSON al formato que Select2 espera
+                    return {
+                        results: data.results
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Escribe para buscar un artista...',
+            minimumInputLength: 2 // Empezar a buscar después de 2 caracteres
         });
 
         $('#id_album').select2({
             theme: "bootstrap-5",
-            placeholder: "-- Selecciona un artista primero --",
+            language: "es",
+            placeholder: "Selecciona un artista primero",
         });
 
         $('#id_artista').on('change', function() {
             const artistaId = $(this).val();
             const albumSelect = $('#id_album');
-            const otrosCampos = $('#id_precio, #id_stock, #id_descripcion_condicion');
 
             if (artistaId) {
                 $.ajax({
-                    url: "{% url 'ajax_cargar_albumes' %}",
+                    url: "{% url 'ajax_cargar_albumes' %}", // Esta URL sigue siendo correcta para cargar álbumes
                     data: { 'artista_id': artistaId },
                     success: function(data) {
                         albumSelect.empty().append('<option value="">-- Elige un álbum --</option>');
@@ -101,12 +123,11 @@
                             }));
                         });
                         albumSelect.prop('disabled', false);
-                        otrosCampos.prop('disabled', false);
+                        $('#id_precio, #id_stock, #id_descripcion_condicion').prop('disabled', false);
                     }
                 });
             } else {
-                albumSelect.empty().append('<option value="">-- Selecciona un artista primero --</option>').prop('disabled', true);
-                otrosCampos.prop('disabled', true);
+                albumSelect.empty().append('<option value="">Selecciona un artista primero</option>').prop('disabled', true);
             }
         });
     });

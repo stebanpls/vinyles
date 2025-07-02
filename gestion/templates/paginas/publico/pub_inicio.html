@@ -3,7 +3,8 @@
 {% load humanize %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/publico/style_inicio.css' %}">
+    {# Ahora usamos el componente de CSS compartido #}
+    <link rel="stylesheet" href="{% static 'css/componentes/style_product_card.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - La Música {% endblock titulo %}
@@ -24,40 +25,7 @@
         </div>
     </section>
 
-    <section class="product-grid-section">
-        <h2 class="section-title">Novedades</h2>
-        <div class="product-grid">
-
-            {% for publicacion in publicaciones %}
-            <div class="product-card">
-                {# El enlace ahora apunta a la página de detalle del producto y pasa el ID correcto #}
-                <a href="{% url 'pub_vinilo' publicacion.producto.id %}" class="product-image-link">
-                    {% if publicacion.producto.imagen_portada %}
-                        <img src="{{ publicacion.producto.imagen_portada.url }}" alt="Portada de {{ publicacion.producto.nombre }}" class="product-image">
-                    {% else %}
-                        <img src="{% static 'images/albumes/default/default_album.png' %}" alt="Portada no disponible" class="product-image">
-                    {% endif %}
-                </a>
-                <div class="product-info">
-                    <h3 class="product-title"><a href="{% url 'pub_vinilo' publicacion.producto.id %}">{{ publicacion.producto.nombre }}</a></h3>
-                    <p class="product-artist">{{ publicacion.producto.artistas.all|join:", " }}</p>
-                    <p class="product-price">${{ publicacion.precio|intcomma }}</p>
-                    {# Este botón redirige al login, lo cual es correcto para un usuario no autenticado #}
-                    <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?next={% url 'pub_vinilo' publicacion.producto.id %}">
-                        Agregar al carrito
-                    </a>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info" role="alert">
-                    <h4 class="alert-heading">¡Aún no hay vinilos!</h4>
-                    <p>No hay productos disponibles en este momento. ¡Vuelve pronto para ver las novedades!</p>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
+    {% include 'componentes/_product_grid.html' %}
 
 {% endblock contenido %}
 

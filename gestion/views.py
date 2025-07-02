@@ -116,21 +116,57 @@ def modal_cancion(
 # VISTAS DE LA CARPETA "PUBLICO"
 
 
-def pub_inicio(request):
-    # Obtenemos las publicaciones que tienen stock disponible.
-    # Usamos select_related y prefetch_related para optimizar la consulta a la base de datos.
+def inicio_view(request):
+    """
+    Vista unificada para la página de inicio.
+    Muestra la versión de comprador si el usuario está autenticado,
+    de lo contrario muestra la versión pública.
+    """
     publicaciones = (
         Publicacion.objects.filter(stock__gt=0, activa=True)
         .select_related("producto")
         .prefetch_related("producto__artistas")
         .order_by("-fecha_publicacion")[:15]
-    )  # Mostramos las 15 más recientes
-    context = {"publicaciones": publicaciones}
-    return render(request, "paginas/publico/pub_inicio.html", context)
+    )
+
+    if request.user.is_authenticated:
+        # Lógica para el comprador (com_inicio)
+        usuario = request.user
+        cliente = getattr(usuario, "cliente", None)
+
+        try:
+            estado_usuario = EstadoUsuario.objects.get(user=usuario)
+            esta_bloqueado = estado_usuario.bloqueado
+        except EstadoUsuario.DoesNotExist:
+            esta_bloqueado = False
+
+        if esta_bloqueado or not usuario.is_active:
+            request.session["mostrar_alerta_bloqueado"] = True
+        else:
+            request.session.pop("mostrar_alerta_bloqueado", None)
+
+        context = {"publicaciones": publicaciones, "usuario": usuario, "cliente": cliente}
+        return render(request, "paginas/comprador/com_inicio.html", context)
+    else:
+        # Lógica para el público (pub_inicio)
+        context = {"publicaciones": publicaciones}
+        return render(request, "paginas/publico/pub_inicio.html", context)
 
 
 def pub_albumes(request):
-    return render(request, "paginas/publico/pub_albumes.html")
+    publicaciones = (
+        Publicacion.objects.filter(stock__gt=0, activa=True)
+        .select_related("producto")
+        .prefetch_related("producto__artistas", "producto__genero_principal")
+        .order_by("-fecha_publicacion")
+    )
+    generos = Genero.objects.all().order_by("nombre")
+    context = {
+        "publicaciones": publicaciones,
+        "generos": generos,
+        "base_template": "plantillas/plantilla_publico.html",  # <-- AÑADE ESTA LÍNEA
+    }
+    return render(request, "paginas/publico/pub_albumes.html", context)
 
 
 def pub_ddl(request):
@@ -378,36 +414,27 @@ def password_reset_confirm_code(request):
 @never_cache
 @login_required
 def com_inicio(request):
-    usuario = request.user
-    cliente = getattr(usuario, "cliente", None)
-
-    try:
-        estado_usuario = EstadoUsuario.objects.get(user=usuario)
-        esta_bloqueado = estado_usuario.bloqueado
-    except EstadoUsuario.DoesNotExist:
-        esta_bloqueado = False
-
-    mostrar_alerta = esta_bloqueado or not usuario.is_active
-
-    if mostrar_alerta:
-        request.session["mostrar_alerta_bloqueado"] = True
-    else:
-        request.session.pop("mostrar_alerta_bloqueado", None)
-
-    return render(
-        request,
-        "paginas/comprador/com_inicio.html",
-        {
-            "usuario": usuario,
-            "cliente": cliente,
-        },
-    )
+    # Esta vista ahora es manejada por inicio_view, pero la mantenemos para que la URL 'com_inicio' funcione.
+    # El decorador @login_required se asegura de que solo usuarios autenticados lleguen aquí.
+    return inicio_view(request)
 
 
 @never_cache
 @login_required
 def com_albumes(request):
-    return render(request, "paginas/comprador/com_albumes.html")
+    publicaciones = (
+        Publicacion.objects.filter(stock__gt=0, activa=True)
+        .select_related("producto")
+        .prefetch_related("producto__artistas", "producto__genero_principal")
+        .order_by("-fecha_publicacion")
+    )
+    generos = Genero.objects.all().order_by("nombre")
+    context = {
+        "publicaciones": publicaciones,
+        "generos": generos,
+        "base_template": "plantillas/plantilla_comprador.html",  # <-- AÑADE ESTA LÍNEA
+    }
+    return render(request, "paginas/comprador/com_albumes.html", context)
 
 
 @never_cache
@@ -695,6 +722,22 @@ def ajax_cargar_albumes(request):
     artista_id = request.GET.get("artista_id")
     albumes = Producto.objects.filter(artistas__id=artista_id).order_by("nombre")
     return JsonResponse(list(albumes.values("id", "nombre")), safe=False)
+
+
+def ajax_buscar_artistas(request):
+    """
+    Vista AJAX para la búsqueda de artistas con Select2.
+    Responde con JSON que Select2 puede consumir.
+    """
+    term = request.GET.get("term", "").strip()
+    if len(term) < 2:  # No buscar si el término es muy corto
+        return JsonResponse({"results": []}, safe=False)
+
+    artistas = Artista.objects.filter(nombre__icontains=term)[:10]  # Limitar a 10 resultados
+
+    results = [{"id": artista.id, "text": artista.nombre} for artista in artistas]
+
+    return JsonResponse({"results": results}, safe=False)
 
 
 @never_cache

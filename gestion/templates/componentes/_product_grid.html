@@ -1,0 +1,64 @@
+{% load static %} {% load humanize %}
+
+<section class="product-grid-section">
+  <h2 class="section-title">Novedades</h2>
+  <div class="product-grid">
+    {% for publicacion in publicaciones %}
+    <div class="product-card">
+      <a
+        href="{% url 'pub_vinilo' publicacion.producto.id %}"
+        class="product-image-link"
+      >
+        {% if publicacion.producto.imagen_portada %}
+        <img
+          src="{{ publicacion.producto.imagen_portada.url }}"
+          alt="Portada de {{ publicacion.producto.nombre }}"
+          class="product-image"
+        />
+        {% else %}
+        <img
+          src="{% static 'images/albumes/default/default_album.png' %}"
+          alt="Portada no disponible"
+          class="product-image"
+        />
+        {% endif %}
+      </a>
+      <div class="product-info">
+        <h3 class="product-title">
+          <a href="{% url 'pub_vinilo' publicacion.producto.id %}"
+            >{{ publicacion.producto.nombre }}</a
+          >
+        </h3>
+        <p class="product-artist">
+          {{ publicacion.producto.artistas.all|join:", " }}
+        </p>
+        <p class="product-price">${{ publicacion.precio|intcomma }}</p>
+
+        {% if user.is_authenticated %} {# Botón para usuario autenticado
+        (comprador) #}
+        <a
+          class="btn btn-add-to-cart"
+          href="{% url 'com_carrito' %}?album_id={{ publicacion.id }}&title={{ publicacion.producto.nombre|urlencode }}&artist={{ publicacion.producto.artistas.all|join:', '|urlencode }}&price={{ publicacion.precio }}&image={{ publicacion.producto.imagen_portada.url }}"
+        >
+          Agregar al carrito
+        </a>
+        {% else %} {# Botón para usuario público (redirige al login) #}
+        <a
+          class="btn btn-add-to-cart"
+          href="{% url 'pub_login' %}?next={% url 'pub_vinilo' publicacion.producto.id %}"
+        >
+          Agregar al carrito
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info" role="alert">
+      <p class="mb-0">
+        No hay productos disponibles en este momento. ¡Vuelve pronto para ver
+        las novedades!
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</section>

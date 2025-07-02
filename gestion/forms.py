@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.forms import SetPasswordForm, UserCreationForm, UsernameField
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
 from django.contrib.auth.models import User  # Importa el modelo User estándar de Django
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django_recaptcha.fields import ReCaptchaField, ReCaptchaV2Checkbox
 
@@ -193,16 +194,19 @@ class VentaDesdeCatalogoForm(forms.Form):
     """
 
     artista = forms.ModelChoiceField(
-        queryset=Artista.objects.order_by("nombre"),
+        # El queryset inicial está vacío; se llenará con AJAX.
+        queryset=Artista.objects.none(),
         label="Paso 1: Selecciona el Artista",
-        empty_label="-- Elige un artista --",
+        # El widget necesita saber cómo buscar. Le pasamos la URL de búsqueda.
         widget=forms.Select(attrs={"class": "form-select form-select-lg mb-3"}),
+        required=True,
     )
     album = forms.ModelChoiceField(
         queryset=Producto.objects.none(),  # Se llena con JS
         label="Paso 2: Selecciona el Álbum",
         empty_label="-- Selecciona un artista primero --",
         widget=forms.Select(attrs={"class": "form-select form-select-lg mb-3"}),
+        required=True,
     )
     precio = forms.DecimalField(
         label="Paso 3: Define el precio de tu copia",
@@ -230,10 +234,20 @@ class VentaDesdeCatalogoForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["album"].widget.attrs["disabled"] = True
-        self.fields["precio"].widget.attrs["disabled"] = True
-        self.fields["stock"].widget.attrs["disabled"] = True
-        self.fields["descripcion_condicion"].widget.attrs["disabled"] = True
+        # Aplicar la clase 'form-control' a todos los campos para consistencia
+        for field_name, field in self.fields.items():
+            # Usamos 'form-select' para los campos de elección para un mejor estilo con Bootstrap
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({"class": "form-select"})
+            else:
+                field.widget.attrs.update({"class": "form-control"})
+
+            # Configuración específica para el campo de artista con AJAX
+            if field_name == "artista":
+                field.widget.attrs.update({
+                    "data-ajax-url": reverse_lazy("ajax_buscar_artistas"),
+                    "data-placeholder": "Escribe para buscar un artista...",
+                })
 
 
 # ELIMINADO: ProductoForm ya no se usa para la creación por parte del vendedor.

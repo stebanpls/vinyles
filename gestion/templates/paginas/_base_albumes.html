@@ -1,0 +1,92 @@
+{% extends base_template %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/componentes/style_product_card.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/paginas/style_albumes_page.css' %}" />
+{% endblock extra_css %}
+
+{% block titulo %} Vinyles - Álbumes {% endblock titulo %}
+
+{% block contenido %}
+  <div class="container-albumes">
+    <aside class="aside-clasificacion">
+      <h2>Clasificación</h2>
+      <ul>
+        <li><a href="#" data-genre="todos">Todos</a></li>
+        {% for genero in generos %}
+          <li>
+            <a href="#" data-genre="{{ genero.nombre|slugify }}">{{ genero.nombre }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <main class="main-albumes">
+      {% for publicacion in publicaciones %}
+        <div class="product-card" data-genre="{{ publicacion.producto.genero_principal.first.nombre|slugify }}">
+          <a href="{% url 'pub_vinilo' publicacion.producto.id %}" class="product-image-link">
+            {% if publicacion.producto.imagen_portada %}
+              <img src="{{ publicacion.producto.imagen_portada.url }}" alt="Portada de {{ publicacion.producto.nombre }}" class="product-image" />
+            {% else %}
+              <img src="{% static 'images/albumes/default/default_album.png' %}" alt="Portada no disponible" class="product-image" />
+            {% endif %}
+          </a>
+          <div class="product-info">
+            <h3 class="product-title">
+              <a href="{% url 'pub_vinilo' publicacion.producto.id %}">{{ publicacion.producto.nombre }}</a>
+            </h3>
+            <p class="product-artist">
+              {{ publicacion.producto.artistas.all|join:", " }}
+            </p>
+            <p class="product-price">${{ publicacion.precio|intcomma }}</p>
+
+            {% if user.is_authenticated %}
+              <a class="btn btn-add-to-cart" href="{% url 'com_carrito' %}?album_id={{ publicacion.id }}&title={{ publicacion.producto.nombre|urlencode }}&artist={{ publicacion.producto.artistas.all|join:', '|urlencode }}&price={{ publicacion.precio }}&image={{ publicacion.producto.imagen_portada.url }}">
+                Agregar al carrito
+              </a>
+            {% else %}
+              <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?next={% url 'pub_vinilo' publicacion.producto.id %}">
+                Agregar al carrito
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <div class="alert alert-info" role="alert">
+          <p class="mb-0">No hay álbumes disponibles en este momento.</p>
+        </div>
+      {% endfor %}
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const genreLinks = document.querySelectorAll(".aside-clasificacion ul li a");
+      const albumCards = document.querySelectorAll(".main-albumes .product-card");
+
+      genreLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const selectedGenre = link.getAttribute("data-genre").toLowerCase();
+
+          albumCards.forEach((card) => {
+            const cardGenre = card.getAttribute("data-genre");
+            if (
+              selectedGenre === "todos" ||
+              (cardGenre && cardGenre.toLowerCase() === selectedGenre)
+            ) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+      });
+    });
+  </script>
+{% endblock contenido %}
+
+{% block pie %}
+{% endblock pie %}

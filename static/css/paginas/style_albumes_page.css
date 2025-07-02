@@ -1,0 +1,55 @@
+/* ==========================================================================
+  Estilos compartidos para las páginas de Álbumes (con filtro lateral)
+   ========================================================================== */
+
+.container-albumes {
+  display: flex;
+  min-height: 50vh;
+  margin: 20px auto;
+  width: 95%;
+  max-width: 1400px;
+  gap: 20px;
+}
+
+.aside-clasificacion {
+  flex: 0 0 220px; /* No crece, no se encoge, base de 220px */
+  background-color: #1a1a1a;
+  padding: 1rem;
+  border-radius: 5px;
+  align-self: flex-start; /* Se alinea arriba */
+  border: 1px solid #333;
+}
+
+.aside-clasificacion h2 {
+  color: #fff;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.aside-clasificacion ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1rem;
+}
+
+.aside-clasificacion ul li {
+  margin: 0.4rem 0;
+}
+
+.aside-clasificacion ul li a {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.aside-clasificacion ul li a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.main-albumes {
+  flex: 1;
+  /* Los estilos de la cuadrícula ya están en style_product_card.css */
+}
