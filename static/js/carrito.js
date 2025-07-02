@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const cartTotalContainer = document.querySelector(".cart-total");
   const cartTotalAmount = document.getElementById("cart-total-amount");
   const checkoutButton = document.getElementById("checkout-button");
-  
+
   // Recuperamos el carrito del localStorage (si existe), en formato JSON
   let cartProducts = [];
   const storedCart = localStorage.getItem("cartProducts");
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const artistName = params.get('artist');
       const price = parseInt(params.get('price'), 10);
       const imageURL = params.get('image');
-  
+
       addToCart(albumName, artistName, price, imageURL);
     }
   renderCart();
@@ -126,5 +126,5 @@ document.addEventListener("DOMContentLoaded", function () {
   checkoutButton.addEventListener("click", function () {
       window.location.href = "/checkout/";
   });
-  
+
 });

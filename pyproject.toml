@@ -1,24 +1,24 @@
 [tool.ruff]
-# Permite una longitud de línea de hasta 99 caracteres.
-line-length = 99
-# Excluye directorios que no quieres que se revisen.
+# Configuración global para ruff. Aplica tanto al linter como al formateador.
+line-length = 120
+# Excluye directorios que no se deben revisar.
 exclude = [
     ".git",
     "__pycache__",
     ".venv",
     "migrations",
+    "venv", # Añadido por si acaso
 ]
 
 [tool.ruff.lint]
 # Habilita las reglas de Pyflakes (F), pycodestyle (E, W), isort (I) y Bugbear (B).
 select = ["E", "F", "W", "I", "B"]
-# Ignora reglas específicas. E501 es "línea demasiado larga", por si quieres ser flexible.
-ignore = ["E501"]
+# Ya no ignoramos E501. Ruff lo comprobará contra el nuevo line-length.
+ignore = ["E501"] # <-- ¡Añade esta línea! Le dice al linter que ignore las líneas largas.
 
 [tool.ruff.lint.isort]
 # Le dice a isort que tus apps de Django son "first-party" para agrupar los imports correctamente.
-# Añade aquí los nombres de tus apps.
-known-first-party = ["gestion", "core", "usuarios"]
+known-first-party = ["gestion", "vinyles"]
 
 [tool.ruff.format]
 # Habilita el formateador de código (similar a Black) para mantener un estilo consistente.

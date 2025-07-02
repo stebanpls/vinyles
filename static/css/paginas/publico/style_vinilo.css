@@ -12,9 +12,9 @@
 /* Barra lateral */
 .aside-clasificacion {
     width: 240px;
-    background-color: #111; 
+    background-color: #111;
     padding: 1rem;
-    margin-right: 1rem; 
+    margin-right: 1rem;
     border-radius: 4px;
 }
 .aside-clasificacion h2 {
@@ -45,7 +45,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    background-color: #222; 
+    background-color: #222;
     padding: 1rem;
     border-radius: 4px;
 }
@@ -85,13 +85,13 @@
     display: flex;
     flex-direction: column;
     padding: 2rem;
-    background-color: #222; 
+    background-color: #222;
 }
 
 /* Ajustes del contenedor de la imagen y botones */
 .cuadro {
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     background-color: #333;
     border-radius: 6px;
     padding: 1rem;
@@ -222,7 +222,7 @@
 .botones-acciones {
     display: flex;
     gap: 1.2rem; /* Espacio horizontal entre botones */
-    margin-top: 1.5rem; 
+    margin-top: 1.5rem;
 }
 
 .btn-comprar,
@@ -240,7 +240,7 @@
 
 .btn-comprar {
     background-color: rgba(240, 165, 0, 0.7); /* Un tono amarillo con transparencia */
-    color: #000; 
+    color: #000;
 }
 
 .btn-agregar-carrito {
@@ -258,7 +258,7 @@
 .botones-acciones {
     display: flex;
     gap: 1.2rem; /* Espacio horizontal entre botones */
-    margin-top: 1.5rem; 
+    margin-top: 1.5rem;
 }
 
 .btn-comprar,
@@ -275,7 +275,7 @@
 
 .btn-comprar {
     background-color: #ffffff; /* Un tono amarillo */
-    color: #000; 
+    color: #000;
 }
 
 .btn-agregar-carrito {
@@ -287,7 +287,7 @@
 .btn-agregar-carrito:hover {
     opacity: 1.0;          /* Aumenta la opacidad */
     transform: scale(1.05); /* Efecto leve de zoom */
-    
+
 }
 
 /* Regla para agrupar la etiqueta "Precio:" y el valor en una misma línea */

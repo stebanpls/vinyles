@@ -7,10 +7,10 @@
 
 {% block titulo %} Administrador - usuarios {% endblock titulo %}
 
-{% block contenido %} 
+{% block contenido %}
 <div class="perfil-container">
     <h2 class="titulo-perfil">Perfil usuario</h2>
-    
+
     <div class="perfil-card">
         <div class="perfil-avatar">
             <img src="{% static '
@@ -48,7 +48,7 @@ images/fotos_perfil/andrea_villalobos.jpg' %}" alt="Avatar">
     function toggleBloqueo() {
         const boton = document.getElementById('boton-bloqueo');
         const mensaje = document.getElementById('mensaje-bloqueo');
-    
+
         if (boton.textContent === "Bloquear usuario") {
             mensaje.textContent = "Usuario bloqueado con éxito ✅";
             boton.textContent = "Desbloquear usuario";
@@ -58,7 +58,7 @@ images/fotos_perfil/andrea_villalobos.jpg' %}" alt="Avatar">
             boton.textContent = "Bloquear usuario";
             boton.classList.remove("desbloquear");
         }
-    
+
         mensaje.classList.add("visible");
         setTimeout(() => {
             mensaje.classList.remove("visible");

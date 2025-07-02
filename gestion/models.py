@@ -24,14 +24,10 @@ def user_directory_path(instance, filename):
 
 
 # Create your models here.
-class Crud(
-    models.Model
-):  # Es mejor nombrar la clase con mayúscula inicial, siguiendo las convenciones de Python
+class Crud(models.Model):  # Es mejor nombrar la clase con mayúscula inicial, siguiendo las convenciones de Python
     # id = models.AutoField(primary_key = True) # Django lo añade automáticamente
     nombre = models.CharField(max_length=50, verbose_name="Nombre")
-    apellido = models.CharField(
-        max_length=50, verbose_name="Apellidos"
-    )  # Cambiado a plural para consistencia
+    apellido = models.CharField(max_length=50, verbose_name="Apellidos")  # Cambiado a plural para consistencia
     foto = models.ImageField(
         upload_to="fotos_crud/", verbose_name="Foto", null=True, blank=True
     )  # Añadido blank=True, y ruta de subida más específica
@@ -104,9 +100,7 @@ class Cliente(models.Model):  # Renombrado de ClienteProfile a Cliente
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True, related_name="cliente"
     )  # Cambiado related_name a 'cliente'
-    numero_documento = models.CharField(
-        max_length=20, blank=True, null=True, verbose_name="Número de Documento"
-    )
+    numero_documento = models.CharField(max_length=20, blank=True, null=True, verbose_name="Número de Documento")
     celular = models.CharField(max_length=20, blank=True, null=True, verbose_name="Celular")
     direccion_residencia = models.CharField(max_length=255, blank=True, null=True)
     foto_perfil = models.ImageField(
@@ -116,9 +110,7 @@ class Cliente(models.Model):  # Renombrado de ClienteProfile a Cliente
         verbose_name="Foto de Perfil",
         default="fotos_perfil/default/default_avatar.png",  # Asegúrate de que esta ruta sea correcta
     )
-    generos_favoritos = models.ManyToManyField(
-        Genero, blank=True, verbose_name="Géneros Favoritos"
-    )
+    generos_favoritos = models.ManyToManyField(Genero, blank=True, verbose_name="Géneros Favoritos")
     medios_de_pago_guardados = models.ManyToManyField(
         "MedioDePago",  # Forward reference to MedioDePago model
         blank=True,
@@ -158,9 +150,7 @@ class Cliente(models.Model):  # Renombrado de ClienteProfile a Cliente
                         os.remove(file_path_to_delete)
                         logger.info(f"Archivo de perfil huérfano eliminado: {file_path_to_delete}")
                     except OSError as e:
-                        logger.error(
-                            f"Error al eliminar archivo huérfano {file_path_to_delete}: {e}"
-                        )
+                        logger.error(f"Error al eliminar archivo huérfano {file_path_to_delete}: {e}")
 
             # Después de la limpieza, si el directorio del usuario está vacío, elimínalo.
             if not os.listdir(user_photo_dir):
@@ -168,17 +158,11 @@ class Cliente(models.Model):  # Renombrado de ClienteProfile a Cliente
                     os.rmdir(user_photo_dir)
                     logger.info(f"Directorio de usuario vacío eliminado: {user_photo_dir}")
                 except OSError as e:
-                    logger.warning(
-                        f"No se pudo eliminar el directorio vacío {user_photo_dir}: {e}"
-                    )
+                    logger.warning(f"No se pudo eliminar el directorio vacío {user_photo_dir}: {e}")
 
         # --- Lógica de procesamiento de imagen (recorte, conversión, etc.) ---
         # Solo procesar si hay una foto de perfil, tiene una ruta y no es la de por defecto.
-        if (
-            self.foto_perfil
-            and hasattr(self.foto_perfil, "path")
-            and "default" not in self.foto_perfil.name
-        ):
+        if self.foto_perfil and hasattr(self.foto_perfil, "path") and "default" not in self.foto_perfil.name:
             try:
                 img = Image.open(self.foto_perfil.path)
                 width, height = img.size
@@ -195,11 +179,7 @@ class Cliente(models.Model):  # Renombrado de ClienteProfile a Cliente
                 # Manejo de transparencia y conversión a RGB
                 if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
                     background = Image.new("RGB", img.size, (255, 255, 255))
-                    mask = (
-                        img.split()[-1]
-                        if img.mode in ("RGBA", "LA")
-                        else img.convert("RGBA").split()[-1]
-                    )
+                    mask = img.split()[-1] if img.mode in ("RGBA", "LA") else img.convert("RGBA").split()[-1]
                     background.paste(img, (0, 0), mask)
                     img = background
                 elif img.mode != "RGB":
@@ -220,9 +200,7 @@ class Cliente(models.Model):  # Renombrado de ClienteProfile a Cliente
 
 
 class PasswordResetCode(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reset_codes", verbose_name="Usuario"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_codes", verbose_name="Usuario")
     code = models.CharField(max_length=6, unique=True, verbose_name="Código")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     expires_at = models.DateTimeField(verbose_name="Fecha de Expiración")
@@ -242,9 +220,7 @@ class PasswordResetCode(models.Model):
             self.code = "".join(random.choices(string.digits, k=6))
             while PasswordResetCode.objects.filter(code=self.code).exists():
                 self.code = "".join(random.choices(string.digits, k=6))
-            self.expires_at = timezone.now() + datetime.timedelta(
-                minutes=10
-            )  # Código válido por 10 minutos
+            self.expires_at = timezone.now() + datetime.timedelta(minutes=10)  # Código válido por 10 minutos
         super().save(*args, **kwargs)
 
 
@@ -256,9 +232,7 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
             Cliente.objects.create(user=instance)
         except Exception as e:
             # En lugar de 'pass', registra el error
-            logger.error(
-                f"Error al crear el perfil Cliente para el usuario {instance.username}: {e}"
-            )
+            logger.error(f"Error al crear el perfil Cliente para el usuario {instance.username}: {e}")
             # pass # Puedes dejar el pass si no quieres que la falla de la señal detenga nada más
 
 
@@ -275,9 +249,7 @@ class Artista(models.Model):
         blank=True,
         default="artistas/default/default_avatar.png",
     )
-    discogs_id = models.CharField(
-        max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs"
-    )
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
 
     class Meta:
         db_table = "artistas"  # Convención: plural
@@ -305,9 +277,7 @@ class Artista(models.Model):
 
 class Productor(models.Model):
     nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre del Productor")
-    discogs_id = models.CharField(
-        max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs"
-    )
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
 
     class Meta:
         db_table = "productores"  # Convención: plural
@@ -321,18 +291,12 @@ class Productor(models.Model):
 
 class Cancion(models.Model):
     nombre = models.CharField(max_length=200, verbose_name="Nombre de la Canción")
-    artistas = models.ManyToManyField(
-        Artista, related_name="canciones_realizadas", blank=True, verbose_name="Artistas"
-    )
+    artistas = models.ManyToManyField(Artista, related_name="canciones_realizadas", blank=True, verbose_name="Artistas")
     productores = models.ManyToManyField(
         Productor, related_name="canciones_producidas", blank=True, verbose_name="Productores"
     )
-    generos = models.ManyToManyField(
-        Genero, related_name="canciones_genero", blank=True, verbose_name="Géneros"
-    )
-    discogs_id = models.CharField(
-        max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs"
-    )
+    generos = models.ManyToManyField(Genero, related_name="canciones_genero", blank=True, verbose_name="Géneros")
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
     duracion = models.DurationField(verbose_name="Duración (ej: 00:03:46)", blank=True, null=True)
 
     class Meta:
@@ -351,14 +315,10 @@ class Cancion(models.Model):
 # --- MODELO PRODUCTO (CATÁLOGO MAESTRO) ---
 class Producto(models.Model):
     nombre = models.CharField(max_length=255, verbose_name="Nombre del Producto/Álbum")
-    artistas = models.ManyToManyField(
-        Artista, related_name="productos", verbose_name="Artista(s) Principal(es)"
-    )
+    artistas = models.ManyToManyField(Artista, related_name="productos", verbose_name="Artista(s) Principal(es)")
     lanzamiento = models.DateField(verbose_name="Fecha de Lanzamiento", null=True, blank=True)
     descripcion = models.TextField(verbose_name="Descripción del Producto", blank=True)
-    discografica = models.CharField(
-        max_length=200, verbose_name="Compañía Discográfica", blank=True
-    )
+    discografica = models.CharField(max_length=200, verbose_name="Compañía Discográfica", blank=True)
     imagen_portada = models.ImageField(
         upload_to="productos_portadas/",
         verbose_name="Imagen de Portada",
@@ -370,9 +330,7 @@ class Producto(models.Model):
         verbose_name="Género(s) Principal(es) del Álbum",
         blank=True,
     )
-    discogs_id = models.CharField(
-        max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs"
-    )
+    discogs_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="ID de Discogs")
 
     class Meta:
         db_table = "productos"
@@ -390,11 +348,7 @@ class Producto(models.Model):
 
         super().save(*args, **kwargs)
 
-        if (
-            old_instance
-            and old_instance.imagen_portada
-            and self.imagen_portada != old_instance.imagen_portada
-        ):
+        if old_instance and old_instance.imagen_portada and self.imagen_portada != old_instance.imagen_portada:
             if "default" not in old_instance.imagen_portada.name:
                 old_instance.imagen_portada.delete(save=False)
 
@@ -411,18 +365,14 @@ class Publicacion(models.Model):
         related_name="publicaciones",
         verbose_name="Producto del Catálogo",
     )
-    vendedor = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="publicaciones", verbose_name="Vendedor"
-    )
+    vendedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="publicaciones", verbose_name="Vendedor")
     precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio de Venta")
     stock = models.PositiveIntegerField(default=1, verbose_name="Cantidad en Venta")
     descripcion_condicion = models.TextField(
         verbose_name="Descripción de la Condición",
         help_text="Ej: 'Casi nuevo, solo se usó una vez.' o 'La portada tiene un ligero desgaste en la esquina.'",
     )
-    fecha_publicacion = models.DateTimeField(
-        auto_now_add=True, verbose_name="Fecha de Publicación"
-    )
+    fecha_publicacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Publicación")
     activa = models.BooleanField(default=True, verbose_name="Publicación Activa")
 
     class Meta:
@@ -439,9 +389,7 @@ class Publicacion(models.Model):
 
 
 class ProductoCancion(models.Model):
-    producto = models.ForeignKey(
-        Producto, on_delete=models.CASCADE, related_name="tracks", verbose_name="Producto"
-    )
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="tracks", verbose_name="Producto")
     cancion = models.ForeignKey(
         Cancion,
         on_delete=models.CASCADE,
@@ -479,9 +427,7 @@ class Pais(models.Model):
 
 class Departamento(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre del Departamento")
-    pais = models.ForeignKey(
-        Pais, on_delete=models.CASCADE, related_name="departamentos", verbose_name="País"
-    )
+    pais = models.ForeignKey(Pais, on_delete=models.CASCADE, related_name="departamentos", verbose_name="País")
 
     class Meta:
         db_table = "departamentos"
@@ -540,9 +486,7 @@ class Pedido(models.Model):
         related_name="pedidos_enviados_aqui",
         verbose_name="Ciudad de Envío",
     )
-    cliente = models.ForeignKey(
-        Cliente, on_delete=models.CASCADE, related_name="pedidos", verbose_name="Cliente"
-    )
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="pedidos", verbose_name="Cliente")
     medio_de_pago = models.ForeignKey(
         MedioDePago,
         on_delete=models.SET_NULL,
@@ -571,9 +515,7 @@ class Pedido(models.Model):
 
 # MODELO INTERMEDIO PARA PEDIDO <-> PUBLICACION
 class PedidoPublicacion(models.Model):
-    pedido = models.ForeignKey(
-        Pedido, on_delete=models.CASCADE, related_name="items_pedido", verbose_name="Pedido"
-    )
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items_pedido", verbose_name="Pedido")
     publicacion = models.ForeignKey(
         "Publicacion",
         on_delete=models.PROTECT,
@@ -638,3 +580,27 @@ class TicketSoporte(models.Model):
 # ELIMINAMOS EL MODELO PedidoProducto PORQUE AHORA USAMOS PedidoPublicacion
 # class PedidoProducto(models.Model):
 #     ...
+
+
+class Notificacion(models.Model):
+    """
+    Modelo para guardar notificaciones para los usuarios, especialmente administradores.
+    """
+
+    # El usuario que recibe la notificación.
+    usuario_destino = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones")
+    mensaje = models.TextField(help_text="El contenido de la notificación.")
+    leido = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+    # URL opcional para que la notificación sea un enlace (ej. al producto editado)
+    url_destino = models.CharField(
+        max_length=255, blank=True, null=True, help_text="URL a la que debe dirigir la notificación."
+    )
+
+    def __str__(self):
+        return f"Notificación para {self.usuario_destino.username}: {self.mensaje[:30]}..."
+
+    class Meta:
+        ordering = ["-fecha_creacion"]
+        verbose_name = "Notificación"
+        verbose_name_plural = "Notificaciones"

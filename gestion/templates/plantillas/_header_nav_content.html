@@ -25,7 +25,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 {# Enlaces de navegación basados en el rol del usuario #}
-                {% if user.is_authenticated %}                    
+                {% if user.is_authenticated %}
                     {% if user.is_staff or user.is_superuser %}
                         {# Enlaces de Administrador #}
                         <li class="nav-item"> <a class="nav-link" href="{% url 'admin_producto' %}">Productos</a>
@@ -57,8 +57,10 @@
                                 Vender
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownVendedor">
-                                <li><a class="dropdown-item" href="{% url 'ven_crear' %}">Crear Producto</a></li>
+                                <li><a class="dropdown-item" href="{% url 'ven_crear' %}">Vender desde Catálogo</a></li>
                                 <li><a class="dropdown-item" href="{% url 'ven_producto' %}">Mis Productos</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'ven_importar_desde_discogs' %}">Importar desde Discogs</a></li>
                                 <li><a class="dropdown-item" href="{% url 'ven_notificaciones' %}">Notificaciones Vendedor</a></li>
                             </ul>
                         </li>

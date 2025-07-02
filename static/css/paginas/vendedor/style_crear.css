@@ -98,7 +98,7 @@ section{
     display: flex;
     flex-wrap: wrap; /*  Clave para que se bajen */
     align-items: flex-start;
-    gap: 20px;   
+    gap: 20px;
     background-color: #68020200;
 }
 
@@ -157,7 +157,7 @@ span {
     display: flex;
     flex-wrap: wrap; /*  Clave para que se bajen */
     align-items: flex-start;
-    gap: 20px;   
+    gap: 20px;
 }
 
 .contenido-comentario a {

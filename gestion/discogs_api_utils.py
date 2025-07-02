@@ -76,9 +76,7 @@ class DiscogsAPI:
                 ext = ".jpg"  # Fallback si no hay extensión
 
             filename = f"{filename_prefix}_{os.urandom(8).hex()}{ext}"
-            path = default_storage.save(
-                os.path.join("productos_portadas", filename), ContentFile(response.content)
-            )
+            path = default_storage.save(os.path.join("productos_portadas", filename), ContentFile(response.content))
             return path
         except requests.exceptions.RequestException as e:
             logger.error(f"Error al descargar la imagen de Discogs {image_url}: {e}")

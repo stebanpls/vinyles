@@ -37,16 +37,10 @@ from gestion import views as gestion_views  # Añadir import para las vistas de 
 from .admin import custom_admin_site
 
 urlpatterns = [
-    path(
-        "", include("gestion.urls")
-    ),  # Accediendo a todo lo que tiene gestion.urls para filtrarlo
-    path(
-        "admin/", custom_admin_site.urls
-    ),  # Usa tu instancia personalizada para la URL del administrador
+    path("", include("gestion.urls")),  # Accediendo a todo lo que tiene gestion.urls para filtrarlo
+    path("admin/", custom_admin_site.urls),  # Usa tu instancia personalizada para la URL del administrador
     # URLs de autenticación de Django, personalizadas
-    path(
-        "accounts/login/", gestion_views.pub_login, name="login"
-    ),  # Modificado para usar tu vista personalizada
+    path("accounts/login/", gestion_views.pub_login, name="login"),  # Modificado para usar tu vista personalizada
     # Redirigir a la URL nombrada 'pub_log_out' después del logout, que está definida en gestion.urls
     path(
         "accounts/logout/",

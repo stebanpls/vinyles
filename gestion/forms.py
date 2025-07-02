@@ -13,6 +13,7 @@ from .models import (  # Importa los modelos actualizados
     Cliente,
     Crud,
     Genero,
+    Producto,
     Productor,
     Publicacion,
 )
@@ -59,9 +60,7 @@ class UserRegistrationForm(DjangoUserCreationForm):  # Heredar de UserCreationFo
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if email and User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError(
-                "Ya existe un usuario registrado con este correo electrónico."
-            )
+            raise forms.ValidationError("Ya existe un usuario registrado con este correo electrónico.")
         return email
 
 
@@ -94,9 +93,7 @@ class PasswordResetConfirmForm(SetPasswordForm):
         label=_("Código de Verificación"),
         max_length=6,
         min_length=6,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Código de 6 dígitos"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Código de 6 dígitos"}),
     )
 
     def clean_code(self):
@@ -106,9 +103,7 @@ class PasswordResetConfirmForm(SetPasswordForm):
         try:
             reset_code_obj = PasswordResetCode.objects.get(user=self.user, code=code)
             if not reset_code_obj.is_valid():
-                raise forms.ValidationError(
-                    _("El código de verificación ha expirado. Por favor, solicita uno nuevo.")
-                )
+                raise forms.ValidationError(_("El código de verificación ha expirado. Por favor, solicita uno nuevo."))
         except PasswordResetCode.DoesNotExist as e:
             raise forms.ValidationError(_("El código de verificación es incorrecto.")) from e
         return code
@@ -133,9 +128,7 @@ class ArtistaForm(forms.ModelForm):
             "foto": "Foto del Artista",
         }
         widgets = {
-            "nombre": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Ej: Michael Jackson"}
-            ),
+            "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ej: Michael Jackson"}),
             "informacion": forms.Textarea(
                 attrs={  # 'biografia' cambiado a 'informacion'
                     "rows": 4,
@@ -169,12 +162,8 @@ class PublicacionForm(forms.ModelForm):
             "descripcion_condicion": "Describe la condición de tu vinilo (portada, disco, etc.)",
         }
         widgets = {
-            "precio": forms.NumberInput(
-                attrs={"class": "form-control", "min": "0", "placeholder": "Ej: 120000"}
-            ),
-            "stock": forms.NumberInput(
-                attrs={"class": "form-control", "min": "1", "placeholder": "Ej: 1"}
-            ),
+            "precio": forms.NumberInput(attrs={"class": "form-control", "min": "0", "placeholder": "Ej: 120000"}),
+            "stock": forms.NumberInput(attrs={"class": "form-control", "min": "1", "placeholder": "Ej: 1"}),
             "descripcion_condicion": forms.Textarea(
                 attrs={
                     "class": "form-control",
@@ -195,6 +184,56 @@ class PublicacionForm(forms.ModelForm):
         if stock is not None and stock < 1:
             raise forms.ValidationError("Debes tener al menos 1 en stock.")
         return stock
+
+
+class VentaDesdeCatalogoForm(forms.Form):
+    """
+    Formulario para vender un producto existente en el catálogo,
+    seleccionando primero el artista y luego el álbum.
+    """
+
+    artista = forms.ModelChoiceField(
+        queryset=Artista.objects.order_by("nombre"),
+        label="Paso 1: Selecciona el Artista",
+        empty_label="-- Elige un artista --",
+        widget=forms.Select(attrs={"class": "form-select form-select-lg mb-3"}),
+    )
+    album = forms.ModelChoiceField(
+        queryset=Producto.objects.none(),  # Se llena con JS
+        label="Paso 2: Selecciona el Álbum",
+        empty_label="-- Selecciona un artista primero --",
+        widget=forms.Select(attrs={"class": "form-select form-select-lg mb-3"}),
+    )
+    precio = forms.DecimalField(
+        label="Paso 3: Define el precio de tu copia",
+        min_value=0.01,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Ej: 120000.00"}),
+    )
+    stock = forms.IntegerField(
+        label="Cantidad disponible",
+        min_value=1,
+        initial=1,
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Ej: 1"}),
+    )
+    descripcion_condicion = forms.CharField(
+        label="Paso 4: Describe la condición de tu vinilo (portada, disco, etc.)",
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "Ej: Portada en excelente estado, disco con ligeras marcas superficiales que no afectan el sonido.",
+            }
+        ),
+        help_text="Sé lo más detallado posible para generar confianza en los compradores.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["album"].widget.attrs["disabled"] = True
+        self.fields["precio"].widget.attrs["disabled"] = True
+        self.fields["stock"].widget.attrs["disabled"] = True
+        self.fields["descripcion_condicion"].widget.attrs["disabled"] = True
 
 
 # ELIMINADO: ProductoForm ya no se usa para la creación por parte del vendedor.
@@ -272,9 +311,7 @@ class ProductorForm(forms.ModelForm):
             "nombre": "Nombre del Productor",
         }
         widgets = {
-            "nombre": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Ej: Quincy Jones"}
-            ),
+            "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ej: Quincy Jones"}),
         }
 
     def clean_nombre(self):
@@ -295,9 +332,7 @@ class GeneroForm(forms.ModelForm):
         }
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ej: Salsa"}),
-            "foto": MinimalFileInput(
-                attrs={"class": "form-control-file mb-2", "accept": "image/*"}
-            ),
+            "foto": MinimalFileInput(attrs={"class": "form-control-file mb-2", "accept": "image/*"}),
         }
 
     def clean_nombre(self):
@@ -415,9 +450,7 @@ class ClienteEditForm(forms.ModelForm):
             "numero_documento": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Ingresa el número de documento"}
             ),
-            "celular": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Ingresa el número de celular"}
-            ),
+            "celular": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ingresa el número de celular"}),
             "direccion_residencia": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Ingresa la dirección"}
             ),
@@ -443,18 +476,10 @@ class UserEditForm(forms.ModelForm):
             "is_staff": "¿Puede acceder al panel administrativo?",
         }
         widgets = {
-            "username": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Ingresa el nombre de usuario"}
-            ),
-            "email": forms.EmailInput(
-                attrs={"class": "form-control", "placeholder": "Ingresa el correo"}
-            ),
-            "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Ingresa los nombres"}
-            ),
-            "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Ingresa los apellidos"}
-            ),
+            "username": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ingresa el nombre de usuario"}),
+            "email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "Ingresa el correo"}),
+            "first_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ingresa los nombres"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ingresa los apellidos"}),
         }
 
 
@@ -482,9 +507,7 @@ class CrearUsuarioStaffForm(UserCreationForm):
         fields = ("username", "email", "first_name", "last_name", "password1", "password2")
         field_classes = {"username": UsernameField}
         widgets = {
-            "username": forms.TextInput(
-                attrs={"placeholder": "Nombre de usuario del administrador"}
-            ),
+            "username": forms.TextInput(attrs={"placeholder": "Nombre de usuario del administrador"}),
             "password1": forms.PasswordInput(attrs={"placeholder": "Contraseña de acceso"}),
             "password2": forms.PasswordInput(attrs={"placeholder": "Confirmar contraseña"}),
         }

@@ -1,0 +1,114 @@
+{% extends "plantillas/plantilla_vendedor.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <style>
+        .select2-container--bootstrap-5 .select2-dropdown {
+            background-color: #343a40;
+            border-color: #6c757d;
+        }
+        .select2-container--bootstrap-5 .select2-results__option {
+            color: #f8f9fa;
+        }
+        .select2-container--bootstrap-5 .select2-results__option--highlighted {
+            background-color: #0d6efd;
+        }
+        .select2-container--bootstrap-5 .select2-search__field {
+            background-color: #495057;
+            color: #f8f9fa;
+            border-color: #6c757d;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block titulo %}Vender desde el Catálogo{% endblock titulo %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">Vender un Vinilo desde el Catálogo</h1>
+            <p class="text-center text-muted">
+                Selecciona un artista para ver sus álbumes disponibles en nuestro catálogo. Luego, elige el álbum que deseas vender.
+            </p>
+
+            <form method="post" class="p-4 border rounded bg-light text-dark shadow-sm">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                    {% render_field field class="form-control" %}
+                    {% if field.help_text %}
+                        <div class="form-text text-muted mt-1">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Poner en Venta</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <p>¿No encuentras el álbum en el catálogo?</p>
+                <a href="{% url 'ven_importar_desde_discogs' %}" class="btn btn-outline-info">Impórtalo desde Discogs</a>
+                <span class="mx-2">o</span>
+                <a href="{% url 'ven_crear_producto_nuevo' %}" class="btn btn-outline-secondary">Créalo desde cero (Avanzado)</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+
+{% block pie %}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        $('#id_artista').select2({
+            theme: "bootstrap-5",
+            placeholder: "-- Elige un artista --",
+        });
+
+        $('#id_album').select2({
+            theme: "bootstrap-5",
+            placeholder: "-- Selecciona un artista primero --",
+        });
+
+        $('#id_artista').on('change', function() {
+            const artistaId = $(this).val();
+            const albumSelect = $('#id_album');
+            const otrosCampos = $('#id_precio, #id_stock, #id_descripcion_condicion');
+
+            if (artistaId) {
+                $.ajax({
+                    url: "{% url 'ajax_cargar_albumes' %}",
+                    data: { 'artista_id': artistaId },
+                    success: function(data) {
+                        albumSelect.empty().append('<option value="">-- Elige un álbum --</option>');
+                        $.each(data, function(key, value) {
+                            albumSelect.append($('<option>', {
+                                value: value.id,
+                                text: value.nombre
+                            }));
+                        });
+                        albumSelect.prop('disabled', false);
+                        otrosCampos.prop('disabled', false);
+                    }
+                });
+            } else {
+                albumSelect.empty().append('<option value="">-- Selecciona un artista primero --</option>').prop('disabled', true);
+                otrosCampos.prop('disabled', true);
+            }
+        });
+    });
+    </script>
+{% endblock pie %}

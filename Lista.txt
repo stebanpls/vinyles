@@ -61,13 +61,31 @@ Lista de Pasos para Implementar Sistema de Autenticación en Django (Proyecto Vi
     *   Verificar flujo de reseteo de contraseña (accediendo a `/accounts/password_reset/`, revisando consola para enlace).
     *   Verificar acceso a páginas protegidas (sin login, con login de rol incorrecto).
 
+13. **Dinamizar la Interfaz Pública (Tienda):**
+    *   **Página de Inicio (`pub_inicio`):**
+        *   **Vista (`gestion/views.py`):** Modificar `pub_inicio` para que consulte las `Publicacion`es activas y las pase a la plantilla. **(Completado)**
+        *   **Plantilla (`gestion/templates/paginas/publico/pub_inicio.html`):** Reemplazar el contenido estático con un bucle `{% for %}` que muestre los productos dinámicamente. **(Completado)**
+        *   **Configuración (`vinyles/settings.py`):** Añadir `'django.contrib.humanize'` a `INSTALLED_APPS` para formateo de precios. **(Completado)**
+    *   **Página de Detalles del Producto (`pub_vinilo`):**
+        *   **Vista (`gestion/views.py`):** Modificar `pub_vinilo` para que acepte un `producto_id`, busque el `Producto` y sus `Publicacion`es asociadas, y los pase a la plantilla. **(Completado)**
+        *   **Plantilla (`gestion/templates/paginas/publico/pub_vinilo.html`):** Actualizar la plantilla para mostrar la información detallada del `producto` (portada, nombre, artistas, tracklist) y un listado de las `publicaciones` (ofertas de vendedores con su precio y condición). **(Pendiente)**
+    *   **Página de Inicio del Comprador (`com_inicio`):**
+        *   Hacer que la página de inicio para usuarios autenticados (`com_inicio`) también muestre productos, similar a `pub_inicio`, pero con la funcionalidad de "Agregar al carrito" ya activa (sin redirigir al login). **(Pendiente)**
+
+--- Pasos Futuros (Después de que la tienda pública básica funcione) ---
+
+14. **Implementar Funcionalidad de Carrito de Compras:**
+    *   **Lógica de Sesión:** Crear vistas o funciones de ayuda para añadir, ver y eliminar productos del carrito, almacenando la información en la sesión del usuario (`request.session`).
+    *   **Integración en Plantillas:** Modificar los botones "Agregar al carrito" en `pub_inicio.html` y `pub_vinilo.html` para que llamen a la vista correspondiente, probablemente usando AJAX para una mejor experiencia de usuario.
+    *   **Vista del Carrito (`com_carrito`):** Hacer que la vista `com_carrito` lea los datos de la sesión y muestre un resumen de los productos en el carrito.
+
 --- Pasos Futuros (Después de que el sistema de autenticación básico funcione bien) ---
 
-13. **Proteger Vistas de Comprador y Vendedor (`gestion/views.py`):**
+15. **Proteger Vistas de Comprador y Vendedor (`gestion/views.py`):**
     *   Aplicar `@login_required` a todas las vistas `com_*` y `ven_*`.
     *   Definir e implementar un mecanismo para identificar "Vendedores" y aplicar `@user_passes_test` a vistas `ven_*`.
 
-14. **Implementar Funcionalidad de "Mi Perfil" (Edición):**
+16. **Implementar Funcionalidad de "Mi Perfil" (Edición):**
     *   **Crear/Actualizar Formulario de Edición:** Crear un nuevo formulario en `gestion/forms.py` (ej. `ClienteProfileForm` o `PerfilEdicionForm`) que maneje los campos del modelo `Cliente` (numero_documento, celular, direccion_residencia, foto_perfil, generos_favoritos) y, opcionalmente, campos del `User` (first_name, last_name, email) y la lógica de cambio de contraseña.
     *   **Modificar Vistas de Perfil (`com_perfil`, `ven_perfil` en `gestion/views.py`):**
         *   Añadir lógica para manejar solicitudes `POST`.
@@ -81,17 +99,17 @@ Lista de Pasos para Implementar Sistema de Autenticación en Django (Proyecto Vi
         *   Incluir `{% csrf_token %}`.
         *   Mostrar mensajes de Django (`{% if messages %}`).
 
-15. **Manejo de Datos del Álbum en el Login:**
+17. **Manejo de Datos del Álbum en el Login:**
     *   Implementar lógica en `pub_login` para que, si un usuario llega desde una página de producto, se le redirija al carrito o se añada el producto al carrito después del login (posiblemente usando sesiones).
 
-16. **Configuración de Envío de Emails para Producción:**
+18. **Configuración de Envío de Emails para Producción:**
     *   Configurar `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, etc., en `settings.py` para que el reseteo de contraseña envíe emails reales.
 
-17. **Refinamiento de la Interfaz de Usuario y Mensajes:**
+19. **Refinamiento de la Interfaz de Usuario y Mensajes:**
     *   Asegurar claridad y utilidad de todos los mensajes al usuario.
     *   Mejorar diseño y usabilidad de formularios y páginas de autenticación.
 
-18. **Seguridad Adicional (Consideraciones):**
+20. **Seguridad Adicional (Consideraciones):**
     *   Revisar configuraciones de seguridad de Django para producción.
     *   Considerar autenticación de dos factores (2FA) si es necesario.
 

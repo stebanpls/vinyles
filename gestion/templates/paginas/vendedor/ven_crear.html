@@ -88,7 +88,7 @@
 
 
 <script>
-//JS PARA EL FOMULARIO DE CREAR ALBUM 
+//JS PARA EL FOMULARIO DE CREAR ALBUM
 //esto es para que funcione lo de agregar canciones y el boton de eliminar
   const cancionesDisponibles = [
     {% for cancion in canciones %}
@@ -98,7 +98,7 @@
 
 
 
-  //para que funcione el select 2 
+  //para que funcione el select 2
 $(document).ready(function () {
   // Inicializar Select2 para el campo de artistas del formulario principal (álbum)
   // Usamos el ID específico para mayor robustez.
@@ -244,7 +244,7 @@ function enviarFormularioArtistaDesdeCancion(event, form) {
     if (data.success) {
       // Referencia al select de artista dentro del modal de canción
       const selectArtista = document.querySelector('#modalCancion .select-artista');
-      
+
       // Crear opción y agregarla al select
       const nuevaOpcion = new Option(data.nombre, data.id, true, true);
       selectArtista.appendChild(nuevaOpcion);
@@ -291,7 +291,7 @@ function enviarFormularioArtistaDesdeCancion(event, form) {
 }
 
 
-//abrir el modal genero 
+//abrir el modal genero
 function abrirModalGenero(url) {
   fetch(url)
     .then(response => response.text())
@@ -308,7 +308,7 @@ function abrirModalGenero(url) {
     });
 }
 
-//enviar el fromualrio de genero 
+//enviar el fromualrio de genero
 function enviarFormularioGenero(event, form, idSelect = "id_genero_principal", modalId = "modalFormulario") {
   event.preventDefault();
   const url = form.action;
@@ -418,7 +418,7 @@ function enviarFormularioGeneroDesdeCancion(event, form) {
 }
 
 
-//abre el modal de cancion desde el formulario de album 
+//abre el modal de cancion desde el formulario de album
 function abrirModalCancion(url) {
   fetch(url)
     .then(response => response.text())
@@ -470,7 +470,7 @@ form.addEventListener("submit", function (event) {
 }
 
 
-//envia el formulario con la cancion creada y se autoselecciona 
+//envia el formulario con la cancion creada y se autoselecciona
 function enviarFormularioCancion(event, form) {
   event.preventDefault();
   const url = form.action;
@@ -573,7 +573,7 @@ function enviarFormularioCancion(event, form) {
 }
 
 
-//TODO ESTO ES PARA QUE FUNCIONE ELIMINAR AGREGAR CANCIONES Y SE ACTUALIZA LA PISTA DE ESTA 
+//TODO ESTO ES PARA QUE FUNCIONE ELIMINAR AGREGAR CANCIONES Y SE ACTUALIZA LA PISTA DE ESTA
 function agregarCancion() {
   const contenedor = document.getElementById("contenedor-canciones");
   const cantidadActual = contenedor.querySelectorAll(".cancion-row").length;
@@ -622,7 +622,7 @@ function renumerarPistas() {
 
 
 
-//ABRIR MODALS DESDE CANCION 
+//ABRIR MODALS DESDE CANCION
 //abre el modal de productor
 function abrirModalProductorDesdeCancion(url) {
   fetch(url)
@@ -695,7 +695,7 @@ function enviarFormularioProductor(event, form) {
 
 
 
-//abrir el modal de genero 
+//abrir el modal de genero
 function abrirModalGenero(url, desdeCancion = false) {
   fetch(url)
     .then(response => response.text())

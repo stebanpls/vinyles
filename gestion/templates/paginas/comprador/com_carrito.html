@@ -15,9 +15,9 @@
     <div class="cart-items">
         {% for item in cart_items %}
         <div class="cart-item">
-            <img 
-            src="{% static item.image %}" 
-            alt="{{ item.title }}" 
+            <img
+            src="{% static item.image %}"
+            alt="{{ item.title }}"
             class="cart-item-image">
 
             <div class="cart-item-details">
@@ -26,8 +26,8 @@
             <p class="cart-item-price">COP ${{ item.price }}</p>
             </div>
 
-            <a 
-            href="{% url 'com_carrito' %}?remove={{ forloop.counter0 }}" 
+            <a
+            href="{% url 'com_carrito' %}?remove={{ forloop.counter0 }}"
             class="btn btn-remove-item">
             🗑 Eliminar
             </a>

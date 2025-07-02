@@ -13,7 +13,7 @@
         <div class="contenedor">
             <img src="{% static album_data.image %}" alt="Carátula de {{ album_data.title|default:'Álbum Desconocido' }}" >
         </div>
-        
+
         <div class="info">
             <div class="titulo">
                 <p>{{ album_data.title }}</p>
@@ -32,7 +32,7 @@
                 </audio>
             </div>
             {% endif %}
-            
+
             <!-- Botones -->
             <div class="botones-acciones">
                 <!-- Botón de comprar: redirige al checkout (con el mismo parámetro 'album' si quieres) -->
@@ -40,14 +40,14 @@
                     Comprar
                 </a>
 
-                
+
                 <a href="{% url 'com_carrito' %}?album={{ album_data.key }}" class="btn-agregar-carrito"> {# Usar album_data.key #}
                     Añadir al carrito
                 </a>
             </div>
         </div>
     </div>
-    
+
     <div class="detalles">
         <div class="album">
             <details>
@@ -70,7 +70,7 @@
                 </p>
             </details>
         </div>
-    
+
         <div class="artista">
             <details>
                 <summary class="acor">Información del artista</summary>
@@ -92,11 +92,11 @@
                 </div>
             </details>
         </div>
-        
+
         <div class="comentarios">
             <details>
                 <summary class="acor">Reseñas y comentarios</summary>
-                
+
                 {% for comment in album_data.comments %}
                 <div class="comentario">
                     <div class="avatar">
@@ -141,5 +141,5 @@
 {% endblock contenido %}
 
 {% block pie %}
-    
+
 {% endblock pie %}

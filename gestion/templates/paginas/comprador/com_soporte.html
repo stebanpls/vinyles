@@ -1,7 +1,7 @@
 {% extends "plantillas/plantilla_comprador.html" %}
 {% load static %}
 
-{% block extra_css %} 
+{% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_soporte.css' %}">
 {% endblock extra_css %}
 
@@ -35,7 +35,7 @@
               <label for="message" class="form-label">Mensaje</label>
               <textarea class="form-control" name="message" id="message" rows="5" required></textarea>
             </div>
-            
+
             <script>
               document.getElementById('loginForm').addEventListener('submit', function(event) {
                 var email = document.getElementById('email').value;
@@ -44,7 +44,7 @@
                   event.preventDefault(); // Evita que el formulario se envíe
                 }
               });
-            
+
               function validateEmail(email) {
                 var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 return re.test(email);

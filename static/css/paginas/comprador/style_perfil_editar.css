@@ -59,7 +59,7 @@
     margin-bottom: 1.5rem !important;
 }
 .profile-edit-form-container form p:last-of-type { /* Evitar doble margen si el último elemento es un <p> antes de los botones */
-    margin-bottom: 0; 
+    margin-bottom: 0;
 }
 
 .profile-edit-form-container label {
@@ -118,7 +118,7 @@
     box-sizing: border-box;
 }
 /* Bootstrap 5 usa .form-control para input file, así que la clase .form-control-file es redundante o custom */
-.profile-edit-form-container .form-control-file { 
+.profile-edit-form-container .form-control-file {
     /* Hereda estilos de input[type="file"] o .form-control */
 }
 .profile-edit-form-container input[type="file"]::file-selector-button {
@@ -315,7 +315,7 @@
 }
 
 .profile-edit-form-container .current-profile-image img.img-thumbnail {
-    display: block; 
+    display: block;
     margin-bottom: 0.75rem; /* Espacio entre la imagen y el botón "Editar Foto" */
 }
 
@@ -343,7 +343,7 @@
     background-color: var(--error-color);
     border-color: var(--error-color);
     color: #fff;
-    margin-top: 0.5rem; 
+    margin-top: 0.5rem;
 }
 .profile-edit-form-container #removeProfilePhotoButton:hover {
     background-color: #c82333;

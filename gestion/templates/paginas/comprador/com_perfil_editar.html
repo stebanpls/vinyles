@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fotoPerfilErrorMessage = fotoPerfilErrorWrapperInitial ? fotoPerfilErrorWrapperInitial.querySelector('.foto-perfil-error-message') : null;
     const deleteProfilePhotoHiddenInput = document.querySelector('input[name="_delete_profile_photo"]');
     // Apuntar a la imagen PNG por defecto desde la carpeta 'media'
-    const defaultAvatarUrl = "{{ MEDIA_URL }}fotos_perfil/default/default_avatar.png"; 
+    const defaultAvatarUrl = "{{ MEDIA_URL }}fotos_perfil/default/default_avatar.png";
 
     if (editPhotoButton && photoEditOptions) {
         editPhotoButton.addEventListener('click', function() {

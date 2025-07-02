@@ -18,7 +18,7 @@
             <p>Ingresa tu dirección de correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
             <form method="post"> {# La action la define la URL de Django #}
                 {% csrf_token %}
-                
+
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger mt-2">
                         {% for error in form.non_field_errors %}

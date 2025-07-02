@@ -58,7 +58,7 @@
 }
 
 .albumes {
-    flex: 1; 
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     grid-gap: 50px;
@@ -67,7 +67,7 @@
 
 .link{
     text-decoration: none;
-    color: #ffffff00;         
+    color: #ffffff00;
 }
 
 .link:visited,
@@ -78,7 +78,7 @@ text-decoration: none;
 }
 
 .album-card {
-    background-color: #3838388b; 
+    background-color: #3838388b;
     padding: 1rem;
     border-radius: 4px;
     text-align: center;

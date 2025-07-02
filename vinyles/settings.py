@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.humanize",
     "django.contrib.sites",
     "django.contrib.staticfiles",
     # 2. Aplicaciones de terceros (generalmente, no se sobrescriben directamente)
@@ -165,9 +166,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "es-co"  # o 'es-es', 'es-ar', 'es-mx', etc.
 
 # Configura esto a tu zona horaria local. Para Colombia, sería 'America/Bogota'.
-TIME_ZONE = (
-    "America/Bogota"  # Por defecto, Django usa UTC, pero puedes cambiarlo a tu zona horaria local.
-)
+TIME_ZONE = "America/Bogota"  # Por defecto, Django usa UTC, pero puedes cambiarlo a tu zona horaria local.
 
 USE_I18N = True  # Esto activa la internacionalización, permitiendo que Django use traducciones y formatos localizados.
 
@@ -201,9 +200,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CONFIGURACIÓN DE AUTENTICACIÓN
 LOGIN_REDIRECT_URL = "com_inicio"  # O 'dashboard' como en el video, apunta a tu vista post-login
 LOGIN_URL = "pub_login"  # URL de tu vista de login principal
-LOGOUT_REDIRECT_URL = (
-    "pub_log_out"  # Redirigir a la URL nombrada 'pub_log_out' después de cerrar sesión
-)
+LOGOUT_REDIRECT_URL = "pub_log_out"  # Redirigir a la URL nombrada 'pub_log_out' después de cerrar sesión
 
 
 # Configuración para que los emails se muestren en la consola durante el desarrollo
@@ -216,12 +213,8 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587  # Puerto estándar para TLS
 EMAIL_USE_TLS = True  # Usar Transport Layer Security (recomendado)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # Lee tu email desde .env
-EMAIL_HOST_PASSWORD = os.environ.get(
-    "EMAIL_HOST_PASSWORD"
-)  # Lee tu contraseña de aplicación desde .env
-DEFAULT_FROM_EMAIL = (
-    f"Vinyles <{os.environ.get('EMAIL_HOST_USER')}>"  # Email que aparecerá como remitente
-)
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  # Lee tu contraseña de aplicación desde .env
+DEFAULT_FROM_EMAIL = f"Vinyles <{os.environ.get('EMAIL_HOST_USER')}>"  # Email que aparecerá como remitente
 
 # Opcional: si quieres que el nombre del remitente sea fijo y no dependa del EMAIL_HOST_USER
 # DEFAULT_FROM_EMAIL = 'Vinyles <tu_correo_de_soporte@example.com>'

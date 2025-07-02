@@ -11,6 +11,7 @@
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
@@ -69,9 +70,9 @@ CREATE TABLE IF NOT EXISTS `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.auth_permission: ~100 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.auth_permission: ~104 rows (aproximadamente)
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 	(1, 'Can add log entry', 1, 'add_logentry');
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
@@ -272,6 +273,14 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 	(99, 'Can delete Canción en Producto', 25, 'delete_productocancion');
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 	(100, 'Can view Canción en Producto', 25, 'view_productocancion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(101, 'Can add Notificación', 26, 'add_notificacion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(102, 'Can change Notificación', 26, 'change_notificacion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(103, 'Can delete Notificación', 26, 'delete_notificacion');
+INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
+	(104, 'Can view Notificación', 26, 'view_notificacion');
 
 -- Volcando estructura para tabla vinyles_local.auth_user
 DROP TABLE IF EXISTS `auth_user`;
@@ -503,9 +512,9 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.django_content_type: ~25 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_content_type: ~26 rows (aproximadamente)
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(1, 'admin', 'logentry');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
@@ -556,6 +565,8 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(24, 'gestion', 'ticketsoporte');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(25, 'gestion', 'productocancion');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(26, 'gestion', 'notificacion');
 
 -- Volcando estructura para tabla vinyles_local.django_migrations
 DROP TABLE IF EXISTS `django_migrations`;
@@ -565,9 +576,9 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~21 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~22 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-06-30 12:47:14.918691');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
@@ -610,6 +621,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(20, 'sites', '0001_initial', '2025-06-30 12:47:32.532345');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(21, 'sites', '0002_alter_domain_unique', '2025-06-30 12:47:32.735994');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(22, 'gestion', '0002_notificacion', '2025-07-02 04:08:09.857884');
 
 -- Volcando estructura para tabla vinyles_local.django_session
 DROP TABLE IF EXISTS `django_session`;
@@ -663,6 +676,22 @@ CREATE TABLE IF NOT EXISTS `gestion_estadousuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Volcando datos para la tabla vinyles_local.gestion_estadousuario: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla vinyles_local.gestion_notificacion
+DROP TABLE IF EXISTS `gestion_notificacion`;
+CREATE TABLE IF NOT EXISTS `gestion_notificacion` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `mensaje` longtext NOT NULL,
+  `leido` tinyint(1) NOT NULL,
+  `fecha_creacion` datetime(6) NOT NULL,
+  `url_destino` varchar(255) DEFAULT NULL,
+  `usuario_destino_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `gestion_notificacion_usuario_destino_id_13b951b0_fk_auth_user_id` (`usuario_destino_id`),
+  CONSTRAINT `gestion_notificacion_usuario_destino_id_13b951b0_fk_auth_user_id` FOREIGN KEY (`usuario_destino_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Volcando datos para la tabla vinyles_local.gestion_notificacion: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla vinyles_local.medios_de_pago
 DROP TABLE IF EXISTS `medios_de_pago`;

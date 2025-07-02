@@ -7,7 +7,7 @@
 
 {% block titulo %} Administrador - usuarios {% endblock titulo %}
 
-{% block contenido %} 
+{% block contenido %}
 <div class="perfil-container">
     <h2 class="titulo-perfil">Perfil usuario</h2>
     <div class="perfil-card">
@@ -17,7 +17,7 @@
         </div>
 
         <div class="perfil-info">
-            
+
             <p><strong>Correo electrónico:</strong> laura67gomezz@gmail.com</p>
             <p><strong>Número de teléfono:</strong> 3167890463</p>
             <p><strong>País:</strong> Colombia</p>
@@ -30,7 +30,7 @@
                     <div>
                         <p class="album"> Abbey Road	</p>
                         <p class="artista">The Beatles</p>
-                        
+
                     </div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
     function toggleBloqueo() {
         const boton = document.getElementById('boton-bloqueo');
         const mensaje = document.getElementById('mensaje-bloqueo');
-    
+
         if (boton.textContent === "Bloquear usuario") {
             mensaje.textContent = "Usuario bloqueado con éxito ✅";
             boton.textContent = "Desbloquear usuario";
@@ -58,7 +58,7 @@
             boton.textContent = "Bloquear usuario";
             boton.classList.remove("desbloquear");
         }
-    
+
         mensaje.classList.add("visible");
         setTimeout(() => {
             mensaje.classList.remove("visible");
