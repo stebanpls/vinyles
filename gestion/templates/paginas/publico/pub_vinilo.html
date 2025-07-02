@@ -1,80 +1,68 @@
 {% extends "plantillas/plantilla_publico.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/paginas/publico/style_vinilo.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} Vinyles - {{ album_data.title }} {% endblock titulo %}
+{% block titulo %} Vinyles - {{ producto.nombre }} {% endblock titulo %}
 
 {% block contenido %}
 <section class="vinilo-section">
     <div class="cuadro">
         <div class="contenedor">
-            <img src="{% static album_data.image %}" alt="Carátula de {{ album_data.title|default:'Álbum Desconocido' }}" >
+            {% if producto.imagen_portada %}
+                <img src="{{ producto.imagen_portada.url }}" alt="Carátula de {{ producto.nombre }}">
+            {% else %}
+                <img src="{% static 'images/albumes/default/default_album.png' %}" alt="Carátula no disponible">
+            {% endif %}
         </div>
 
         <div class="info">
             <div class="titulo">
-                <p>{{ album_data.title }}</p>
+                <p>{{ producto.nombre }}</p>
+                <p class="artista-subtitulo">de {{ producto.artistas.all|join:", " }}</p>
             </div>
             <div class="precio-valor">
-                <span class="etiqueta-precio">Precio: </span>
-                <span class="dato-precio">${{ album_data.price|floatformat:"0" }}</span>
+                <span class="etiqueta-precio">Desde: </span>
+                {# Encontrar el precio más bajo entre las publicaciones disponibles #}
+                {% with publicaciones|first as primera_publicacion %}
+                    <span class="dato-precio">${{ primera_publicacion.precio|intcomma }}</span>
+                {% endwith %}
             </div>
-
-                        {# reproductor de audio (giselleteamo) #}
-            {% if album_data.audio %}
-            <div class="audio-player">
-                <audio controls>
-                    <source src="{% static album_data.audio %}" type="audio/mpeg">
-                    Tu navegador no soporta reproducción de audio.
-                </audio>
-            </div>
-            {% endif %}
 
             <!-- Botones -->
             <div class="botones-acciones">
-                <!-- Botón de comprar: redirige al checkout (con el mismo parámetro 'album' si quieres) -->
-                <a href="{% url 'com_carrito' %}?album={{ album_data.key }}&checkout=true" class="btn-comprar"> {# Usar album_data.key si lo añades en views.py #}
-                    Comprar
-                </a>
-
-
-                <a href="{% url 'com_carrito' %}?album={{ album_data.key }}" class="btn-agregar-carrito"> {# Usar album_data.key #}
-                    Añadir al carrito
-                </a>
+                {# El botón de comprar ahora podría llevar directamente al checkout con la primera oferta #}
+                {% with publicaciones|first as primera_publicacion %}
+                    <a href="#" class="btn-comprar">Comprar ahora</a>
+                {% endwith %}
+                <a href="#ofertas" class="btn-agregar-carrito">Ver ofertas</a>
             </div>
         </div>
     </div>
 
     <div class="detalles">
         <div class="album">
-            <details>
+            <details open>
                 <summary class="acor">Información del álbum</summary>
                 <p>
-                    <span class="etiqueta">Género:</span>
-                    <span class="dato">{{ album_data.genre }}</span>
+                    <span class="etiqueta">Género(s):</span>
+                    <span class="dato">{{ producto.genero_principal.all|join:", " }}</span>
                 </p>
                 <p>
                     <span class="etiqueta">Lanzamiento:</span>
-                    <span class="dato">{{ album_data.release_date }}</span>
+                    <span class="dato">{{ producto.lanzamiento|date:"Y" }}</span>
                 </p>
                 <p>
                     <span class="etiqueta">Sello discográfico:</span>
-                    <span class="dato">{{ album_data.label }}</span>
+                    <span class="dato">{{ producto.discografica|default:"No especificado" }}</span>
                 </p>
                 <p>
-                    <span class="etiqueta">Productor(es):</span>
-                    <span class="dato">{{ album_data.producers }}</span>
+                    <span class="etiqueta">Descripción:</span>
+                    <span class="dato">{{ producto.descripcion|default:"No hay descripción disponible."|linebreaksbr }}</span>
                 </p>
-            </details>
-        </div>
-
-        <div class="artista">
-            <details>
-                <summary class="acor">Información del artista</summary>
-                <p>{{ album_data.artist_info }}</p>
             </details>
         </div>
 
@@ -82,62 +70,38 @@
             <details>
                 <summary class="acor">Listado de canciones</summary>
                 <div class="listap">
-                    <ul class="lista-canciones">
-                        {% for song in album_data.song_list %}
-                            <li><i class="fa-solid fa-music"></i> {{ song }}</li>
+                    <ol class="lista-canciones">
+                        {% for track in canciones %}
+                            <li><i class="fa-solid fa-music"></i> {{ track.cancion.nombre }}</li>
                         {% empty %}
-                            <li>Por definir...</li>
+                            <li>No hay listado de canciones disponible.</li>
                         {% endfor %}
-                    </ul>
+                    </ol>
                 </div>
             </details>
         </div>
 
-        <div class="comentarios">
-            <details>
-                <summary class="acor">Reseñas y comentarios</summary>
-
-                {% for comment in album_data.comments %}
-                <div class="comentario">
-                    <div class="avatar">
-                        <img src="{% static 'images/fotos_perfil/default_avatar.svg' %}" alt="Avatar de {{ comment.username }}"> {# Usar avatar por defecto #}
+        <div class="ofertas-vendedores" id="ofertas">
+            <details open>
+                <summary class="acor">Ofertas de Vendedores</summary>
+                {% for publicacion in publicaciones %}
+                <div class="oferta-card">
+                    <div class="oferta-info">
+                        <p class="vendedor">Vendido por: <strong>{{ publicacion.vendedor.username }}</strong></p>
+                        <p class="condicion"><strong>Condición:</strong> {{ publicacion.descripcion_condicion }}</p>
                     </div>
-                    <div class="contenido-comentario">
-                        <span class="nombre">{{ comment.username }}</span>
-                        <p class="texto">{{ comment.comment }}</p>
+                    <div class="oferta-accion">
+                        <p class="precio-oferta">${{ publicacion.precio|intcomma }}</p>
+                        <a href="#" class="btn btn-sm btn-success">Añadir al carrito</a>
                     </div>
                 </div>
                 {% empty %}
-                <p>No hay comentarios para este álbum.</p>
+                <p>Actualmente no hay ofertas para este vinilo.</p>
                 {% endfor %}
             </details>
         </div>
     </div>
 </section>
-
-<script>
-    function addToCart(albumName, artistName, price, imageURL) {
-    // Recuperar o iniciar el array de productos en localStorage
-    let cartProducts = JSON.parse(localStorage.getItem("cartProducts")) || [];
-
-    // Crear objeto con datos del álbum
-    const albumData = {
-        albumName: albumName,
-        artistName: artistName,
-        price: price,
-        imageURL: imageURL
-    };
-
-    // Agregar al array
-    cartProducts.push(albumData);
-
-    // Guardar de nuevo en localStorage
-    localStorage.setItem("cartProducts", JSON.stringify(cartProducts));
-
-    // Redirigir al carrito
-    window.location.href = "{% url 'com_carrito' %}";
-    }
-</script>
 {% endblock contenido %}
 
 {% block pie %}

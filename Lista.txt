@@ -68,7 +68,7 @@ Lista de Pasos para Implementar Sistema de Autenticación en Django (Proyecto Vi
         *   **Configuración (`vinyles/settings.py`):** Añadir `'django.contrib.humanize'` a `INSTALLED_APPS` para formateo de precios. **(Completado)**
     *   **Página de Detalles del Producto (`pub_vinilo`):**
         *   **Vista (`gestion/views.py`):** Modificar `pub_vinilo` para que acepte un `producto_id`, busque el `Producto` y sus `Publicacion`es asociadas, y los pase a la plantilla. **(Completado)**
-        *   **Plantilla (`gestion/templates/paginas/publico/pub_vinilo.html`):** Actualizar la plantilla para mostrar la información detallada del `producto` (portada, nombre, artistas, tracklist) y un listado de las `publicaciones` (ofertas de vendedores con su precio y condición). **(Pendiente)**
+        *   **Plantilla (`gestion/templates/paginas/publico/pub_vinilo.html`):** Actualizar la plantilla para mostrar la información detallada del `producto` (portada, nombre, artistas, tracklist) y un listado de las `publicaciones` (ofertas de vendedores con su precio y condición). **(Completado)**
     *   **Página de Inicio del Comprador (`com_inicio`):**
         *   Hacer que la página de inicio para usuarios autenticados (`com_inicio`) también muestre productos, similar a `pub_inicio`, pero con la funcionalidad de "Agregar al carrito" ya activa (sin redirigir al login). **(Pendiente)**
 
