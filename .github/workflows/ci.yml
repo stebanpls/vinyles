@@ -9,9 +9,7 @@ x-install-mariadb-client: &install-mariadb-client
 
 on:
   push:
-
   pull_request:
-
 
 jobs:
   lint:
