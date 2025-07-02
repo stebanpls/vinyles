@@ -9,9 +9,9 @@ x-install-mariadb-client: &install-mariadb-client
 
 on:
   push:
-    branches: [ "main", "develop" ] # O las ramas que uses
+
   pull_request:
-    branches: [ "main", "develop" ]
+
 
 jobs:
   lint:
