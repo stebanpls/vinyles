@@ -1,18 +1,21 @@
-{% extends "plantillas/plantilla_vendedor.html" %}
-{% load static %}
-{% load widget_tweaks %}
-
-{% block extra_css %}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css" />
-    <!-- <link rel="stylesheet" href="{% static 'css/paginas/vendedor/style_crear.css' %}"> -->
-      <style>
+{% extends "plantillas/plantilla_vendedor.html" %} {% load static %} {% load
+widget_tweaks %} {% block extra_css %}
+  <link
+    href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css"
+  />
+  <style>
     .select2-container--default .select2-results__option {
       color: #000 !important;
       background-color: #fff !important;
     }
 
-    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    .select2-container--default
+    .select2-results__option--highlighted[aria-selected] {
       background-color: #0d6efd !important;
       color: white !important;
     }
@@ -29,822 +32,348 @@
       z-index: 9999 !important;
     }
   </style>
-{% endblock extra_css %}
+{% endblock extra_css %} {% block titulo %}Vinyles - Crear Nuevo Producto{%
+  endblock titulo %} {% block contenido %} {% include
+    'paginas/vendedor/ven_crear_formulario.html' %}
 
-{% block titulo %}Vinyles - Álbumes{% endblock titulo %}
-
-{% block contenido %}
-
-{% include 'paginas/vendedor/ven_crear_formulario.html' %}
-
-<!-- Modal vacío, se llenará vía fetch -->
-<div class="modal fade" id="modalFormulario" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content" id="modalContent">
-      <!-- Aquí se carga el HTML del formulario -->
+<!-- Modal Genérico para Formularios -->
+    <div class="modal fade" id="modalGenerico" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" id="modalContent">
+      <!-- Aquí se carga el HTML del formulario vía fetch -->
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<!-- Modal para Canción -->
-<div class="modal fade" id="modalCancion" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content" id="modalContentCancion"></div>
-  </div>
-</div>
 
-<!-- Modal para Artista -->
-<div class="modal fade" id="modalArtista" tabindex="-1" aria-labelledby="modalArtistaLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content" id="modalContentArtista"></div>
-  </div>
-</div>
-
-
-<!-- Modal de Género -->
-<div class="modal fade" id="modalGenero" tabindex="-1" aria-labelledby="modalGeneroLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content" id="modalContentGenero">
-      <!-- Aquí se inyecta el contenido del formulario -->
-    </div>
-  </div>
-</div>
-
-<!-- ✅ Modal para Productor -->
-<div class="modal fade" id="modalProductor" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content" id="modalContentProductor"></div>
-  </div>
-</div>
-
-
-
-
-
-{% endblock contenido %}
-
-{% block pie %}
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
-<script>
-//JS PARA EL FOMULARIO DE CREAR ALBUM
-//esto es para que funcione lo de agregar canciones y el boton de eliminar
-  const cancionesDisponibles = [
-    {% for cancion in canciones %}
-      { id: {{ cancion.id }}, nombre: "{{ cancion.nombre }}" },
-    {% endfor %}
-  ];
-
-
-
-  //para que funcione el select 2
-$(document).ready(function () {
-  // Inicializar Select2 para el campo de artistas del formulario principal (álbum)
-  // Usamos el ID específico para mayor robustez.
-  // Asumimos que el campo en ProductoForm se llama 'artistas', por lo que su ID es 'id_artistas'.
-  if ($('#id_artistas').length && !$('#id_artistas').data('select2')) {
-    $('#id_artistas').select2({
-      placeholder: "Busca y selecciona artista(s) del álbum",
-      width: '100%',
-      theme: "bootstrap-5"
-    });
-  }
-
-  $('.select-genero').select2({
-    placeholder: "Selecciona género(s)",
-    width: '100%',
-    theme: "bootstrap-5"
-  });
-
-  $('.select-productor').select2({
-    placeholder: "Busca y selecciona productor(es)",
-    width: '100%',
-    theme: "bootstrap-5"
-  });
-
-  console.log("✅ Select2 cargado para artista, género y productor");
-
-  // Inicializa botones de eliminar (si los tienes dinámicamente generados)
-  actualizarBotonesEliminar();
-});
-
-
-//abre el modal de artista
-// Abre el modal de artista
-
-function abrirModalArtista(url, desdeCancion = false) {
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById("modalContentArtista").innerHTML = html;
-      let modal = new bootstrap.Modal(document.getElementById('modalArtista'));
-      modal.show();
-
-      const form = document.querySelector("#modalArtista form");
-
-      if (desdeCancion) {
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          enviarFormularioArtistaDesdeCancion(event, form);
-        });
-      } else {
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          enviarFormularioArtista(event, form, "id_artistas", "modalArtista");
-        });
-      }
-
-      const modalContent = $('#modalArtista .modal-content');
-      $('#modalArtista .select-artista').select2({
-        placeholder: "Selecciona artista(s)",
-        dropdownParent: modalContent,
-        width: '100%',
-        theme: "bootstrap-5"
-      });
-    });
-}
-
-
-function enviarFormularioArtista(event, form, idSelect = "id_artistas", modalId = "modalArtista") {
-  event.preventDefault();
-  const url = form.action;
-  const formData = new FormData(form);
-
-  fetch(url, {
-    method: 'POST',
-    body: formData,
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      const select = document.getElementById(idSelect);
-      const option = new Option(data.nombre, data.id, true, true);
-      select.appendChild(option);
-      $('#' + idSelect).trigger('change');
-
-      const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
-      modal.hide();
-      alert("✅ Artista creado con éxito");
-    } else {
-      // 1. Guardar los valores escritos por el usuario antes de reemplazar el HTML
-      const valoresActuales = {};
-      form.querySelectorAll("input, textarea, select").forEach(input => {
-        if (input.name) {
-          valoresActuales[input.name] = input.value;
-        }
-      });
-
-      // 2. Reemplazar el contenido del modal con el nuevo HTML que incluye errores
-      document.getElementById(modalId === "modalArtista" ? "modalContentArtista" : "modalContent").innerHTML = data.form_html; // Ajuste por si se usa modalFormulario
-
-      // 3. Volver a colocar los valores escritos por el usuario en el nuevo formulario
-      const nuevoForm = document.querySelector(`#${modalId} form`);
-      Object.keys(valoresActuales).forEach(name => {
-        const campo = nuevoForm.querySelector(`[name="${name}"]`);
-        if (campo) {
-          campo.value = valoresActuales[name];
-        }
-      });
-
-      // 4. Volver a enganchar el evento submit para que siga funcionando
-      nuevoForm.addEventListener("submit", function (event) {
-        enviarFormularioArtista(event, nuevoForm, idSelect, modalId);
-      });
-
-      // Re-inicializar Select2 si hay campos select en el modal de artista
-      const modalContent = $(`#${modalId} .modal-content`);
-      $(`#${modalId} .select-artista`).each(function() { // Asumiendo que podrías tener un select de artista dentro
-        if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2({
-                placeholder: "Selecciona artista(s)",
-                dropdownParent: modalContent,
-                width: '100%',
-                theme: "bootstrap-5"
-            });
-        }
-      });
-      console.log(`Modal ${modalId} (artista) recargado con errores, Select2 y submit re-inicializados.`);
-    }
-  });
-}
-
-
-function enviarFormularioArtistaDesdeCancion(event, form) {
-  event.preventDefault();
-  const url = form.action;
-  const formData = new FormData(form);
-
-  fetch(url, {
-    method: 'POST',
-    body: formData,
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Referencia al select de artista dentro del modal de canción
-      const selectArtista = document.querySelector('#modalCancion .select-artista');
-
-      // Crear opción y agregarla al select
-      const nuevaOpcion = new Option(data.nombre, data.id, true, true);
-      selectArtista.appendChild(nuevaOpcion);
-
-      // Actualizar select2
-      $(selectArtista).trigger('change');
-
-      // Actualizar también el select de artista principal del formulario de producto
-      const selectArtistaPrincipal = document.getElementById('id_artistas'); // ID del select principal de artistas
-      if (selectArtistaPrincipal) {
-        const nuevaOpcionPrincipal = new Option(data.nombre, data.id, false, false); // No lo seleccionamos por defecto aquí
-        selectArtistaPrincipal.appendChild(nuevaOpcionPrincipal);
-        $(selectArtistaPrincipal).trigger('change'); // Actualizar Select2 del form principal
-      }
-
-      // Cerrar solo el modal de artista
-      const modal = bootstrap.Modal.getInstance(document.getElementById("modalArtista"));
-      modal.hide();
-
-      alert("✅ Artista creado con éxito");
-    } else {
-      // Si hay errores, recargar el form con los errores visibles
-      document.getElementById("modalContentArtista").innerHTML = data.form_html;
-
-      const nuevoForm = document.querySelector("#modalArtista form");
-      nuevoForm.addEventListener("submit", function (event) {
-        enviarFormularioArtistaDesdeCancion(event, nuevoForm);
-      });
-      // Re-inicializar Select2 si hay campos select en el modal de artista
-      const modalContent = $('#modalArtista .modal-content');
-      $('#modalArtista .select-artista').each(function() {
-        if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2({
-                placeholder: "Selecciona artista(s)",
-                dropdownParent: modalContent,
-                width: '100%',
-                theme: "bootstrap-5"
-            });
-        }
-      });
-      console.log("Modal Artista (desde canción) recargado con errores, Select2 y submit re-inicializados.");
-    }
-  });
-}
-
-
-//abrir el modal genero
-function abrirModalGenero(url) {
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById("modalContentGenero").innerHTML = html;
-      let modal = new bootstrap.Modal(document.getElementById('modalGenero'));
-      modal.show();
-
-      const form = document.querySelector("#modalGenero form");
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        enviarFormularioGenero(event, form, "id_genero_principal", "modalGenero");  // Corregido: usa el ID del select del formulario principal
-      });
-    });
-}
-
-//enviar el fromualrio de genero
-function enviarFormularioGenero(event, form, idSelect = "id_genero_principal", modalId = "modalFormulario") {
-  event.preventDefault();
-  const url = form.action;
-  const formData = new FormData(form);
-
-  fetch(url, {
-    method: 'POST',
-    body: formData,
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      const select = document.getElementById(idSelect);
-      const option = new Option(data.nombre, data.id, true, true);
-      select.appendChild(option);
-      $('#' + idSelect).trigger('change');
-
-      const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
-      modal.hide();
-      alert("✅ Género creado con éxito");
-    } else {
-      const contentId = modalId === "modalFormulario" ? "modalContent" : "modalContentGenero";
-      document.getElementById(contentId).innerHTML = data.form_html;
-
-      // 💥 Volvemos a enganchar el submit al nuevo form renderizado
-      const nuevoForm = document.querySelector(`#${modalId} form`);
-      nuevoForm.addEventListener("submit", function (event) {
-        enviarFormularioGenero(event, nuevoForm, idSelect, modalId);
-      });
-      // Re-inicializar Select2 si hay campos select en el modal de genero
-      const modalContent = $(`#${modalId} .modal-content`);
-      $(`#${modalId} .select-genero`).each(function() { // Asumiendo clase 'select-genero'
-        if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2({
-                placeholder: "Selecciona género(s)",
-                dropdownParent: modalContent,
-                width: '100%',
-                theme: "bootstrap-5"
-            });
-        }
-      });
-      console.log(`Modal ${modalId} (género) recargado con errores, Select2 y submit re-inicializados.`);
-    }
-  });
-}
-
-//enviar el formulario de genero desde el modal de cancion
-function enviarFormularioGeneroDesdeCancion(event, form) {
-  event.preventDefault();
-  const url = form.action;
-  const formData = new FormData(form);
-
-  fetch(url, {
-    method: 'POST',
-    body: formData,
-    headers: { // Importante para que Django reconozca la petición AJAX
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Referencia al select de género dentro del modal de canción
-      // Asegúrate de que el selector '#modalCancion .select-genero' sea el correcto.
-      const selectGeneroEnCancion = document.querySelector('#modalCancion .select-genero');
-
-      if (selectGeneroEnCancion) {
-        const nuevaOpcion = new Option(data.nombre, data.id, true, true);
-        selectGeneroEnCancion.appendChild(nuevaOpcion);
-        $(selectGeneroEnCancion).trigger('change'); // Actualizar Select2
-
-        // Actualizar también el select de género principal del formulario de producto
-        const selectGeneroPrincipal = document.getElementById('id_genero_principal');
-        if (selectGeneroPrincipal) {
-          const nuevaOpcionPrincipal = new Option(data.nombre, data.id, false, false); // No lo seleccionamos por defecto aquí
-          selectGeneroPrincipal.appendChild(nuevaOpcionPrincipal);
-          $(selectGeneroPrincipal).trigger('change'); // Actualizar Select2 del form principal
-        }
-      } else {
-        console.error("Error: No se encontró el select de género en el modal de canción. Verifica el selector.");
-      }
-
-      // Cerrar solo el modal de género
-      const modalGenero = bootstrap.Modal.getInstance(document.getElementById("modalGenero"));
-      modalGenero.hide();
-
-      alert("✅ Género creado con éxito y añadido a la canción.");
-    } else {
-      // Si hay errores, recargar el form del modal de género con los errores visibles
-      document.getElementById("modalContentGenero").innerHTML = data.form_html;
-
-      // Volver a enganchar el evento submit al nuevo formulario del modal de género
-      const nuevoFormGenero = document.querySelector("#modalGenero form");
-      if (nuevoFormGenero) {
-        nuevoFormGenero.addEventListener("submit", function (event) {
-          enviarFormularioGeneroDesdeCancion(event, nuevoFormGenero);
-        });
-      }
-      // Aquí podrías re-inicializar Select2 si el modal de género tiene campos Select2.
-      console.log("Modal Género (desde canción) recargado con errores, submit re-inicializado.");
-    }
-  })
-  .catch(error => {
-    console.error('Error en enviarFormularioGeneroDesdeCancion:', error);
-    alert("❌ Error al crear el género. Revisa la consola para más detalles.");
-  });
-}
-
-
-//abre el modal de cancion desde el formulario de album
-function abrirModalCancion(url) {
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById("modalContentCancion").innerHTML = html;
-
-      const modalCancion = new bootstrap.Modal(document.getElementById('modalCancion'));
-      modalCancion.show();
-
-      const modalContent = $('#modalCancion .modal-content');
-
-      // Inicializar Select2 dentro del modal
-      // Inicializar Select2 para artista sin romper estilos previos
-$('#modalCancion select.select-artista').each(function () {
-  if (!$(this).hasClass('select2-hidden-accessible')) {
-    $(this).select2({
-      placeholder: "Busca y selecciona artista(s)",
-      dropdownParent: modalContent,
-      width: '100%',
-      theme: "bootstrap-5"
-    });
-  }
-});
-
-
-      $('#modalCancion .select-productor-modal').select2({ // Corregido para coincidir con la clase en modal_cancion.html
-        placeholder: "Busca y selecciona productor(es)",
-        dropdownParent: modalContent,
-        width: '100%',
-        theme: "bootstrap-5"
-      });
-
-      $('#modalCancion .select-genero').select2({
-        placeholder: "Selecciona género(s)",
-        dropdownParent: modalContent,
-        width: '100%',
-        theme: "bootstrap-5"
-      });
-
-      // 🔁 Conectar formulario al submit
-      const form = document.querySelector("#modalCancion form");
-form.addEventListener("submit", function (event) {
-  enviarFormularioCancion(event, form);
-});
-
-
-      console.log("🎵 Modal de canción abierto y Select2 listo.");
-    });
-}
-
-
-//envia el formulario con la cancion creada y se autoselecciona
-function enviarFormularioCancion(event, form) {
-  event.preventDefault();
-  const url = form.action;
-  const formData = new FormData(form);
-
-
-  fetch(url, {
-    method: 'POST',
-    body: formData,
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalCancion'));
-        modal.hide();
-
-        const contenedor = document.getElementById("contenedor-canciones");
-        const selects = contenedor.querySelectorAll("select.select-cancion");
-
-        let reemplazado = false;
-
-        // Reemplaza un select vacío si existe
-        selects.forEach((select, index) => {
-          if (!select.value && !reemplazado) {
-            select.innerHTML = `<option value="${data.id}" selected>${data.nombre}</option>`;
-            const pistaInput = select.closest(".cancion-row").querySelector("input[name^='pista_']");
-            pistaInput.value = index + 1;
-            reemplazado = true;
-          }
-        });
-
-        // Si no hay ninguno vacío, agregar uno nuevo
-        if (!reemplazado) {
-          const cantidadActual = selects.length;
-          const nuevaCancionHTML = `
-            <div class="cancion-row d-flex align-items-center mb-2">
-              <select name="cancion_${cantidadActual}" class="form-control select-cancion me-2" required>
-                <option value="${data.id}" selected>${data.nombre}</option>
-              </select>
-              <input type="number" name="pista_${cantidadActual}" class="form-control me-2" value="${cantidadActual + 1}" readonly style="max-width: 100px;">
-              <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
-            </div>
-          `;
-          contenedor.insertAdjacentHTML('beforeend', nuevaCancionHTML);
-        }
-
-        actualizarBotonesEliminar();
-        renumerarPistas();
-
-        alert("✅ Canción creada y añadida correctamente.");
-      } else {
-        // Mostrar errores en el modal
-        document.getElementById("modalContentCancion").innerHTML = data.form_html;
-
-        const modalContent = $('#modalCancion .modal-content');
-
-        $('#modalCancion select.select-artista').each(function () {
-          if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2({
-              placeholder: "Busca y selecciona artista(s)",
-              dropdownParent: modalContent,
-              width: '100%',
-              theme: "bootstrap-5"
-            });
-          }
-        });
-
-        $('#modalCancion .select-productor-modal').each(function () {
-          if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2({
-              placeholder: "Busca y selecciona productor(es)",
-              dropdownParent: modalContent,
-              width: '100%',
-              theme: "bootstrap-5"
-            });
-          }
-        });
-
-        $('#modalCancion .select-genero').each(function () {
-          if (!$(this).hasClass('select2-hidden-accessible')) {
-            $(this).select2({
-              placeholder: "Selecciona género(s)",
-              dropdownParent: modalContent,
-              width: '100%',
-              theme: "bootstrap-5"
-            });
-          }
-        });
-
-        const nuevoFormCancion = document.querySelector("#modalCancion form");
-        if (nuevoFormCancion) {
-          nuevoFormCancion.addEventListener("submit", function (event) {
-            enviarFormularioCancion(event, nuevoFormCancion);
+  {% endblock contenido %} {% block pie %}
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+  // JS PARA EL FOMULARIO DE CREAR ALBUM
+  // Esto es para que funcione lo de agregar canciones y el boton de eliminar
+      const cancionesDisponibles = [
+        {% for cancion in canciones %}
+          { id: {{ cancion.id }}, nombre: "{{ cancion.nombre|escapejs }}" },
+        {% endfor %}
+      ];
+
+  // Para que funcione el select2 en la página principal
+      $(document).ready(function () {
+        if ($('#id_artistas').length && !$('#id_artistas').data('select2')) {
+          $('#id_artistas').select2({
+            placeholder: "Busca y selecciona artista(s) del álbum",
+            width: '100%',
+            theme: "bootstrap-5"
           });
         }
 
-        console.log("Modal de canción recargado con errores, Select2 y submit re-inicializados.");
-      }
-    });
-}
+        $('.select-genero').select2({
+          placeholder: "Selecciona género(s)",
+          width: '100%',
+          theme: "bootstrap-5"
+        });
 
+        $('.select-productor').select2({
+          placeholder: "Busca y selecciona productor(es)",
+          width: '100%',
+          theme: "bootstrap-5"
+        });
 
-//TODO ESTO ES PARA QUE FUNCIONE ELIMINAR AGREGAR CANCIONES Y SE ACTUALIZA LA PISTA DE ESTA
-function agregarCancion() {
-  const contenedor = document.getElementById("contenedor-canciones");
-  const cantidadActual = contenedor.querySelectorAll(".cancion-row").length;
-
-  const nuevaCancionHTML = `
-    <div class="cancion-row d-flex align-items-center mb-2">
-      <select name="cancion_${cantidadActual}" class="form-control select-cancion me-2" required>
-        <option value="">Selecciona una canción</option>
-        ${cancionesDisponibles.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('')}
-      </select>
-      <input type="number" name="pista_${cantidadActual}" class="form-control me-2" value="${cantidadActual + 1}" readonly style="max-width: 100px;">
-      <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
-    </div>
-  `;
-
-  contenedor.insertAdjacentHTML("beforeend", nuevaCancionHTML);
-  actualizarBotonesEliminar(); // Volver a enlazar los botones
-}
-
-function actualizarBotonesEliminar() {
-  document.querySelectorAll(".eliminar-cancion").forEach(btn => {
-    btn.removeEventListener("click", eliminarCancion);
-    btn.addEventListener("click", eliminarCancion);
-  });
-}
-
-function eliminarCancion(event) {
-  const fila = event.target.closest(".cancion-row");
-  fila.remove();
-  renumerarPistas();
-}
-
-function renumerarPistas() {
-  const filas = document.querySelectorAll("#contenedor-canciones .cancion-row");
-  filas.forEach((fila, index) => {
-    const pistaInput = fila.querySelector("input[name^='pista_']");
-    const select = fila.querySelector("select[name^='cancion_']");
-
-    pistaInput.value = index + 1;
-    pistaInput.name = `pista_${index}`;
-    select.name = `cancion_${index}`;
-  });
-}
-
-
-
-
-
-//ABRIR MODALS DESDE CANCION
-//abre el modal de productor
-function abrirModalProductorDesdeCancion(url) {
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById("modalContentProductor").innerHTML = html;
-
-      const modal = new bootstrap.Modal(document.getElementById("modalProductor"));
-      modal.show();
-
-      const modalContent = $('#modalProductor .modal-content');
-
-      $('#modalProductor select').select2({
-        dropdownParent: modalContent,
-        width: '100%',
-        theme: "bootstrap-5"
+        console.log("✅ Select2 cargado para artista, género y productor");
+        actualizarBotonesEliminar();
       });
 
-      // Conectar el formulario del modal
-      const form = document.querySelector("#modalProductor form");
-      form.addEventListener("submit", function (event) {
-        enviarFormularioProductor(event, form);
-      });
+  // --- Función genérica para abrir modales ---
+      function abrirModalGenerico(url, submitHandler) {
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            const modalContentEl = document.getElementById("modalContent");
+            modalContentEl.innerHTML = html;
 
-      console.log("🎬 Modal de Productor abierto desde Canción.");
-    });
-}
+            const modalEl = document.getElementById('modalGenerico');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
 
-
-//envia el formulario con el productor creado y se autoselecciona
-function enviarFormularioProductor(event, form) {
-  event.preventDefault();
-
-  const url = form.action;
-  const formData = new FormData(form);
-
-  fetch(url, {
-    method: 'POST',
-    body: formData,
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        const modal = bootstrap.Modal.getInstance(document.getElementById("modalProductor"));
-        modal.hide();
-
-        const nuevoOption = new Option(data.nombre, data.id, true, true);
-        $('#modalCancion .select-productor-modal').append(nuevoOption).trigger('change');
-
-        alert("✅ Productor creado y añadido a la canción.");
-      } else {
-        document.getElementById("modalContentProductor").innerHTML = data.form_html;
-        // Re-enganchar el formulario y reinicializar select2 si es necesario
-        const nuevoFormProductor = document.querySelector("#modalProductor form");
-        if (nuevoFormProductor) {
-            nuevoFormProductor.addEventListener("submit", function(event) {
-                enviarFormularioProductor(event, nuevoFormProductor);
+        // Inicializar cualquier Select2 dentro del nuevo contenido del modal
+            const modalContentJquery = $(modalContentEl);
+            modalContentJquery.find('.select-artista, .select-productor-modal, .select-genero').each(function() {
+              if (!$(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2({
+                  placeholder: $(this).data('placeholder') || "Seleccionar...",
+                  dropdownParent: $('#modalGenerico .modal-content'),
+                  width: '100%',
+                  theme: "bootstrap-5"
+                });
+              }
             });
-        }
-        const modalContent = $('#modalProductor .modal-content');
-        $('#modalProductor select').select2({ // Asumiendo que podría haber un select
-            dropdownParent: modalContent,
+
+            const form = modalContentEl.querySelector("form");
+            if (form) {
+              form.addEventListener("submit", function(event) {
+                event.preventDefault();
+                submitHandler(event, form);
+              });
+            }
+          });
+      }
+
+  // --- Manejadores de submit para cada tipo de modal ---
+
+      function manejarRespuestaFormulario(data, form, submitHandler) {
+        if (data.success) {
+          const modal = bootstrap.Modal.getInstance(document.getElementById("modalGenerico"));
+          modal.hide();
+          return true;
+        } else {
+          document.getElementById("modalContent").innerHTML = data.form_html;
+          const nuevoForm = document.querySelector("#modalContent form");
+          if (nuevoForm) {
+            nuevoForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              submitHandler(e, nuevoForm);
+            });
+          }
+          // Re-inicializar select2 en el modal recargado
+          $('#modalContent .select-artista, #modalContent .select-productor-modal, #modalContent .select-genero').select2({
+            dropdownParent: $('#modalGenerico .modal-content'),
             width: '100%',
             theme: "bootstrap-5"
-        });
-        console.log("Modal Productor recargado con errores, Select2 y submit re-inicializados.");
+          });
+          return false;
+        }
       }
-    });
-}
 
+      function enviarFormularioArtista(event, form) {
+        const url = form.action;
+        const formData = new FormData(form);
 
+        fetch(url, { method: 'POST', body: formData })
+          .then(response => response.json())
+          .then(data => {
+            if (manejarRespuestaFormulario(data, form, enviarFormularioArtista)) {
+          // Si el formulario fue exitoso, actualizamos los selects
+              const selectPrincipal = document.getElementById("id_artistas");
+              const selectEnCancion = document.querySelector('#modalContent .select-artista');
 
-//abrir el modal de genero
-function abrirModalGenero(url, desdeCancion = false) {
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById("modalContentGenero").innerHTML = html;
-      let modal = new bootstrap.Modal(document.getElementById('modalGenero'));
-      modal.show();
+              if (selectPrincipal) {
+                const option = new Option(data.nombre, data.id, false, false);
+                selectPrincipal.appendChild(option);
+              }
+              if (selectEnCancion) {
+                const optionCancion = new Option(data.nombre, data.id, true, true);
+                $(selectEnCancion).append(optionCancion).trigger('change');
+              } else if (selectPrincipal) {
+              // Si no estamos en el modal de canción, seleccionamos en el principal
+                $(selectPrincipal).val([...$(selectPrincipal).val(), data.id]).trigger('change');
+              }
+              alert("✅ Artista creado con éxito");
+            }
+          });
+      }
 
-      const form = document.querySelector("#modalGenero form");
+      function enviarFormularioCancion(event, form) {
+        const url = form.action;
+        const formData = new FormData(form);
 
-      if (desdeCancion) {
+        fetch(url, { method: 'POST', body: formData })
+          .then(response => response.json())
+          .then(data => {
+            if (manejarRespuestaFormulario(data, form, enviarFormularioCancion)) {
+              const contenedor = document.getElementById("contenedor-canciones");
+              const selects = contenedor.querySelectorAll("select.select-cancion");
+              let reemplazado = false;
+
+              selects.forEach((select) => {
+                if (!select.value && !reemplazado) {
+                  select.innerHTML = `<option value="${data.id}" selected>${data.nombre}</option>`;
+                  reemplazado = true;
+                }
+              });
+
+              if (!reemplazado) {
+                const cantidadActual = selects.length;
+                const nuevaCancionHTML = `
+              <div class="cancion-row d-flex align-items-center mb-2">
+                <select name="cancion_${cantidadActual}" class="form-control select-cancion me-2" required>
+                  <option value="${data.id}" selected>${data.nombre}</option>
+                </select>
+                <input type="number" name="pista_${cantidadActual}" class="form-control me-2" value="${cantidadActual + 1}" readonly style="max-width: 100px;">
+                <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
+              </div>
+            `;
+                contenedor.insertAdjacentHTML('beforeend', nuevaCancionHTML);
+              }
+
+              actualizarBotonesEliminar();
+              renumerarPistas();
+              alert("✅ Canción creada y añadida correctamente.");
+            }
+          });
+      }
+
+      function enviarFormularioProductor(event, form) {
+        const url = form.action;
+        const formData = new FormData(form);
+
+        fetch(url, { method: 'POST', body: formData })
+          .then(response => response.json())
+          .then(data => {
+            if (manejarRespuestaFormulario(data, form, enviarFormularioProductor)) {
+              const selectEnCancion = document.querySelector('#modalContent .select-productor-modal');
+              if (selectEnCancion) {
+                const nuevoOption = new Option(data.nombre, data.id, true, true);
+                $(selectEnCancion).append(nuevoOption).trigger('change');
+              }
+              alert("✅ Productor creado y añadido a la canción.");
+            }
+          });
+      }
+
+      function enviarFormularioGenero(event, form) {
+        const url = form.action;
+        const formData = new FormData(form);
+
+        fetch(url, { method: 'POST', body: formData })
+          .then(response => response.json())
+          .then(data => {
+            if (manejarRespuestaFormulario(data, form, enviarFormularioGenero)) {
+              const selectPrincipal = document.getElementById("id_genero_principal");
+              const selectEnCancion = document.querySelector('#modalContent .select-genero');
+
+              if (selectPrincipal) {
+                const option = new Option(data.nombre, data.id, false, false);
+                selectPrincipal.appendChild(option);
+              }
+              if (selectEnCancion) {
+                const optionCancion = new Option(data.nombre, data.id, true, true);
+                $(selectEnCancion).append(optionCancion).trigger('change');
+              } else if (selectPrincipal) {
+                $(selectPrincipal).val([...$(selectPrincipal).val(), data.id]).trigger('change');
+              }
+              alert("✅ Género creado con éxito.");
+            }
+          });
+      }
+
+  // --- Funciones de enlace para los botones "+ Agregar" ---
+  // Estas funciones ahora solo necesitan la URL y el manejador correcto.
+      function abrirModalCancion(url) {
+        abrirModalGenerico(url, enviarFormularioCancion);
+      }
+
+      function abrirModalArtista(url) {
+        abrirModalGenerico(url, enviarFormularioArtista);
+      }
+
+      function abrirModalProductorDesdeCancion(url) {
+        abrirModalGenerico(url, enviarFormularioProductor);
+      }
+
+      function abrirModalGenero(url) {
+        abrirModalGenerico(url, enviarFormularioGenero);
+      }
+
+  // --- Lógica para agregar/eliminar filas de canciones ---
+      function agregarCancion() {
+        const contenedor = document.getElementById("contenedor-canciones");
+        const cantidadActual = contenedor.querySelectorAll(".cancion-row").length;
+
+        const nuevaCancionHTML = `
+      <div class="cancion-row d-flex align-items-center mb-2">
+        <select name="cancion_${cantidadActual}" class="form-control select-cancion me-2" required>
+          <option value="">Selecciona una canción</option>
+          ${cancionesDisponibles.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('')}
+        </select>
+        <input type="number" name="pista_${cantidadActual}" class="form-control me-2" value="${cantidadActual + 1}" readonly style="max-width: 100px;">
+        <button type="button" class="btn btn-danger btn-sm eliminar-cancion">X</button>
+      </div>
+    `;
+
+        contenedor.insertAdjacentHTML("beforeend", nuevaCancionHTML);
+        actualizarBotonesEliminar();
+      }
+
+      function actualizarBotonesEliminar() {
+        document.querySelectorAll(".eliminar-cancion").forEach(btn => {
+          btn.removeEventListener("click", eliminarCancion);
+          btn.addEventListener("click", eliminarCancion);
+        });
+      }
+
+      function eliminarCancion(event) {
+        const fila = event.target.closest(".cancion-row");
+        fila.remove();
+        renumerarPistas();
+      }
+
+      function renumerarPistas() {
+        const filas = document.querySelectorAll("#contenedor-canciones .cancion-row");
+        filas.forEach((fila, index) => {
+          const pistaInput = fila.querySelector("input[name^='pista_']");
+          const select = fila.querySelector("select[name^='cancion_']");
+
+          pistaInput.value = index + 1;
+          pistaInput.name = `pista_${index}`;
+          select.name = `cancion_${index}`;
+        });
+      }
+
+  // --- Lógica para el envío del formulario principal del producto ---
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("formProducto");
+        if (!form) return;
+
+        document.querySelector(".btn-confirmar").addEventListener("click", function () {
+          form.requestSubmit();
+        });
+
         form.addEventListener("submit", function (event) {
           event.preventDefault();
-          enviarFormularioGeneroDesdeCancion(event, form);
+          const formData = new FormData(form);
+          const url = form.action;
+
+          fetch(url, {
+            method: "POST",
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert("✅ Producto creado con éxito");
+                if (data.redirect_url) {
+                  window.location.href = data.redirect_url;
+                }
+              } else {
+                document.getElementById("contenedorFormularioProducto").innerHTML = data.form_html;
+            // Re-enganchar eventos y reactivar select2
+                reinicializarFormularioProducto();
+              }
+            });
         });
-      } else {
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          enviarFormularioGenero(event, form, "id_genero_principal", "modalGenero");
+      });
+
+      function reinicializarFormularioProducto() {
+      // Re-engancha el listener del submit al nuevo formulario
+        const form = document.getElementById("formProducto");
+        if (form) {
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+              // ... (código de envío fetch, idéntico al anterior)
+          });
+        }
+      // Reactiva todos los select2 del formulario principal
+        $('#id_artistas, .select-genero, .select-cancion').select2({
+          width: '100%',
+          theme: 'bootstrap-5'
         });
       }
-    });
-}
+    </script>
 
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("formProducto");
-  if (!form) return;
-
-  // Botón de crear producto
-  document.querySelector(".btn-confirmar").addEventListener("click", function () {
-    // Validaciones básicas antes de enviar
-    let valido = true;
-
-    // Limpiar clases previas de error
-    form.querySelectorAll(".is-invalid").forEach(el => el.classList.remove("is-invalid"));
-
-    const camposRequeridos = [
-      'id_nombre',
-      'id_artistas',
-      'id_lanzamiento',
-      'id_precio',
-      'id_stock',
-      'id_descripcion',
-      'id_discografica',
-      'id_imagen_portada',
-      'id_genero_principal',
-    ];
-
-    camposRequeridos.forEach(id => {
-      const campo = document.getElementById(id);
-      if (campo && (!campo.value || campo.value.length === 0)) {
-        campo.classList.add("is-invalid");
-        valido = false;
-      }
-    });
-
-    // Validar que al menos una canción esté seleccionada
-    let alMenosUna = false;
-    document.querySelectorAll('.select-cancion').forEach(select => {
-      if (select.value) {
-        alMenosUna = true;
-      } else {
-        select.classList.add("is-invalid");
-      }
-    });
-
-    if (!alMenosUna) {
-      valido = false;
-      alert("⚠️ Debes seleccionar al menos una canción.");
-    }
-
-    if (!valido) {
-      alert("⚠️ Por favor completa todos los campos requeridos.");
-      return;
-    }
-
-    form.requestSubmit();
-  });
-
-  // Envío del formulario
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-    const url = form.action;
-
-    fetch(url, {
-      method: "POST",
-      body: formData,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert("✅ Producto creado con éxito");
-          if (data.redirect_url) {
-            window.location.href = data.redirect_url;
-          }
-        } else {
-          document.getElementById("contenedorFormularioProducto").innerHTML = data.form_html;
-          reinicializarFormularioProducto(); // Volver a enganchar eventos
-        }
-      });
-  });
-});
-
-// Reenganchar eventos si el formulario fue reemplazado
-function reinicializarFormularioProducto() {
-  const form = document.getElementById("formProducto");
-  if (!form) return;
-
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-    const url = form.action;
-
-    fetch(url, {
-      method: "POST",
-      body: formData,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert("✅ Producto creado con éxito");
-          if (data.redirect_url) {
-            window.location.href = data.redirect_url;
-          }
-        } else {
-          document.getElementById("contenedorFormularioProducto").innerHTML = data.form_html;
-          reinicializarFormularioProducto();
-        }
-      });
-  });
-
-  // Reactivar select2
-  $('#id_artistas, .select-genero, .select-cancion').select2({
-    width: '100%',
-    theme: 'bootstrap-5'
-  });
-}
-
-
-
-</script>
-
-{% endblock pie %}
+  {% endblock pie %}

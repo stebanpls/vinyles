@@ -95,6 +95,7 @@ admin_patterns = [
 ajax_patterns = [
     path("cargar-albumes/", views.ajax_cargar_albumes, name="ajax_cargar_albumes"),
     path("buscar-artistas/", views.ajax_buscar_artistas, name="ajax_buscar_artistas"),
+    path("importar-album/", views.ajax_importar_album, name="ajax_importar_album"),
     path("modal/artista/crear/", views.artista_form_modal, name="modal_artista_crear"),
     path("modal/genero/crear/", views.modal_genero, name="modal_genero_crear"),
     path("modal/cancion/crear/", views.modal_cancion, name="modal_cancion_crear"),

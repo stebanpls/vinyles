@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       # Elimina espacios en blanco innecesarios al final de las líneas.
       - id: trailing-whitespace
@@ -13,6 +13,8 @@ repos:
       # Evita que se suban archivos con marcadores de conflictos de merge.
       - id: check-merge-conflict
       # Evita que accidentalmente se suban archivos muy grandes al repositorio.
+      # Si usas Git LFS (ver más abajo), este hook sigue siendo útil para
+      # recordarte qué archivos deberían estar en LFS.
       - id: check-added-large-files
 
 -   repo: https://github.com/astral-sh/ruff-pre-commit
@@ -24,3 +26,28 @@ repos:
         args: [--fix, --exit-non-zero-on-fix]
       # Ejecuta el formateador de código
       - id: ruff-format
+
+-   repo: local
+    hooks:
+      - id: python-manage-py-check-migrations
+        name: Django - Check for missing migrations
+        # Usamos 'check --migrations' para ser más específicos con el propósito del hook.
+        # El comando correcto es 'makemigrations --check'.
+        entry: ../.venv/Scripts/python.exe manage.py makemigrations --check
+        # Usamos 'system' para que el hook se ejecute en tu entorno virtual (.venv)
+        # y tenga acceso a TODAS las dependencias de tu proyecto.
+        language: system
+        types: [python]
+        pass_filenames: false
+
+# Desactivamos djhtml. Es la fuente del error de codificación persistente.
+# Es mejor tener un sistema funcional sin él, que uno roto con él.
+# -   repo: https://github.com/rtts/djhtml
+#     rev: 3.0.6
+#     hooks:
+#       - id: djhtml
+-   repo: https://github.com/PyCQA/bandit
+    rev: 1.7.9
+    hooks:
+      - id: bandit
+        args: ["-s", "B101"] # Ignorar la comprobación de 'assert'

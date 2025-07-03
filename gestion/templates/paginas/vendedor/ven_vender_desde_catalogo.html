@@ -4,7 +4,7 @@
 
 {% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css" />
     <style>
         .select2-container--bootstrap-5 .select2-dropdown {
             background-color: #343a40;
@@ -22,46 +22,41 @@
             border-color: #6c757d;
         }
     </style>
-{% endblock extra_css %}
 
-{% block titulo %}Vender desde el Catálogo{% endblock titulo %}
+{% endblock %}
+
+{% block titulo %}Vender un Vinilo{% endblock %}
 
 {% block contenido %}
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <h1 class="text-center mb-4">Vender un Vinilo desde el Catálogo</h1>
+            <h1 class="text-center mb-4">Vender un Vinilo</h1>
             <p class="text-center text-muted">
-                Selecciona un artista para ver sus álbumes disponibles en nuestro catálogo. Luego, elige el álbum que deseas vender.
+                Busca un artista y selecciona el álbum que deseas vender. Si no está en nuestro catálogo, lo importaremos desde Discogs por ti.
             </p>
 
-            <form method="post" class="p-4 border rounded bg-light text-dark shadow-sm">
-                {% csrf_token %}
-
-                {% for field in form %}
+            <!-- Contenedor de Búsqueda -->
+            <div id="search-container" class="p-4 border rounded bg-light text-dark shadow-sm mb-4">
                 <div class="mb-4">
-                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                    {# Ya no necesitamos añadir la clase aquí, el formulario se encarga de ello #}
-                    {% render_field field %}
-                    {% if field.help_text %}
-                        <div class="form-text text-muted mt-1">{{ field.help_text }}</div>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <div class="invalid-feedback d-block">{{ error }}</div>
-                    {% endfor %}
+                    <label for="id_artista_search" class="form-label fw-bold">Paso 1: Busca el Artista</label>
+                    <select id="id_artista_search" class="form-select form-select-lg"></select>
                 </div>
-                {% endfor %}
-
-                <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg">Poner en Venta</button>
+                <div class="mb-4">
+                    <label for="id_album_search" class="form-label fw-bold">Paso 2: Selecciona el Álbum</label>
+                    <select id="id_album_search" class="form-select form-select-lg" disabled></select>
                 </div>
-            </form>
+            </div>
 
-            <div class="text-center mt-4">
-                <p>¿No encuentras el álbum en el catálogo?</p>
-                <a href="{% url 'ven_importar_desde_discogs' %}" class="btn btn-outline-info">Impórtalo desde Discogs</a>
-                <span class="mx-2">o</span>
-                <a href="{% url 'ven_crear_producto_nuevo' %}" class="btn btn-outline-secondary">Créalo desde cero (Avanzado)</a>
+            <h3 class="mt-4 mb-3">Paso 3: Describe tu Copia</h3>
+                <form method="post" id="sale-form" class="p-4 border rounded bg-light text-dark shadow-sm">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Poner en Venta</button>
+                        <button type="button" id="cancel-sale-btn" class="btn btn-secondary">Cancelar y buscar de nuevo</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -71,7 +66,6 @@
 {% block pie %}
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    {# Añadimos el archivo de idioma español para Select2 #}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/es.js"></script>
 
     <script>

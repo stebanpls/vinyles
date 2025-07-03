@@ -71,7 +71,7 @@
       </div>
 
       <div class="input-group mb-3">
-        <button type="button" class="btn btn-outline-primary" onclick="abrirModalArtista('{% url 'modal_artista_crear' %}', true)">
+        <button type="button" class="btn btn-outline-primary" onclick="abrirModalGenerico('{% url 'modal_artista_crear' %}', enviarFormularioArtista)">
           + Agregar nuevo artista
         </button>
       </div>
@@ -89,7 +89,7 @@
         {% endfor %}
       </div>
 
-      <button type="button" class="btn btn-primary mb-3" onclick="abrirModalProductorDesdeCancion('{% url 'modal_productor_crear' %}?select_id=id_productores&modal_id=modalCancion')">
+      <button type="button" class="btn btn-primary mb-3" onclick="abrirModalGenerico('{% url 'modal_productor_crear' %}', enviarFormularioProductor)">
         + Agregar nuevo Productor
       </button>
 
@@ -106,7 +106,7 @@
         {% endfor %}
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="abrirModalGenero('{% url 'modal_genero_crear' %}', true)">
+      <button type="button" class="btn btn-primary" onclick="abrirModalGenerico('{% url 'modal_genero_crear' %}', enviarFormularioGenero)">
         + Agregar nuevo género
       </button>
     </div>
