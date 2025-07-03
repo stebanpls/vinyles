@@ -40,12 +40,13 @@ repos:
         types: [python]
         pass_filenames: false
 
-# Desactivamos djhtml. Es la fuente del error de codificación persistente.
-# Es mejor tener un sistema funcional sin él, que uno roto con él.
-# -   repo: https://github.com/rtts/djhtml
-#     rev: 3.0.6
-#     hooks:
-#       - id: djhtml
+-   repo: https://github.com/rtts/djhtml
+    rev: 3.0.6
+    hooks:
+      # Formatea las plantillas de Django.
+      # Forzamos la codificación a UTF-8 para evitar errores en Windows.
+      - id: djhtml
+        args: ["--encoding", "utf-8"]
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.7.9
     hooks:
