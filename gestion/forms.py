@@ -200,7 +200,10 @@ class VentaDesdeCatalogoForm(forms.Form):
     """
 
     # Este campo se llenará con JS después de la importación/selección.
-    producto = forms.ModelChoiceField(queryset=Producto.objects.all(), widget=forms.HiddenInput(), required=True)
+    producto = forms.ModelChoiceField(queryset=Producto.objects.all(), widget=forms.HiddenInput(), required=False)
+    # Nuevo campo oculto para guardar el ID de Discogs si es un nuevo álbum
+    discogs_master_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+
     precio = forms.DecimalField(
         label="Define el precio de tu copia",
         min_value=0.01,
@@ -224,6 +227,14 @@ class VentaDesdeCatalogoForm(forms.Form):
         ),
         help_text="Sé lo más detallado posible para generar confianza en los compradores.",
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        producto = cleaned_data.get("producto")
+        discogs_master_id = cleaned_data.get("discogs_master_id")
+        if not producto and not discogs_master_id:
+            raise forms.ValidationError("Debes seleccionar un álbum del catálogo o de Discogs.")
+        return cleaned_data
 
 
 # ELIMINADO: ProductoForm ya no se usa para la creación por parte del vendedor.

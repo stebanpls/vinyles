@@ -6,20 +6,73 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css" />
     <style>
-        .select2-container--bootstrap-5 .select2-dropdown {
-            background-color: #343a40;
-            border-color: #6c757d;
+        /* Estilos para que Select2 se vea bien con el tema de Bootstrap */
+        .select2-container--bootstrap-5 .select2-selection {
+            border-radius: .375rem;
+            min-height: calc(1.5em + .75rem + 2px);
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
         }
-        .select2-container--bootstrap-5 .select2-results__option {
-            color: #f8f9fa;
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection,
+        .select2-container--bootstrap-5.select2-container--open .select2-selection {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+        }
+        .select2-container--bootstrap-5 .select2-dropdown {
+            border-radius: .375rem;
         }
         .select2-container--bootstrap-5 .select2-results__option--highlighted {
             background-color: #0d6efd;
+            color: white;
         }
-        .select2-container--bootstrap-5 .select2-search__field {
-            background-color: #495057;
-            color: #f8f9fa;
-            border-color: #6c757d;
+        /* Ocultar contenedores por defecto y estilos para resultados */
+        #artist-results-container, #album-search-container, #sale-form-container, #artist-loading-spinner {
+            display: none;
+        }
+        /* --- Estilos para el Modo Oscuro --- */
+        #search-container, #sale-form {
+            background-color: #2c3034; /* Un gris oscuro para los contenedores */
+        }
+        /* Estilo para la tarjeta de vista previa del álbum */
+        #album-details-preview.card {
+            background-color: #212529;
+            border-color: #495057;
+        }
+        #album-details-preview .card-title {
+            color: #e9ecef; /* Un color claro para el título del álbum */
+        }
+        .text-muted {
+            color: #adb5bd !important; /* Un gris más claro para el texto de ayuda */
+        }
+        .form-control {
+            background-color: #212529;
+            color: #fff;
+            border-color: #495057;
+        }
+        .form-control:focus {
+            background-color: #212529;
+            color: #fff;
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+        }
+        .list-group-item {
+            background-color: #212529;
+            border-color: #495057;
+            color: #fff;
+        }
+        .spinner-border {
+            display: none; /* Oculto por defecto */
+        }
+        .album-result-item, .artist-result-item {
+            cursor: pointer;
+        }
+        .album-result-item:hover, .artist-result-item:hover {
+            background-color: #343a40; /* Un hover más oscuro */
+        }
+        .list-group-item.active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
         }
     </style>
 
@@ -32,26 +85,66 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h1 class="text-center mb-4">Vender un Vinilo</h1>
-            <p class="text-center text-muted">
-                Busca un artista y selecciona el álbum que deseas vender. Si no está en nuestro catálogo, lo importaremos desde Discogs por ti.
+            <p class="text-center">
+                Busca un artista y selecciona el álbum que deseas vender. Si no está en nuestro catálogo, lo importaremos desde Discogs.
             </p>
 
             <!-- Contenedor de Búsqueda -->
-            <div id="search-container" class="p-4 border rounded bg-light text-dark shadow-sm mb-4">
+            <div id="search-container" class="p-4 border rounded shadow-sm mb-4" data-bs-theme="dark">
                 <div class="mb-4">
-                    <label for="id_artista_search" class="form-label fw-bold">Paso 1: Busca el Artista</label>
-                    <select id="id_artista_search" class="form-select form-select-lg"></select>
+                    <label for="artist-search-input" class="form-label fw-bold">Paso 1: Busca el Artista</label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="artist-search-input" class="form-control form-control-lg" placeholder="Escribe el nombre de un artista...">
+                        <button class="btn btn-primary" type="button" id="artist-search-btn">Buscar</button>
+                    </div>
+                    <div class="spinner-border text-primary mt-2" role="status" id="artist-loading-spinner"></div>
+                    <div id="artist-results-container" class="list-group mt-2">
+                        <!-- Los resultados de la búsqueda de artistas se insertarán aquí -->
+                    </div>
+                    <input type="hidden" id="selected-artist-id">
                 </div>
-                <div class="mb-4">
-                    <label for="id_album_search" class="form-label fw-bold">Paso 2: Selecciona el Álbum</label>
-                    <select id="id_album_search" class="form-select form-select-lg" disabled></select>
+
+                <!-- Contenedor de búsqueda de álbum (inicialmente oculto) -->
+                <div id="album-search-container">
+                    <label for="album-search-input" class="form-label fw-bold">Paso 2: Busca el Álbum</label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="album-search-input" class="form-control form-control-lg" placeholder="Escribe el nombre del álbum...">
+                        <button class="btn btn-primary" type="button" id="album-search-btn">Buscar</button>
+                    </div>
+                    <div id="album-results-container" class="list-group mt-2">
+                        <!-- Los resultados de la búsqueda se insertarán aquí -->
+                    </div>
+                    <div class="spinner-border text-primary mt-2" role="status" id="album-loading-spinner"></div>
                 </div>
             </div>
 
-            <h3 class="mt-4 mb-3">Paso 3: Describe tu Copia</h3>
-                <form method="post" id="sale-form" class="p-4 border rounded bg-light text-dark shadow-sm">
+            <!-- Contenedor del Formulario de Venta -->
+            <div id="sale-form-container">
+                <!-- Vista previa del álbum seleccionado -->
+                <div id="album-details-preview" class="card mb-4 shadow-sm">
+                    <!-- El contenido se generará dinámicamente -->
+                </div>
+
+                <h3 class="mt-4 mb-3">Paso 3: Describe tu Copia</h3>
+                <form method="post" id="sale-form" class="p-4 border rounded shadow-sm" action="{% url 'ven_crear' %}" data-bs-theme="dark">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    {{ form.producto }} {# Campo oculto que se llenará con JS #}
+                    {{ form.discogs_master_id }} {# Nuevo campo oculto para Discogs #}
+
+                    <div class="mb-3">
+                        <label for="{{ form.precio.id_for_label }}" class="form-label">{{ form.precio.label }}</label>
+                        {{ form.precio|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.stock.id_for_label }}" class="form-label">{{ form.stock.label }}</label>
+                        {{ form.stock|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.descripcion_condicion.id_for_label }}" class="form-label">{{ form.descripcion_condicion.label }}</label>
+                        {{ form.descripcion_condicion|add_class:"form-control"|attr:"rows:4" }}
+                        <div class="form-text">{{ form.descripcion_condicion.help_text }}</div>
+                    </div>
+
                     <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">Poner en Venta</button>
                         <button type="button" id="cancel-sale-btn" class="btn btn-secondary">Cancelar y buscar de nuevo</button>
@@ -70,59 +163,178 @@
 
     <script>
     $(document).ready(function() {
-        $('#id_artista').select2({
-            theme: "bootstrap-5",
-            language: "es", // Usar el idioma español
-            ajax: {
-                url: $('#id_artista').data('ajax-url'), // URL desde el atributo data-*
-                dataType: 'json',
-                delay: 250, // Esperar 250ms después de que el usuario deje de escribir
-                data: function (params) {
-                    return {
-                        term: params.term // Término de búsqueda
-                    };
-                },
-                processResults: function (data) {
-                    // Transforma la respuesta JSON al formato que Select2 espera
-                    return {
-                        results: data.results
-                    };
-                },
-                cache: true
-            },
-            placeholder: 'Escribe para buscar un artista...',
-            minimumInputLength: 2 // Empezar a buscar después de 2 caracteres
-        });
-
-        $('#id_album').select2({
-            theme: "bootstrap-5",
-            language: "es",
-            placeholder: "Selecciona un artista primero",
-        });
-
-        $('#id_artista').on('change', function() {
-            const artistaId = $(this).val();
-            const albumSelect = $('#id_album');
-
-            if (artistaId) {
-                $.ajax({
-                    url: "{% url 'ajax_cargar_albumes' %}", // Esta URL sigue siendo correcta para cargar álbumes
-                    data: { 'artista_id': artistaId },
-                    success: function(data) {
-                        albumSelect.empty().append('<option value="">-- Elige un álbum --</option>');
-                        $.each(data, function(key, value) {
-                            albumSelect.append($('<option>', {
-                                value: value.id,
-                                text: value.nombre
-                            }));
-                        });
-                        albumSelect.prop('disabled', false);
-                        $('#id_precio, #id_stock, #id_descripcion_condicion').prop('disabled', false);
-                    }
-                });
-            } else {
-                albumSelect.empty().append('<option value="">Selecciona un artista primero</option>').prop('disabled', true);
+        // --- Lógica de Búsqueda de Artista ---
+        $('#artist-search-btn').on('click', performArtistSearch);
+        $('#artist-search-input').on('keypress', function(e) {
+            if (e.which === 13) { // Enter
+                e.preventDefault();
+                performArtistSearch();
             }
+        });
+
+        function performArtistSearch() {
+            const searchTerm = $('#artist-search-input').val().trim();
+            if (searchTerm.length < 3) {
+                alert('Por favor, escribe al menos 3 caracteres para buscar.');
+                return;
+            }
+
+            $('#artist-loading-spinner').show();
+            $('#artist-results-container').empty();
+            $('#artist-results-container').show(); // <-- ¡LA LÍNEA QUE FALTABA!
+            $('#album-search-container').hide(); // Ocultar búsqueda de álbum
+
+            $.ajax({
+                url: "{% url 'ajax_buscar_artistas' %}",
+                data: { 'term': searchTerm },
+                success: function(data) {
+                    $('#artist-loading-spinner').hide();
+                    if (data.results && data.results.length > 0) {
+                        data.results.forEach(function(artist) {
+                            const resultItem = `
+                                <a class="list-group-item list-group-item-action artist-result-item" data-artist-id="${artist.id}" data-artist-name="${artist.text}">
+                                    ${artist.text}
+                                </a>`;
+                            $('#artist-results-container').append(resultItem);
+                        });
+                    } else {
+                        $('#artist-results-container').html('<p class="text-muted">No se encontraron artistas.</p>');
+                    }
+                }
+            });
+        }
+
+        // --- Evento: Click en un resultado de artista ---
+        $(document).on('click', '.artist-result-item', function() {
+            const artistId = $(this).data('artist-id');
+            const artistName = $(this).data('artist-name');
+
+            // Actualizar el input, guardar el ID y ocultar los resultados
+            $('#artist-search-input').val(artistName);
+            $('#selected-artist-id').val(artistId);
+            $('#artist-results-container').slideUp(200, function() { $(this).empty(); });
+
+            resetAlbumSearch();
+            $('#album-search-container').show();
+        });
+
+        // --- Evento: Click en el botón de buscar álbum ---
+        $('#album-search-btn').on('click', function() {
+            performAlbumSearch();
+        });
+
+        // --- Evento: Presionar Enter en el input de búsqueda de álbum ---
+        $('#album-search-input').on('keypress', function(e) {
+            if (e.which === 13) { // 13 es el código para Enter
+                e.preventDefault();
+                performAlbumSearch();
+            }
+        });
+
+        // --- Función para realizar la búsqueda de álbumes ---
+        function performAlbumSearch() {
+            const artistaId = $('#selected-artist-id').val();
+            const searchTerm = $('#album-search-input').val().trim();
+
+            if (!artistaId) {
+                alert('Por favor, selecciona un artista primero.');
+                return;
+            }
+
+            $('#album-loading-spinner').show();
+            $('#album-results-container').empty();
+
+            $.ajax({
+                url: "{% url 'ajax_cargar_albumes' %}",
+                data: {
+                    'artista_id': artistaId,
+                    'term': searchTerm
+                },
+                success: function(data) {
+                    $('#album-loading-spinner').hide();
+                    if (data.results && data.results.length > 0) {
+                        data.results.forEach(function(album) {
+                            const resultItem = `
+                                <a class="list-group-item list-group-item-action album-result-item" data-album-id="${album.id}">
+                                    ${album.text}
+                                </a>`;
+                            $('#album-results-container').append(resultItem);
+                        });
+                    } else {
+                        $('#album-results-container').html('<p class="text-muted">No se encontraron álbumes.</p>');
+                    }
+                }
+            });
+        }
+
+        // --- Evento: Click en un resultado de álbum ---
+        $(document).on('click', '.album-result-item', function() {
+            const albumId = $(this).data('album-id');
+            prepareSaleForm(albumId);
+        });
+
+        // --- Función para preparar y mostrar el formulario de venta ---
+        function prepareSaleForm(albumId) {
+            if (albumId.startsWith('local-')) {
+                $('#id_producto').val(albumId.split('-')[1]);
+                $('#id_discogs_master_id').val('');
+            } else if (albumId.startsWith('discogs-master-')) {
+                $('#id_producto').val('');
+                $('#id_discogs_master_id').val(albumId.split('-')[2]);
+            }
+
+            // Ocultar la búsqueda y mostrar el formulario final
+            $('#search-container').hide();
+            $('#sale-form-container').show();
+
+            // Mostrar vista previa
+            const masterId = albumId.split('-')[2];
+            $.ajax({
+                url: "{% url 'ajax_get_album_details' %}",
+                data: { 'master_id': masterId },
+                success: function(data) {
+                    if (data.success) {
+                        const yearText = data.year && data.year !== 'N/A' ? `(${data.year})` : '';
+                        const detailsHtml = `
+                            <div class="row g-0">
+                                <div class="col-md-4"><img src="${data.image_url}" class="img-fluid rounded-start" alt="Portada"></div>
+                                <div class="col-md-8"><div class="card-body">
+                                    <h4 class="card-title">${data.title}</h4>
+                                    <h6 class="card-subtitle mb-2 text-muted">${data.artist} ${yearText}</h6>
+                                </div></div>
+                            </div>`;
+                        $('#album-details-preview').html(detailsHtml).show();
+                    }
+                }
+            });
+        }
+
+        // --- Función para resetear la vista ---
+        function resetSaleForm() {
+            $('#sale-form-container').hide();
+            $('#search-container').show();
+            resetArtistSearch();
+        }
+
+        function resetArtistSearch() {
+            $('#artist-search-input').val('');
+            $('#artist-results-container').empty();
+            $('#selected-artist-id').val('');
+            $('#album-search-container').hide();
+            resetAlbumSearch();
+        }
+
+        function resetAlbumSearch() {
+            $('#album-search-input').val('');
+            $('#album-results-container').empty();
+            $('#album-details-preview').hide().empty();
+            $('#id_producto').val(''); // Limpiar el producto oculto
+            $('#id_discogs_master_id').val(''); // Limpiar el id de discogs oculto
+        }
+
+        // --- Evento para el botón de cancelar ---
+        $('#cancel-sale-btn').on('click', function() {
+            resetSaleForm();
         });
     });
     </script>

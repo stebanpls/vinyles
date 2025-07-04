@@ -12,12 +12,14 @@ logger = logging.getLogger(__name__)
 
 class DiscogsAPI:
     def __init__(self):
-        self.token = settings.DISCOGS_TOKEN
-        if not self.token:
-            raise ValueError("DISCOGS_TOKEN no está configurado en settings.py")
-        # Es buena práctica incluir el nombre de tu aplicación y una versión
-        # en el User-Agent para que Discogs pueda identificar tu uso.
-        self.client = discogs_client.Client("VinylesStoreApp/1.0 (Django)", user_token=self.token)
+        user_token = settings.DISCOGS_TOKEN
+
+        if not user_token:
+            raise ValueError("DISCOGS_USER_TOKEN debe estar configurado en settings.py")
+
+        # Para búsquedas públicas, solo se necesita el user_token.
+        self.user_agent = "VinylesStoreApp/1.0"
+        self.client = discogs_client.Client(self.user_agent, user_token=user_token)
 
     def search_releases(self, query, type="release", per_page=10):
         """
@@ -31,8 +33,8 @@ class DiscogsAPI:
             # discogs-client devuelve un iterador, lo convertimos a lista
             results = list(self.client.search(query, type=type, per_page=per_page))
             return results
-        except discogs_client.RateLimitError:
-            logger.warning("Límite de peticiones de Discogs excedido.")
+        except discogs_client.exceptions.HTTPError as e:
+            logger.warning(f"Error HTTP de Discogs al buscar: {e}")
             return None
         except Exception as e:
             logger.error(f"Error al buscar en Discogs: {e}")
@@ -47,10 +49,8 @@ class DiscogsAPI:
         try:
             release = self.client.release(release_id)
             return release
-        except discogs_client.RateLimitError:
-            logger.warning(
-                f"Límite de peticiones de Discogs excedido al obtener detalles del lanzamiento {release_id}."
-            )
+        except discogs_client.exceptions.HTTPError as e:
+            logger.warning(f"Error HTTP de Discogs al obtener detalles del lanzamiento {release_id}: {e}")
             return None
         except Exception as e:
             logger.error(f"Error al obtener detalles del lanzamiento {release_id}: {e}")
@@ -67,7 +67,8 @@ class DiscogsAPI:
             return None
 
         try:
-            response = requests.get(image_url, stream=True)
+            headers = {"User-Agent": self.user_agent}
+            response = requests.get(image_url, stream=True, headers=headers, timeout=(10, 15))
             response.raise_for_status()  # Lanza una excepción para errores HTTP
 
             # Obtener la extensión del archivo de la URL

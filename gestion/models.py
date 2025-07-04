@@ -1,7 +1,7 @@
 import datetime
 import logging  # Añadir al inicio del archivo
 import os  # Para construir rutas de archivo
-import random
+import secrets
 import string
 from uuid import uuid4  # Para generar nombres de archivo únicos
 
@@ -217,9 +217,9 @@ class PasswordResetCode(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.code = "".join(random.choices(string.digits, k=6))
+            self.code = "".join(secrets.choice(string.digits) for _ in range(6))
             while PasswordResetCode.objects.filter(code=self.code).exists():
-                self.code = "".join(random.choices(string.digits, k=6))
+                self.code = "".join(secrets.choice(string.digits) for _ in range(6))
             self.expires_at = timezone.now() + datetime.timedelta(minutes=10)  # Código válido por 10 minutos
         super().save(*args, **kwargs)
 

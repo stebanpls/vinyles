@@ -234,3 +234,5 @@ SITE_ID = 1
 
 # Configuración de la API de Discogs
 DISCOGS_TOKEN = os.environ.get("DISCOGS_USER_TOKEN", "")
+DISCOGS_CONSUMER_KEY = os.environ.get("DISCOGS_CONSUMER_KEY", "")
+DISCOGS_CONSUMER_SECRET = os.environ.get("DISCOGS_CONSUMER_SECRET", "")
