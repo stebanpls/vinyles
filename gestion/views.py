@@ -695,18 +695,21 @@ def ven_crear(request):
                 producto = _get_or_import_producto_from_discogs(discogs_master_id, request.user)
                 if not producto:
                     messages.error(request, "No se pudo importar el álbum desde Discogs. Inténtalo de nuevo.")
-                    # Redirigir de vuelta al formulario de venta para que no pierda los datos
                     return render(request, "paginas/vendedor/ven_vender_desde_catalogo.html", {"form": form})
                 else:
                     messages.info(request, f"Se ha añadido '{producto.nombre}' al catálogo de Vinyles.")
-                    # Crear notificación para admins
-                    mensaje_notificacion = (
-                        f"El vendedor '{request.user.username}' ha importado un nuevo producto: '{producto.nombre}'."
-                    )
-                    crear_notificacion_para_admins(mensaje_notificacion)
 
-            # A este punto, ya sea que existía o se acaba de importar, tenemos un objeto `producto`.
-            # Ahora creamos la Publicación.
+                    # 🔔 Notificar a los admins sobre el nuevo producto importado
+                    mensaje = f"🆕 El vendedor '{request.user.username}' ha importado un nuevo producto: '{producto.nombre}'."
+                    url = "/admin/lista-productos/"  # pon aquí la URL real si tienes
+                    for admin in User.objects.filter(is_staff=True, is_superuser=False):
+                        Notificacion.objects.create(
+                            usuario_destino=admin,
+                            mensaje=mensaje,
+                            url_destino=url
+                        )
+
+            # Crear publicación para el producto (nuevo o ya existente)
             publicacion = Publicacion(
                 producto=producto,
                 vendedor=request.user,
@@ -718,9 +721,20 @@ def ven_crear(request):
             try:
                 publicacion.save()
                 messages.success(request, f"¡Has publicado '{producto.nombre}' para la venta!")
+
+                # 🔔 Notificar a los admins sobre la publicación creada
+                mensaje = f"📢 El vendedor '{request.user.username}' ha publicado el álbum '{producto.nombre}'."
+                url = "/admin/lista-productos/"  # o donde quieras llevar al admin
+                for admin in User.objects.filter(is_staff=True, is_superuser=False):
+                    Notificacion.objects.create(
+                        usuario_destino=admin,
+                        mensaje=mensaje,
+                        url_destino=url
+                    )
+
                 return redirect("ven_producto")
+
             except Exception:
-                # Esto podría pasar si el unique_together falla (el usuario ya tiene una publicación)
                 messages.warning(
                     request,
                     f"Ya tienes una publicación para '{producto.nombre}'. Puedes editarla desde 'Mis Productos'.",
@@ -729,7 +743,6 @@ def ven_crear(request):
 
         else:
             messages.error(request, "Por favor, corrige los errores en el formulario.")
-            # Volver a renderizar la página de venta, pero esta vez con el formulario que contiene errores.
     else:
         form = VentaDesdeCatalogoForm()
 
@@ -1179,18 +1192,35 @@ def admin_usuario(request):
     return render(request, "paginas/Administrador/admin_usuario.html")
 
 
+
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_verificacion(request):
-    return render(request, "paginas/Administrador/admin_verificacion.html")
+    notificaciones = Notificacion.objects.filter(usuario_destino=request.user).order_by('-fecha_creacion')[:5]
+    return render(request, "paginas/Administrador/admin_verificacion.html", {
+        "notificaciones": notificaciones,
+    })
 
 
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
-def admin_adPro(request):
-    return render(request, "paginas/administrador/admin_adPro.html")
+def admin_adPro(request, producto_id):
+    # Importa tu modelo si no lo has hecho aún
+    from gestion.models import Producto  # o donde sea que esté tu modelo
+
+    try:
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        messages.error(request, "❌ El álbum no existe.")
+        return redirect("admin_verificacion")  # o a donde quieras redirigir
+
+    context = {
+        "producto": producto,
+    }
+    return render(request, "paginas/Administrador/admin_adPro.html", context)
+
 
 
 @never_cache

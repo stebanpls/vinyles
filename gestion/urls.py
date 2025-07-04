@@ -67,7 +67,7 @@ seller_patterns = [
 admin_patterns = [
     path("", views.admin_administrador, name="admin_administrador"),
     path("productos/", views.admin_producto, name="admin_producto"),
-    path("productos/adpro/", views.admin_adPro, name="admin_adPro"),
+    path("productos/adpro/<int:producto_id>/", views.admin_adPro, name="admin_adPro"),
     path("productos/buscar-discogs/", views.admin_buscar_album_discogs, name="admin_buscar_album_discogs"),
     path("productos/importar-discogs/", views.admin_importar_album_discogs, name="admin_importar_album_discogs"),
     path("generos/", views.admin_generos, name="admin_generos"),
@@ -90,6 +90,7 @@ admin_patterns = [
     path("notificaciones/", views.admin_notificaciones, name="admin_notificaciones"),
     path("nosotros/", views.admin_nosotros, name="admin_nosotros"),
     path("terminos/", views.admin_terminos, name="admin_terminos"),
+    path("usuarios/admin/bloq/gesUsers/", views.admin_usuario, name="admin_usuario"),
 ]
 
 # --- URLs para llamadas AJAX (no destinadas a ser visitadas directamente) ---
