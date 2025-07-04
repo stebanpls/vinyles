@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 # Se agregó el import de os
 import os
+import sys
 from pathlib import Path
 
 # Importar python-dotenv
@@ -236,3 +237,10 @@ SITE_ID = 1
 DISCOGS_TOKEN = os.environ.get("DISCOGS_USER_TOKEN", "")
 DISCOGS_CONSUMER_KEY = os.environ.get("DISCOGS_CONSUMER_KEY", "")
 DISCOGS_CONSUMER_SECRET = os.environ.get("DISCOGS_CONSUMER_SECRET", "")
+
+# Si estamos en modo de prueba (ej. 'manage.py test') y el token no está en
+# el entorno, usamos un valor falso para evitar que la app falle al iniciar.
+# Las pruebas que realmente usen la API deberían mockearla.
+if "test" in sys.argv:
+    if not DISCOGS_TOKEN:
+        DISCOGS_TOKEN = "dummy-token-for-testing"  # nosec B105

@@ -6,6 +6,7 @@ import requests
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.utils.functional import LazyObject
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ class DiscogsAPI:
         user_token = settings.DISCOGS_TOKEN
 
         if not user_token:
-            raise ValueError("DISCOGS_USER_TOKEN debe estar configurado en settings.py")
+            raise ValueError("DISCOGS_USER_TOKEN debe estar configurado en tus settings o variables de entorno.")
 
         # Para búsquedas públicas, solo se necesita el user_token.
         self.user_agent = "VinylesStoreApp/1.0"
@@ -84,5 +85,12 @@ class DiscogsAPI:
             return None
 
 
-# Instancia global de la API para usar en las vistas
-discogs_api = DiscogsAPI()
+class LazyDiscogsAPI(LazyObject):
+    def _setup(self):
+        """
+        Este método se llama la primera vez que se accede al objeto `discogs_api`.
+        """
+        self._wrapped = DiscogsAPI()
+
+
+discogs_api = LazyDiscogsAPI()
