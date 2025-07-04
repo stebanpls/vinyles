@@ -701,7 +701,10 @@ def ven_crear(request):
 
                     # 🔔 Notificar a los admins sobre el nuevo producto importado
                     mensaje = f"🆕 El vendedor '{request.user.username}' ha importado un nuevo producto: '{producto.nombre}'."
-                    url = "/admin/lista-productos/"  # pon aquí la URL real si tienes
+                    
+
+                    url = reverse("admin_adPro", args=[producto.id])
+                    
                     for admin in User.objects.filter(is_staff=True, is_superuser=False):
                         Notificacion.objects.create(
                             usuario_destino=admin,
@@ -724,7 +727,8 @@ def ven_crear(request):
 
                 # 🔔 Notificar a los admins sobre la publicación creada
                 mensaje = f"📢 El vendedor '{request.user.username}' ha publicado el álbum '{producto.nombre}'."
-                url = "/admin/lista-productos/"  # o donde quieras llevar al admin
+                
+                url = reverse("admin_adPro", args=[producto.id])
                 for admin in User.objects.filter(is_staff=True, is_superuser=False):
                     Notificacion.objects.create(
                         usuario_destino=admin,
