@@ -181,3 +181,9 @@ cython_debug/
 
 # Ignorar la carpeta STATIC_ROOT (donde collectstatic copia los archivos)
 /staticfiles/
+
+# Ignorar la carpeta MEDIA_ROOT (donde se suben los archivos de usuario)
+# /media/
+
+# macOS specific files
+.DS_Store

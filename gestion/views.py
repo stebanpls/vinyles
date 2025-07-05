@@ -68,7 +68,7 @@ def artista_form_modal(request):
                 "nombre": str(artista),  # Usar str(artista) para obtener la representación del modelo
             })
         else:
-            print(f"Errores en el formulario de artista (modal): {form.errors.as_json()}")
+            logger.warning("Errores en el formulario de artista (modal): %s", form.errors.as_json())
             form_html = render_to_string("modales/modal_artista.html", {"form": form}, request=request)
             return JsonResponse({"success": False, "form_html": form_html})
     else:
@@ -83,7 +83,7 @@ def modal_genero(request):
             genero = form.save()
             return JsonResponse({"success": True, "id": genero.id, "nombre": str(genero)})
         else:
-            print(f"Errores en el formulario de género (modal): {form.errors.as_json()}")
+            logger.warning("Errores en el formulario de género (modal): %s", form.errors.as_json())
             form_html = render_to_string("modales/modal_genero.html", {"form": form}, request=request)
             return JsonResponse({"success": False, "form_html": form_html})
     else:
@@ -98,7 +98,7 @@ def modal_productor(request):
             productor = form.save()
             return JsonResponse({"success": True, "id": productor.id, "nombre": str(productor)})
         else:
-            print(f"Errores en el formulario de productor (modal): {form.errors.as_json()}")
+            logger.warning("Errores en el formulario de productor (modal): %s", form.errors.as_json())
             form_html = render_to_string("modales/modal_productor.html", {"form": form}, request=request)
             return JsonResponse({"success": False, "form_html": form_html})
     else:
@@ -115,7 +115,7 @@ def modal_cancion(
             cancion = form.save()
             return JsonResponse({"success": True, "id": cancion.id, "nombre": str(cancion)})
         else:
-            print(f"Errores en el formulario de canción (modal): {form.errors.as_json()}")
+            logger.warning("Errores en el formulario de canción (modal): %s", form.errors.as_json())
             form_html = render_to_string("modales/modal_cancion.html", {"form": form}, request=request)
             return JsonResponse({"success": False, "form_html": form_html})
     else:
@@ -124,6 +124,37 @@ def modal_cancion(
 
 
 # VISTAS DE LA CARPETA "PUBLICO"
+
+
+def _get_user_for_login(request, identifier, password):
+    """
+    Intenta autenticar a un usuario por nombre de usuario o email.
+    Devuelve (user, error_message)
+    """
+    user = authenticate(request, username=identifier, password=password)
+    if user is not None:
+        return user, None
+
+    # Si falla, intenta buscar por email
+    try:
+        user_by_email = User.objects.get(email__iexact=identifier)
+        user = authenticate(request, username=user_by_email.username, password=password)
+        if user is not None:
+            return user, None
+    except User.DoesNotExist:
+        pass  # El email no existe, el error general se mostrará
+    except User.MultipleObjectsReturned:
+        return None, "Múltiples cuentas están asociadas con este correo electrónico. Por favor, contacte a soporte."
+
+    return None, "El nombre de usuario/email o la contraseña son incorrectos. Por favor, inténtalo de nuevo."
+
+
+def _handle_successful_login(request, user, next_url):
+    """Maneja el inicio de sesión y la redirección."""
+    auth_login(request, user)
+    messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
+    default_redirect = "admin_administrador" if user.is_staff or user.is_superuser else "com_inicio"
+    return redirect(next_url or default_redirect)
 
 
 def inicio_view(request):
@@ -214,44 +245,16 @@ def pub_login(request):
         if form.is_valid():  # Esto validará el reCAPTCHA y los otros campos
             identifier = form.cleaned_data["login_identifier"]
             password = form.cleaned_data["password"]
-            specific_auth_error_occurred = False
 
-            user = authenticate(request, username=identifier, password=password)
-
-            if user is None:
-                try:
-                    user_by_email = User.objects.get(email__iexact=identifier)  # Búsqueda case-insensitive
-                    user = authenticate(request, username=user_by_email.username, password=password)
-                except User.DoesNotExist:
-                    pass
-                except User.MultipleObjectsReturned:
-                    messages.error(
-                        request,
-                        "Múltiples cuentas están asociadas con este correo electrónico. Por favor, contacte a soporte.",
-                    )
-                    specific_auth_error_occurred = True  # Marcar que este error específico ocurrió
-
+            user, error_message = _get_user_for_login(request, identifier, password)
             if user is not None:
                 estado = getattr(user, "estado", None)
-
                 if estado and estado.bloqueado:
                     request.session["mostrar_alerta_bloqueado"] = True
-
-                auth_login(request, user)
-                messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
-
-                default_redirect_url_name = "com_inicio"  # Default para usuarios normales
-                if user.is_staff or user.is_superuser:
-                    default_redirect_url_name = "admin_administrador"
-                if next_url:
-                    return redirect(next_url)
-                return redirect(default_redirect_url_name)
+                return _handle_successful_login(request, user, next_url)
             else:
-                if not specific_auth_error_occurred:
-                    messages.error(
-                        request,
-                        "El nombre de usuario/email o la contraseña son incorrectos. Por favor, inténtalo de nuevo.",
-                    )
+                messages.error(request, error_message)
+
     context = {
         "form": form,  # Pasar el formulario al contexto
         "album_name_get": album_name_get,  # Datos del álbum de GET
@@ -614,7 +617,7 @@ def _get_or_import_producto_from_discogs(master_id, request_user):
         master = discogs_api.client.master(int(master_id))
         release_details = master.main_release
     except Exception as e:
-        logger.error(f"Error al obtener el main_release para el master {master_id}: {e}")
+        logger.error("Error al obtener el main_release para el master %s: %s", master_id, e)
         return None
 
     # Comprobar si el producto ya existe por su discogs_id de la release principal
@@ -700,18 +703,11 @@ def ven_crear(request):
                     messages.info(request, f"Se ha añadido '{producto.nombre}' al catálogo de Vinyles.")
 
                     # 🔔 Notificar a los admins sobre el nuevo producto importado
-                    mensaje = f"🆕 El vendedor '{request.user.username}' ha importado un nuevo producto: '{producto.nombre}'."
-                    
-
+                    mensaje = (
+                        f"🆕 El vendedor '{request.user.username}' ha importado un nuevo producto: '{producto.nombre}'."
+                    )
                     url = reverse("admin_adPro", args=[producto.id])
-                    
-                    for admin in User.objects.filter(is_staff=True, is_superuser=False):
-                        Notificacion.objects.create(
-                            usuario_destino=admin,
-                            mensaje=mensaje,
-                            url_destino=url
-                        )
-
+                    crear_notificacion_para_admins(mensaje, url)
             # Crear publicación para el producto (nuevo o ya existente)
             publicacion = Publicacion(
                 producto=producto,
@@ -727,15 +723,8 @@ def ven_crear(request):
 
                 # 🔔 Notificar a los admins sobre la publicación creada
                 mensaje = f"📢 El vendedor '{request.user.username}' ha publicado el álbum '{producto.nombre}'."
-                
                 url = reverse("admin_adPro", args=[producto.id])
-                for admin in User.objects.filter(is_staff=True, is_superuser=False):
-                    Notificacion.objects.create(
-                        usuario_destino=admin,
-                        mensaje=mensaje,
-                        url_destino=url
-                    )
-
+                crear_notificacion_para_admins(mensaje, url)
                 return redirect("ven_producto")
 
             except Exception:
@@ -811,6 +800,49 @@ def ven_crear_producto_nuevo(request):
     return render(request, "paginas/vendedor/ven_crear.html", context)
 
 
+def _get_local_albums(artista_id, term):
+    """Busca álbumes de un artista local en la base de datos."""
+    try:
+        artista_id_num = int(artista_id.split("-")[1])
+        albumes = Producto.objects.filter(artistas__id=artista_id_num, nombre__icontains=term).order_by("nombre")
+        return [{"id": f"local-{album.id}", "text": album.nombre} for album in albumes]
+    except (ValueError, IndexError):
+        return []
+
+
+def _get_discogs_albums(artista_id, term):
+    """Busca y formatea álbumes de un artista en la API de Discogs."""
+    try:
+        discogs_artist_id = int(artista_id.split("-")[1])
+        artist = discogs_api.client.artist(discogs_artist_id)
+        processed_titles = set()
+
+        search_results = discogs_api.client.search(term, artist=artist.name, type="master", format="album", per_page=50)
+
+        valid_masters = []
+        for master in search_results:
+            if master.title.lower() in processed_titles:
+                continue
+
+            if hasattr(master, "main_release") and master.main_release:
+                is_unofficial = False
+                if hasattr(master.main_release, "formats"):
+                    for f in master.main_release.formats:
+                        if "unofficial release" in [d.lower() for d in f.get("descriptions", [])]:
+                            is_unofficial = True
+                            break
+                if not is_unofficial:
+                    valid_masters.append(master)
+                    processed_titles.add(master.title.lower())
+
+        valid_masters.sort(key=lambda m: m.year if hasattr(m, "year") and m.year else 9999)
+
+        return [{"id": f"discogs-master-{master.id}", "text": f"{master.title} ({m.year})"} for m in valid_masters]
+    except Exception as e:
+        logger.error("Error al buscar álbumes en Discogs para el artista %s: %s", artista_id, e)
+        return []
+
+
 @login_required
 def ajax_cargar_albumes(request):
     """
@@ -818,68 +850,14 @@ def ajax_cargar_albumes(request):
     ya sea desde la base de datos local o desde Discogs.
     """
     # Obtenemos tanto el ID del artista como el término de búsqueda del álbum
-    artista_id_str = request.GET.get("artista_id", "")
+    artista_id = request.GET.get("artista_id", "")
     term = request.GET.get("term", "").strip()
     albumes_data = []
 
-    if artista_id_str.startswith("local-"):
-        try:
-            artista_id = int(artista_id_str.split("-")[1])
-            # Filtramos los álbumes locales por el artista Y por el término de búsqueda
-            albumes = Producto.objects.filter(artistas__id=artista_id, nombre__icontains=term).order_by("nombre")
-            for album in albumes:
-                albumes_data.append({"id": f"local-{album.id}", "text": album.nombre})
-        except (ValueError, IndexError):
-            pass  # ID inválido
-
-    elif artista_id_str.startswith("discogs-"):
-        try:
-            discogs_artist_id = int(artista_id_str.split("-")[1])
-            artist = discogs_api.client.artist(discogs_artist_id)
-            processed_titles = set()
-
-            # Búsqueda más precisa y eficiente:
-            # - type='master': Solo queremos las entradas principales, no cada reedición.
-            # - format='album': Filtramos directamente en la API para que solo devuelva álbumes.
-            # - artist=artist.name: Buscamos por el nombre del artista.
-            # - term: Incluimos el término de búsqueda del usuario si lo hay.
-            # - per_page=50: Le pedimos a la API que nos devuelva un máximo de 50 resultados.
-            search_results = discogs_api.client.search(
-                term, artist=artist.name, type="master", format="album", per_page=50
-            )
-
-            valid_masters = []
-            # 1. Recopilamos todos los álbumes válidos y oficiales
-            for master in search_results:
-                # Evitar duplicados por título
-                if master.title.lower() in processed_titles:
-                    continue
-
-                # Asegurarnos de que es un master válido con una release principal
-                if hasattr(master, "main_release") and master.main_release:
-                    # Filtro para excluir lanzamientos no oficiales (bootlegs)
-                    is_unofficial = False
-                    if hasattr(master.main_release, "formats"):
-                        for f in master.main_release.formats:
-                            if "unofficial release" in [d.lower() for d in f.get("descriptions", [])]:
-                                is_unofficial = True
-                                break
-                    if is_unofficial:
-                        continue  # Si es no oficial, lo saltamos
-
-                    valid_masters.append(master)
-                    processed_titles.add(master.title.lower())
-
-            # 2. Ordenamos la lista de álbumes válidos por año (los más antiguos primero)
-            valid_masters.sort(key=lambda m: m.year if hasattr(m, "year") and m.year else 9999)
-
-            # 3. Creamos la lista final para Select2 a partir de los resultados ordenados
-            for master in valid_masters:
-                year_str = f" ({master.year})" if hasattr(master, "year") and master.year else ""
-                albumes_data.append({"id": f"discogs-master-{master.id}", "text": f"{master.title}{year_str}"})
-
-        except Exception as e:
-            logger.error(f"Error al buscar álbumes en Discogs para el artista {artista_id_str}: {e}")
+    if artista_id.startswith("local-"):
+        albumes_data = _get_local_albums(artista_id, term)
+    elif artista_id.startswith("discogs-"):
+        albumes_data = _get_discogs_albums(artista_id, term)
 
     # Devolvemos los resultados en el formato que Select2 espera
     return JsonResponse({"results": albumes_data})
@@ -915,7 +893,7 @@ def ajax_buscar_artistas(request):
                     results.append({"id": f"discogs-{artist.id}", "text": artist.name, "type": "Discogs"})
                     processed_artists.add(artist.name.lower())
     except Exception as e:
-        logger.error(f"Error al buscar artistas en Discogs con término '{term}': {e}")
+        logger.error("Error al buscar artistas en Discogs con término '%s': %s", term, e)
 
     return JsonResponse({"results": results})
 
@@ -947,7 +925,7 @@ def ajax_get_album_details(request):
         }
         return JsonResponse(details)
     except Exception as e:
-        logger.error(f"Error al obtener detalles del master {master_id} desde Discogs: {e}")
+        logger.error("Error al obtener detalles del master %s desde Discogs: %s", master_id, e)
         return JsonResponse({"success": False, "error": "No se pudieron obtener los detalles."}, status=500)
 
 
@@ -973,70 +951,63 @@ def ven_notificaciones(request):
     return render(request, "paginas/vendedor/ven_notificaciones.html", context)
 
 
-@never_cache
-@login_required
-def ven_seleccionar_version(request, release_id):
-    from .discogs_api_utils import discogs_api
-
+def _get_or_create_producto_from_release(release_id):
+    """Obtiene o crea un Producto desde un ID de release de Discogs."""
     try:
-        producto = Producto.objects.get(discogs_id=str(release_id))
-        if Publicacion.objects.filter(producto=producto, vendedor=request.user).exists():
-            messages.warning(
-                request,
-                f"Ya tienes una publicación para '{producto.nombre}'. Puedes editarla desde 'Mis Productos'.",
-            )
-            return redirect("ven_producto")  # Redirigir a la lista de productos del vendedor
-
+        return Producto.objects.get(discogs_id=str(release_id))
     except Producto.DoesNotExist:
         release_details = discogs_api.get_release_details(release_id)
         if not release_details:
-            messages.error(
-                request,
-                "No se pudieron obtener los detalles de este álbum desde Discogs. Inténtalo de nuevo.",
-            )
-            return redirect("ven_importar_desde_discogs")
+            return None, "No se pudieron obtener los detalles de este álbum desde Discogs."
 
         try:
-            artistas_objs = []
-            if hasattr(release_details, "artists"):
-                for artist_data in release_details.artists:
-                    artista, _ = Artista.objects.get_or_create(
-                        nombre=artist_data.name, defaults={"discogs_id": str(artist_data.id)}
-                    )
-                    artistas_objs.append(artista)
+            with transaction.atomic():
+                artistas_objs = [
+                    Artista.objects.get_or_create(nombre=artist.name, defaults={"discogs_id": str(artist.id)})[0]
+                    for artist in getattr(release_details, "artists", [])
+                ]
+                generos_objs = [
+                    Genero.objects.get_or_create(nombre=genre_name.upper())[0]
+                    for genre_name in getattr(release_details, "genres", [])
+                ]
+                image_path = None
+                if hasattr(release_details, "images") and release_details.images:
+                    image_url = release_details.images[0].get("uri")
+                    if image_url:
+                        image_path = discogs_api.download_image(image_url, filename_prefix=f"release_{release_id}")
 
-            generos_objs = []
-            if hasattr(release_details, "genres"):
-                for genre_name in release_details.genres:
-                    genero, _ = Genero.objects.get_or_create(nombre=genre_name.upper())
-                    generos_objs.append(genero)
-
-            image_path = None
-            if hasattr(release_details, "images") and release_details.images:
-                image_url = release_details.images[0].get("uri")
-                if image_url:
-                    image_path = discogs_api.download_image(image_url, filename_prefix=f"release_{release_id}")
-
-            producto = Producto(
-                nombre=release_details.title,
-                lanzamiento=f"{release_details.year}-01-01"
-                if release_details.year and release_details.year > 0
-                else None,
-                discografica=release_details.labels[0].name
-                if hasattr(release_details, "labels") and release_details.labels
-                else "Desconocida",
-                imagen_portada=image_path,
-                discogs_id=str(release_id),
-            )
-            producto.save()  # Guardar para poder establecer relaciones M2M
-            producto.artistas.set(artistas_objs)
-            producto.genero_principal.set(generos_objs)
-            messages.info(request, f"Se ha añadido '{producto.nombre}' al catálogo de Vinyles.")
-
+                producto = Producto.objects.create(
+                    nombre=release_details.title,
+                    lanzamiento=f"{release_details.year}-01-01" if release_details.year else None,
+                    discografica=getattr(release_details.labels[0], "name", "Desconocida"),
+                    imagen_portada=image_path,
+                    discogs_id=str(release_id),
+                )
+                producto.artistas.set(artistas_objs)
+                producto.genero_principal.set(generos_objs)
+                return producto, f"Se ha añadido '{producto.nombre}' al catálogo de Vinyles."
         except Exception as e:
-            logger.error(f"Error al crear el producto desde Discogs release {release_id}: {e}")
-            messages.error(request, "Hubo un error al guardar la información del álbum.")
+            logger.error("Error al crear el producto desde Discogs release %s: %s", release_id, e)
+            return None, "Hubo un error al guardar la información del álbum."
+
+
+@never_cache
+@login_required
+def ven_seleccionar_version(request, release_id):
+    try:
+        producto = Producto.objects.get(discogs_id=str(release_id))
+    except Producto.DoesNotExist:
+        producto, message = _get_or_create_producto_from_release(release_id)
+        if not producto:
+            messages.error(request, message)
             return redirect("ven_importar_desde_discogs")
+        messages.info(request, message)
+
+    if Publicacion.objects.filter(producto=producto, vendedor=request.user).exists():
+        messages.warning(
+            request, f"Ya tienes una publicación para '{producto.nombre}'. Puedes editarla desde 'Mis Productos'."
+        )
+        return redirect("ven_producto")
 
     if request.method == "POST":
         form = PublicacionForm(request.POST)
@@ -1196,15 +1167,18 @@ def admin_usuario(request):
     return render(request, "paginas/Administrador/admin_usuario.html")
 
 
-
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_verificacion(request):
-    notificaciones = Notificacion.objects.filter(usuario_destino=request.user).order_by('-fecha_creacion')[:5]
-    return render(request, "paginas/Administrador/admin_verificacion.html", {
-        "notificaciones": notificaciones,
-    })
+    notificaciones = Notificacion.objects.filter(usuario_destino=request.user).order_by("-fecha_creacion")[:5]
+    return render(
+        request,
+        "paginas/Administrador/admin_verificacion.html",
+        {
+            "notificaciones": notificaciones,
+        },
+    )
 
 
 @never_cache
@@ -1224,7 +1198,6 @@ def admin_adPro(request, producto_id):
         "producto": producto,
     }
     return render(request, "paginas/Administrador/admin_adPro.html", context)
-
 
 
 @never_cache
@@ -1265,85 +1238,102 @@ def admin_buscar_album_discogs(request):
     )
 
 
+# --- Funciones auxiliares para la importación desde Discogs ---
+
+
+def _create_artists_from_details(release_details, request):
+    """Crea o encuentra artistas a partir de los detalles de un lanzamiento de Discogs."""
+    artistas_objs = []
+    if hasattr(release_details, "artists") and release_details.artists:
+        for artist_data in release_details.artists:
+            artist_obj, created = Artista.objects.get_or_create(
+                nombre=artist_data.name,
+                defaults={"discogs_id": artist_data.id if hasattr(artist_data, "id") else None},
+            )
+            if created:
+                messages.info(request, "Artista '%s' creado.", artist_data.name)
+            artistas_objs.append(artist_obj)
+    return artistas_objs
+
+
+def _create_genres_from_details(release_details, request):
+    """Crea o encuentra géneros a partir de los detalles de un lanzamiento de Discogs."""
+    generos_objs = []
+    if hasattr(release_details, "genres") and release_details.genres:
+        for genre_name in release_details.genres:
+            genero_obj, created = Genero.objects.get_or_create(nombre=genre_name.upper())
+            if created:
+                messages.info(request, "Género '%s' creado.", genre_name)
+            generos_objs.append(genero_obj)
+    return generos_objs
+
+
+def _download_and_save_image(release_details, request):
+    """Descarga y guarda la imagen de portada de un lanzamiento de Discogs."""
+    if hasattr(release_details, "images") and release_details.images:
+        image_url = release_details.images[0]["uri"]
+        image_path = discogs_api.download_image(image_url, filename_prefix=f"{release_details.id}")
+        if not image_path:
+            messages.warning(request, "No se pudo descargar la imagen para '%s'.", release_details.title)
+        return image_path
+    return None
+
+
+def _create_product_instance(release_details, artistas, generos, image_path):
+    """Crea una nueva instancia del modelo Producto."""
+    formats_str = ", ".join(release_details.formats) if hasattr(release_details, "formats") else "N/A"
+    producto = Producto.objects.create(
+        nombre=release_details.title,
+        lanzamiento=f"{release_details.year}-01-01" if hasattr(release_details, "year") else "2000-01-01",
+        descripcion=f"Álbum importado desde Discogs. Formato(s): {formats_str}",
+        discografica=(
+            release_details.labels[0].name
+            if hasattr(release_details, "labels") and release_details.labels
+            else "Desconocida"
+        ),
+        imagen_portada=image_path,
+        discogs_id=str(release_details.id),
+    )
+    producto.artistas.set(artistas)
+    producto.genero_principal.set(generos)
+    return producto
+
+
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_importar_album_discogs(request):
-    from .discogs_api_utils import discogs_api  # Importa tu utilidad aquí
+    """Importa un álbum desde Discogs a la base de datos local."""
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Método no permitido"}, status=405)
 
-    if request.method == "POST":
-        release_id = request.POST.get("release_id")
-        if release_id:
-            release_details = discogs_api.get_release_details(int(release_id))
-            if release_details:
-                try:
-                    if Producto.objects.filter(discogs_id=release_details.id).exists():
-                        messages.warning(request, f"El álbum '{release_details.title}' ya ha sido importado.")
-                        return JsonResponse({"success": False, "error": "Álbum ya existe"})
+    release_id = request.POST.get("release_id")
+    if not release_id:
+        messages.error(request, "ID de lanzamiento no proporcionado.")
+        return JsonResponse({"success": False, "error": "ID no proporcionado"}, status=400)
 
-                    artistas_objs = []
-                    if hasattr(release_details, "artists") and release_details.artists:
-                        for artist_data in release_details.artists:
-                            artist_obj, created = Artista.objects.get_or_create(
-                                nombre=artist_data.name,
-                                defaults={"discogs_id": artist_data.id if hasattr(artist_data, "id") else None},
-                            )
-                            if created:
-                                messages.info(request, f"Artista '{artist_data.name}' creado.")
-                            artistas_objs.append(artist_obj)
+    release_details = discogs_api.get_release_details(int(release_id))
+    if not release_details:
+        messages.error(request, "No se pudieron obtener los detalles del lanzamiento de Discogs.")
+        return JsonResponse({"success": False, "error": "Detalles no encontrados"}, status=404)
 
-                    generos_objs = []
-                    if hasattr(release_details, "genres") and release_details.genres:
-                        for genre_name in release_details.genres:
-                            # Tu modelo Genero convierte a mayúsculas al guardar
-                            genero_obj, created = Genero.objects.get_or_create(nombre=genre_name.upper())
-                            if created:
-                                messages.info(request, f"Género '{genre_name}' creado.")
-                            generos_objs.append(genero_obj)
+    if Producto.objects.filter(discogs_id=release_details.id).exists():
+        messages.warning(request, "El álbum '%s' ya ha sido importado.", release_details.title)
+        return JsonResponse({"success": False, "error": "Álbum ya existe"}, status=409)
 
-                    image_path = None
-                    if hasattr(release_details, "images") and release_details.images:
-                        image_url = release_details.images[0]["uri"]
-                        image_path = discogs_api.download_image(image_url, filename_prefix=f"{release_details.id}")
-                        if not image_path:
-                            messages.warning(
-                                request,
-                                f"No se pudo descargar la imagen para '{release_details.title}'.",
-                            )
+    try:
+        with transaction.atomic():
+            artistas = _create_artists_from_details(release_details, request)
+            generos = _create_genres_from_details(release_details, request)
+            image_path = _download_and_save_image(release_details, request)
+            producto = _create_product_instance(release_details, artistas, generos, image_path)
 
-                    producto = Producto.objects.create(
-                        nombre=release_details.title,
-                        lanzamiento=f"{release_details.year}-01-01"
-                        if hasattr(release_details, "year")
-                        else "2000-01-01",  # Discogs a menudo solo da el año
-                        precio=0,  # Precio inicial, el admin lo ajustará
-                        stock=0,  # Stock inicial
-                        descripcion=f"Álbum importado desde Discogs. Formato(s): {', '.join(release_details.formats) if hasattr(release_details, 'formats') else 'N/A'}",
-                        discografica=release_details.labels[0].name
-                        if hasattr(release_details, "labels") and release_details.labels
-                        else "Desconocida",
-                        imagen_portada=image_path,
-                        discogs_id=str(release_details.id),
-                    )
-                    producto.artistas.set(artistas_objs)  # Asigna los artistas
-                    producto.genero_principal.set(generos_objs)  # Asigna los géneros
-
-                    messages.success(request, f"Álbum '{producto.nombre}' importado exitosamente desde Discogs.")
-                    return JsonResponse({
-                        "success": True,
-                        "redirect_url": reverse("admin_adPro"),
-                    })  # Redirige a la página de edición del producto
-                except Exception as e:
-                    messages.error(request, f"Error al importar el álbum: {e}")
-                    logger.exception("Error durante la importación de álbum desde Discogs")
-                    return JsonResponse({"success": False, "error": str(e)})
-            else:
-                messages.error(request, "No se pudieron obtener los detalles del lanzamiento de Discogs.")
-                return JsonResponse({"success": False, "error": "Detalles no encontrados"})
-        else:
-            messages.error(request, "ID de lanzamiento no proporcionado.")
-            return JsonResponse({"success": False, "error": "ID no proporcionado"})
-    return JsonResponse({"success": False, "error": "Método no permitido"})
+        messages.success(request, "Álbum '%s' importado exitosamente desde Discogs.", producto.nombre)
+        return JsonResponse({"success": True, "redirect_url": reverse("admin_adPro", args=[producto.id])})
+    except Exception as e:
+        logger.exception("Error durante la importación de álbum desde Discogs")
+        messages.error(request, "Error al importar el álbum: %s", e)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 @never_cache

@@ -12,7 +12,7 @@ exclude = [
 
 [tool.ruff.lint]
 # Habilita las reglas de Pyflakes (F), pycodestyle (E, W), isort (I) y Bugbear (B).
-select = ["E", "F", "W", "I", "B"]
+select = ["E", "F", "W", "I", "B", "DJ", "UP", "C90"]
 # Ya no ignoramos E501. Ruff lo comprobará contra el nuevo line-length.
 ignore = ["E501"] # <-- ¡Añade esta línea! Le dice al linter que ignore las líneas largas.
 

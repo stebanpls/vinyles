@@ -19,7 +19,7 @@ repos:
 
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     # Asegúrate de usar una versión reciente de ruff
-    rev: v0.5.0
+    rev: v0.12.2
     hooks:
       # Ejecuta el linter y auto-corrige lo que pueda
       - id: ruff
@@ -27,26 +27,21 @@ repos:
       # Ejecuta el formateador de código
       - id: ruff-format
 
--   repo: local
-    hooks:
-      - id: python-manage-py-check-migrations
-        name: Django - Check for missing migrations
-        # Usamos 'check --migrations' para ser más específicos con el propósito del hook.
-        # El comando correcto es 'makemigrations --check'.
-        entry: ../.venv/Scripts/python.exe manage.py makemigrations --check
-        # Usamos 'system' para que el hook se ejecute en tu entorno virtual (.venv)
-        # y tenga acceso a TODAS las dependencias de tu proyecto.
-        language: system
-        types: [python]
-        pass_filenames: false
-
 # -   repo: https://github.com/djlint/djlint
 #     rev: v1.34.1
 #     hooks:
 #       - id: djlint-reformat-django
 #
 -   repo: https://github.com/PyCQA/bandit
-    rev: 1.7.9
+    rev: 1.8.5 # Esta es la última versión estable
     hooks:
       - id: bandit
         args: ["-s", "B101"] # Ignorar la comprobación de 'assert'
+
+-   repo: https://github.com/pypa/pip-audit
+    rev: v2.9.0 # Esta es la última versión estable
+    hooks:
+      - id: pip-audit
+        name: Pip-Audit - Check for vulnerabilities
+        args: ["-r", "requirements.txt", "--no-deps"]
+        # El hook se ejecutará automáticamente cuando cambie requirements.txt

@@ -23,7 +23,7 @@ from .widgets import MinimalFileInput  # Importar el widget personalizado
 class CrudForm(forms.ModelForm):
     class Meta:
         model = Crud  # Especifica el modelo que se va a usar en el formulario
-        fields = "__all__"
+        fields = ["nombre", "apellido", "foto", "clase", "direccion", "fechaIngreso"]
 
 
 class UserRegistrationForm(DjangoUserCreationForm):  # Heredar de UserCreationForm
@@ -354,7 +354,7 @@ class UserUpdateForm(forms.ModelForm):
         fields = ["first_name", "last_name", "email"]
 
     def __init__(self, *args, **kwargs):
-        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["first_name"].widget.attrs.update({
             "class": "form-control",
             "placeholder": "Nombres",
@@ -400,7 +400,7 @@ class ClienteUpdateForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        super(ClienteUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["numero_documento"].widget.attrs.update({
             "class": "form-control",
             "placeholder": "Número de Documento",
