@@ -128,6 +128,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Debug Environment Variables
+        env:
+          DB_NAME: ${{ secrets.PROD_DB_NAME }}
+          DB_USER: ${{ secrets.PROD_DB_USER }}
+          DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+          DB_HOST: ${{ secrets.PROD_DB_HOST }}
+          DB_PORT: ${{ secrets.PROD_DB_PORT }}
+        run: |
+          echo "DEBUG: Valor de DB_HOST es '${DB_HOST}'"
+          echo "DEBUG: Valor de DB_PORT es '${DB_PORT}'"
+          echo "DEBUG: Valor de DB_USER es '${DB_USER}'"
+          echo "DEBUG: Valor de DB_NAME es '${DB_NAME}'"
+
       - name: Run Django migrations
         env:
           # DEBES configurar estos secretos en los ajustes de tu repositorio:
