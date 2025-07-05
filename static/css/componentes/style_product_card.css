@@ -94,7 +94,7 @@ a:hover {
 
 /* --- Product Grid --- */
 .product-grid-section {
-  max-width: 1200px; /* Limit width like laMusica */
+  max-width: 1400px; /* Unificado con la página de álbumes */
   margin: 0 auto 40px auto; /* Center the section and add bottom margin */
   padding: 0 15px; /* Add padding on the sides */
 }

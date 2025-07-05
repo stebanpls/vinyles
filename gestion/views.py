@@ -170,6 +170,10 @@ def inicio_view(request):
         .order_by("-fecha_publicacion")[:15]
     )
 
+    context = {
+        "publicaciones": publicaciones,
+    }
+
     if request.user.is_authenticated:
         # Lógica para el comprador (com_inicio)
         usuario = request.user
@@ -186,15 +190,20 @@ def inicio_view(request):
         else:
             request.session.pop("mostrar_alerta_bloqueado", None)
 
-        context = {"publicaciones": publicaciones, "usuario": usuario, "cliente": cliente}
-        return render(request, "paginas/comprador/com_inicio.html", context)
+        context.update({"usuario": usuario, "cliente": cliente, "base_template": "plantillas/plantilla_comprador.html"})
     else:
         # Lógica para el público (pub_inicio)
-        context = {"publicaciones": publicaciones}
-        return render(request, "paginas/publico/pub_inicio.html", context)
+        context["base_template"] = "plantillas/plantilla_publico.html"
+
+    return render(request, "paginas/_base_inicio.html", context)
 
 
-def pub_albumes(request):
+def albumes_view(request):
+    """
+    Vista unificada para la página de "Álbumes".
+    Muestra la versión de comprador si el usuario está autenticado,
+    de lo contrario muestra la versión pública.
+    """
     publicaciones = (
         Publicacion.objects.filter(stock__gt=0, activa=True)
         .select_related("producto")
@@ -202,12 +211,18 @@ def pub_albumes(request):
         .order_by("-fecha_publicacion")
     )
     generos = Genero.objects.all().order_by("nombre")
+
     context = {
         "publicaciones": publicaciones,
         "generos": generos,
-        "base_template": "plantillas/plantilla_publico.html",  # <-- AÑADE ESTA LÍNEA
     }
-    return render(request, "paginas/publico/pub_albumes.html", context)
+
+    if request.user.is_authenticated:
+        context["base_template"] = "plantillas/plantilla_comprador.html"
+    else:
+        context["base_template"] = "plantillas/plantilla_publico.html"
+
+    return render(request, "paginas/_base_albumes.html", context)
 
 
 def pub_ddl(request):
@@ -435,19 +450,13 @@ def com_inicio(request):
 @never_cache
 @login_required
 def com_albumes(request):
-    publicaciones = (
-        Publicacion.objects.filter(stock__gt=0, activa=True)
-        .select_related("producto")
-        .prefetch_related("producto__artistas", "producto__genero_principal")
-        .order_by("-fecha_publicacion")
-    )
-    generos = Genero.objects.all().order_by("nombre")
-    context = {
-        "publicaciones": publicaciones,
-        "generos": generos,
-        "base_template": "plantillas/plantilla_comprador.html",  # <-- AÑADE ESTA LÍNEA
-    }
-    return render(request, "paginas/comprador/com_albumes.html", context)
+    # Esta vista ahora es manejada por albumes_view.
+    return albumes_view(request)
+
+
+def pub_albumes(request):
+    # Esta vista ahora es manejada por albumes_view.
+    return albumes_view(request)
 
 
 @never_cache
@@ -835,9 +844,19 @@ def _get_discogs_albums(artista_id, term):
                     valid_masters.append(master)
                     processed_titles.add(master.title.lower())
 
-        valid_masters.sort(key=lambda m: m.year if hasattr(m, "year") and m.year else 9999)
+        # Corregido: Ordenar usando el año de la 'main_release'
+        valid_masters.sort(
+            key=lambda m: m.main_release.year if hasattr(m.main_release, "year") and m.main_release.year else 9999
+        )
 
-        return [{"id": f"discogs-master-{master.id}", "text": f"{master.title} ({m.year})"} for m in valid_masters]
+        # Corregido: Usar la variable de bucle 'm' y acceder al año desde 'main_release'
+        return [
+            {
+                "id": f"discogs-master-{m.id}",
+                "text": f"{m.title} ({m.main_release.year if hasattr(m.main_release, 'year') and m.main_release.year else 'N/A'})",
+            }
+            for m in valid_masters
+        ]
     except Exception as e:
         logger.error("Error al buscar álbumes en Discogs para el artista %s: %s", artista_id, e)
         return []

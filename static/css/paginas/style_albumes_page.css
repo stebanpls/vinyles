@@ -51,5 +51,9 @@
 
 .main-albumes {
   flex: 1;
-  /* Los estilos de la cuadrícula ya están en style_product_card.css */
+  /* Aplicamos las mismas reglas de grid que en la página de inicio */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  align-content: start; /* Evita que los elementos se estiren verticalmente */
 }
