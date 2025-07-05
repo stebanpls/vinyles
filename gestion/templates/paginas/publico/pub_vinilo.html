@@ -28,7 +28,11 @@
                 <span class="etiqueta-precio">Desde: </span>
                 {# Encontrar el precio más bajo entre las publicaciones disponibles #}
                 {% with publicaciones|first as primera_publicacion %}
-                    <span class="dato-precio">${{ primera_publicacion.precio|intcomma }}</span>
+                    {% if primera_publicacion %}
+                        <span class="dato-precio">${{ primera_publicacion.precio|intcomma }}</span>
+                    {% else %}
+                        <span class="dato-precio">No disponible</span>
+                    {% endif %}
                 {% endwith %}
             </div>
 
@@ -36,7 +40,9 @@
             <div class="botones-acciones">
                 {# El botón de comprar ahora podría llevar directamente al checkout con la primera oferta #}
                 {% with publicaciones|first as primera_publicacion %}
-                    <a href="#" class="btn-comprar">Comprar ahora</a>
+                    {% if primera_publicacion %}
+                        <a href="{% url 'add_to_cart' publicacion_id=primera_publicacion.id %}?buy_now=true" class="btn-comprar">Comprar ahora</a>
+                    {% endif %}
                 {% endwith %}
                 <a href="#ofertas" class="btn-agregar-carrito">Ver ofertas</a>
             </div>
@@ -92,7 +98,7 @@
                     </div>
                     <div class="oferta-accion">
                         <p class="precio-oferta">${{ publicacion.precio|intcomma }}</p>
-                        <a href="#" class="btn btn-sm btn-success">Añadir al carrito</a>
+                        <a href="{% url 'add_to_cart' publicacion_id=publicacion.id %}" class="btn btn-sm btn-success">Añadir al carrito</a>
                     </div>
                 </div>
                 {% empty %}

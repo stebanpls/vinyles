@@ -36,6 +36,7 @@ buyer_patterns = [
     path("inicio/", never_cache(login_required(views.inicio_view)), name="com_inicio"),
     path("albumes/", never_cache(login_required(views.albumes_view)), name="com_albumes"),
     path("carrito/", views.com_carrito, name="com_carrito"),
+    path("carrito/agregar/<int:publicacion_id>/", views.add_to_cart, name="add_to_cart"),
     path("pago/", views.com_checkout, name="com_checkout"),
     path("perfil/", views.com_perfil, name="com_perfil"),
     path("perfil/editar/", views.com_perfil_editar, name="com_perfil_editar"),

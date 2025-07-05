@@ -1,6 +1,11 @@
 def cart_item_count(request):
     """
-    Procesador de contexto para añadir el número de ítems en el carrito al contexto de la plantilla.
+    Hace que el número de artículos en el carrito esté disponible en todas las plantillas.
     """
-    cart = request.session.get("cart", [])
-    return {"cart_count": len(cart)}
+    cart_count = 0
+    # Solo calculamos el conteo si el usuario está autenticado
+    if request.user.is_authenticated:
+        cart = request.session.get("cart", [])
+        cart_count = len(cart)
+
+    return {"cart_count": cart_count}

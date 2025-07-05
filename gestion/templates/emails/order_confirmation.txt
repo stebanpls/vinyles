@@ -1,0 +1,39 @@
+{% load humanize i18n %}{% autoescape off %}
+{% trans "¡Gracias por tu compra en Vinyles!" %}
+==================================
+
+{% blocktranslate with username=user.first_name|default:user.username %}Hola {{ username }},{% endblocktranslate %}
+
+{% blocktranslate %}Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el {{ fecha_pedido|date:"d/m/Y \a \l\a\s H:i" }}.{% endblocktranslate %}
+
+---
+{% trans "Resumen del Pedido" %}
+---
+{% for item in cart_items %}
+- {{ item.quantity }}x {{ item.title }} - {{ item.artist }}: ${{ item.price|floatformat:2|intcomma }}
+{% endfor %}
+
+----------------------------------
+{% trans "Subtotal" %}:   ${{ subtotal|floatformat:2|intcomma }}
+{% trans "Envío" %}:      ${{ costo_envio|floatformat:2|intcomma }}
+----------------------------------
+{% trans "TOTAL" %}:      ${{ total_final|floatformat:2|intcomma }}
+----------------------------------
+
+---
+{% trans "Dirección de Envío" %}
+---
+{{ shipping_address.nombre_receptor }} {{ shipping_address.apellidos_receptor }}
+{{ shipping_address.direccion_entrega }}{% if shipping_address.direccion_extra %}, {{ shipping_address.direccion_extra }}{% endif %}
+{{ shipping_address.ciudad_entrega }}, {{ shipping_address.codigo_postal }}
+{% trans "Teléfono" %}: {{ shipping_address.telefono_receptor }}
+
+---
+
+{% trans "Recibirás otra notificación cuando tu pedido haya sido enviado." %}
+
+{% trans "¡Gracias por elegirnos!" %}
+
+{% trans "El equipo de Vinyles" %}
+© {% now "Y" %} Vinyles. {% trans "Todos los derechos reservados." %}
+{% endautoescape %}

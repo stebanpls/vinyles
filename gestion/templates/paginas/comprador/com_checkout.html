@@ -1,5 +1,6 @@
 {% extends 'plantillas/plantilla_comprador.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_checkout.css' %}">
@@ -12,8 +13,9 @@
   <!-- ENCABEZADO DE CHECKOUT -->
   <h1>Contacto</h1>
 
-  <!-- TODO: Añadir method="post" y action="{% url 'tu_vista_de_procesar_checkout' %}" para enviar el formulario al backend -->
-  <form>
+  <!-- Formulario de checkout que enviará los datos a la vista com_checkout -->
+  <form method="post" action="{% url 'com_checkout' %}">
+    {% csrf_token %}
     <div class="row g-3">
       <!-- CORREO ELECTRÓNICO -->
       <div class="col-12 col-md-6">
@@ -103,12 +105,12 @@
         <div class="list-group">
           {% for item in cart_items %}
           <div class="list-group-item d-flex align-items-center">
-            <img src="{% static item.image %}" alt="{{ item.title }}" class="me-3" width="50">
+            <img src="{{ item.image }}" alt="{{ item.title }}" class="me-3" width="50">
             <div>
               <p class="mb-0"><strong>{{ item.title }}</strong></p>
               <p class="mb-0">{{ item.artist }}</p>
             </div>
-            <span class="ms-auto">COP ${{ item.price }}</span>
+            <span class="ms-auto">COP ${{ item.price|floatformat:2|intcomma }}</span>
           </div>
           {% endfor %}
         </div>
@@ -127,6 +129,7 @@
       <div class="col-12 col-md-6">
         <h2>Métodos de envío</h2>
         <select id="ciudad-envio" name="metodo_envio_ciudad" class="form-select">
+          <!-- Los valores son los costos de envío en COP -->
           <option value="7500">Bogotá — COP $7.500</option>
           <option value="9000">Medellín — COP $9.000</option>
           <option value="8500">Cali — COP $8.500</option>
@@ -134,11 +137,13 @@
           <option value="10000">Cartagena — COP $10.000</option>
         </select>
       </div>
+      <!-- Campo oculto para enviar el costo de envío al backend -->
+      <input type="hidden" name="costo_envio" id="costo-envio-input" value="7500">
       <div class="col-6 col-md-3">
         <p id="envio-cost">Costo envío:<br><strong>COP $7.500</strong></p>
       </div>
       <div class="col-6 col-md-3">
-        <p id="total-final"><strong>Total:</strong><br>COP ${{ total|add:"7500" }}</p>
+        <p id="total-final"><strong>Total:</strong><br>COP ${{ total|add:"7500"|floatformat:2|intcomma }}</p>
       </div>
 
       <div class="col-12">
@@ -192,10 +197,8 @@
 
       <!-- BOTÓN FINALIZAR -->
       <div class="col-12 text-end">
-        <!-- TODO: Si este botón debe enviar el formulario, cambiar type="button" a type="submit" -->
-        <!-- La redirección a 'com_progreso_envio' debería ocurrir DESPUÉS de que el servidor procese el pedido. -->
-        <button id="finalizar-compra" type="button" class="btn btn-primary" data-url="{% url 'com_progreso_envio' %}">
-          Finalizar compra
+        <button id="finalizar-compra" type="submit" class="btn btn-primary">
+          Finalizar Pedido
         </button>
       </div>
 
@@ -210,12 +213,14 @@
     const selectCity = document.getElementById("ciudad-envio");
     const envioCost = document.getElementById("envio-cost");
     const totalFinal = document.getElementById("total-final");
+    const costoEnvioInput = document.getElementById("costo-envio-input");
     const subtotal = {{ total }};
 
     function updateEnvio() {
       const cost = parseInt(selectCity.value, 10);
-      envioCost.innerHTML = `Costo envío:<br><strong>COP $${cost}</strong>`;
-      totalFinal.innerHTML = `<strong>Total:</strong><br>COP $${subtotal + cost}`;
+      envioCost.innerHTML = `Costo envío:<br><strong>COP $${cost.toLocaleString('es-CO')}</strong>`;
+      costoEnvioInput.value = cost; // Actualizar el campo oculto
+      totalFinal.innerHTML = `<strong>Total:</strong><br>COP $${(subtotal + cost).toLocaleString('es-CO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
     }
 
     selectCity.addEventListener("change", updateEnvio);

@@ -1,0 +1,2 @@
+{% load i18n %}
+{% blocktranslate %}Confirmación de tu pedido en Vinyles{% endblocktranslate %}

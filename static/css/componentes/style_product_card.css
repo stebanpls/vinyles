@@ -48,6 +48,7 @@ a:hover {
 .btn-add-to-cart:hover {
   background-color: #218838;
   border-color: #1c7430; /* Añadido para consistencia */
+  color: #fff; /* Asegurar que el texto siga siendo blanco */
   text-decoration: none;
 }
 

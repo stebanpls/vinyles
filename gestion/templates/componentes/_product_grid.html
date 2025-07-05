@@ -22,17 +22,8 @@
           </p>
           <p class="product-price">${{ publicacion.precio|intcomma }}</p>
 
-          {% if user.is_authenticated %}
-            {# Botón para usuario autenticado (comprador) #}
-            <a class="btn btn-add-to-cart" href="{% url 'com_carrito' %}?album_id={{ publicacion.id }}&title={{ publicacion.producto.nombre|urlencode }}&artist={{ publicacion.producto.artistas.all|join:', '|urlencode }}&price={{ publicacion.precio }}&image={{ publicacion.producto.imagen_portada.url }}">
-              Agregar al carrito
-            </a>
-          {% else %}
-            {# Botón para usuario no autenticado (público) #}
-            <a class="btn btn-add-to-cart" href="{% url 'pub_login' %}?next={% url 'pub_vinilo' publicacion.producto.id %}">
-              Agregar al carrito
-            </a>
-          {% endif %}
+          {# Este enlace funcionará para ambos casos: autenticado y no autenticado. #}
+          <a href="{% url 'add_to_cart' publicacion_id=publicacion.id %}" class="btn btn-add-to-cart">Añadir al carrito</a>
         </div>
       </div>
     {% empty %}

@@ -1,5 +1,6 @@
 {% extends 'plantillas/plantilla_comprador.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_carrito.css' %}">
@@ -16,14 +17,14 @@
         {% for item in cart_items %}
         <div class="cart-item">
             <img
-            src="{% static item.image %}"
+            src="{{ item.image }}"
             alt="{{ item.title }}"
             class="cart-item-image">
 
             <div class="cart-item-details">
             <h4 class="cart-item-title">{{ item.title }}</h4>
             <p class="cart-item-artist">{{ item.artist }}</p>
-            <p class="cart-item-price">COP ${{ item.price }}</p>
+            <p class="cart-item-price">COP ${{ item.price|floatformat:2|intcomma }}</p>
             </div>
 
             <a
@@ -36,7 +37,7 @@
     </div>
 
     <div class="cart-total">
-        <p>Total: <span>COP ${{ total }}</span></p>
+        <p>Total: <span>COP ${{ total|floatformat:2|intcomma }}</span></p>
     </div>
 
     <a href="{% url 'com_checkout' %}" class="btn btn-primary btn-checkout">

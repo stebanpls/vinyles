@@ -439,26 +439,150 @@ def password_reset_confirm_code(request):
 # VISTAS DE LA CARPETA "COMPRADOR"
 
 
+@login_required
+def add_to_cart(request, publicacion_id):
+    """
+    Añade una publicación al carrito de compras almacenado en la sesión.
+    """
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id, activa=True, stock__gt=0)
+
+    # Evitar que un vendedor compre su propio producto
+    if publicacion.vendedor == request.user:
+        messages.error(request, "No puedes comprar tu propio producto.")
+        # Redirige a la página del vinilo si intenta comprar su propio producto
+        return redirect(reverse("pub_vinilo", args=[publicacion.producto.id]))
+
+    # Obtener el carrito de la sesión o crear uno nuevo
+    cart = request.session.get("cart", [])
+
+    # Verificar si el item ya está en el carrito para evitar duplicados
+    if any(item["id"] == publicacion.id for item in cart):
+        messages.info(request, f"'{publicacion.producto.nombre}' ya está en tu carrito.")
+    else:
+        # Crear el item para el carrito
+        cart_item = {
+            "id": publicacion.id,
+            "title": publicacion.producto.nombre,
+            "artist": ", ".join([a.nombre for a in publicacion.producto.artistas.all()]),
+            "price": float(publicacion.precio),  # Convertir Decimal a float para que sea serializable en JSON
+            "image": publicacion.producto.imagen_portada.url if publicacion.producto.imagen_portada else "",
+            "quantity": 1,  # Por ahora, la cantidad es siempre 1
+        }
+        cart.append(cart_item)
+        messages.success(request, f"¡Se ha añadido '{publicacion.producto.nombre}' a tu carrito!")
+
+    # Guardar el carrito actualizado en la sesión
+    request.session["cart"] = cart
+    request.session.modified = True
+
+    # Redirigir según el botón presionado
+    if request.GET.get("buy_now") == "true":
+        return redirect("com_carrito")
+
+    # Redirigir a la página anterior, con un fallback
+    return redirect(request.META.get("HTTP_REFERER", reverse("pub_vinilo", args=[publicacion.producto.id])))
+
+
 @never_cache
 @login_required
 def com_carrito(request):
-    return render(
-        request,
-        "paginas/comprador/com_carrito.html",
-    )
+    cart = request.session.get("cart", [])
+
+    # Lógica para eliminar un item del carrito
+    item_to_remove_index = request.GET.get("remove")
+    if item_to_remove_index is not None:
+        try:
+            # El índice viene como string, lo convertimos a entero
+            item_to_remove_index = int(item_to_remove_index)
+            if 0 <= item_to_remove_index < len(cart):
+                removed_item = cart.pop(item_to_remove_index)
+                request.session["cart"] = cart
+                request.session.modified = True
+                messages.success(request, f"Se ha eliminado '{removed_item['title']}' del carrito.")
+                # Redirigir a la misma página sin el parámetro 'remove' para evitar eliminaciones accidentales al recargar
+                return redirect("com_carrito")
+        except (ValueError, IndexError):
+            messages.error(request, "Índice de item inválido.")
+
+    # Calcular el total
+    total = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
+
+    context = {
+        "cart_items": cart,
+        "total": total,
+    }
+    return render(request, "paginas/comprador/com_carrito.html", context)
 
 
 @never_cache
 @login_required
 def com_checkout(request):
     cart = request.session.get("cart", [])
-
     if not cart:
+        messages.warning(request, "Tu carrito está vacío. No puedes proceder al pago.")
         return redirect("com_carrito")
 
-    total = sum(item["price"] for item in cart)
+    if request.method == "POST":
+        # 1. Recolectar datos del formulario
+        shipping_address = {
+            "nombre_receptor": request.POST.get("nombre_receptor"),
+            "apellidos_receptor": request.POST.get("apellidos_receptor"),
+            "direccion_entrega": request.POST.get("direccion_entrega"),
+            "direccion_extra": request.POST.get("direccion_extra", ""),
+            "ciudad_entrega": request.POST.get("ciudad_entrega"),
+            "codigo_postal": request.POST.get("codigo_postal"),
+            "telefono_receptor": request.POST.get("telefono_receptor"),
+        }
 
-    return render(request, "paginas/comprador/com_checkout.html", {"cart_items": cart, "total": total})
+        # 2. Calcular totales
+        subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
+        costo_envio = float(request.POST.get("costo_envio", 0))
+        total_final = subtotal + costo_envio
+
+        # 3. Preparar y enviar el email de confirmación
+        email_context = {
+            "user": request.user,
+            "cart_items": cart,
+            "subtotal": subtotal,
+            "costo_envio": costo_envio,
+            "total_final": total_final,
+            "shipping_address": shipping_address,
+            "fecha_pedido": timezone.now(),
+        }
+
+        html_message = render_to_string("emails/order_confirmation.html", email_context)
+        text_message = render_to_string("emails/order_confirmation.txt", email_context)
+        mail_subject = render_to_string("emails/order_confirmation_subject.txt", email_context).strip()
+        to_email = request.POST.get("email", request.user.email)
+
+        email_message = EmailMultiAlternatives(mail_subject, text_message, settings.DEFAULT_FROM_EMAIL, [to_email])
+        email_message.attach_alternative(html_message, "text/html")
+        email_message.send()
+
+        # 4. Crear una versión serializable de los detalles para la sesión
+        session_order_details = {
+            "user_info": {"first_name": request.user.first_name, "username": request.user.username},
+            "cart_items": cart,
+            "subtotal": subtotal,
+            "costo_envio": costo_envio,
+            "total_final": total_final,
+            "shipping_address": shipping_address,
+            "fecha_pedido": timezone.now().isoformat(),  # Guardar como string
+        }
+        request.session["last_order_details"] = session_order_details
+
+        # 5. Limpiar el carrito y redirigir
+        request.session["cart"] = []
+        request.session.modified = True
+        messages.success(
+            request, "¡Tu pedido ha sido procesado exitosamente! Revisa tu correo para ver la confirmación."
+        )
+        return redirect("com_progreso_envio")
+
+    # Lógica para GET (mostrar el formulario)
+    subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
+    context = {"cart_items": cart, "total": subtotal}
+    return render(request, "paginas/comprador/com_checkout.html", context)
 
 
 @never_cache
@@ -566,7 +690,16 @@ def com_perfil_editar(request):
 @never_cache
 @login_required
 def com_progreso_envio(request):
-    return render(request, "paginas/comprador/com_progreso_envio.html")
+    # Recuperar los detalles del último pedido de la sesión
+    order_details = request.session.get("last_order_details")
+
+    # Limpiar los detalles de la sesión para que no se muestren de nuevo
+    if "last_order_details" in request.session:
+        del request.session["last_order_details"]
+        request.session.modified = True
+
+    context = {"order_details": order_details}
+    return render(request, "paginas/comprador/com_progreso_envio.html", context)
 
 
 @never_cache
