@@ -45,9 +45,11 @@ from .forms import (
 from .models import (
     Artista,
     Cliente,
+    DetallePedido,
     EstadoUsuario,
     Genero,
     Notificacion,
+    Pedido,
     Producto,
     Publicacion,
 )
@@ -523,8 +525,7 @@ def com_checkout(request):
         return redirect("com_carrito")
 
     if request.method == "POST":
-        # 1. Recolectar datos del formulario
-        shipping_address = {
+        shipping_address_dict = {
             "nombre_receptor": request.POST.get("nombre_receptor"),
             "apellidos_receptor": request.POST.get("apellidos_receptor"),
             "direccion_entrega": request.POST.get("direccion_entrega"),
@@ -533,51 +534,78 @@ def com_checkout(request):
             "codigo_postal": request.POST.get("codigo_postal"),
             "telefono_receptor": request.POST.get("telefono_receptor"),
         }
+        # Formatear la dirección como un solo string para el modelo
+        direccion_envio_str = (
+            f"{shipping_address_dict['nombre_receptor']} {shipping_address_dict['apellidos_receptor']}\n"
+            f"{shipping_address_dict['direccion_entrega']}"
+            f"{', ' + shipping_address_dict['direccion_extra'] if shipping_address_dict['direccion_extra'] else ''}\n"
+            f"{shipping_address_dict['ciudad_entrega']}, {shipping_address_dict['codigo_postal']}\n"
+            f"Tel: {shipping_address_dict['telefono_receptor']}"
+        )
 
-        # 2. Calcular totales
         subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
         costo_envio = float(request.POST.get("costo_envio", 0))
         total_final = subtotal + costo_envio
 
-        # 3. Preparar y enviar el email de confirmación
-        email_context = {
-            "user": request.user,
-            "cart_items": cart,
-            "subtotal": subtotal,
-            "costo_envio": costo_envio,
-            "total_final": total_final,
-            "shipping_address": shipping_address,
-            "fecha_pedido": timezone.now(),
-        }
+        try:
+            with transaction.atomic():
+                # 2. Crear el objeto Pedido
+                pedido = Pedido.objects.create(
+                    comprador=request.user,
+                    total=total_final,
+                    direccion_envio=direccion_envio_str,
+                    estado="P",  # Procesando
+                )
 
-        html_message = render_to_string("emails/order_confirmation.html", email_context)
-        text_message = render_to_string("emails/order_confirmation.txt", email_context)
-        mail_subject = render_to_string("emails/order_confirmation_subject.txt", email_context).strip()
-        to_email = request.POST.get("email", request.user.email)
+                # 3. Crear los detalles del pedido y actualizar stock
+                for item in cart:
+                    publicacion = Publicacion.objects.select_for_update().get(id=item["id"])
+                    if publicacion.stock < item["quantity"]:
+                        raise ValueError(f"No hay suficiente stock para {publicacion.producto.nombre}.")
 
-        email_message = EmailMultiAlternatives(mail_subject, text_message, settings.DEFAULT_FROM_EMAIL, [to_email])
-        email_message.attach_alternative(html_message, "text/html")
-        email_message.send()
+                    DetallePedido.objects.create(
+                        pedido=pedido, publicacion=publicacion, cantidad=item["quantity"], precio_unitario=item["price"]
+                    )
+                    publicacion.stock -= item["quantity"]
+                    publicacion.save()
 
-        # 4. Crear una versión serializable de los detalles para la sesión
-        session_order_details = {
-            "user_info": {"first_name": request.user.first_name, "username": request.user.username},
-            "cart_items": cart,
-            "subtotal": subtotal,
-            "costo_envio": costo_envio,
-            "total_final": total_final,
-            "shipping_address": shipping_address,
-            "fecha_pedido": timezone.now().isoformat(),  # Guardar como string
-        }
-        request.session["last_order_details"] = session_order_details
+                # 4. Preparar y enviar el email de confirmación
+                email_context = {
+                    "user": request.user,
+                    "pedido": pedido,
+                    "detalles_pedido": pedido.detalles.all(),
+                    "subtotal": subtotal,
+                    "costo_envio": costo_envio,
+                    "shipping_address": shipping_address_dict,
+                }
+                html_message = render_to_string("emails/order_confirmation.html", email_context)
+                text_message = render_to_string("emails/order_confirmation.txt", email_context)
+                mail_subject = render_to_string("emails/order_confirmation_subject.txt", email_context).strip()
+                to_email = request.POST.get("email", request.user.email)
+                email_message = EmailMultiAlternatives(
+                    mail_subject, text_message, settings.DEFAULT_FROM_EMAIL, [to_email]
+                )
+                email_message.attach_alternative(html_message, "text/html")
+                email_message.send()
 
-        # 5. Limpiar el carrito y redirigir
-        request.session["cart"] = []
-        request.session.modified = True
-        messages.success(
-            request, "¡Tu pedido ha sido procesado exitosamente! Revisa tu correo para ver la confirmación."
-        )
-        return redirect("com_progreso_envio")
+                # 5. Guardar ID del pedido en la sesión para la página de confirmación
+                request.session["last_order_id"] = pedido.id
+
+                # 6. Limpiar el carrito y redirigir
+                request.session["cart"] = []
+                request.session.modified = True
+                messages.success(
+                    request, "¡Tu pedido ha sido procesado exitosamente! Revisa tu correo para ver la confirmación."
+                )
+                return redirect("com_progreso_envio")
+
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect("com_carrito")
+        except Exception as e:
+            logger.error(f"Error processing checkout: {e}")
+            messages.error(request, "Ocurrió un error inesperado al procesar tu pedido. Por favor, intenta de nuevo.")
+            return redirect("com_carrito")
 
     # Lógica para GET (mostrar el formulario)
     subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
@@ -690,15 +718,25 @@ def com_perfil_editar(request):
 @never_cache
 @login_required
 def com_progreso_envio(request):
-    # Recuperar los detalles del último pedido de la sesión
-    order_details = request.session.get("last_order_details")
+    # Recuperar el ID del último pedido de la sesión
+    last_order_id = request.session.get("last_order_id")
+    pedido = None
+
+    if last_order_id:
+        try:
+            # Obtener el pedido desde la base de datos
+            pedido = Pedido.objects.prefetch_related("detalles__publicacion__producto").get(
+                id=last_order_id, comprador=request.user
+            )
+        except Pedido.DoesNotExist:
+            messages.warning(request, "No se encontró el pedido solicitado.")
 
     # Limpiar los detalles de la sesión para que no se muestren de nuevo
-    if "last_order_details" in request.session:
-        del request.session["last_order_details"]
+    if "last_order_id" in request.session:
+        del request.session["last_order_id"]
         request.session.modified = True
 
-    context = {"order_details": order_details}
+    context = {"pedido": pedido}
     return render(request, "paginas/comprador/com_progreso_envio.html", context)
 
 
