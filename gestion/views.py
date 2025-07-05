@@ -590,12 +590,6 @@ def com_terminos(request):
 # VISTAS DE LA CARPETA "VENDEDOR"
 
 
-@never_cache
-@login_required  # Solo requiere que el usuario esté autenticado
-def ven_bad(request):
-    return render(request, "paginas/vendedor/ven_bad.html")
-
-
 def _get_or_import_producto_from_discogs(master_id, request_user):
     """
     Función auxiliar para obtener o importar un Producto desde un Master ID de Discogs.

@@ -62,7 +62,6 @@ seller_patterns = [
     path("notificaciones/", views.ven_notificaciones, name="ven_notificaciones"),
     path("nosotros/", views.ven_nosotros, name="ven_nosotros"),
     path("terminos/", views.ven_terminos, name="ven_terminos"),
-    path("bad/", views.ven_bad, name="ven_bad"),
 ]
 
 # --- URLs del Panel de Administración (requieren permisos de staff) ---
