@@ -141,6 +141,12 @@ jobs:
           DB_PORT: ${{ secrets.PROD_DB_PORT }}
           # Añade aquí cualquier otra variable de entorno que necesite tu app en producción
           DISCOGS_USER_TOKEN: ${{ secrets.DISCOGS_USER_TOKEN }}
+          RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+          EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+          EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+          DISCOGS_CONSUMER_KEY: ${{ secrets.DISCOGS_CONSUMER_KEY }}
+          DISCOGS_CONSUMER_SECRET: ${{ secrets.DISCOGS_CONSUMER_SECRET }}
         run: |
           python manage.py migrate --noinput
           python manage.py collectstatic --noinput
