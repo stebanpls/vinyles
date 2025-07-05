@@ -441,26 +441,6 @@ def password_reset_confirm_code(request):
 
 @never_cache
 @login_required
-def com_inicio(request):
-    # Esta vista ahora es manejada por inicio_view, pero la mantenemos para que la URL 'com_inicio' funcione.
-    # El decorador @login_required se asegura de que solo usuarios autenticados lleguen aquí.
-    return inicio_view(request)
-
-
-@never_cache
-@login_required
-def com_albumes(request):
-    # Esta vista ahora es manejada por albumes_view.
-    return albumes_view(request)
-
-
-def pub_albumes(request):
-    # Esta vista ahora es manejada por albumes_view.
-    return albumes_view(request)
-
-
-@never_cache
-@login_required
 def com_carrito(request):
     return render(
         request,

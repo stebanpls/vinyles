@@ -1,5 +1,7 @@
 # from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import include, path
+from django.views.decorators.cache import never_cache
 
 from . import views
 
@@ -12,7 +14,7 @@ from . import views
 # --- URLs Públicas (accesibles para todos) ---
 public_patterns = [
     path("", views.inicio_view, name="pub_inicio"),
-    path("albumes/", views.pub_albumes, name="pub_albumes"),
+    path("albumes/", views.albumes_view, name="pub_albumes"),
     path("vinilo/<int:producto_id>/", views.pub_vinilo, name="pub_vinilo"),
     path("nosotros/", views.pub_nosotros, name="pub_nosotros"),
     path("terminos-y-condiciones/", views.pub_terminos, name="pub_terminos"),
@@ -31,8 +33,8 @@ auth_patterns = [
 
 # --- URLs del Comprador (requieren inicio de sesión) ---
 buyer_patterns = [
-    path("inicio/", views.com_inicio, name="com_inicio"),
-    path("albumes/", views.com_albumes, name="com_albumes"),
+    path("inicio/", never_cache(login_required(views.inicio_view)), name="com_inicio"),
+    path("albumes/", never_cache(login_required(views.albumes_view)), name="com_albumes"),
     path("carrito/", views.com_carrito, name="com_carrito"),
     path("pago/", views.com_checkout, name="com_checkout"),
     path("perfil/", views.com_perfil, name="com_perfil"),
