@@ -460,70 +460,6 @@ class MedioDePago(models.Model):
         return self.nombre
 
 
-class Pedido(models.Model):
-    fecha = models.DateField(verbose_name="Fecha del Pedido")
-    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido")
-    direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío")
-    ciudad_envio = models.ForeignKey(
-        Ciudad,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="pedidos_enviados_aqui",
-        verbose_name="Ciudad de Envío",
-    )
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="pedidos", verbose_name="Cliente")
-    medio_de_pago = models.ForeignKey(
-        MedioDePago,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="pedidos_pagados_con",
-        verbose_name="Medio de Pago",
-    )
-    # AHORA UN PEDIDO SE RELACIONA CON PUBLICACIONES, NO CON PRODUCTOS
-    publicaciones = models.ManyToManyField(
-        "Publicacion",
-        through="PedidoPublicacion",
-        related_name="en_pedidos",
-        verbose_name="Publicaciones en el Pedido",
-    )
-
-    class Meta:
-        db_table = "pedidos"
-        verbose_name = "Pedido"
-        verbose_name_plural = "Pedidos"
-        ordering = ["-fecha", "cliente"]
-
-    def __str__(self):
-        return f"Pedido #{self.pk} de {self.cliente.user.username} - {self.fecha}"
-
-
-# MODELO INTERMEDIO PARA PEDIDO <-> PUBLICACION
-class PedidoPublicacion(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items_pedido", verbose_name="Pedido")
-    publicacion = models.ForeignKey(
-        "Publicacion",
-        on_delete=models.PROTECT,
-        related_name="lineas_de_pedido",
-        verbose_name="Publicación",
-    )
-    cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
-    valor_unitario = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Valor Unitario en el Momento de la Compra"
-    )
-
-    class Meta:
-        db_table = "pedido_publicaciones"
-        verbose_name = "Publicación del Pedido"
-        verbose_name_plural = "Publicaciones del Pedido"
-        ordering = ["pedido", "publicacion"]
-        unique_together = (("pedido", "publicacion"),)
-
-    def __str__(self):
-        return f"{self.cantidad} x {self.publicacion.producto.nombre} en Pedido #{self.pedido.pk}"
-
-
 # --- Modelo para Soporte ---
 
 
@@ -583,3 +519,37 @@ class Notificacion(models.Model):
 
     def __str__(self):
         return f"Notificación para {self.usuario_destino.username}: {self.mensaje[:30]}..."
+
+
+class Pedido(models.Model):
+    comprador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="pedidos")
+    fecha_pedido = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    direccion_envio = models.TextField()
+    ESTADOS_PEDIDO = [
+        ("P", "Procesando"),
+        ("E", "Enviado"),
+        ("C", "Completado"),
+        ("X", "Cancelado"),
+    ]
+    estado = models.CharField(max_length=1, choices=ESTADOS_PEDIDO, default="P")
+
+    class Meta:
+        ordering = ["-fecha_pedido"]
+
+    def __str__(self):
+        return f"Pedido #{self.id} de {self.comprador.username if self.comprador else 'Usuario Eliminado'}"
+
+
+class DetallePedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="detalles")
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.PROTECT, related_name="detalles_pedido")
+    cantidad = models.PositiveIntegerField(default=1)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.publicacion.producto.nombre} en Pedido #{self.pedido.id}"
+
+    @property
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario

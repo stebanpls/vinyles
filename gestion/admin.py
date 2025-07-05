@@ -13,11 +13,11 @@ from .models import (
     Cliente,
     Crud,
     Departamento,
+    DetallePedido,
     Genero,
     MedioDePago,
     Pais,
     Pedido,
-    PedidoPublicacion,
     Producto,
     ProductoCancion,
     Productor,
@@ -49,12 +49,16 @@ class ProductoCancionInline(admin.TabularInline):
     autocomplete_fields = ["cancion"]
 
 
-class PedidoPublicacionInline(admin.TabularInline):
-    """Muestra las publicaciones compradas en un pedido."""
+class DetallePedidoInline(admin.TabularInline):
+    """Muestra los detalles de un pedido en la página del Pedido."""
 
-    model = PedidoPublicacion
+    model = DetallePedido
     extra = 0
-    autocomplete_fields = ["publicacion"]
+    readonly_fields = ("publicacion", "cantidad", "precio_unitario", "subtotal")
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
 
 
 # --- MODEL ADMINS ---
@@ -108,12 +112,14 @@ class CancionAdmin(admin.ModelAdmin):
 
 
 class PedidoAdmin(admin.ModelAdmin):
-    list_display = ("id", "cliente", "fecha", "total", "ciudad_envio", "medio_de_pago")
-    list_filter = ("fecha", "medio_de_pago", "ciudad_envio__departamento__pais")
-    search_fields = ("id", "cliente__user__username")
-    date_hierarchy = "fecha"
-    autocomplete_fields = ["cliente", "ciudad_envio", "medio_de_pago"]
-    inlines = [PedidoPublicacionInline]  # Usamos el nuevo inline
+    """Admin para los nuevos Pedidos."""
+
+    list_display = ("id", "comprador", "fecha_pedido", "total", "estado")
+    list_filter = ("estado", "fecha_pedido")
+    search_fields = ("id", "comprador__username")
+    date_hierarchy = "fecha_pedido"
+    readonly_fields = ("comprador", "fecha_pedido", "total", "direccion_envio")
+    inlines = [DetallePedidoInline]
 
 
 # --- OTROS ADMINS (sin cambios mayores) ---
@@ -223,4 +229,3 @@ custom_admin_site.register(Ciudad, CiudadAdmin)
 custom_admin_site.register(MedioDePago, MedioDePagoAdmin)
 custom_admin_site.register(Pedido, PedidoAdmin)
 custom_admin_site.register(TicketSoporte, TicketSoporteAdmin)
-# No registramos PedidoPublicacion directamente, se maneja a través del inline en PedidoAdmin
