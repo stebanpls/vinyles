@@ -807,6 +807,7 @@ def _get_or_import_producto_from_discogs(master_id, request_user):
     se confirma una venta.
     """
     try:
+        # Obtenemos el master y su release principal
         master = discogs_api.client.master(int(master_id))
         release_details = master.main_release
     except Exception as e:
@@ -840,11 +841,15 @@ def _get_or_import_producto_from_discogs(master_id, request_user):
                 generos_objs.append(genero)
 
         # Descargar imagen
-        image_path = None
-        if hasattr(release_details, "images") and release_details.images:
+        image_url = None
+        if hasattr(master, "cover_image") and master.cover_image:
+            image_url = master.cover_image
+        elif hasattr(release_details, "images") and release_details.images:
             image_url = release_details.images[0].get("uri")
-            if image_url:
-                image_path = discogs_api.download_image(image_url, filename_prefix=f"release_{master_id}")
+
+        image_path = None
+        if image_url:
+            image_path = discogs_api.download_image(image_url, filename_prefix=f"master_{master_id}")
 
         # Crear el producto
         producto = Producto(
@@ -1121,14 +1126,24 @@ def ajax_get_album_details(request):
         if hasattr(master, "main_release") and master.main_release and hasattr(master.main_release, "artists"):
             artist_str = ", ".join(artist.name for artist in master.main_release.artists)
 
+        # Lógica mejorada para obtener la mejor imagen posible
+        image_url = None
+        if hasattr(master, "cover_image") and master.cover_image:
+            image_url = master.cover_image
+        elif hasattr(master, "main_release") and hasattr(master.main_release, "images") and master.main_release.images:
+            image_url = master.main_release.images[0].get("uri")
+        elif hasattr(master, "images") and master.images:
+            image_url = master.images[0].get("uri")
+
+        # Si no se encuentra ninguna imagen, usar la de por defecto
+        final_image_url = image_url or (settings.STATIC_URL + "images/albumes/default/default_album.png")
+
         details = {
             "success": True,
             "title": master.title,
             "artist": artist_str,
             "year": master.year if hasattr(master, "year") and master.year else "N/A",
-            "image_url": master.images[0].get("uri")
-            if hasattr(master, "images") and master.images
-            else settings.STATIC_URL + "images/albumes/default/default_album.png",
+            "image_url": final_image_url,
         }
         return JsonResponse(details)
     except Exception as e:
