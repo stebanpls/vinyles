@@ -72,35 +72,37 @@
       </div>
       <div class="content">
         <p>{% blocktranslate with username=user.first_name|default:user.username %}Hola {{ username }},{% endblocktranslate %}</p>
-        <p>{% blocktranslate %}Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el {{ fecha_pedido|date:"d/m/Y \a \l\a\s H:i" }}.{% endblocktranslate %}</p>
+        <p>{% blocktranslate %}Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el {{ pedido.fecha_pedido|date:"d/m/Y \a \l\a\s H:i" }}.{% endblocktranslate %}</p>
 
         <div class="order-summary">
-          <h2>{% trans "Resumen del Pedido" %}</h2>
+          <h2>{% trans "Resumen del Pedido" %} #{{ pedido.id }}</h2>
           <table>
             <thead>
               <tr>
                 <th>{% trans "Producto" %}</th>
+                <th style="text-align: center;">{% trans "Cantidad" %}</th>
                 <th>{% trans "Precio" %}</th>
               </tr>
             </thead>
             <tbody>
-              {% for item in cart_items %}
+              {% for detalle in detalles_pedido %}
               <tr>
-                <td>{{ item.quantity }}x {{ item.title }} - {{ item.artist }}</td>
-                <td>${{ item.price|floatformat:2|intcomma }}</td> {# Prices don't need translation #}
+                <td>{{ detalle.publicacion.producto.nombre }} - {{ detalle.publicacion.producto.artistas.first.nombre }}</td>
+                <td style="text-align: center;">{{ detalle.cantidad }}</td>
+                <td>${{ detalle.precio_unitario|floatformat:2|intcomma }}</td>
               </tr>
               {% endfor %}
               <tr class="total-row">
-                <td>{% trans "Subtotal" %}</td>
-                <td>${{ subtotal|floatformat:2|intcomma }}</td>
+                <td colspan="2" style="text-align: right;">{% trans "Subtotal" %}</td>
+                <td>${{ pedido.subtotal|floatformat:2|intcomma }}</td>
               </tr>
               <tr>
-                <td>{% trans "Envío" %}</td>
-                <td>${{ costo_envio|floatformat:2|intcomma }}</td>
+                <td colspan="2" style="text-align: right;">{% trans "Envío" %}</td>
+                <td>${{ pedido.costo_envio|floatformat:2|intcomma }}</td>
               </tr>
               <tr class="total-row">
-                <td><strong>{% trans "Total" %}</strong></td>
-                <td><strong>${{ total_final|floatformat:2|intcomma }}</strong></td>
+                <td colspan="2" style="text-align: right;"><strong>{% trans "Total" %}</strong></td>
+                <td><strong>${{ pedido.total|floatformat:2|intcomma }}</strong></td>
               </tr>
             </tbody>
           </table>
@@ -108,12 +110,7 @@
 
         <div class="shipping-details">
           <h2>{% trans "Dirección de Envío" %}</h2>
-          <p>
-            <strong>{{ shipping_address.nombre_receptor }} {{ shipping_address.apellidos_receptor }}</strong><br>
-            {{ shipping_address.direccion_entrega }}{% if shipping_address.direccion_extra %}, {{ shipping_address.direccion_extra }}{% endif %}<br>
-            {{ shipping_address.ciudad_entrega }}, {{ shipping_address.codigo_postal }}<br>
-            {% trans "Teléfono" %}: {{ shipping_address.telefono_receptor }}
-          </p>
+          <p style="white-space: pre-wrap;">{{ pedido.direccion_envio }}</p>
         </div>
 
         <p>{% trans "Recibirás otra notificación cuando tu pedido haya sido enviado." %}</p>

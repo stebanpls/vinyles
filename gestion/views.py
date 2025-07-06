@@ -717,6 +717,24 @@ def com_perfil_editar(request):
 
 @never_cache
 @login_required
+def com_historial_pedidos(request):
+    """
+    Muestra el historial de pedidos del usuario.
+    """
+    # Obtenemos todos los pedidos del usuario, del más reciente al más antiguo.
+    # Usamos prefetch_related para optimizar la consulta y evitar múltiples accesos a la BD en la plantilla.
+    pedidos = (
+        Pedido.objects.filter(comprador=request.user)
+        .prefetch_related("detalles__publicacion__producto__artistas")
+        .order_by("-fecha_pedido")
+    )
+
+    context = {"pedidos": pedidos, "titulo_pagina": "Mis Pedidos"}
+    return render(request, "paginas/comprador/com_historial_pedidos.html", context)
+
+
+@never_cache
+@login_required
 def com_progreso_envio(request):
     # Recuperar el ID del último pedido de la sesión
     last_order_id = request.session.get("last_order_id")
@@ -1314,7 +1332,15 @@ def admin_pedido(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_producto(request):
-    return render(request, "paginas/administrador/admin_producto.html")
+    generos = Genero.objects.all().order_by("nombre")
+    publicaciones = (
+        Publicacion.objects.select_related("producto")
+        .prefetch_related("producto__artistas", "producto__genero_principal")
+        .order_by("producto__nombre")
+    )
+
+    context = {"generos": generos, "publicaciones": publicaciones}
+    return render(request, "paginas/Administrador/admin_producto.html", context)
 
 
 @never_cache
@@ -1352,9 +1378,7 @@ def admin_adPro(request, producto_id):
     try:
         producto = Producto.objects.get(id=producto_id)
 
-        publicaciones = Publicacion.objects.filter(
-            producto=producto
-        ).select_related("vendedor")
+        publicaciones = Publicacion.objects.filter(producto=producto).select_related("vendedor")
 
         canciones = producto.tracks.all().order_by("numero_pista").select_related("cancion")
 
@@ -1367,10 +1391,7 @@ def admin_adPro(request, producto_id):
 
     except Producto.DoesNotExist:
         # Si el álbum ya fue eliminado
-        return render(request, "paginas/Administrador/admin_album_no_disponible.html", {
-            "producto_id": producto_id
-        })
-
+        return render(request, "paginas/Administrador/admin_album_no_disponible.html", {"producto_id": producto_id})
 
 
 @never_cache

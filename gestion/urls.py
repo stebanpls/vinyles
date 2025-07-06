@@ -40,6 +40,7 @@ buyer_patterns = [
     path("pago/", views.com_checkout, name="com_checkout"),
     path("perfil/", views.com_perfil, name="com_perfil"),
     path("perfil/editar/", views.com_perfil_editar, name="com_perfil_editar"),
+    path("mis-pedidos/", views.com_historial_pedidos, name="com_historial_pedidos"),
     path("envio/progreso/", views.com_progreso_envio, name="com_progreso_envio"),
     # Las páginas de 'nosotros', 'terminos', etc. pueden reutilizar las públicas o tener su propia versión
     path("nosotros/", views.com_nosotros, name="com_nosotros"),
@@ -93,10 +94,12 @@ admin_patterns = [
     path("nosotros/", views.admin_nosotros, name="admin_nosotros"),
     path("terminos/", views.admin_terminos, name="admin_terminos"),
     path("usuarios/admin/bloq/gesUsers/", views.admin_usuario, name="admin_usuario"),
-    path("admin/eliminar-notificacion/<int:notificacion_id>/", views.admin_eliminar_notificacion, name="admin_eliminar_notificacion"),
+    path(
+        "admin/eliminar-notificacion/<int:notificacion_id>/",
+        views.admin_eliminar_notificacion,
+        name="admin_eliminar_notificacion",
+    ),
     path("panel-admin/eliminar-album/<int:producto_id>/", views.admin_eliminar_album, name="admin_eliminar_album"),
-
-
 ]
 
 # --- URLs para llamadas AJAX (no destinadas a ser visitadas directamente) ---

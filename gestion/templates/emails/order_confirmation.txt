@@ -4,29 +4,26 @@
 
 {% blocktranslate with username=user.first_name|default:user.username %}Hola {{ username }},{% endblocktranslate %}
 
-{% blocktranslate %}Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el {{ fecha_pedido|date:"d/m/Y \a \l\a\s H:i" }}.{% endblocktranslate %}
+{% blocktranslate %}Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el {{ pedido.fecha_pedido|date:"d/m/Y \a \l\a\s H:i" }}.{% endblocktranslate %}
 
 ---
-{% trans "Resumen del Pedido" %}
+{% trans "Resumen del Pedido" %} #{{ pedido.id }}
 ---
-{% for item in cart_items %}
-- {{ item.quantity }}x {{ item.title }} - {{ item.artist }}: ${{ item.price|floatformat:2|intcomma }}
+{% for detalle in detalles_pedido %}
+- {{ detalle.cantidad }}x {{ detalle.publicacion.producto.nombre }} - {{ detalle.publicacion.producto.artistas.first.nombre }}: ${{ detalle.precio_unitario|floatformat:2|intcomma }}
 {% endfor %}
 
 ----------------------------------
-{% trans "Subtotal" %}:   ${{ subtotal|floatformat:2|intcomma }}
-{% trans "Envío" %}:      ${{ costo_envio|floatformat:2|intcomma }}
+{% trans "Subtotal" %}:   ${{ pedido.subtotal|floatformat:2|intcomma }}
+{% trans "Envío" %}:      ${{ pedido.costo_envio|floatformat:2|intcomma }}
 ----------------------------------
-{% trans "TOTAL" %}:      ${{ total_final|floatformat:2|intcomma }}
+{% trans "TOTAL" %}:      ${{ pedido.total|floatformat:2|intcomma }}
 ----------------------------------
 
 ---
 {% trans "Dirección de Envío" %}
 ---
-{{ shipping_address.nombre_receptor }} {{ shipping_address.apellidos_receptor }}
-{{ shipping_address.direccion_entrega }}{% if shipping_address.direccion_extra %}, {{ shipping_address.direccion_extra }}{% endif %}
-{{ shipping_address.ciudad_entrega }}, {{ shipping_address.codigo_postal }}
-{% trans "Teléfono" %}: {{ shipping_address.telefono_receptor }}
+{{ pedido.direccion_envio }}
 
 ---
 

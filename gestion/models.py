@@ -540,6 +540,17 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.id} de {self.comprador.username if self.comprador else 'Usuario Eliminado'}"
 
+    @property
+    def subtotal(self):
+        """Calcula el subtotal del pedido sumando los subtotales de los detalles."""
+        # Usamos prefetch_related en la vista para optimizar esto
+        return sum(detalle.subtotal for detalle in self.detalles.all())
+
+    @property
+    def costo_envio(self):
+        """Calcula el costo de envío restando el subtotal del total."""
+        return self.total - self.subtotal
+
 
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="detalles")

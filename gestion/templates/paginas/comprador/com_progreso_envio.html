@@ -11,10 +11,10 @@
 {% block contenido %}
 <div class="container my-5">
     <div class="confirmation-container">
-        {% if order_details %}
+        {% if pedido %}
             <div class="confirmation-header">
                 <i class="fas fa-check-circle success-icon"></i>
-                <h1>¡Gracias por tu pedido, {{ order_details.user_info.first_name|default:order_details.user_info.username }}!</h1>
+                <h1>¡Gracias por tu pedido, {{ pedido.comprador.first_name|default:pedido.comprador.username }}!</h1>
                 <p class="lead">Tu pedido ha sido confirmado y está siendo procesado. Hemos enviado un resumen a tu correo electrónico.</p>
             </div>
 
@@ -45,19 +45,26 @@
                             <h4>Resumen del Pedido</h4>
                         </div>
                         <ul class="list-group list-group-flush">
-                            {% for item in order_details.cart_items %}
+                            {% for detalle in pedido.detalles.all %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ item.title }}
-                                <span>${{ item.price|floatformat:2|intcomma }}</span>
+                                <div>
+                                    <strong>{{ detalle.publicacion.producto.nombre }}</strong>
+                                    <small class="d-block text-muted">{{ detalle.publicacion.producto.artistas.first.nombre }}</small>
+                                </div>
+                                <span>${{ detalle.precio_unitario|floatformat:2|intcomma }}</span>
                             </li>
                             {% endfor %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Subtotal
+                                <span>${{ pedido.subtotal|floatformat:2|intcomma }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Envío
-                                <span>${{ order_details.costo_envio|floatformat:2|intcomma }}</span>
+                                <span>${{ pedido.costo_envio|floatformat:2|intcomma }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center fw-bold">
                                 Total
-                                <span>${{ order_details.total_final|floatformat:2|intcomma }}</span>
+                                <span>${{ pedido.total|floatformat:2|intcomma }}</span>
                             </li>
                         </ul>
                     </div>
@@ -70,10 +77,7 @@
                             <h4>Dirección de Envío</h4>
                         </div>
                         <div class="card-body">
-                            <p><strong>{{ order_details.shipping_address.nombre_receptor }} {{ order_details.shipping_address.apellidos_receptor }}</strong><br>
-                            {{ order_details.shipping_address.direccion_entrega }}{% if order_details.shipping_address.direccion_extra %}, {{ order_details.shipping_address.direccion_extra }}{% endif %}<br>
-                            {{ order_details.shipping_address.ciudad_entrega }}, {{ order_details.shipping_address.codigo_postal }}<br>
-                            Teléfono: {{ order_details.shipping_address.telefono_receptor }}</p>
+                            <p style="white-space: pre-wrap;">{{ pedido.direccion_envio }}</p>
                         </div>
                     </div>
                 </div>
@@ -96,8 +100,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Solo ejecutar la animación si hay detalles del pedido
-    {% if order_details %}
+    // Solo ejecutar la animación si hay un pedido
+    {% if pedido %}
         const steps = document.querySelectorAll('.status-step');
         let delay = 500; // ms de retraso inicial
 
