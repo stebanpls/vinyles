@@ -8,59 +8,41 @@
 {% block titulo %} Vinyles - Ventas {% endblock titulo %}
 
 {% block contenido %}
-
 <section class="section">
     <div class="textos">
         <h4 class="bienvenida">Ventas Hoy</h4>
         <p class="bien">Estas son las ventas que se han registrado el día de hoy.</p>
     </div>
-    <table >
+    <table>
         <thead>
             <tr>
-            <th>Cliente</th>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Fecha</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-            <td><a href="{% url 'laura_g'%}" >Laura Gómez</a></td>
-            <td><a href="{% url 'the_beatles' %}"> The Beatles - Abbey Road</a></td>
-            <td>$250.000</td>
-            <td>09/04/2025</td>
-            </tr>
-            <tr>
-            <td><a href="{% url 'carlos_r'%}">Carlos Ruiz</a></td>
-            <td><a href="{% url 'nirvana' %}">Nirvana - In Utero</a></td>
-            <td>$210.000</td>
-            <td>09/04/2025</td>
-            </tr>
-            <tr>
-                <td><a href="{% url 'camila_q'%}">Camila Quintero</a></td>
-                <td><a href="{% url 'bts'%}">BTS - Be</a></td>
-                <td>$250.000</td>
-                <td>09/04/2025</td>
-                </tr>
+            {% for pedido in pedidos %}
+                {% for detalle in pedido.detalles.all %}
                 <tr>
-                    <td><a href="{% url 'john_m'%}">Jhon Martínez</a></td>
-                    <td><a href="{% url 'mj_bad'%}">Michael Jackson - Bad</a></td>
-                    <td>$270.000</td>
-                    <td>09/04/2025</td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'alex_r'%}">Alex Rojas</a></td>
-                        <td><a href="{% url 'eminem_show'%}">Eminem - The Eminem Show</a></td>
-                        <td>$250.000</td>
-                        <td>09/04/2025</td>
-                        </tr>
-            <!-- Más filas -->
+                    <td><a href="a">{{ pedido.comprador.get_full_name|default:pedido.comprador.username }}</a></td>
+                    <td><a href="#">{{ detalle.publicacion.producto.nombre }}</a></td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>${{ detalle.subtotal|floatformat:"0" }}</td>
+                    <td>{{ pedido.fecha_pedido|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+            {% empty %}
+            <tr>
+                <td colspan="5">No se han registrado ventas hoy.</td>
+            </tr>
+            {% endfor %}
         </tbody>
-        </table>
-
+    </table>
 </section>
 {% endblock contenido %}
 
 {% block pie %}
-
 {% endblock pie %}

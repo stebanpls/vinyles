@@ -1,14 +1,14 @@
 {% extends "plantillas/plantilla_administrador.html" %}
 {% load static %}
+{% load humanize %}  {# 👈 esto permite usar intcomma para miles #}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_administrador.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} Vinlyles - Administrador{% endblock titulo %}
+{% block titulo %} Vinyles - Administrador{% endblock titulo %}
 
 {% block contenido %}
-
 <section class="section">
 
     <div class="textos">
@@ -20,8 +20,8 @@
     <a href="{% url 'admin_ventas' %}" class="nota rosita">
         <i class="fas fa-cash-register icono-nota"></i>
         <h3>Ventas hoy</h3>
-        <div class="value">5</div>
-        <div class="desc">Total: $1.230.000</div>
+        <div class="value">{{ num_ventas }}</div>
+        <div class="desc">Total: ${{ total_ventas|floatformat:"0"|intcomma }}</div>
     </a>
 
     <!-- Nuevos usuarios -->
@@ -32,9 +32,6 @@
         <div class="desc">Registrados hoy</div>
     </a>
 
-
-
-
     <!-- Más vendidos -->
     <a href="{% url 'admin_mas_vendidos' %}" class="nota verde">
         <i class="fas fa-star icono-nota"></i>
@@ -42,11 +39,12 @@
         <div class="value">5</div>
         <div class="desc">productos más vendidos</div>
     </a>
+
 </section>
 {% endblock contenido %}
 
 {% block pie %}
-        <!-- SWEETALERT2 CDN -->
+<!-- SWEETALERT2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 {% if request.session.mostrar_alerta_bloqueado %}
@@ -75,5 +73,4 @@ Swal.fire({
 });
 </script>
 {% endif %}
-
 {% endblock pie %}

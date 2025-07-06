@@ -1,7 +1,8 @@
 import logging
 import os  # Importar para obtener variables de entorno
 from datetime import timedelta  # Importar timedelta
-
+from decimal import Decimal
+from django.db.models import Sum
 from django.conf import settings  # Para acceder a settings.py
 from django.contrib import messages  # Para mensajes opcionales
 from django.contrib.auth import (  # Importa las funciones de autenticación
@@ -544,7 +545,8 @@ def com_checkout(request):
         )
 
         subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
-        costo_envio = float(request.POST.get("costo_envio", 0))
+        costo_envio = Decimal(request.POST.get("costo_envio", "0"))
+        subtotal = Decimal(str(subtotal))  # por si subtotal viene como float puro
         total_final = subtotal + costo_envio
 
         try:
@@ -1304,8 +1306,21 @@ def admin_administrador(request):
     today_start = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_end = today_start + timedelta(days=1)
 
-    usuarios_hoy = User.objects.filter(date_joined__gte=today_start, date_joined__lt=today_end).count()
+    # Nuevos usuarios (CORREGIDO aquí los filtros)
+    usuarios_hoy = User.objects.filter(
+        date_joined__gte=today_start,
+        date_joined__lt=today_end
+    ).count()
 
+    # Ventas de hoy
+    pedidos_hoy = Pedido.objects.filter(
+        fecha_pedido__gte=today_start,
+        fecha_pedido__lt=today_end
+    )
+    total_ventas = pedidos_hoy.aggregate(total=Sum("total"))["total"] or 0
+    num_ventas = pedidos_hoy.count()
+
+    # Verificación de estado de bloqueo
     usuario = request.user
     try:
         estado = EstadoUsuario.objects.get(user=usuario)
@@ -1318,7 +1333,16 @@ def admin_administrador(request):
     else:
         request.session.pop("mostrar_alerta_bloqueado", None)
 
-    return render(request, "paginas/Administrador/admin_administrador.html", {"usuarios_hoy": usuarios_hoy})
+    return render(
+        request,
+        "paginas/Administrador/admin_administrador.html",
+        {
+            "usuarios_hoy": usuarios_hoy,
+            "num_ventas": num_ventas,
+            "total_ventas": total_ventas,
+        }
+    )
+
 
 
 @never_cache
@@ -1774,7 +1798,20 @@ def admin_pedido_realizado(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_ventas(request):
-    return render(request, "paginas/Administrador/admin_ventas.html")
+    now = timezone.localtime()
+    hoy_inicio = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    mañana = hoy_inicio + timedelta(days=1)
+
+    pedidos = Pedido.objects.filter(
+        fecha_pedido__gte=hoy_inicio,
+        fecha_pedido__lt=mañana
+    ).prefetch_related(
+        "detalles",                 # relación entre Pedido y DetallePedido
+        "detalles__publicacion",    # relación entre DetallePedido y Publicacion
+        "detalles__publicacion__producto"  # relación entre Publicacion y Producto
+    ).select_related("comprador")  # comprador es un ForeignKey
+
+    return render(request, "paginas/Administrador/admin_ventas.html", {"pedidos": pedidos})
 
 
 @never_cache
