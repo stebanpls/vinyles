@@ -1,189 +1,147 @@
 {% extends "plantillas/plantilla_administrador.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_adPro.css' %}">
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_adPro.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} Vinyles - Álbumes {% endblock titulo %}
+{% block titulo %}Vinyles - {{ producto.nombre }}{% endblock titulo %}
+
+
 
 {% block contenido %}
-<div class="textos">
-    <h1 class="bienvenida">Gestion de productos</h1>
-    <p class="bien">
-        Edita la información de tus productos. Actualiza detalles, precios y más, directamente desde esta sección.
-    </p>
-</div>
-
-<section>
-    <div class="guardar-global">
-        <div class = "Botonsito"><button onclick="guardarCambios()" id="guardarBtn" class="button-guardar">Guardar</button></div>
-        <button onclick="activarEdicion()" class="button-editar">Editar información</button>
-    </div>
-
-    <div class = "cuadro">
-        <div class ="contenedor">
-            <img src="{%static 'images/albumes/elvis_crespo_suavemente.jpg' %}" alt="Snow" >
+<section class="vinilo-section">
+    <div class="cuadro">
+        <div class="contenedor">
+            {% if producto.imagen_portada %}
+                <img src="{{ producto.imagen_portada.url }}" alt="Carátula de {{ producto.nombre }}">
+            {% else %}
+                <img src="{% static 'images/albumes/default/default_album.png' %}" alt="Carátula no disponible">
+            {% endif %}
         </div>
 
-        <div class = "info">
-            <div class= "titulo">
-                <p class="editable" contenteditable="false">
-                    Suavemente
-                </p>
+        <div class="info">
+            <div class="titulo">
+                <p>{{ producto.nombre }}</p>
+                <p class="artista-subtitulo">de {{ producto.artistas.all|join:", " }}</p>
             </div>
 
-            <div class = "precio">
-                <p>
-                    Precio:
-                </p>
+            <div class="precio-valor">
+                <span class="etiqueta-precio">Desde:</span>
+                {% with publicaciones|first as primera_publicacion %}
+                    {% if primera_publicacion %}
+                        <span class="dato-precio">${{ primera_publicacion.precio|intcomma }}</span>
+                    {% else %}
+                        <span class="dato-precio">No disponible</span>
+                    {% endif %}
+                {% endwith %}
             </div>
 
-            <div class = "valor">
-                <p class="editable" contenteditable="false">
-                    $50.000
-                </p>
-            </div>
-
-            <div>
-                <button class="button" onclick="marcarNoDisponible()">No disponible</button>
-                <div id="mensajeNoDisponible" class = "NoDis"></div>
-            </div>
-
-            <div>
-                <button class="button2" onclick="Disponible()">Disponible</button>
-                <div id="Disponible" class = "Dis"></div>
+            <!-- Solo este botón -->
+            <div class="botones-acciones">
+                <a href="#ofertas" class="btn-agregar-carrito">Ver ofertas</a>
             </div>
         </div>
     </div>
+
     <div class="detalles">
         <div class="album">
-            <details>
+            <details open>
                 <summary class="acor">Información del álbum</summary>
-                <p>
-                    <span class="etiqueta">Género:</span><span class="dato editable" contenteditable="false">Merengue</span>
-                </p>
-                <p>
-                    <span class="etiqueta">Lanzamiento:</span><span class="dato editable" contenteditable="false">14 de abril 1998</span>
-                </p>
-                <p>
-                    <span class="etiqueta">Sello discográfico:</span><span class="dato editable" contenteditable="false">Sony Discos</span>
-                </p>
-                <p>
-                    <span class="etiqueta">Productor(es):</span><span class="dato editable" contenteditable="false">Elvis Crespo, Luis A. Cruz, Roberto Cora, Papo Ríos</span>
-                </p>
-            </details>
-        </div>
-
-        <div class="artista">
-            <details>
-                <summary class="acor">
-                    Información del artista
-                </summary>
-                <p class="editable" contenteditable="false">
-                    El artista estadounidense con ascendencia puertorriqueña llamado Elvis Crespo una vez más nos cautiva con un álbum tan bien logrado a tal punto que las canciones pertenecientes a este álbum son un disfrute total ya sea para pasar el rato, bailar con tu pareja, poner en los XV de tu sobrina,etc,...
-                </p>
+                <p><span class="etiqueta">Género(s):</span> <span class="dato">{{ producto.genero_principal.all|join:", " }}</span></p>
+                <p><span class="etiqueta">Lanzamiento:</span> <span class="dato">{{ producto.lanzamiento|date:"Y" }}</span></p>
+                <p><span class="etiqueta">Sello discográfico:</span> <span class="dato">{{ producto.discografica|default:"No especificado" }}</span></p>
+                <p><span class="etiqueta">Descripción:</span> <span class="dato">{{ producto.descripcion|default:"No hay descripción disponible."|linebreaksbr }}</span></p>
             </details>
         </div>
 
         <div class="canciones">
             <details>
-                <summary class="acor">
-                    Listado de canciones
-                </summary>
+                <summary class="acor">Listado de canciones</summary>
                 <div class="listap">
-                    <ul class="lista-canciones editable" contenteditable="false">
-                        <li><i class="fa-solid fa-music"></i> Suavemente</li>
-                        <li><i class="fa-solid fa-music"></i> Nuestra Canción</li>
-                        <li><i class="fa-solid fa-music"></i> Luna Llena</li>
-                        <li><i class="fa-solid fa-music"></i> Me Arrepiento</li>
-                        <li><i class="fa-solid fa-music"></i> Princesita</li>
-                        <li><i class="fa-solid fa-music"></i> Tu Sonrisa</li>
-                        <li><i class="fa-solid fa-music"></i> Yo Me Moriré</li>
-                        <li><i class="fa-solid fa-music"></i> Llorando</li>
-                        <li><i class="fa-solid fa-music"></i> ¿Por Qué?</li>
-                        <li><i class="fa-solid fa-music"></i> Te Vas</li>
-                    </ul>
+                    <ol class="lista-canciones">
+                        {% for track in canciones %}
+                            <li><i class="fa-solid fa-music"></i> {{ track.cancion.nombre }}</li>
+                        {% empty %}
+                            <li>No hay canciones disponibles.</li>
+                        {% endfor %}
+                    </ol>
                 </div>
             </details>
         </div>
 
-        <div class="comentarios">
-            <details>
-                <summary class="acor">
-                    Reseñas y comentarios
-                </summary>
-                <div class="comentario">
-                    <div class="avatar">
-                        <img src="{%static 'images/fotos_perfil/laura_gomez.jpg' %}" alt="Avatar de Laura">
+        <div class="ofertas-vendedores" id="ofertas">
+            <details open>
+                <summary class="acor">Ofertas publicadas</summary>
+                {% for publicacion in publicaciones %}
+                <div class="oferta-card">
+                    <div class="oferta-info">
+                        <p class="vendedor">Vendido por:
+                            <div class="vendedor-mini-perfil">
+                            <a href="{% url 'admin_ver_perfil_usuario' publicacion.vendedor.id %}" class="link-usuario-perfil">
+                                <div class="mini-avatar">
+                                {% if publicacion.vendedor.cliente.foto_perfil %}
+                                    <img src="{{ publicacion.vendedor.cliente.foto_perfil.url }}" alt="Foto de perfil">
+                                {% else %}
+                                    <img src="{% static 'images/perfiles/default.png' %}" alt="Foto por defecto">
+                                {% endif %}
+                                </div>
+                                <span class="nombre-usuario">{{ publicacion.vendedor.username }}</span>
+                            </a>
+                            </div>
+
+                        <p class="condicion"><strong>Condición:</strong> {{ publicacion.descripcion_condicion }}</p>
                     </div>
-                    <div class="contenido-comentario">
-                        <a href = "{% url "laura_g" %}">Laura Gomez</a>
-                        <p class="texto">
-                            ¡Excelente calidad y servicio!
-                        </p>
+                    <div class="oferta-accion">
+                        <p class="precio-oferta">${{ publicacion.precio|intcomma }}</p>
+                        <a href="#" class="btn btn-sm btn-success">Ver detalle</a>
                     </div>
                 </div>
+                {% empty %}
+                <p>No hay publicaciones activas para este álbum.</p>
+                {% endfor %}
             </details>
         </div>
     </div>
 </section>
 
-<script>
-    function activarEdicion() {
-        const campos = document.querySelectorAll(".editable");
-        campos.forEach(campo => {
-            campo.contentEditable = true;
-            campo.style.border = "1px dashed #ccc";
-            campo.style.border.color = "gray";
-        });
-    }
+<button id="btnEliminarAlbum" class="btn-eliminar-admin">
+    <i class="fa-solid fa-trash-can"></i> Eliminar álbum
+</button>
 
-    function guardarCambios() {
-        const campos = document.querySelectorAll(".editable");
-        campos.forEach(campo => {
-            campo.contentEditable = false;
-            campo.style.border = "none";
-        });
 
-        // Mensaje de confirmación
-        const mensaje = document.createElement("p");
-        mensaje.textContent = "✅";
-        mensaje.classList.add("mensaje-guardado");
-        mensaje.style.color = "green";
-        mensaje.style.fontWeight = "bold";
-
-        const contenedor = document.querySelector(".guardar-global");
-        contenedor.appendChild(mensaje);
-
-        setTimeout(() => mensaje.remove(), 3000);
-    }
-
-    // 👇 ESTA ES LA FUNCIÓN QUE MARCA COMO NO DISPONIBLE
-    function marcarNoDisponible() {
-        const contenedor = document.getElementById("mensajeNoDisponible");
-
-        contenedor.textContent = "📦 Marcado como no disponible";
-        contenedor.style.color = "red";
-        contenedor.style.fontWeight = "bold";
-        contenedor.style.marginTop = "10px";
-
-        setTimeout(() => contenedor.textContent = "", 3000);
-    }
-
-    function Disponible() {
-        const contenedor = document.getElementById("Disponible");
-
-        contenedor.textContent = "✅ Disponible";
-        contenedor.style.color = "green";
-        contenedor.style.fontWeight = "bold";
-        contenedor.style.marginTop = "10px";
-
-        setTimeout(() => contenedor.textContent = "", 3000);
-    }
-</script>
 {% endblock contenido %}
 
 {% block pie %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.getElementById('btnEliminarAlbum').addEventListener('click', function () {
+    Swal.fire({
+        title: '¿Eliminar álbum?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'mi-alerta-azul',
+            title: 'titulo-alerta',
+            htmlContainer: 'contenido-alerta',
+            confirmButton: 'btn-confirmar',
+            cancelButton: 'btn-cancelar',
+            actions: 'acciones-alerta'
+        },
+        background: 'transparent',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{% url 'admin_eliminar_album' producto.id %}";
+        }
+    });
+});
+</script>
+
+
 
 {% endblock pie %}

@@ -1349,19 +1349,52 @@ def admin_verificacion(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_adPro(request, producto_id):
-    # Importa tu modelo si no lo has hecho aún
-    from gestion.models import Producto  # o donde sea que esté tu modelo
-
     try:
         producto = Producto.objects.get(id=producto_id)
-    except Producto.DoesNotExist:
-        messages.error(request, "❌ El álbum no existe.")
-        return redirect("admin_verificacion")  # o a donde quieras redirigir
 
-    context = {
-        "producto": producto,
-    }
-    return render(request, "paginas/Administrador/admin_adPro.html", context)
+        publicaciones = Publicacion.objects.filter(
+            producto=producto
+        ).select_related("vendedor")
+
+        canciones = producto.tracks.all().order_by("numero_pista").select_related("cancion")
+
+        context = {
+            "producto": producto,
+            "publicaciones": publicaciones,
+            "canciones": canciones,
+        }
+        return render(request, "paginas/Administrador/admin_adPro.html", context)
+
+    except Producto.DoesNotExist:
+        # Si el álbum ya fue eliminado
+        return render(request, "paginas/Administrador/admin_album_no_disponible.html", {
+            "producto_id": producto_id
+        })
+
+
+
+@never_cache
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url="pub_login")
+def admin_eliminar_notificacion(request, notificacion_id):
+    notificacion = get_object_or_404(Notificacion, id=notificacion_id)
+    notificacion.delete()
+    messages.success(request, "Notificación eliminada correctamente.")
+    return redirect("admin_verificacion")  # o a la vista donde se listan
+
+
+@never_cache
+@login_required
+@user_passes_test(lambda u: u.is_staff, login_url="pub_login")
+def admin_eliminar_album(request, producto_id):
+    try:
+        producto = Producto.objects.get(id=producto_id)
+        producto.delete()
+        messages.success(request, "✅ Álbum eliminado correctamente.")
+    except Producto.DoesNotExist:
+        messages.error(request, "❌ El álbum no existe o ya fue eliminado.")
+
+    return redirect("admin_verificacion")
 
 
 @never_cache
