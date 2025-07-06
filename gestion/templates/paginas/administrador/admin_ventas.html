@@ -27,8 +27,14 @@
             {% for pedido in pedidos %}
                 {% for detalle in pedido.detalles.all %}
                 <tr>
-                    <td><a href="a">{{ pedido.comprador.get_full_name|default:pedido.comprador.username }}</a></td>
-                    <td><a href="#">{{ detalle.publicacion.producto.nombre }}</a></td>
+                    <td><a href="{% url 'admin_ver_perfil_usuario' pedido.comprador.id %}">
+                        {{ pedido.comprador.get_full_name|default:pedido.comprador.username }}
+                        </a>
+                    </td>
+                    <td><a href="{% url 'admin_adPro' detalle.publicacion.producto.id %}">
+                            {{ detalle.publicacion.producto.nombre }}
+                        </a>
+                    </td>
                     <td>{{ detalle.cantidad }}</td>
                     <td>${{ detalle.subtotal|floatformat:"0" }}</td>
                     <td>{{ pedido.fecha_pedido|date:"d/m/Y" }}</td>
