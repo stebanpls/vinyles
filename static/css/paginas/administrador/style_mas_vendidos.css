@@ -1,140 +1,140 @@
-.textos {
-    width: 100%;
-    margin-bottom: 1rem;
-    color: aliceblue;
-}
-
-table {
-    position: relative;
-    margin-left: 10%;
-    width: 80%;
-    border-collapse: collapse;
-    margin-top: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-table {
-    caption-side: bottom;
-    border-collapse: collapse;
-}
-*, ::after, ::before {
-    box-sizing: border-box;
-}
-user agent stylesheet
-table {
-    display: table;
-    border-collapse: separate;
-    box-sizing: border-box;
-    text-indent: initial;
-    unicode-bidi: isolate;
-    border-spacing: 2px;
-    border-color: gray;
-}
-main {
-    padding: 2rem;
-    background-color: #000000;
-    color: #FFFFFF;
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    flex-grow: 1;
-}
 body {
-    margin: 0;
-    font-family: var(--bs-body-font-family);
-    font-size: var(--bs-body-font-size);
-    font-weight: var(--bs-body-font-weight);
-    line-height: var(--bs-body-line-height);
-    color: var(--bs-body-color);
-    text-align: var(--bs-body-text-align);
-    background-color: var(--bs-body-bg);
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;
-}
-body {
-    display: flex
-;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    background: #0e0e0e;
+    font-family: 'Segoe UI', sans-serif;
+    color: #e6e6e6;
     margin: 0;
     padding: 0;
 }
-:root, [data-bs-theme=light] {
-    --bs-carousel-indicator-active-bg: #fff;
-    --bs-carousel-caption-color: #fff;
-    --bs-carousel-control-icon-filter: ;
+
+.section {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    position: relative;
 }
-:root, [data-bs-theme=light] {
-    --bs-btn-close-filter: ;
+
+.textos {
+    margin-bottom: 30px;
+    text-align: center;
 }
-:root {
-    --bs-breakpoint-xs: 0;
-    --bs-breakpoint-sm: 576px;
-    --bs-breakpoint-md: 768px;
-    --bs-breakpoint-lg: 992px;
-    --bs-breakpoint-xl: 1200px;
-    --bs-breakpoint-xxl: 1400px;
+
+.textos .bienvenida {
+    font-size: 28px;
+    font-weight: bold;
+    color: #f4f4f4;
+    position: relative;
 }
-:root, [data-bs-theme=light] {
-    --bs-blue: #0d6efd;
-    --bs-indigo: #6610f2;
-    --bs-purple: #6f42c1;
-    --bs-pink: #d63384;
-    --bs-red: #dc3545;
-    --bs-orange: #fd7e14;
-    --bs-yellow: #ffc107;
-    --bs-green: #198754;
-    --bs-teal: #20c997;
-    --bs-cyan: #0dcaf0;
-    --bs-black: #000;
-    --bs-white: #fff;
-    --bs-gray: #6c757d;
-    --bs-gray-dark: #343a40;
-    --bs-gray-100: #f8f9fa;
-    --bs-gray-200: #e9ecef;
-    --bs-gray-300: #dee2e6;
-    --bs-gray-400: #ced4da;
-    --bs-gray-500: #adb5bd;
-    --bs-gray-600: #6c757d;
-    --bs-gray-700: #495057;
-    --bs-gray-800: #343a40;
-    --bs-gray-900: #212529;
-    --bs-primary: #0d6efd;
-    --bs-secondary: #6c757d;
-    --bs-success: #198754;
-    --bs-info: #0dcaf0;
-    --bs-warning: #ffc107;
-    --bs-danger: #dc3545;
-    --bs-light: #f8f9fa;
-    --bs-dark: #212529;
-    --bs-primary-rgb: 13, 110, 253;
-    --bs-secondary-rgb: 108, 117, 125;
-    --bs-success-rgb: 25, 135, 84;
-    --bs-info-rgb: 13, 202, 240;
-    --bs-warning-rgb: 255, 193, 7;
-    --bs-danger-rgb: 220, 53, 69;
-    --bs-light-rgb: 248, 249, 250;
-    --bs-dark-rgb: 33, 37, 41;
-    --bs-primary-text-emphasis: #052c65;
-    --bs-secondary-text-emphasis: #2b2f32;
-    --bs-success-text-emphasis: #0a3622;
-    --bs-info-text-emphasis: #055160;
-    --bs-warning-text-emphasis: #664d03;
-    --bs-danger-text-emphasis: #58151c;
-    --bs-light-text-emphasis: #495057;
-    --bs-dark-text-emphasis: #495057;
-    --bs-primary-bg-subtle: #cfe2ff;
-    --bs-secondary-bg-subtle: #e2e3e5;
-    --bs-success-bg-subtle: #d1e7dd;
+
+.textos .bienvenida::after {
+    content: none; /* ← se elimina la rayita amarilla */
 }
-::after, ::before {
-    box-sizing: border-box;
+
+.textos .bien {
+    font-size: 16px;
+    color: #999;
 }
-::after, ::before {
-    box-sizing: border-box;
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #1f1f1f;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+thead {
+    background: #252525;
+}
+
+th, td {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    color: #cccccc;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+td {
+    color: #e5e5e5;
+}
+
+td a {
+    color: #f8b400; /* amarillo-naranja potente */
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+}
+
+td a:hover {
+    color: #ff8f00;
+    text-decoration: underline;
+}
+
+tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+    transition: background 0.2s ease;
+}
+
+/* Responsive (opcional) */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead {
+        display: none;
+    }
+
+    td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #333;
+        position: relative;
+    }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #888;
+        display: block;
+        margin-bottom: 5px;
+    }
+}
+
+/* Estrella animada 🔥 */
+.estrella-animada {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 26px;
+    color: #f8b400;
+    animation: explotarEstrella 2s ease-in-out 1;
+    animation-delay: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes explotarEstrella {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    30% {
+        transform: scale(1.5) rotate(180deg);
+        opacity: 1;
+    }
+    60% {
+        transform: scale(0.8) rotate(360deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1) rotate(360deg);
+        opacity: 1;
+    }
 }

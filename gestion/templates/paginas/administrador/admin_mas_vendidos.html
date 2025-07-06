@@ -5,56 +5,45 @@
     <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_mas_vendidos.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} Vinyles - Mas Vendidos {% endblock titulo %}
+{% block titulo %} Vinyles - Más Vendidos {% endblock titulo %}
 
 {% block contenido %}
-
 <section class="section">
     <div class="textos">
-        <h4 class="bienvenida">Más vendidos</h4>
-        <p class="bien">Estos son los productos mas vendidos hasta la fecha.</p>
+        <h4 class="bienvenida">
+            <span class="estrella-animada">★</span> Más Vendidos
+        </h4>
+        <p class="bien">Estos son los productos más vendidos hasta la fecha.</p>
     </div>
-    <table >
+
+    <table>
         <thead>
             <tr>
-            <th>Cantidad Vendida</th>
-            <th>Producto</th>
-            <th>Total Vendido</th>
+                <th>Cantidad Vendida</th>
+                <th>Producto</th>
+                <th>Total Vendido</th>
             </tr>
         </thead>
         <tbody>
+            {% for producto in mas_vendidos %}
             <tr>
-            <td>7</td>
-            <td><a href="{% url 'the_beatles' %}"> The Beatles - Abbey Road</a></td>
-            <td>$1.750.000</td>
+                <td>{{ producto.cantidad_vendida }}</td>
+                <td>
+                    <a href="{% url 'admin_adPro' producto.publicacion__producto__id %}">
+                        {{ producto.publicacion__producto__nombre }}
+                    </a>
+                </td>
+                <td>${{ producto.total_vendido|floatformat:"0" }}</td>
             </tr>
+            {% empty %}
             <tr>
-            <td>5</td>
-            <td><a href="{% url 'nirvana' %}">Nirvana - In Utero</a></td>
-            <td>$1.050.000</td>
+                <td colspan="3">No se han registrado ventas aún.</td>
             </tr>
-            <tr>
-                <td>4</td>
-                <td><a href="{% url 'bts'%}">BTS - Be</a></td>
-                <td>$1.000.000</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td><a href="{% url 'mj_bad'%}">Michael Jackson - Bad</a></td>
-                    <td>$1.080.000</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td><a href="{% url 'eminem_show'%}">Eminem - The Eminem Show</a></td>
-                        <td>$750.000</td>
-                        </tr>
-            <!-- Más filas -->
+            {% endfor %}
         </tbody>
-        </table>
-
+    </table>
 </section>
 {% endblock contenido %}
 
 {% block pie %}
-
 {% endblock pie %}

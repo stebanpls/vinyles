@@ -1,16 +1,15 @@
 {% extends "plantillas/plantilla_administrador.html" %}
 {% load static %}
-{% load humanize %}  {# 👈 esto permite usar intcomma para miles #}
+{% load humanize %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_administrador.css' %}">
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_administrador.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Administrador{% endblock titulo %}
 
 {% block contenido %}
 <section class="section">
-
     <div class="textos">
         <h1 class="bienvenida">Bienvenido , Admin</h1>
         <p class="bien">Todo lo que pasa en la plataforma, al instante. Tu centro de mando está listo, Admin.</p>
@@ -36,10 +35,9 @@
     <a href="{% url 'admin_mas_vendidos' %}" class="nota verde">
         <i class="fas fa-star icono-nota"></i>
         <h3>Más vendidos</h3>
-        <div class="value">5</div>
+        <div class="value">{{ num_mas_vendidos }}</div>
         <div class="desc">productos más vendidos</div>
     </a>
-
 </section>
 {% endblock contenido %}
 
