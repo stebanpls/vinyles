@@ -1,71 +1,86 @@
 {% extends "plantillas/plantilla_administrador.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_producto.css' %}">
+  <link rel="stylesheet" href="{% static 'css/componentes/style_product_card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/paginas/style_albumes_page.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Productos {% endblock titulo %}
 
 {% block contenido %}
-        <section class="section">
-            <div class="textos">
-                <h1 class="bienvenida">Productos</h1>
-                <p class="bien">Aquí puedes visualizar y manejar todos los productos disponibles en el sistema. ¡Haz clic para gestionar!</p>
+<section class="section">
+  <div class="textos">
+    <h1 class="bienvenida">Productos</h1>
+    <p class="bien">Aquí puedes visualizar y manejar todos los productos disponibles en el sistema. ¡Haz clic para gestionar!</p>
+  </div>
+
+  <div class="container-albumes">
+    <aside class="aside-clasificacion">
+      <h2>Clasificación</h2>
+      <ul>
+        <li><a href="#" data-genre="todos">Todos</a></li>
+        {% for genero in generos %}
+          <li><a href="#" data-genre="{{ genero.nombre|slugify }}">{{ genero.nombre }}</a></li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <main class="main-albumes">
+      {% if publicaciones %}
+        {% for publicacion in publicaciones %}
+          <div class="product-card" data-genre="{{ publicacion.producto.genero_principal.first.nombre|slugify }}">
+            <a href="{% url 'admin_adPro' publicacion.producto.id %}" class="product-image-link">
+              {% if publicacion.producto.imagen_portada %}
+                <img src="{{ publicacion.producto.imagen_portada.url }}" alt="Carátula de {{ publicacion.producto.nombre }}" class="product-image" />
+              {% else %}
+                <img src="{% static 'images/albumes/default/default_album.png' %}" alt="Sin portada" class="product-image" />
+              {% endif %}
+            </a>
+            <div class="product-info">
+              <h3 class="product-title">
+                <a href="{% url 'admin_adPro' publicacion.producto.id %}">{{ publicacion.producto.nombre }}</a>
+              </h3>
+              <p class="product-artist">{{ publicacion.producto.artistas.all|join:", " }}</p>
+              <p class="product-price">${{ publicacion.precio|intcomma }}</p>
             </div>
-
-            <div class="albumes">
-                <a href="{% url 'admin_adPro' %}" class="link">
-                    <div class="album-card">
-                        <img src="{% static 'images/albumes/michael_jackson_bad.jpg' %}" alt="Álbum Bad - Michael Jackson"/>
-                        <p>
-                            <strong>Álbum:</strong> Bad
-                        </p>
-                        <p>
-                            <strong>Artista:</strong> Michael Jackson
-                        </p>
-                    </div>
-                </a>
-
-                <a href="{% url 'admin_adPro' %}" class="link">
-                    <div class="album-card">
-                        <img src="{% static 'images/albumes/metallica_master.jpg' %}" alt="Álbum Master of Puppets - Metallica" />
-                        <p>
-                            <strong>Álbum:</strong> Master of Puppets
-                        </p>
-                        <p>
-                            <strong>Artista:</strong> Metallica
-                        </p>
-                    </div>
-                </a>
-
-                <a href="{% url 'admin_adPro' %}" class="link">
-                    <div class="album-card">
-                        <img src="{% static 'images/albumes/joe_arroyo_la_verdad.jpg' %}" alt="Álbum La Verdad de Joe Arroyo: el Original" />
-                        <p>
-                            <strong>Álbum:</strong> Los Mejores Exitos
-                        </p>
-                        <p>
-                            <strong>Artista:</strong> Joe Arroyo
-                        </p>
-                    </div>
-                </a>
-
-                <a href="{% url 'admin_adPro' %}" class="link">
-                    <div class="album-card">
-                        <img src="{% static 'images/albumes/michael_jackson_thriller.jpg' %}" alt="Álbum Thriller - Michael Jackson" />
-                        <p>
-                            <strong>Álbum:</strong> Thriller
-                        </p>
-                        <p>
-                            <strong>Artista:</strong> Michael Jackson
-                        </p>
-                    </div>
-                </a>
-            </div>
-        </section>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="alert alert-info" role="alert">
+          <p class="mb-0">No hay productos publicados actualmente.</p>
+        </div>
+      {% endif %}
+    </main>
+  </div>
+</section>
 {% endblock contenido %}
 
 {% block pie %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const genreLinks = document.querySelectorAll(".aside-clasificacion ul li a");
+    const albumCards = document.querySelectorAll(".main-albumes .product-card");
 
+    genreLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const selectedGenre = link.getAttribute("data-genre").toLowerCase();
+
+        albumCards.forEach((card) => {
+          const cardGenre = card.getAttribute("data-genre");
+          if (
+            selectedGenre === "todos" ||
+            (cardGenre && cardGenre.toLowerCase() === selectedGenre)
+          ) {
+            card.style.display = "";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    });
+  });
+</script>
 {% endblock pie %}
