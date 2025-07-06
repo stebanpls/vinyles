@@ -1,8 +1,9 @@
 import logging
 import os  # Importar para obtener variables de entorno
+import time
 from datetime import timedelta  # Importar timedelta
 from decimal import Decimal
-from django.db.models import Sum, F
+
 from django.conf import settings  # Para acceder a settings.py
 from django.contrib import messages  # Para mensajes opcionales
 from django.contrib.auth import (  # Importa las funciones de autenticación
@@ -992,57 +993,72 @@ def ven_crear_producto_nuevo(request):
     return render(request, "paginas/vendedor/ven_crear.html", context)
 
 
-def _get_local_albums(artista_id, term):
-    """Busca álbumes de un artista local en la base de datos."""
-    try:
-        artista_id_num = int(artista_id.split("-")[1])
-        albumes = Producto.objects.filter(artistas__id=artista_id_num, nombre__icontains=term).order_by("nombre")
-        return [{"id": f"local-{album.id}", "text": album.nombre} for album in albumes]
-    except (ValueError, IndexError):
-        return []
+def _is_valid_master_release(master, processed_titles):
+    """
+    Comprueba si un 'master release' de Discogs es válido para nuestros propósitos.
+    Un 'master' es válido si:
+    1. Tiene una 'main_release' (versión principal).
+    2. No es un duplicado por título en la lista actual.
+    3. No está marcado como 'Unofficial Release'.
+    """
+    if not hasattr(master, "main_release") or not master.main_release:
+        return False
+
+    title_lower = master.title.lower()
+    if title_lower in processed_titles:
+        return False
+
+    if hasattr(master.main_release, "formats"):
+        for f in master.main_release.formats:
+            descriptions = [d.lower() for d in (f.get("descriptions") or [])]
+            if "unofficial release" in descriptions:
+                return False
+
+    processed_titles.add(title_lower)
+    return True
 
 
 def _get_discogs_albums(artista_id, term):
     """Busca y formatea álbumes de un artista en la API de Discogs."""
-    try:
-        discogs_artist_id = int(artista_id.split("-")[1])
-        artist = discogs_api.client.artist(discogs_artist_id)
-        processed_titles = set()
+    # Lógica de reintentos para mayor robustez
+    for attempt in range(3):
+        try:
+            discogs_artist_id = int(artista_id.split("-")[1])
+            artist = discogs_api.client.artist(discogs_artist_id)
 
-        search_results = discogs_api.client.search(term, artist=artist.name, type="master", format="album", per_page=50)
+            search_params = {"artist": artist.name, "type": "master", "format": "album", "per_page": 50}
+            search_results = (
+                discogs_api.client.search(term, **search_params) if term else discogs_api.client.search(**search_params)
+            )
 
-        valid_masters = []
-        for master in search_results:
-            if master.title.lower() in processed_titles:
-                continue
+            valid_masters = []
+            if not search_results:
+                return []
 
-            if hasattr(master, "main_release") and master.main_release:
-                is_unofficial = False
-                if hasattr(master.main_release, "formats"):
-                    for f in master.main_release.formats:
-                        if "unofficial release" in [d.lower() for d in f.get("descriptions", [])]:
-                            is_unofficial = True
-                            break
-                if not is_unofficial:
+            processed_titles = set()
+            for master in search_results:
+                if _is_valid_master_release(master, processed_titles):
                     valid_masters.append(master)
-                    processed_titles.add(master.title.lower())
 
-        # Corregido: Ordenar usando el año de la 'main_release'
-        valid_masters.sort(
-            key=lambda m: m.main_release.year if hasattr(m.main_release, "year") and m.main_release.year else 9999
-        )
+            valid_masters.sort(
+                key=lambda m: m.main_release.year if hasattr(m.main_release, "year") and m.main_release.year else 9999
+            )
 
-        # Corregido: Usar la variable de bucle 'm' y acceder al año desde 'main_release'
-        return [
-            {
-                "id": f"discogs-master-{m.id}",
-                "text": f"{m.title} ({m.main_release.year if hasattr(m.main_release, 'year') and m.main_release.year else 'N/A'})",
-            }
-            for m in valid_masters
-        ]
-    except Exception as e:
-        logger.error("Error al buscar álbumes en Discogs para el artista %s: %s", artista_id, e)
-        return []
+            return [
+                {
+                    "id": f"discogs-master-{m.id}",
+                    "text": f"{m.title} ({m.main_release.year if hasattr(m.main_release, 'year') and m.main_release.year else 'N/A'})",
+                }
+                for m in valid_masters
+            ]
+        except Exception as e:
+            logger.warning("Intento %d: Error al buscar álbumes en Discogs para %s: %s", attempt + 1, artista_id, e)
+            if attempt < 2:  # Si no es el último intento
+                time.sleep(1)  # Esperar 1 segundo antes de reintentar
+            else:
+                logger.error("Fallaron todos los intentos de buscar álbumes en Discogs para %s.", artista_id)
+                return []
+    return []  # Retornar lista vacía si el bucle termina sin éxito
 
 
 @login_required
@@ -1056,9 +1072,7 @@ def ajax_cargar_albumes(request):
     term = request.GET.get("term", "").strip()
     albumes_data = []
 
-    if artista_id.startswith("local-"):
-        albumes_data = _get_local_albums(artista_id, term)
-    elif artista_id.startswith("discogs-"):
+    if artista_id.startswith("discogs-"):
         albumes_data = _get_discogs_albums(artista_id, term)
 
     # Devolvemos los resultados en el formato que Select2 espera
@@ -1076,16 +1090,7 @@ def ajax_buscar_artistas(request):
     results = []
     processed_artists = set()
 
-    # 1. Buscar en la base de datos local primero
-    artistas_locales = Artista.objects.filter(nombre__icontains=term)[:5]
-    for artista in artistas_locales:
-        if artista.nombre.lower() not in processed_artists:
-            results.append({"id": f"local-{artista.id}", "text": artista.nombre, "type": "Local"})
-            processed_artists.add(artista.nombre.lower())
-
-    # 2. Buscar en Discogs para complementar
     try:
-        # Pedimos hasta 10 para tener margen de filtrado
         discogs_results = discogs_api.client.search(term, type="artist", per_page=10)
         if discogs_results:
             for artist in discogs_results:
@@ -1306,28 +1311,15 @@ def admin_administrador(request):
     today_start = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_end = today_start + timedelta(days=1)
 
-    # Nuevos usuarios (hoy)
-    usuarios_hoy = User.objects.filter(
-        date_joined__gte=today_start,
-        date_joined__lt=today_end
-    ).count()
+    # Nuevos usuarios (CORREGIDO aquí los filtros)
+    usuarios_hoy = User.objects.filter(date_joined__gte=today_start, date_joined__lt=today_end).count()
 
     # Ventas de hoy
-    pedidos_hoy = Pedido.objects.filter(
-        fecha_pedido__gte=today_start,
-        fecha_pedido__lt=today_end
-    )
+    from django.db.models import Sum
+
+    pedidos_hoy = Pedido.objects.filter(fecha_pedido__gte=today_start, fecha_pedido__lt=today_end)
     total_ventas = pedidos_hoy.aggregate(total=Sum("total"))["total"] or 0
     num_ventas = pedidos_hoy.count()
-
-    # Productos más vendidos (contar top 10 únicos productos)
-    mas_vendidos = DetallePedido.objects.values(
-        "publicacion__producto__id"
-    ).annotate(
-        cantidad_vendida=Sum("cantidad")
-    ).order_by("-cantidad_vendida")[:10]
-
-    num_mas_vendidos = mas_vendidos.count()
 
     # Verificación de estado de bloqueo
     usuario = request.user
@@ -1349,10 +1341,8 @@ def admin_administrador(request):
             "usuarios_hoy": usuarios_hoy,
             "num_ventas": num_ventas,
             "total_ventas": total_ventas,
-            "num_mas_vendidos": num_mas_vendidos,
-        }
+        },
     )
-
 
 
 @never_cache
@@ -1812,14 +1802,15 @@ def admin_ventas(request):
     hoy_inicio = now.replace(hour=0, minute=0, second=0, microsecond=0)
     mañana = hoy_inicio + timedelta(days=1)
 
-    pedidos = Pedido.objects.filter(
-        fecha_pedido__gte=hoy_inicio,
-        fecha_pedido__lt=mañana
-    ).prefetch_related(
-        "detalles",                 # relación entre Pedido y DetallePedido
-        "detalles__publicacion",    # relación entre DetallePedido y Publicacion
-        "detalles__publicacion__producto"  # relación entre Publicacion y Producto
-    ).select_related("comprador")  # comprador es un ForeignKey
+    pedidos = (
+        Pedido.objects.filter(fecha_pedido__gte=hoy_inicio, fecha_pedido__lt=mañana)
+        .prefetch_related(
+            "detalles",  # relación entre Pedido y DetallePedido
+            "detalles__publicacion",  # relación entre DetallePedido y Publicacion
+            "detalles__publicacion__producto",  # relación entre Publicacion y Producto
+        )
+        .select_related("comprador")
+    )  # comprador es un ForeignKey
 
     return render(request, "paginas/Administrador/admin_ventas.html", {"pedidos": pedidos})
 
@@ -1845,20 +1836,4 @@ def admin_terminos(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_mas_vendidos(request):
-    # Agrupar por producto y sumar cantidad y total vendido
-    mas_vendidos = (
-        DetallePedido.objects
-        .values("publicacion__producto__id", "publicacion__producto__nombre")
-        .annotate(
-            total_vendido=Sum(F("cantidad") * F("precio_unitario")),
-            cantidad_vendida=Sum("cantidad")
-        )
-        .order_by("-cantidad_vendida")[:10]
-    )
-
-    return render(
-        request,
-        "paginas/Administrador/admin_mas_vendidos.html",
-        {"mas_vendidos": mas_vendidos}
-    )
-
+    return render(request, "paginas/administrador/admin_mas_vendidos.html")
