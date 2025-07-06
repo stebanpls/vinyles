@@ -3,7 +3,7 @@ import os  # Importar para obtener variables de entorno
 import time
 from datetime import timedelta  # Importar timedelta
 from decimal import Decimal
-from django.db.models import Sum, F
+
 from django.conf import settings  # Para acceder a settings.py
 from django.contrib import messages  # Para mensajes opcionales
 from django.contrib.auth import (  # Importa las funciones de autenticación
@@ -18,7 +18,7 @@ from django.contrib.auth.models import User  # Importar el modelo User y Group e
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives  # Importar para enviar correos HTML
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -1327,25 +1327,19 @@ def admin_administrador(request):
     today_end = today_start + timedelta(days=1)
 
     # Nuevos usuarios (hoy)
-    usuarios_hoy = User.objects.filter(
-        date_joined__gte=today_start,
-        date_joined__lt=today_end
-    ).count()
+    usuarios_hoy = User.objects.filter(date_joined__gte=today_start, date_joined__lt=today_end).count()
 
     # Ventas de hoy
-    pedidos_hoy = Pedido.objects.filter(
-        fecha_pedido__gte=today_start,
-        fecha_pedido__lt=today_end
-    )
+    pedidos_hoy = Pedido.objects.filter(fecha_pedido__gte=today_start, fecha_pedido__lt=today_end)
     total_ventas = pedidos_hoy.aggregate(total=Sum("total"))["total"] or 0
     num_ventas = pedidos_hoy.count()
 
     # Productos más vendidos (contar top 10 únicos productos)
-    mas_vendidos = DetallePedido.objects.values(
-        "publicacion__producto__id"
-    ).annotate(
-        cantidad_vendida=Sum("cantidad")
-    ).order_by("-cantidad_vendida")[:10]
+    mas_vendidos = (
+        DetallePedido.objects.values("publicacion__producto__id")
+        .annotate(cantidad_vendida=Sum("cantidad"))
+        .order_by("-cantidad_vendida")[:10]
+    )
 
     num_mas_vendidos = mas_vendidos.count()
 
@@ -1370,8 +1364,8 @@ def admin_administrador(request):
             "num_ventas": num_ventas,
             "total_ventas": total_ventas,
             "num_mas_vendidos": num_mas_vendidos,
-        }
-    ) 
+        },
+    )
 
 
 @never_cache
@@ -1867,17 +1861,9 @@ def admin_terminos(request):
 def admin_mas_vendidos(request):
     # Agrupar por producto y sumar cantidad y total vendido
     mas_vendidos = (
-        DetallePedido.objects
-        .values("publicacion__producto__id", "publicacion__producto__nombre")
-        .annotate(
-            total_vendido=Sum(F("cantidad") * F("precio_unitario")),
-            cantidad_vendida=Sum("cantidad")
-        )
+        DetallePedido.objects.values("publicacion__producto__id", "publicacion__producto__nombre")
+        .annotate(total_vendido=Sum(F("cantidad") * F("precio_unitario")), cantidad_vendida=Sum("cantidad"))
         .order_by("-cantidad_vendida")[:10]
     )
 
-    return render(
-        request,
-        "paginas/Administrador/admin_mas_vendidos.html",
-        {"mas_vendidos": mas_vendidos}
-    )
+    return render(request, "paginas/Administrador/admin_mas_vendidos.html", {"mas_vendidos": mas_vendidos})
