@@ -22,17 +22,17 @@
             <div class="status-timeline-container">
                 <h4>Estado del Pedido</h4>
                 <div class="status-timeline">
-                    <div class="status-step">
+                    <div class="status-step {% if pedido.estado == 'P' or pedido.estado == 'E' or pedido.estado == 'C' %}active{% endif %}">
                         <div class="status-icon"><i class="fas fa-receipt"></i></div>
-                        <div class="status-label">Pedido Recibido</div>
+                        <div class="status-label">Procesando</div>
                     </div>
-                    <div class="status-step">
-                        <div class="status-icon"><i class="fas fa-box-open"></i></div>
-                        <div class="status-label">En Preparación</div>
-                    </div>
-                    <div class="status-step">
+                    <div class="status-step {% if pedido.estado == 'E' or pedido.estado == 'C' %}active{% endif %}">
                         <div class="status-icon"><i class="fas fa-truck"></i></div>
                         <div class="status-label">Enviado</div>
+                    </div>
+                    <div class="status-step {% if pedido.estado == 'C' %}active{% endif %}">
+                        <div class="status-icon"><i class="fas fa-check-double"></i></div>
+                        <div class="status-label">Completado</div>
                     </div>
                 </div>
             </div>
@@ -97,21 +97,7 @@
 {% endblock contenido %}
 
 {% block pie %}
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Solo ejecutar la animación si hay un pedido
-    {% if pedido %}
-        const steps = document.querySelectorAll('.status-step');
-        let delay = 500; // ms de retraso inicial
-
-        steps.forEach((step, index) => {
-            setTimeout(() => {
-                step.classList.add('active');
-            }, delay + (index * 1000)); // Cada paso se activa 1 segundo después del anterior
-        });
-    {% endif %}
-});
+    // Ya no se necesita JavaScript para la animación, la lógica está en el HTML.
 </script>
-
 {% endblock pie %}

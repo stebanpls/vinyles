@@ -71,8 +71,8 @@
                 <div class="info-content">
                     <label>Historial de Compra</label>
                     <span>
-                        {% if cliente_instance.pedidos.all %}
-                            <a href="#" class="history-link">Ver mis {{ cliente_instance.pedidos.count }} pedido(s)</a>
+                        {% if user.pedidos.all %}
+                            <a href="{% url 'com_historial_pedidos' %}" class="history-link">Ver mis {{ user.pedidos.count }} pedido(s)</a>
                         {% else %}
                             Aún no has realizado compras.
                         {% endif %}

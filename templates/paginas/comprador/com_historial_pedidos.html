@@ -97,8 +97,30 @@ Pedidos" }} - Vinyles{% endblock titulo %} {% block contenido %}
                 </div>
               </div>
             </div>
-            <div class="text-end mt-3">
-              <a href="#" class="btn btn-sm btn-outline-light">Ver Factura</a>
+
+                            <hr class="my-4">
+                            <h5 class="mb-3">Progreso del Pedido</h5>
+
+                            {% if pedido.estado != 'X' %}
+                            <div class="status-timeline">
+                                <div class="status-step {% if pedido.estado == 'P' or pedido.estado == 'E' or pedido.estado == 'C' %}active{% endif %}">
+                                    <div class="status-icon"><i class="fas fa-receipt"></i></div>
+                                    <div class="status-label">Procesando</div>
+                                </div>
+                                <div class="status-step {% if pedido.estado == 'E' or pedido.estado == 'C' %}active{% endif %}">
+                                    <div class="status-icon"><i class="fas fa-truck"></i></div>
+                                    <div class="status-label">Enviado</div>
+                                </div>
+                                <div class="status-step {% if pedido.estado == 'C' %}active{% endif %}">
+                                    <div class="status-icon"><i class="fas fa-check-double"></i></div>
+                                    <div class="status-label">Completado</div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-danger mt-3 text-center"><i class="fas fa-times-circle me-2"></i>Este pedido fue cancelado.</div>
+                            {% endif %}
+                            <div class="text-end mt-4">
+              <a href="{% url 'com_pedido_factura' pedido.id %}" class="btn btn-sm btn-outline-light">Ver Factura</a>
             </div>
           </div>
         </div>

@@ -1,0 +1,107 @@
+{% extends 'plantillas/plantilla_comprador.html' %} {% load static %} {% load
+humanize %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/paginas/comprador/style_factura.css' %}"
+/>
+{% endblock extra_css %} {% block titulo %}{{ titulo_pagina|default:"Factura" }}
+- Vinyles{% endblock titulo %} {% block contenido %}
+<div class="container my-5">
+  <div class="invoice-container">
+    <div class="invoice-header">
+      <div class="invoice-logo">
+        <img src="{% static 'images/utiles/vinilo.ico' %}" alt="Vinyles Logo" />
+        <h1>Vinyles</h1>
+      </div>
+      <div class="invoice-details">
+        <h2>Factura</h2>
+        <p><strong>Factura #:</strong> {{ pedido.id }}</p>
+        <p><strong>Fecha:</strong> {{ pedido.fecha_pedido|date:"d M, Y" }}</p>
+        <p>
+          <strong>Estado:</strong>
+          <span class="status-{{ pedido.estado|lower }}"
+            >{{ pedido.get_estado_display }}</span
+          >
+        </p>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="invoice-addresses">
+      <div class="address-block">
+        <h4>Facturado a:</h4>
+        <p style="white-space: pre-wrap">{{ pedido.direccion_envio }}</p>
+      </div>
+      <div class="address-block">
+        <h4>Enviado a:</h4>
+        <p style="white-space: pre-wrap">{{ pedido.direccion_envio }}</p>
+      </div>
+    </div>
+
+    <div class="invoice-items">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Artículo</th>
+            <th>Vendedor</th>
+            <th class="text-center">Cantidad</th>
+            <th class="text-end">Precio Unitario</th>
+            <th class="text-end">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for detalle in pedido.detalles.all %}
+          <tr>
+            <td>
+              <strong>{{ detalle.publicacion.producto.nombre }}</strong><br />
+              <small class="text-muted"
+                >{{ detalle.publicacion.producto.artistas.first.nombre }}</small
+              >
+            </td>
+            <td>{{ detalle.publicacion.vendedor.username }}</td>
+            <td class="text-center">{{ detalle.cantidad }}</td>
+            <td class="text-end">
+              ${{ detalle.precio_unitario|floatformat:2|intcomma }}
+            </td>
+            <td class="text-end">
+              ${{ detalle.subtotal|floatformat:2|intcomma }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="invoice-summary">
+      <div class="summary-item">
+        <span>Subtotal:</span>
+        <span>${{ pedido.subtotal|floatformat:2|intcomma }}</span>
+      </div>
+      <div class="summary-item">
+        <span>Envío:</span>
+        <span>${{ pedido.costo_envio|floatformat:2|intcomma }}</span>
+      </div>
+      <div class="summary-item total">
+        <span>Total:</span>
+        <span>${{ pedido.total|floatformat:2|intcomma }}</span>
+      </div>
+    </div>
+
+    <div class="invoice-footer">
+      <p>
+        Gracias por tu compra. Si tienes alguna pregunta sobre esta factura, por
+        favor contáctanos.
+      </p>
+      <div class="mt-4">
+        <button onclick="window.print()" class="btn btn-primary">
+          <i class="fas fa-print me-2"></i>Imprimir Factura
+        </button>
+        <a href="{% url 'com_historial_pedidos' %}" class="btn btn-secondary"
+          >Volver al Historial</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock contenido %}

@@ -735,6 +735,24 @@ def com_historial_pedidos(request):
 
 @never_cache
 @login_required
+def com_pedido_factura(request, pedido_id):
+    """
+    Muestra una vista de factura para un pedido específico.
+    """
+    # Usamos prefetch_related para optimizar la consulta y traer todos los datos necesarios.
+    # Aseguramos que el pedido pertenezca al usuario que ha iniciado sesión.
+    pedido = get_object_or_404(
+        Pedido.objects.prefetch_related("detalles__publicacion__producto__artistas", "detalles__publicacion__vendedor"),
+        id=pedido_id,
+        comprador=request.user,
+    )
+
+    context = {"pedido": pedido, "titulo_pagina": f"Factura Pedido #{pedido.id}"}
+    return render(request, "paginas/comprador/com_pedido_factura.html", context)
+
+
+@never_cache
+@login_required
 def com_progreso_envio(request):
     # Recuperar el ID del último pedido de la sesión
     last_order_id = request.session.get("last_order_id")

@@ -118,3 +118,53 @@
     gap: 0.5rem;
   }
 }
+
+/* --- Estilos para la Línea de Tiempo del Pedido --- */
+.status-timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin: 2rem 0;
+}
+
+.status-timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #495057;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.status-step {
+    position: relative;
+    text-align: center;
+    z-index: 2;
+}
+
+.status-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #495057;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    border: 3px solid #343a40;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color: #adb5bd;
+}
+
+.status-step.active .status-icon {
+    background-color: #28a745; /* Verde para activo */
+    color: #fff;
+}
+
+.status-label {
+    font-size: 0.9rem;
+    color: #ced4da;
+}
