@@ -2,115 +2,110 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_reembolsos.css' %}">
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_pedido_pendiente.css' %}">
 {% endblock extra_css %}
 
 {% block titulo %} Vinyles - Reembolsos {% endblock titulo %}
 
 {% block contenido %}
-<section>
-    <div class="textos">
-        <h1 class="bienvenida">Reembolsos</h1>
-        <p class="bien">Aquí gestionas los reembolsos pendientes. Aprueba o rechaza según el caso 📋.</p>
-    </div>
-    <div class="contenedor-reembolsos">
+<section class="seccion-pedidos">
+  <div class="textos">
+    <h1 class="bienvenida">Reembolsos</h1>
+    <p class="bien">Aquí gestionas los reembolsos pendientes. Aprueba o rechaza según el caso.</p>
+  </div>
 
-        <!-- 🔍 Buscador -->
-        <input type="text" id="buscador" placeholder="🔎 Buscar cliente..." class="busqueda">
+  <input type="text" id="buscador" placeholder="Buscar cliente..." class="busqueda">
 
-        <!-- Lista de Reembolsos -->
-        <div id="lista-reembolsos">
+  <div class="acordeon" id="lista-reembolsos">
+    {% for reembolso in reembolsos %}
+    <div class="acordeon-item" data-id="{{ reembolso.id }}">
+      <button class="acordeon-btn" onclick="togglePedido(this)">
+        <i class="fas fa-user"></i>
+        {{ reembolso.usuario.get_full_name|default:reembolso.usuario.username }}
+        <i class="fas fa-chevron-down flecha"></i>
+      </button>
 
-            <!-- Reembolso 1 -->
-            <div class="reembolso">
-                <details>
-                    <summary>Carlos Mendoza</summary>
-                    <div class="info-reembolso">
-                        <div class="compra">
-                            <a href="{% url 'admin_adPro' %}" style="display: flex; align-items: center; gap: 1rem;">
-                                <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles">
-                                <p style="color:white; margin: 0;">The Beatles - Abbey Road</p>
-                            </a>
-                        </div>
-                        <p><strong>Correo:</strong> carlosm@gmail.com</p>
-                        <p><strong>Número de pedido:</strong> #2023-001</p>
-                        <p><strong>Motivo del reembolso:</strong> Producto llegó dañado</p>
-                        <p><strong>Fecha y hora:</strong> 2025-04-15 10:45 AM</p>
-                        <div class="acciones">
-                            <button class="btn autorizar" onclick="gestionarReembolso(this, 'autorizado')">Autorizar</button>
-                            <button class="btn rechazar" onclick="gestionarReembolso(this, 'rechazado')">Rechazar</button>
-                        </div>
-                        <div class="mensaje"></div>
-                    </div>
-                </details>
-            </div>
-
-            <!-- Reembolso 2 -->
-            <div class="reembolso">
-                <details>
-                    <summary>Valeria Gómez</summary>
-                    <div class="info-reembolso">
-                        <div class="compra">
-                            <a href="{% url 'admin_adPro' %}" style="display: flex; align-items: center; gap: 1rem;">
-                                <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles">
-                                <p style="color:white; margin: 0;">The Beatles - Abbey Road</p>
-                            </a>
-                        </div>
-                            <div class = "info-user">
-                        <p><strong>Correo:</strong> valegomez@mail.com</p>
-                        <p><strong>Número de pedido:</strong> #2023-014</p>
-                        <p><strong>Motivo del reembolso:</strong> Pedido incorrecto</p>
-                        <p><strong>Fecha y hora:</strong> 2025-04-16 03:20 PM</p>
-                        <div class="acciones">
-                            <button class="btn autorizar" onclick="gestionarReembolso(this, 'autorizado')">Autorizar</button>
-                            <button class="btn rechazar" onclick="gestionarReembolso(this, 'rechazado')">Rechazar</button>
-                        </div>
-                        <div class="mensaje"></div>
-                    </div>
-                </div>
-                </details>
-            </div>
-
+      <div class="acordeon-panel">
+        <div class="producto">
+          <a href="{% url 'admin_adPro' reembolso.producto.id %}">
+            <img src="{{ reembolso.producto.imagen_portada.url }}" alt="{{ reembolso.producto.nombre }}">
+            <p class="nombre-producto">{{ reembolso.producto.nombre }}</p>
+          </a>
         </div>
 
-        <!-- JS: Gestor de Reembolso -->
-        <script>
-            function gestionarReembolso(boton, estado) {
-                const item = boton.closest('.reembolso');
-                const mensaje = item.querySelector('.mensaje');
+        <div class="info-pedido">
+          <p><strong>Correo:</strong> {{ reembolso.usuario.email }}</p>
+          <p><strong>Número de pedido:</strong> #{{ reembolso.pedido.id }}</p>
+          <p><strong>Motivo:</strong> {{ reembolso.motivo }}</p>
+          <p><strong>Fecha:</strong> {{ reembolso.fecha_solicitud|date:"Y-m-d H:i" }}</p>
+        </div>
 
-                mensaje.textContent = estado === 'autorizado' ? '✅ Reembolso autorizado con éxito' : '❌ Reembolso rechazado';
-                mensaje.style.opacity = '1';
-
-                setTimeout(() => {
-                    mensaje.style.opacity = '0';
-                }, 2000);
-
-                setTimeout(() => {
-                    item.style.opacity = '0';
-                    setTimeout(() => item.remove(), 300);
-                }, 2500);
-            }
-        </script>
-
-        <!-- JS: Buscador -->
-        <script>
-            const buscador = document.getElementById('buscador');
-            const reembolsos = document.querySelectorAll('.reembolso');
-
-            buscador.addEventListener('keyup', () => {
-                const texto = buscador.value.toLowerCase();
-                reembolsos.forEach(item => {
-                    const nombre = item.querySelector('summary').textContent.toLowerCase();
-                    item.style.display = nombre.includes(texto) ? 'block' : 'none';
-                });
-            });
-        </script>
-
+        <div class="acciones">
+          <button class="btn-confirmar" onclick="gestionarReembolso(this, 'autorizado')">Autorizar</button>
+          <button class="btn-cancelar" onclick="gestionarReembolso(this, 'rechazado')">Rechazar</button>
+          <div class="mensaje"></div>
+        </div>
+      </div>
     </div>
+    {% empty %}
+    <p style="text-align:center; color:#ccc; margin-top: 2rem;">
+      <i class="fas fa-money-check-alt" style="font-size: 1.5rem;"></i><br>
+      No hay solicitudes de reembolso por ahora.
+    </p>
+    {% endfor %}
+  </div>
 </section>
 {% endblock contenido %}
 
 {% block pie %}
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
 
+function togglePedido(boton) {
+  boton.classList.toggle("activo");
+  const panel = boton.nextElementSibling;
+  panel.style.maxHeight = panel.style.maxHeight ? null : panel.scrollHeight + "px";
+}
+
+function gestionarReembolso(btn, estado) {
+  const item = btn.closest(".acordeon-item");
+  const mensaje = item.querySelector(".mensaje");
+
+  mensaje.textContent = estado === "autorizado"
+    ? "Reembolso autorizado con éxito"
+    : "Reembolso rechazado";
+  mensaje.style.opacity = "1";
+
+  setTimeout(() => {
+    mensaje.style.opacity = "0";
+  }, 2000);
+
+  setTimeout(() => {
+    item.style.opacity = "0";
+    setTimeout(() => item.remove(), 300);
+  }, 2500);
+}
+
+document.getElementById("buscador")?.addEventListener("keyup", () => {
+  const texto = document.getElementById("buscador").value.toLowerCase();
+  const items = document.querySelectorAll("#lista-reembolsos .acordeon-item");
+  items.forEach(item => {
+    const nombre = item.querySelector(".acordeon-btn")?.textContent.toLowerCase() || "";
+    item.style.display = nombre.includes(texto) ? "block" : "none";
+  });
+});
+</script>
 {% endblock pie %}
