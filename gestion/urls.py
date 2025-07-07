@@ -101,6 +101,8 @@ admin_patterns = [
         name="admin_eliminar_notificacion",
     ),
     path("panel-admin/eliminar-album/<int:producto_id>/", views.admin_eliminar_album, name="admin_eliminar_album"),
+    path("admin/pedidos/marcar-entregado/<int:pedido_id>/", views.marcar_pedido_entregado, name="marcar_pedido_entregado"),
+    path("admin/pedidos/eliminar/<int:pedido_id>/", views.eliminar_pedido_realizado, name="eliminar_pedido_realizado"),
 ]
 
 # --- URLs para llamadas AJAX (no destinadas a ser visitadas directamente) ---

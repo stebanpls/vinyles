@@ -1,93 +1,222 @@
-section{
-  font-family: 'Times New Roman', Times, serif;
-  background-color: rgb(0, 0, 0);
-  width: 100%;
-  height: auto;
-  padding: 50px 50px 400px 50px;
+body {
+  background: #0e0e0e;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  color: #f0f0f0;
 }
 
-.pedido{
-  max-width: 80%;
-  height: auto;
-  background-color: rgba(230, 246, 252, 0.991);
-  border-radius: 20px;
-  padding: 20px;
-  gap: 10px;
-  margin: 80px 10px;
-  border: 2px solid rgba(38, 137, 180, 0.441);
-}
-
-.info{
-  margin: 10px;
-  max-width: 300px;
-}
-
-.informacion{
-  margin: 10px;
-  gap: 20px;
-  color: #111;
-}
-
-summary{
-  padding: 5px;
-  font-size: 20px;
-  color: black ;
-  font-weight: bolder;
-}
-
-.compra {
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-  gap: 1rem;
-  background-color: #111;
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.compra img {
-  width: 60px;
-  height: auto;
-  border-radius: 5px;
-}
-
-a{
+a {
   text-decoration: none;
+  color: inherit;
 }
 
-.boton-realizado{
-  transition: background 0.3s ease;
-  padding: 5px;
-  border-radius: 5px;
-  background-color: rgba(240, 248, 255, 0);
-  border: 3px solid black;
-  border-radius: 5px;
-  font-size: 1vw;
-  width: 20%;
-  font-weight: bold;
+a:hover {
+  color: #b0cfff;
 }
 
-.boton-realizado:hover{
-  background-color: forestgreen;
-  color: azure;
-  border: 3px solid forestgreen;
+.seccion-pedidos {
+  max-width: 90%;
+  margin: 40px auto;
+  padding: 30px;
+  background: #1a1a1a;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
-.decoracion{
-  background-color: rgb(19, 19, 19);
-  padding: 20px;
-  border-radius: 10px;
-  border: 2px solid rgb(138, 138, 138);
-  box-shadow: 0 4px 12px rgba(249, 145, 244, 0.457);
+.textos {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.textos .bienvenida {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.textos .bien {
+  font-size: 16px;
+  color: #aaa;
 }
 
 .busqueda {
-  max-width: 700px;
-  padding: 10px 15px;
-  margin: 20px;
-  border: none;
-  border-radius: 10px;
+  width: 100%;
+  padding: 12px 16px;
   font-size: 16px;
+  margin-bottom: 25px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: #141414;
+  color: #f5f5f5;
+}
+
+.acordeon-item {
+  margin-bottom: 16px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #222;
+  transition: 0.3s;
+}
+
+.acordeon-btn {
+  background: #2a2a2a;
+  color: #f5f5f5;
+  padding: 16px 20px;
+  width: 100%;
+  text-align: left;
+  border: none;
   outline: none;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.acordeon-btn:hover {
+  background: #333;
+}
+
+.acordeon-btn .flecha {
+  transition: transform 0.3s ease;
+}
+
+.acordeon-btn.activo .flecha {
+  transform: rotate(180deg);
+}
+
+.acordeon-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  background: #1e1e1e;
+  padding: 0 20px;
+}
+
+.producto {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.producto img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
+}
+
+.nombre-producto {
+  font-size: 16px;
+  font-weight: 500;
+  color: #b0b0ff; /* Cambiado de amarillo a azul pastel */
+}
+
+.info-pedido {
+  padding: 15px 0;
+  border-top: 1px solid #444;
+  font-size: 15px;
+}
+
+.info-pedido p {
+  margin: 6px 0;
+  color: #ddd;
+}
+
+
+.boton-realizado {
+  margin-top: 15px;
+  background-color: #2e7d4c; /* verde oscuro suave */
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.boton-realizado:hover {
+  background-color: #256d40; /* un poco más oscuro en hover */
+  transform: scale(1.03);
+}
+
+
+/* SweetAlert botones */
+.swal2-popup.popup-alerta {
+  background-color: #1a1a1a !important;
+  color: #fff;
+  border-radius: 12px;
+  border: 1px solid #333;
+  box-shadow: 0 0 10px rgba(255,255,255,0.05);
+}
+
+.swal2-confirm.btn-confirmar {
+  background: #3da160;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  margin: 5px;
+}
+
+.swal2-confirm.btn-confirmar:hover {
+  background: #2e7d4c;
+}
+
+.swal2-cancel.btn-cancelar {
+  background: #dc3545;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  margin: 5px;
+}
+
+.swal2-cancel.btn-cancelar:hover {
+  background: #b52a37;
+}
+
+@media (max-width: 600px) {
+  .producto {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .producto img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+.acciones {
+  text-align: right;
+  padding: 20px 10px 10px 10px; /* arriba, der, abajo, izq */
+  margin-top: 15px;
+  border-top: 1px solid #333;
+}
+
+.eliminar-icono {
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.eliminar-icono:hover {
+  background: rgba(255, 0, 0, 0.1);
+  transform: scale(1.2);
+}
+
+.mensaje-vacio {
+  text-align: center;
 }

@@ -2,161 +2,146 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/paginas/administrador/style_pedido_pendiente.css' %}">
+<link rel="stylesheet" href="{% static 'css/paginas/administrador/style_pedido_pendiente.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} Vinyles - Álbumes {% endblock titulo %}
+{% block titulo %} Vinyles - Pedidos Pendientes {% endblock titulo %}
 
 {% block contenido %}
-<section>
-    <div class="textos">
-        <h1 class="bienvenida">Pedidos pendientes</h1>
-        <p class="bien">🚚 No dejes que se acumulen. Gestiona los pedidos pendientes y asegúrate de que cada cliente reciba lo suyo a tiempo.</p>
+<section class="seccion-pedidos">
+  {% csrf_token %}
+
+  <div class="textos">
+    <h1 class="bienvenida">Pedidos pendientes</h1>
+    <p class="bien">
+      <i class="fas fa-box"></i> Gestiona los pedidos pendientes y asegúrate de que cada cliente reciba lo suyo a tiempo.
+    </p>
+  </div>
+
+  <!-- Buscador -->
+  <input type="text" id="buscador" placeholder="Buscar cliente..." class="busqueda">
+
+  <!-- Lista de pedidos estilo acordeón -->
+  <div class="acordeon" id="lista-pedidos">
+    {% for pedido in pedidos %}
+    <div class="acordeon-item" data-id="{{ pedido.id }}">
+      <button class="acordeon-btn" onclick="togglePedido(this)">
+        <i class="fas fa-user"></i>
+        {{ pedido.comprador.get_full_name|default:pedido.comprador.username }}
+        <i class="fas fa-chevron-down flecha"></i>
+      </button>
+      <div class="acordeon-panel">
+        {% for detalle in pedido.detalles.all %}
+        <div class="producto">
+          <a href="{% url 'admin_adPro' detalle.publicacion.producto.id %}">
+            <img src="{{ detalle.publicacion.producto.imagen_portada.url }}" alt="{{ detalle.publicacion.producto.nombre }}">
+            <p class="nombre-producto">{{ detalle.publicacion.producto.nombre }}</p>
+          </a>
+        </div>
+        {% endfor %}
+
+        <div class="info-pedido">
+          <p><strong>Usuario:</strong>
+            <a href="{% url 'admin_ver_perfil_usuario' pedido.comprador.id %}">
+              {{ pedido.comprador.username }}
+            </a>
+          </p>
+          <p><strong>Dirección:</strong> {{ pedido.direccion_envio }}</p>
+          <p><strong>Email:</strong> {{ pedido.comprador.email }}</p>
+          <p><strong>Teléfono:</strong> {{ pedido.comprador.cliente.telefono }}</p>
+          <p><strong>País:</strong> {{ pedido.comprador.cliente.pais }}</p>
+          <p><strong>Compras realizadas:</strong> {{ pedido.comprador.pedidos.count }}</p>
+          <button class="boton-realizado" onclick="confirmarEntrega(this)">Pedido Realizado</button>
+        </div>
+      </div>
     </div>
-    <div class="decoracion">
-
-        <!-- 🔍 Buscador -->
-        <input type="text" id="buscador" placeholder="🔎 Buscar cliente..." class="busqueda" style="width: 100%; padding: 10px; font-size: 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc;">
-
-        <!-- PEDIDOS -->
-        <div id="lista-pedidos">
-
-            <!-- Pedido 1 -->
-            <div class="pedido">
-                <details>
-                    <summary>Ana González</summary>
-                    <div class="info">
-                        <div class="compra"><a href="{% url 'admin_adPro' %}">
-                            <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles">
-                            <div><p style="color:white">The Beatles - Abbey Road</p></a></div>
-                        </div>
-                    </div>
-                    <div class="informacion">
-                        <p><strong>Dirección de domicilio:</strong> Calle 73 A # 53b</p>
-                        <p><strong>Correo electrónico:</strong> anitauwu67@gmail.com</p>
-                        <p><strong>Número de teléfono:</strong> 3202361123</p>
-                        <p><strong>País:</strong> Colombia</p>
-                        <p><strong>Número de compras realizadas:</strong> 1</p>
-                        <button class="boton-realizado" onclick="eliminarPedido(this)">Pedido Realizado</button>
-                    </div>
-                </details>
-            </div>
-
-            <!-- Pedido 2 -->
-            <div class="pedido">
-                <details>
-                    <summary>Juan Pérez</summary>
-                    <div class="info">
-                        <div class="compra"><a href="{% url 'admin_adPro' %}">
-                            <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles">
-                            <div><p style="color:white">The Beatles - Abbey Road</p></a></div>
-                        </div>
-                    </div>
-                    <div class="informacion">
-                        <p><strong>Dirección de domicilio:</strong> Carrera 50 # 12-34</p>
-                        <p><strong>Correo electrónico:</strong> juanperez88@gmail.com</p>
-                        <p><strong>Número de teléfono:</strong> 3107894561</p>
-                        <p><strong>País:</strong> Colombia</p>
-                        <p><strong>Número de compras realizadas:</strong> 3</p>
-                        <button class="boton-realizado" onclick="eliminarPedido(this)">Pedido Realizado</button>
-                    </div>
-                </details>
-            </div>
-
-            <!-- Pedido 3 -->
-            <div class="pedido">
-                <details>
-                    <summary>Camila Ríos</summary>
-                    <div class="info">
-                        <div class="compra"><a href="{% url 'admin_adPro' %}">
-                            <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles">
-                            <div><p style="color:white">The Beatles - Abbey Road</p></a></div>
-                        </div>
-                    </div>
-                    <div class="informacion">
-                        <p><strong>Dirección de domicilio:</strong> Av. Siempre Viva #742</p>
-                        <p><strong>Correo electrónico:</strong> camiri23@gmail.com</p>
-                        <p><strong>Número de teléfono:</strong> 3001122334</p>
-                        <p><strong>País:</strong> Colombia</p>
-                        <p><strong>Número de compras realizadas:</strong> 2</p>
-                        <button class="boton-realizado" onclick="eliminarPedido(this)">Pedido Realizado</button>
-                    </div>
-                </details>
-            </div>
-
-            <!-- Pedido 4 -->
-            <div class="pedido">
-                <details>
-                    <summary>Esteban Martínez</summary>
-                    <div class="info">
-                        <div class="compra"><a href="{% url 'admin_adPro' %}">
-                            <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles">
-                            <div><p style="color:white">The Beatles - Abbey Road</p></a></div>
-                        </div>
-                    </div>
-                    <div class="informacion">
-                        <p><strong>Dirección de domicilio:</strong> Calle 10 # 25-89</p>
-                        <p><strong>Correo electrónico:</strong> estemtz@gmail.com</p>
-                        <p><strong>Número de teléfono:</strong> 3209988776</p>
-                        <p><strong>País:</strong> Colombia</p>
-                        <p><strong>Número de compras realizadas:</strong> 5</p>
-                        <button class="boton-realizado" onclick="eliminarPedido(this)">Pedido Realizado</button>
-                    </div>
-                </details>
-            </div>
-
-            <!-- Pedido 5 -->
-            <div class="pedido">
-                <details>
-                    <summary>Lucía Torres</summary>
-                    <div class="info">
-                        <div class="compra"><a href="{% url 'admin_adPro' %}">
-                            <img src="{% static 'images/albumes/the_beatles_abbey_road.jpg' %}" alt="Abbey Road - The Beatles">
-                            <div><p style="color:white">The Beatles - Abbey Road</p></a></div>
-                        </div>
-                    </div>
-                    <div class="informacion">
-                        <p><strong>Dirección de domicilio:</strong> Calle 15 # 8-90</p>
-                        <p><strong>Correo electrónico:</strong> luciatorres90@gmail.com</p>
-                        <p><strong>Número de teléfono:</strong> 3104455667</p>
-                        <p><strong>País:</strong> Colombia</p>
-                        <p><strong>Número de compras realizadas:</strong> 4</p>
-                        <button class="boton-realizado" onclick="eliminarPedido(this)">Pedido Realizado</button>
-                    </div>
-                </details>
-            </div>
-
-        </div> <!-- FIN lista-pedidos -->
-
-        <!-- JS eliminar pedido -->
-        <script>
-            function eliminarPedido(boton) {
-                const pedido = boton.closest('.pedido');
-                pedido.style.opacity = '0';
-                setTimeout(() => {
-                    pedido.remove();
-                }, 300);
-            }
-        </script>
-
-        <!-- 🔍 JS buscador por nombre -->
-        <script>
-            const buscador = document.getElementById('buscador');
-            const pedidos = document.querySelectorAll('#lista-pedidos .pedido');
-
-            buscador.addEventListener('keyup', () => {
-                const texto = buscador.value.toLowerCase();
-                pedidos.forEach(pedido => {
-                    const nombre = pedido.querySelector('summary').textContent.toLowerCase();
-                    pedido.style.display = nombre.includes(texto) ? 'block' : 'none';
-                });
-            });
-        </script>
-
-    </div>
+    {% empty %}
+    <p style="text-align:center; color:#ccc">No hay pedidos pendientes.</p>
+    {% endfor %}
+  </div>
 </section>
 {% endblock contenido %}
 
 {% block pie %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// CSRF desde cookie
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
 
+// Mostrar / ocultar panel
+function togglePedido(boton) {
+  boton.classList.toggle("activo");
+  const panel = boton.nextElementSibling;
+  panel.style.maxHeight = panel.style.maxHeight ? null : panel.scrollHeight + "px";
+}
+
+// URL dinámica generada por Django
+const urlEntrega = "{% url 'marcar_pedido_entregado' 0 %}".replace("0", "__ID__");
+
+// Confirmar y marcar como entregado
+function confirmarEntrega(btn) {
+  const item = btn.closest(".acordeon-item");
+  const pedidoId = item.dataset.id;
+
+  Swal.fire({
+    title: '¿Confirmar entrega?',
+    icon: 'success',
+    text: 'El pedido será marcado como entregado.',
+    confirmButtonText: 'Confirmar',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    background: '#1a1a1a',
+    color: '#fff',
+    width: '340px',
+    customClass: {
+      popup: 'popup-alerta',
+      confirmButton: 'btn-confirmar',
+      cancelButton: 'btn-cancelar'
+    },
+    buttonsStyling: false
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(urlEntrega.replace("__ID__", pedidoId), {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+        }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Error al actualizar pedido');
+        item.style.opacity = '0';
+        setTimeout(() => item.remove(), 300);
+      })
+      .catch(error => {
+        Swal.fire('Error', 'No se pudo actualizar el pedido.', 'error');
+      });
+    }
+  });
+}
+
+// Buscador
+const buscador = document.getElementById('buscador');
+const items = document.querySelectorAll('#lista-pedidos .acordeon-item');
+
+buscador.addEventListener('keyup', () => {
+  const texto = buscador.value.toLowerCase();
+  items.forEach(item => {
+    const nombre = item.querySelector('.acordeon-btn').textContent.toLowerCase();
+    item.style.display = nombre.includes(texto) ? 'block' : 'none';
+  });
+});
+</script>
 {% endblock pie %}
