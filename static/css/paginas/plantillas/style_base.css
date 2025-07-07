@@ -175,34 +175,6 @@ body {
     text-decoration: none; /* Quitar subrayado al pasar el ratón */
 }
 
-/* Estilos para las alertas de Django Messages (Bootstrap) */
-.alert {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem 1.25rem;
-    border-radius: 0.25rem;
-    color: #fff; /* Texto blanco para todas las alertas */
-    border: 1px solid transparent;
-}
-
-/* Alerta de éxito (verde claro por defecto) */
-.alert-success {
-    background-color: #198754; /* Verde más oscuro */
-    border-color: #198754;
-}
-
-/* Alerta de información (azul claro por defecto) */
-.alert-info {
-    background-color: #0d6efd; /* Azul más oscuro */
-    border-color: #0d6efd;
-}
-
-/* Alerta de error/peligro (rojo claro por defecto) */
-.alert-danger, .alert-error { /* alert-error es un tag común de Django messages */
-    background-color: #dc3545; /* Rojo más oscuro */
-    border-color: #dc3545;
-}
-
 /* Estilos generales de los botones (si no están definidos en otro lugar) */
 .btn-primary {
   background-color: #121212;

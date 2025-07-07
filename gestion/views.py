@@ -18,7 +18,8 @@ from django.contrib.auth.models import User  # Importar el modelo User y Group e
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives  # Importar para enviar correos HTML
 from django.db import transaction
-from django.db.models import F, Q, Sum
+from django.db.models import ProtectedError, Q
+from django.db.utils import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -800,71 +801,85 @@ def com_terminos(request):
 # VISTAS DE LA CARPETA "VENDEDOR"
 
 
-def _get_or_import_producto_from_discogs(master_id, request_user):
+def _get_discogs_image_url(master, release_details):
+    """Busca la mejor URL de imagen en el objeto master y release de Discogs."""
+    if hasattr(master, "cover_image") and master.cover_image:
+        return master.cover_image
+    if hasattr(release_details, "images") and release_details.images:
+        return release_details.images[0].get("uri")
+    if hasattr(master, "images") and master.images:
+        return master.images[0].get("uri")
+    return None
+
+
+def _create_producto_from_discogs_data(release_details, artistas, generos, image_path):
+    """Crea y guarda un nuevo objeto Producto con los datos procesados."""
+    producto = Producto(
+        nombre=release_details.title,
+        lanzamiento=f"{release_details.year}-01-01" if release_details.year and release_details.year > 0 else None,
+        discografica=(
+            release_details.labels[0].name
+            if hasattr(release_details, "labels") and release_details.labels
+            else "Desconocida"
+        ),
+        imagen_portada=image_path,
+        discogs_id=str(release_details.id),
+    )
+    producto.save()
+    producto.artistas.set(artistas)
+    producto.genero_principal.set(generos)
+    return producto
+
+
+def _get_or_import_producto_from_discogs(master_id, request_user):  # noqa: C901
     """
     Función auxiliar para obtener o importar un Producto desde un Master ID de Discogs.
-    Esta función contiene la lógica de importación y solo debe ser llamada cuando
-    se confirma una venta.
     """
     try:
-        # Obtenemos el master y su release principal
+        # 1. Obtener datos de Discogs
         master = discogs_api.client.master(int(master_id))
         release_details = master.main_release
     except Exception as e:
         logger.error("Error al obtener el main_release para el master %s: %s", master_id, e)
         return None
 
-    # Comprobar si el producto ya existe por su discogs_id de la release principal
+    # 2. Comprobar si el producto ya existe en la BD local
     try:
+        # Usamos el ID de la release principal, que es más específico
         producto = Producto.objects.get(discogs_id=str(release_details.id))
+        # FIX: Si el producto existe pero no tiene imagen (o el archivo se borró),
+        # intenta descargarla de nuevo para asegurar que siempre se muestre.
+        if not producto.imagen_portada or not producto.imagen_portada.storage.exists(producto.imagen_portada.name):
+            logger.info(f"Producto '{producto.nombre}' encontrado pero sin imagen. Intentando descargar...")
+            image_url = _get_discogs_image_url(master, release_details)
+            if image_url:
+                image_path = discogs_api.download_image(image_url, filename_prefix=f"master_{master_id}")
+                if image_path:
+                    producto.imagen_portada = image_path
+                    producto.save(update_fields=["imagen_portada"])
         return producto
     except Producto.DoesNotExist:
         pass  # El producto no existe, proceder a importarlo.
 
-    # Si llegamos aquí, el producto no existe y debe ser importado.
+    # 3. Si no existe, importar el producto
     with transaction.atomic():
-        # Crear o encontrar artistas
-        artistas_objs = []
-        if hasattr(release_details, "artists"):
-            for artist_data in release_details.artists:
-                artista, _ = Artista.objects.get_or_create(
-                    discogs_id=str(artist_data.id),
-                    defaults={"nombre": artist_data.name},
-                )
-                artistas_objs.append(artista)
+        # Crear/obtener artistas y géneros
+        artistas_objs = [
+            Artista.objects.get_or_create(discogs_id=str(a.id), defaults={"nombre": a.name})[0]
+            for a in getattr(release_details, "artists", [])
+        ]
+        generos_objs = [
+            Genero.objects.get_or_create(nombre=g.upper())[0] for g in getattr(release_details, "genres", [])
+        ]
 
-        # Crear o encontrar géneros
-        generos_objs = []
-        if hasattr(release_details, "genres"):
-            for genre_name in release_details.genres:
-                genero, _ = Genero.objects.get_or_create(nombre=genre_name.upper())
-                generos_objs.append(genero)
-
-        # Descargar imagen
-        image_url = None
-        if hasattr(master, "cover_image") and master.cover_image:
-            image_url = master.cover_image
-        elif hasattr(release_details, "images") and release_details.images:
-            image_url = release_details.images[0].get("uri")
-
+        # Obtener URL de la imagen y descargarla
+        image_url = _get_discogs_image_url(master, release_details)
         image_path = None
         if image_url:
             image_path = discogs_api.download_image(image_url, filename_prefix=f"master_{master_id}")
 
-        # Crear el producto
-        producto = Producto(
-            nombre=release_details.title,
-            lanzamiento=f"{release_details.year}-01-01" if release_details.year and release_details.year > 0 else None,
-            discografica=release_details.labels[0].name
-            if hasattr(release_details, "labels") and release_details.labels
-            else "Desconocida",
-            imagen_portada=image_path,
-            discogs_id=str(release_details.id),
-        )
-        producto.save()
-        producto.artistas.set(artistas_objs)
-        producto.genero_principal.set(generos_objs)
-
+        # Crear la instancia del producto
+        producto = _create_producto_from_discogs_data(release_details, artistas_objs, generos_objs, image_path)
         return producto
 
 
@@ -906,26 +921,26 @@ def ven_crear(request):
                     )
                     url = reverse("admin_adPro", args=[producto.id])
                     crear_notificacion_para_admins(mensaje, url)
-            # Crear publicación para el producto (nuevo o ya existente)
-            publicacion = Publicacion(
-                producto=producto,
-                vendedor=request.user,
-                precio=form.cleaned_data["precio"],
-                stock=form.cleaned_data["stock"],
-                descripcion_condicion=form.cleaned_data["descripcion_condicion"],
-            )
 
+            # Intentar crear una nueva publicación
             try:
-                publicacion.save()
+                Publicacion.objects.create(
+                    producto=producto,
+                    vendedor=request.user,
+                    precio=form.cleaned_data["precio"],
+                    stock=form.cleaned_data["stock"],
+                    descripcion_condicion=form.cleaned_data["descripcion_condicion"],
+                    activa=True,
+                )
                 messages.success(request, f"¡Has publicado '{producto.nombre}' para la venta!")
-
-                # 🔔 Notificar a los admins sobre la publicación creada
+                # 🔔 Notificar a los admins sobre la nueva publicación
                 mensaje = f"📢 El vendedor '{request.user.username}' ha publicado el álbum '{producto.nombre}'."
                 url = reverse("admin_adPro", args=[producto.id])
                 crear_notificacion_para_admins(mensaje, url)
                 return redirect("ven_producto")
 
-            except Exception:
+            except IntegrityError:
+                # Si falla, es porque ya existe una publicación para ese producto y vendedor.
                 messages.warning(
                     request,
                     f"Ya tienes una publicación para '{producto.nombre}'. Puedes editarla desde 'Mis Productos'.",
@@ -1126,15 +1141,8 @@ def ajax_get_album_details(request):
         if hasattr(master, "main_release") and master.main_release and hasattr(master.main_release, "artists"):
             artist_str = ", ".join(artist.name for artist in master.main_release.artists)
 
-        # Lógica mejorada para obtener la mejor imagen posible
-        image_url = None
-        if hasattr(master, "cover_image") and master.cover_image:
-            image_url = master.cover_image
-        elif hasattr(master, "main_release") and hasattr(master.main_release, "images") and master.main_release.images:
-            image_url = master.main_release.images[0].get("uri")
-        elif hasattr(master, "images") and master.images:
-            image_url = master.images[0].get("uri")
-
+        # Usamos la misma función auxiliar para obtener la URL de la imagen
+        image_url = _get_discogs_image_url(master, master.main_release)
         # Si no se encuentra ninguna imagen, usar la de por defecto
         final_image_url = image_url or (settings.STATIC_URL + "images/albumes/default/default_album.png")
 
@@ -1295,9 +1303,20 @@ def ven_eliminar_producto(request, publicacion_id):
     publicacion = get_object_or_404(Publicacion, pk=publicacion_id, vendedor=request.user)
 
     if request.method == "POST":
-        nombre_producto = publicacion.producto.nombre
-        publicacion.delete()
-        messages.success(request, f"La publicación de '{nombre_producto}' ha sido eliminada.")
+        try:
+            # Intenta eliminar la publicación directamente.
+            nombre_producto = publicacion.producto.nombre
+            publicacion.delete()
+            messages.success(request, f"La publicación de '{nombre_producto}' ha sido eliminada correctamente.")
+        except ProtectedError:
+            # Si está protegida (tiene ventas), la desactivamos en lugar de borrarla.
+            publicacion.activa = False
+            publicacion.stock = 0
+            publicacion.save()
+            messages.warning(
+                request,
+                f"La publicación de '{publicacion.producto.nombre}' tiene ventas asociadas y no puede ser eliminada permanentemente. En su lugar, ha sido desactivada y archivada.",
+            )
         return redirect("ven_producto")
 
     return redirect("ven_producto")
@@ -1326,22 +1345,15 @@ def admin_administrador(request):
     today_start = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_end = today_start + timedelta(days=1)
 
-    # Nuevos usuarios (hoy)
+    # Nuevos usuarios (CORREGIDO aquí los filtros)
     usuarios_hoy = User.objects.filter(date_joined__gte=today_start, date_joined__lt=today_end).count()
 
     # Ventas de hoy
+    from django.db.models import Sum
+
     pedidos_hoy = Pedido.objects.filter(fecha_pedido__gte=today_start, fecha_pedido__lt=today_end)
     total_ventas = pedidos_hoy.aggregate(total=Sum("total"))["total"] or 0
     num_ventas = pedidos_hoy.count()
-
-    # Productos más vendidos (contar top 10 únicos productos)
-    mas_vendidos = (
-        DetallePedido.objects.values("publicacion__producto__id")
-        .annotate(cantidad_vendida=Sum("cantidad"))
-        .order_by("-cantidad_vendida")[:10]
-    )
-
-    num_mas_vendidos = mas_vendidos.count()
 
     # Verificación de estado de bloqueo
     usuario = request.user
@@ -1363,7 +1375,6 @@ def admin_administrador(request):
             "usuarios_hoy": usuarios_hoy,
             "num_ventas": num_ventas,
             "total_ventas": total_ventas,
-            "num_mas_vendidos": num_mas_vendidos,
         },
     )
 
@@ -1859,11 +1870,4 @@ def admin_terminos(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_mas_vendidos(request):
-    # Agrupar por producto y sumar cantidad y total vendido
-    mas_vendidos = (
-        DetallePedido.objects.values("publicacion__producto__id", "publicacion__producto__nombre")
-        .annotate(total_vendido=Sum(F("cantidad") * F("precio_unitario")), cantidad_vendida=Sum("cantidad"))
-        .order_by("-cantidad_vendida")[:10]
-    )
-
-    return render(request, "paginas/Administrador/admin_mas_vendidos.html", {"mas_vendidos": mas_vendidos})
+    return render(request, "paginas/administrador/admin_mas_vendidos.html")

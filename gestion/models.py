@@ -366,9 +366,6 @@ class Publicacion(models.Model):
         verbose_name = "Publicación (Oferta)"
         verbose_name_plural = "Publicaciones (Ofertas)"
         ordering = ["-fecha_publicacion"]
-        unique_together = (
-            ("producto", "vendedor"),
-        )  # Un vendedor solo puede tener una publicación activa por producto
 
     def __str__(self):
         return f"Oferta de {self.vendedor.username} para {self.producto.nombre} por ${self.precio}"

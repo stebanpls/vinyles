@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static 'css/paginas/plantillas/style_base.css' %}"> {# Nueva base de CSS #}
     <link rel="stylesheet" href="{% static 'css/paginas/plantillas/style_plantilla_vendedor.css' %}"> {# El CSS de este template específico #}
-    {% block extra_css %} {% endblock %}
+    {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/componentes/custom_messages.css' %}">
+    {% endblock %}
 </head>
 
 <body>
