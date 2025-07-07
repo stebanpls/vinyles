@@ -9,14 +9,14 @@
 {% block titulo %} Vinyles - Checkout {% endblock titulo %}
 
 {% block contenido %}
-<div class="container my-4">
+<div class="container my-4" data-bs-theme="dark">
   <!-- ENCABEZADO DE CHECKOUT -->
-  <h1>Contacto</h1>
+  <h1>Contacto y Entrega</h1>
 
   <!-- Formulario de checkout que enviará los datos a la vista com_checkout -->
   <form method="post" action="{% url 'com_checkout' %}">
     {% csrf_token %}
-    <div class="row g-3">
+    <div class="row g-4">
       <!-- CORREO ELECTRÓNICO -->
       <div class="col-12 col-md-6">
         <label for="email" class="form-label">Correo electrónico</label>
@@ -100,7 +100,7 @@
 
       <!-- RESUMEN DE COMPRA -->
       <div class="col-12">
-        <h2>Resumen de Compra</h2>
+        <h2 class="mb-3">Resumen de Compra</h2>
         {% if cart_items %}
         <div class="list-group">
           {% for item in cart_items %}
@@ -127,23 +127,19 @@
 
       <!-- MÉTODOS DE ENVÍO -->
       <div class="col-12 col-md-6">
-        <h2>Métodos de envío</h2>
-        <select id="ciudad-envio" name="metodo_envio_ciudad" class="form-select">
-          <!-- Los valores son los costos de envío en COP -->
-          <option value="7500">Bogotá — COP $7.500</option>
-          <option value="9000">Medellín — COP $9.000</option>
-          <option value="8500">Cali — COP $8.500</option>
-          <option value="9500">Barranquilla — COP $9.500</option>
-          <option value="10000">Cartagena — COP $10.000</option>
+        <h2 class="mb-3">Método de envío</h2>
+        <select id="metodo-envio" name="metodo_envio" class="form-select">
+          <option value="0" selected>Bogotá D.C. — Gratis</option>
+          <option value="12500">Resto del país — COP $12.500</option>
         </select>
       </div>
       <!-- Campo oculto para enviar el costo de envío al backend -->
-      <input type="hidden" name="costo_envio" id="costo-envio-input" value="7500">
+      <input type="hidden" name="costo_envio" id="costo-envio-input" value="0">
       <div class="col-6 col-md-3">
-        <p id="envio-cost">Costo envío:<br><strong>COP $7.500</strong></p>
+        <p id="envio-cost">Costo envío:<br><strong>Gratis</strong></p>
       </div>
       <div class="col-6 col-md-3">
-        <p id="total-final"><strong>Total:</strong><br>COP ${{ total|add:"7500"|floatformat:2|intcomma }}</p>
+        <p id="total-final"><strong>Total:</strong><br>COP ${{ total|floatformat:2|intcomma }}</p>
       </div>
 
       <div class="col-12">
@@ -152,47 +148,39 @@
 
       <!-- MÉTODOS DE PAGO -->
       <div class="col-12">
-        <h2>Pago</h2>
+        <h2 class="mb-3">Pago</h2>
         <p>Todas las transacciones son seguras y encriptadas.</p>
       </div>
       <!-- Radios -->
-      <div class="col-12 col-md-4">
+      <div class="col-12 col-md-6">
         <div class="form-check">
           <input class="form-check-input" type="radio" name="payment_method" id="creditCard" value="credit" checked>
           <label class="form-check-label" for="creditCard">Tarjeta de Crédito</label>
         </div>
       </div>
-      <div class="col-12 col-md-4">
+      <div class="col-12 col-md-6">
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="payment_method" id="nequi" value="nequi">
-          <label class="form-check-label" for="nequi">Nequi</label>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="payment_method" id="others" value="others">
-          <label class="form-check-label" for="others">Otros (Débito)</label>
+          <input class="form-check-input" type="radio" name="payment_method" id="debitCard" value="debit">
+          <label class="form-check-label" for="debitCard">Tarjeta Débito</label>
         </div>
       </div>
 
       <!-- Secciones según método seleccionado -->
-      <div id="credit-section" class="col-12 col-md-4 payment-section">
-        <label for="cardNumber" class="form-label">Número de Tarjeta</label>
-        <input type="text" id="cardNumber" name="card_number" class="form-control mb-2" placeholder="XXXX-XXXX-XXXX-XXXX">
-        <label for="cardExpiry" class="form-label">Fecha de Expiración</label>
-        <input type="text" id="cardExpiry" name="card_expiry" class="form-control mb-2" placeholder="MM/AA">
-        <label for="cardCVC" class="form-label">CVC</label>
-        <input type="text" id="cardCVC" name="card_cvc" class="form-control" placeholder="CVC">
-      </div>
-      <div id="nequi-section" class="col-12 col-md-4 payment-section" style="display:none;">
-        <label for="nequiNumber" class="form-label">Número de Celular Nequi</label>
-        <input type="text" id="nequiNumber" name="nequi_number" class="form-control mb-2" placeholder="Ej: 3123456789">
-        <label for="nequiCode" class="form-label">Clave Dinámica</label>
-        <input type="text" id="nequiCode" name="nequi_code" class="form-control" placeholder="Código dinámico">
-      </div>
-      <div id="others-section" class="col-12 col-md-4 payment-section" style="display:none;">
-        <label for="debitInfo" class="form-label">Información Débito</label>
-        <input type="text" id="debitInfo" name="debit_info" class="form-control" placeholder="Cuenta o débito">
+      <div id="card-info-section" class="col-12 payment-section">
+        <div class="row g-3">
+          <div class="col-12">
+            <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+            <input type="text" id="cardNumber" name="card_number" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX">
+          </div>
+          <div class="col-md-6">
+            <label for="cardExpiry" class="form-label">Fecha de Expiración</label>
+            <input type="text" id="cardExpiry" name="card_expiry" class="form-control" placeholder="MM/AA">
+          </div>
+          <div class="col-md-6">
+            <label for="cardCVC" class="form-label">CVC</label>
+            <input type="text" id="cardCVC" name="card_cvc" class="form-control" placeholder="CVC">
+          </div>
+        </div>
       </div>
 
       <!-- BOTÓN FINALIZAR -->
@@ -210,40 +198,37 @@
 <!-- JavaScript: envío y mostrar secciones de pago -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const selectCity = document.getElementById("ciudad-envio");
+    const selectEnvio = document.getElementById("metodo-envio");
     const envioCost = document.getElementById("envio-cost");
     const totalFinal = document.getElementById("total-final");
     const costoEnvioInput = document.getElementById("costo-envio-input");
     const subtotal = {{ total }};
 
     function updateEnvio() {
-      const cost = parseInt(selectCity.value, 10);
-      envioCost.innerHTML = `Costo envío:<br><strong>COP $${cost.toLocaleString('es-CO')}</strong>`;
+      const cost = parseInt(selectEnvio.value, 10);
+      const costText = cost === 0 ? 'Gratis' : `COP $${cost.toLocaleString('es-CO')}`;
+      envioCost.innerHTML = `Costo envío:<br><strong>${costText}</strong>`;
       costoEnvioInput.value = cost; // Actualizar el campo oculto
       totalFinal.innerHTML = `<strong>Total:</strong><br>COP $${(subtotal + cost).toLocaleString('es-CO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
     }
 
-    selectCity.addEventListener("change", updateEnvio);
+    selectEnvio.addEventListener("change", updateEnvio);
     updateEnvio();
 
-
-    // Payment sections
+    // --- Lógica de pago simplificada ---
+    // Ya no necesitamos mostrar/ocultar secciones, ya que el formulario de tarjeta es único.
+    // Mantenemos los listeners por si en el futuro se añaden otros métodos de pago como PSE.
     const creditRadio = document.getElementById("creditCard");
-    const nequiRadio  = document.getElementById("nequi");
-    const othersRadio = document.getElementById("others");
-    const creditSec   = document.getElementById("credit-section");
-    const nequiSec    = document.getElementById("nequi-section");
-    const othersSec   = document.getElementById("others-section");
+    const debitRadio = document.getElementById("debitCard");
+    const cardInfoSection = document.getElementById("card-info-section");
 
     function updatePaymentSection() {
-      creditSec.style.display = creditRadio.checked ? "block" : "none";
-      nequiSec.style.display  = nequiRadio.checked  ? "block" : "none";
-      othersSec.style.display = othersRadio.checked ? "block" : "none";
+      // El formulario de tarjeta siempre es visible si se selecciona crédito o débito.
+      cardInfoSection.style.display = (creditRadio.checked || debitRadio.checked) ? "block" : "none";
     }
 
     creditRadio.addEventListener("change", updatePaymentSection);
-    nequiRadio.addEventListener("change", updatePaymentSection);
-    othersRadio.addEventListener("change", updatePaymentSection);
+    debitRadio.addEventListener("change", updatePaymentSection);
     updatePaymentSection();
   });
 </script>

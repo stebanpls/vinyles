@@ -1,7 +1,7 @@
 /********************************************
  * ESTILOS PARA ALBUMESCOM
  ********************************************/
- .container-albumes {
+.container-albumes {
     display: flex;
     min-height: 70vh;
     margin: 0 auto;
@@ -158,11 +158,13 @@
     background-color: rgba(96, 99, 98, 0.3);
     border-radius: 5px;
     padding: 0.5rem;
-    cursor: pointer;
 }
 .detalles .acor {
     font-weight: bold;
     color: #fff;
+    /* FIX: Evita que el cursor cambie a una mano, ya que no es un enlace. */
+    cursor: default;
+    list-style: none; /* Opcional: quita el marcador de lista si aparece */
 }
 .detalles p {
     color: #ccc;

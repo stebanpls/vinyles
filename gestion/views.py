@@ -47,6 +47,7 @@ from .forms import (
 )
 from .models import (
     Artista,
+    Cancion,
     Cliente,
     DetallePedido,
     EstadoUsuario,
@@ -54,6 +55,7 @@ from .models import (
     Notificacion,
     Pedido,
     Producto,
+    ProductoCancion,
     Publicacion,
 )
 
@@ -812,7 +814,7 @@ def _get_discogs_image_url(master, release_details):
     return None
 
 
-def _create_producto_from_discogs_data(release_details, artistas, generos, image_path):
+def _create_producto_from_discogs_data(release_details, artistas, generos, image_path, descripcion):
     """Crea y guarda un nuevo objeto Producto con los datos procesados."""
     producto = Producto(
         nombre=release_details.title,
@@ -824,11 +826,80 @@ def _create_producto_from_discogs_data(release_details, artistas, generos, image
         ),
         imagen_portada=image_path,
         discogs_id=str(release_details.id),
+        descripcion=descripcion,
     )
     producto.save()
     producto.artistas.set(artistas)
     producto.genero_principal.set(generos)
     return producto
+
+
+def _clean_discogs_notes(notes_text):
+    """
+    Limpia las notas de Discogs para eliminar jerga técnica y dejar solo
+    una descripción potencialmente útil para el usuario.
+    """
+    if not notes_text:
+        return ""
+
+    # Lista de frases técnicas a filtrar (en minúsculas)
+    technical_phrases = [
+        "lacquer cut",
+        "runouts are etched",
+        "cat#",
+        "barcode",
+        "matrix / runout",
+        "manufactured and distributed",
+        "℗ ©",
+        "mastered at",
+        "pressed by",
+        "printed by",
+        "universal music distribution",
+        "this is the standard pressing",
+        "hype sticker",
+        "comes with a",
+        "includes a",
+    ]
+
+    lines = notes_text.splitlines()
+    clean_lines = []
+
+    for line in lines:
+        # Si la línea no contiene ninguna de las frases técnicas, la conservamos
+        if not any(phrase in line.lower() for phrase in technical_phrases):
+            clean_lines.append(line)
+
+    cleaned_text = "\n".join(clean_lines).strip()
+
+    # Si después de limpiar, el texto es muy corto, probablemente no sea una descripción real.
+    if len(cleaned_text.split()) < 5:  # Requerir al menos 5 palabras
+        return ""
+    return cleaned_text
+
+
+def _import_tracklist_for_producto(producto, release_details):
+    """Importa el listado de canciones para un producto desde los datos de Discogs."""
+    if not hasattr(release_details, "tracklist") or producto.tracks.exists():
+        return  # No hay tracklist o ya fue importado
+
+    with transaction.atomic():
+        for i, track in enumerate(release_details.tracklist, 1):
+            # Parsear duración (ej: "5:24") a un objeto timedelta
+            duration_str = track.duration
+            duration_td = None
+            if duration_str:
+                try:
+                    minutes, seconds = map(int, duration_str.split(":"))
+                    duration_td = timedelta(minutes=minutes, seconds=seconds)
+                except (ValueError, TypeError):
+                    logger.warning(f"No se pudo parsear la duración '{duration_str}' para la canción '{track.title}'")
+
+            # Crear o obtener la canción
+            cancion, _ = Cancion.objects.get_or_create(
+                nombre=track.title, duracion=duration_td, defaults={"nombre": track.title}
+            )
+            # Crear la relación entre el producto y la canción
+            ProductoCancion.objects.create(producto=producto, cancion=cancion, numero_pista=i)
 
 
 def _get_or_import_producto_from_discogs(master_id, request_user):  # noqa: C901
@@ -847,8 +918,9 @@ def _get_or_import_producto_from_discogs(master_id, request_user):  # noqa: C901
     try:
         # Usamos el ID de la release principal, que es más específico
         producto = Producto.objects.get(discogs_id=str(release_details.id))
-        # FIX: Si el producto existe pero no tiene imagen (o el archivo se borró),
-        # intenta descargarla de nuevo para asegurar que siempre se muestre.
+
+        # --- FIX: Si el producto ya existe, nos aseguramos de que tenga todos los datos ---
+        # 1. Imagen
         if not producto.imagen_portada or not producto.imagen_portada.storage.exists(producto.imagen_portada.name):
             logger.info(f"Producto '{producto.nombre}' encontrado pero sin imagen. Intentando descargar...")
             image_url = _get_discogs_image_url(master, release_details)
@@ -857,6 +929,16 @@ def _get_or_import_producto_from_discogs(master_id, request_user):  # noqa: C901
                 if image_path:
                     producto.imagen_portada = image_path
                     producto.save(update_fields=["imagen_portada"])
+        # 2. Descripción
+        # Siempre la volvemos a procesar si está vacía, por si mejoramos el filtro.
+        if not producto.descripcion and hasattr(release_details, "notes"):
+            producto.descripcion = _clean_discogs_notes(getattr(release_details, "notes", ""))
+            producto.save(update_fields=["descripcion"])
+        # 3. Tracklist
+        if not producto.tracks.exists():
+            logger.info(f"Producto '{producto.nombre}' encontrado pero sin tracklist. Importando...")
+            _import_tracklist_for_producto(producto, release_details)
+
         return producto
     except Producto.DoesNotExist:
         pass  # El producto no existe, proceder a importarlo.
@@ -878,8 +960,16 @@ def _get_or_import_producto_from_discogs(master_id, request_user):  # noqa: C901
         if image_url:
             image_path = discogs_api.download_image(image_url, filename_prefix=f"master_{master_id}")
 
+        # Obtener descripción
+        raw_notes = getattr(release_details, "notes", "")
+        descripcion = _clean_discogs_notes(raw_notes)
+
         # Crear la instancia del producto
-        producto = _create_producto_from_discogs_data(release_details, artistas_objs, generos_objs, image_path)
+        producto = _create_producto_from_discogs_data(
+            release_details, artistas_objs, generos_objs, image_path, descripcion
+        )
+        # Importar el listado de canciones para el nuevo producto
+        _import_tracklist_for_producto(producto, release_details)
         return producto
 
 

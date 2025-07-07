@@ -44,7 +44,9 @@
                         <a href="{% url 'add_to_cart' publicacion_id=primera_publicacion.id %}?buy_now=true" class="btn-comprar">Comprar ahora</a>
                     {% endif %}
                 {% endwith %}
-                <a href="#ofertas" class="btn-agregar-carrito">Ver ofertas</a>
+                {# El botón "Añadir al carrito" ahora está en cada oferta individual más abajo #}
+                {# Eliminamos el botón "Ver ofertas" porque es redundante y la sección ya está visible #}
+                {# <a href="#ofertas" class="btn-agregar-carrito">Ver ofertas</a> #}
             </div>
         </div>
     </div>
@@ -65,10 +67,12 @@
                     <span class="etiqueta">Sello discográfico:</span>
                     <span class="dato">{{ producto.discografica|default:"No especificado" }}</span>
                 </p>
+                {% if producto.descripcion %}
                 <p>
                     <span class="etiqueta">Descripción:</span>
-                    <span class="dato">{{ producto.descripcion|default:"No hay descripción disponible."|linebreaksbr }}</span>
+                    <span class="dato">{{ producto.descripcion|linebreaksbr }}</span>
                 </p>
+                {% endif %}
             </details>
         </div>
 
@@ -89,7 +93,7 @@
 
         <div class="ofertas-vendedores" id="ofertas">
             <details open>
-                <summary class="acor">Ofertas de Vendedores</summary>
+                <summary class="acor">Detalles del producto</summary>
                 {% for publicacion in publicaciones %}
                 <div class="oferta-card">
                     <div class="oferta-info">
