@@ -20,7 +20,7 @@
       <!-- CORREO ELECTRÓNICO -->
       <div class="col-12 col-md-6">
         <label for="email" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com">
+        <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com" value="{{ initial_data.user.email|default:'' }}" required>
       </div>
 
       <!-- CHECKBOX DE NOVEDADES -->
@@ -45,39 +45,39 @@
       </div>
       <div class="col-12 col-md-4">
         <label for="ciudad" class="form-label">Ciudad</label>
-        <input type="text" class="form-control" id="ciudad" name="ciudad_entrega" placeholder="Bogotá">
+        <input type="text" class="form-control" id="ciudad" name="ciudad_entrega" placeholder="Bogotá" value="{{ initial_data.cliente.ciudad_residencia|default:'' }}" required>
       </div>
 
       <!-- Datos receptor -->
       <div class="col-12 col-md-4">
         <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="nombre" name="nombre_receptor" placeholder="Tu nombre">
+        <input type="text" class="form-control" id="nombre" name="nombre_receptor" placeholder="Tu nombre" value="{{ initial_data.user.first_name|default:'' }}" required>
       </div>
       <div class="col-12 col-md-4">
         <label for="apellidos" class="form-label">Apellidos</label>
-        <input type="text" class="form-control" id="apellidos" name="apellidos_receptor" placeholder="Tus apellidos">
+        <input type="text" class="form-control" id="apellidos" name="apellidos_receptor" placeholder="Tus apellidos" value="{{ initial_data.user.last_name|default:'' }}" required>
       </div>
       <div class="col-12 col-md-4">
         <label for="cedula" class="form-label">Cédula / NIT</label>
-        <input type="text" class="form-control" id="cedula" name="cedula_receptor" placeholder="12345678">
+        <input type="text" class="form-control" id="cedula" name="cedula_receptor" placeholder="12345678" value="{{ initial_data.cliente.numero_documento|default:'' }}" required>
       </div>
       <div class="col-12 col-md-4">
         <label for="telefono" class="form-label">Teléfono</label>
-        <input type="text" class="form-control" id="telefono" name="telefono_receptor" placeholder="3001234567">
+        <input type="text" class="form-control" id="telefono" name="telefono_receptor" placeholder="3001234567" value="{{ initial_data.cliente.celular|default:'' }}" required>
       </div>
 
 <!-- Dirección -->
 <div class="col-12 col-md-6"">
   <label for="direccion" class="form-label">Dirección</label>
-  <input type="text" class="form-control" id="direccion" name="direccion_entrega" placeholder="Calle 1 # 2 - 3">
+  <input type="text" class="form-control" id="direccion" name="direccion_entrega" placeholder="Calle 1 # 2 - 3" value="{{ initial_data.cliente.direccion_residencia|default:'' }}" required>
 </div>
 <div class="col-12 col-md-6">
   <label for="extra" class="form-label">Casa, apto, etc. (opcional)</label>
-  <input type="text" class="form-control" id="extra" name="direccion_extra" placeholder="Apartamento 101">
+  <input type="text" class="form-control" id="extra" name="direccion_extra" placeholder="Apartamento 101" value="{{ initial_data.cliente.direccion_extra|default:'' }}">
 </div>
 <div class="col-12 col-md-3">
   <label for="postal" class="form-label">Código postal</label>
-  <input type="text" class="form-control" id="postal" name="codigo_postal" placeholder="000000">
+  <input type="text" class="form-control" id="postal" name="codigo_postal" placeholder="000000" value="{{ initial_data.cliente.codigo_postal|default:'' }}">
 </div>
 <div class="col-12 col-md-3">
       <!-- puedes dejar otra cosa aquí o dejar vacío para balancear -->
@@ -123,23 +123,21 @@
         <hr>
       </div>
 
-
-
-      <!-- MÉTODOS DE ENVÍO -->
-      <div class="col-12 col-md-6">
-        <h2 class="mb-3">Método de envío</h2>
-        <select id="metodo-envio" name="metodo_envio" class="form-select">
-          <option value="0" selected>Bogotá D.C. — Gratis</option>
-          <option value="12500">Resto del país — COP $12.500</option>
-        </select>
+      <!-- MÉTODO DE ENVÍO Y RESUMEN DE COSTOS -->
+      <div class="col-12">
+        <h2 class="mb-3">Envío</h2>
+        <p class="text-muted">¡Buenas noticias! El envío es gratuito para todos los destinos en Colombia.</p>
       </div>
       <!-- Campo oculto para enviar el costo de envío al backend -->
       <input type="hidden" name="costo_envio" id="costo-envio-input" value="0">
-      <div class="col-6 col-md-3">
-        <p id="envio-cost">Costo envío:<br><strong>Gratis</strong></p>
-      </div>
-      <div class="col-6 col-md-3">
-        <p id="total-final"><strong>Total:</strong><br>COP ${{ total|floatformat:2|intcomma }}</p>
+
+      <div class="col-12 d-flex justify-content-end">
+        <div class="cost-summary" style="width: 100%; max-width: 350px;">
+          <div class="d-flex justify-content-between"><span>Subtotal</span><span>COP ${{ total|floatformat:2|intcomma }}</span></div>
+          <div class="d-flex justify-content-between"><span>Envío</span><span id="envio-cost-display">Gratis</span></div>
+          <hr>
+          <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span id="total-final">COP ${{ total|floatformat:2|intcomma }}</span></div>
+        </div>
       </div>
 
       <div class="col-12">
@@ -170,15 +168,15 @@
         <div class="row g-3">
           <div class="col-12">
             <label for="cardNumber" class="form-label">Número de Tarjeta</label>
-            <input type="text" id="cardNumber" name="card_number" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX">
+            <input type="text" id="cardNumber" name="card_number" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="cc-number">
           </div>
           <div class="col-md-6">
             <label for="cardExpiry" class="form-label">Fecha de Expiración</label>
-            <input type="text" id="cardExpiry" name="card_expiry" class="form-control" placeholder="MM/AA">
+            <input type="text" id="cardExpiry" name="card_expiry" class="form-control" placeholder="MM/AA" autocomplete="cc-exp">
           </div>
           <div class="col-md-6">
             <label for="cardCVC" class="form-label">CVC</label>
-            <input type="text" id="cardCVC" name="card_cvc" class="form-control" placeholder="CVC">
+            <input type="text" id="cardCVC" name="card_cvc" class="form-control" placeholder="CVC" autocomplete="cc-csc">
           </div>
         </div>
       </div>
@@ -198,22 +196,39 @@
 <!-- JavaScript: envío y mostrar secciones de pago -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const selectEnvio = document.getElementById("metodo-envio");
-    const envioCost = document.getElementById("envio-cost");
-    const totalFinal = document.getElementById("total-final");
-    const costoEnvioInput = document.getElementById("costo-envio-input");
-    const subtotal = {{ total }};
+    /*
+    // --- Lógica de cálculo de envío (temporalmente desactivada) ---
+    // const ciudadInput = document.getElementById("ciudad");
+    // const envioCostDisplay = document.getElementById("envio-cost-display");
+    // const totalFinalDisplay = document.getElementById("total-final");
+    // const costoEnvioInput = document.getElementById("costo-envio-input");
+    // const subtotal = {{ total }};
+    // const costoEnvioNacional = 12500;
 
-    function updateEnvio() {
-      const cost = parseInt(selectEnvio.value, 10);
-      const costText = cost === 0 ? 'Gratis' : `COP $${cost.toLocaleString('es-CO')}`;
-      envioCost.innerHTML = `Costo envío:<br><strong>${costText}</strong>`;
-      costoEnvioInput.value = cost; // Actualizar el campo oculto
-      totalFinal.innerHTML = `<strong>Total:</strong><br>COP $${(subtotal + cost).toLocaleString('es-CO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    }
+    // function formatCurrency(value) {
+    //     return `COP $${value.toLocaleString('es-CO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    // }
 
-    selectEnvio.addEventListener("change", updateEnvio);
-    updateEnvio();
+    // function updateCostoEnvio() {
+    //     const ciudad = ciudadInput.value
+    //         .trim()
+    //         .normalize("NFD")
+    //         .replace(/[\u0300-\u036f]/g, "")
+    //         .toLowerCase();
+
+    //     let costo = costoEnvioNacional;
+    //     if (ciudad.includes("bogota")) {
+    //         costo = 0;
+    //     }
+
+    //     costoEnvioInput.value = costo;
+    //     envioCostDisplay.textContent = (costo === 0) ? 'Gratis' : formatCurrency(costo);
+    //     totalFinalDisplay.textContent = formatCurrency(subtotal + costo);
+    // }
+    // ciudadInput.addEventListener("input", updateCostoEnvio);
+    // ciudadInput.addEventListener("change", updateCostoEnvio);
+    // setTimeout(updateCostoEnvio, 100);
+    */
 
     // --- Lógica de pago simplificada ---
     // Ya no necesitamos mostrar/ocultar secciones, ya que el formulario de tarjeta es único.

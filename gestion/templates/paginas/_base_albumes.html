@@ -43,7 +43,7 @@
             <p class="product-price">${{ publicacion.precio|intcomma }}</p>
 
             {% if user.is_authenticated %}
-              <a class="btn btn-add-to-cart" href="{% url 'com_carrito' %}?album_id={{ publicacion.id }}&title={{ publicacion.producto.nombre|urlencode }}&artist={{ publicacion.producto.artistas.all|join:', '|urlencode }}&price={{ publicacion.precio }}&image={{ publicacion.producto.imagen_portada.url }}">
+              <a class="btn btn-add-to-cart" href="{% url 'add_to_cart' publicacion.id %}">
                 Agregar al carrito
               </a>
             {% else %}

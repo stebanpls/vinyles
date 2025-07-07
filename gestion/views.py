@@ -570,8 +570,16 @@ def com_checkout(request):
         )
 
         subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
-        costo_envio = Decimal(request.POST.get("costo_envio", "0"))
         subtotal = Decimal(str(subtotal))  # por si subtotal viene como float puro
+
+        # --- Temporal: Envío gratuito para todos los destinos ---
+        costo_envio = Decimal("0")
+        # # Lógica original para costo de envío basado en la ciudad
+        # ciudad_entrega = request.POST.get("ciudad_entrega", "").strip().lower()
+        # # El envío es gratis si la ciudad contiene "bogota" o "bogotá"
+        # if "bogota" not in ciudad_entrega and "bogotá" not in ciudad_entrega:
+        #     costo_envio = Decimal("12500")
+
         total_final = subtotal + costo_envio
 
         try:
@@ -585,6 +593,51 @@ def com_checkout(request):
                     direccion_envio=direccion_envio_str,
                     estado="P",  # Procesando
                 )
+
+                # 5. Guardar la información en el perfil del usuario si se solicita
+                if request.POST.get("guardar_info"):
+                    email_form = request.POST.get("email")
+                    # Verificar si el correo electrónico ya existe en otra cuenta
+                    if (
+                        email_form
+                        and User.objects.filter(email__iexact=email_form).exclude(pk=request.user.pk).exists()
+                    ):
+                        messages.error(
+                            request,
+                            "Este correo electrónico ya está asociado a otra cuenta. Por favor, utiliza otro correo o inicia sesión con la cuenta existente.",
+                        )
+                        return redirect("com_checkout")  # Redirige de nuevo al checkout
+
+                    cliente = request.user.cliente
+                    cliente.celular = request.POST.get("telefono_receptor")
+                    cliente.direccion_residencia = request.POST.get("direccion_entrega")
+                    # Nota: Para guardar la información extra y el código postal,
+                    # tu modelo Cliente debe tener campos como 'direccion_extra' y 'codigo_postal'.
+                    cliente.direccion_extra = request.POST.get("direccion_extra", "")
+                    cliente.codigo_postal = request.POST.get("codigo_postal")
+                    cliente.ciudad_residencia = request.POST.get("ciudad_entrega")
+
+                    cliente.numero_documento = request.POST.get(
+                        "cedula_receptor"
+                    )  # Utiliza 'cedula_receptor' del formulario
+
+                    # Guarda el correo electrónico también, si se proporciona y es diferente
+                    if email_form and request.user.email != email_form:
+                        # antes de actualizar el email, verificar si ya existe en otro user
+                        if User.objects.filter(email__iexact=email_form).exclude(pk=request.user.pk).exists():
+                            messages.error(
+                                request,
+                                "Este correo electrónico ya está asociado a otra cuenta. Por favor, utiliza otro correo o inicia sesión con la cuenta existente.",
+                            )
+                            return redirect("com_checkout")
+                    cliente.numero_documento = request.POST.get(
+                        "cedula_receptor"
+                    )  # Utiliza 'cedula_receptor' del formulario
+                    request.user.email = email_form
+                    request.user.save()
+
+                    cliente.save()
+                    messages.success(request, "¡Información guardada en tu perfil!")
 
                 # 3. Crear los detalles del pedido y actualizar stock
                 for item in cart:
@@ -629,7 +682,16 @@ def com_checkout(request):
 
     # Lógica para GET (mostrar el formulario)
     subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
-    context = {"cart_items": cart, "total": subtotal}
+
+    # Precargar datos del usuario si existen
+    initial_data = {}
+    if request.user.is_authenticated:
+        cliente = getattr(request.user, "cliente", None)
+        if cliente:
+            initial_data["cliente"] = cliente
+        initial_data["user"] = request.user
+
+    context = {"cart_items": cart, "total": subtotal, "initial_data": initial_data}
     return render(request, "paginas/comprador/com_checkout.html", context)
 
 

@@ -101,6 +101,9 @@ class Cliente(models.Model):  # Renombrado de ClienteProfile a Cliente
     numero_documento = models.CharField(max_length=20, blank=True, verbose_name="Número de Documento")
     celular = models.CharField(max_length=20, blank=True, verbose_name="Celular")
     direccion_residencia = models.CharField(max_length=255, blank=True)
+    direccion_extra = models.CharField(max_length=255, blank=True, verbose_name="Información Adicional Dirección")
+    ciudad_residencia = models.CharField(max_length=100, blank=True, verbose_name="Ciudad de Residencia")
+    codigo_postal = models.CharField(max_length=20, blank=True, verbose_name="Código Postal")
     foto_perfil = models.ImageField(
         upload_to=user_directory_path,
         null=True,

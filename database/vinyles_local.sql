@@ -418,17 +418,20 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   `celular` varchar(20) NOT NULL,
   `direccion_residencia` varchar(255) NOT NULL,
   `foto_perfil` varchar(100) DEFAULT NULL,
+  `ciudad_residencia` varchar(100) NOT NULL,
+  `codigo_postal` varchar(20) NOT NULL,
+  `direccion_extra` varchar(255) NOT NULL,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `clientes_user_id_2e92d62d_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Volcando datos para la tabla vinyles_local.clientes: ~3 rows (aproximadamente)
-INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
-	(1, '', '', '', 'fotos_perfil/default/default_avatar.png');
-INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
-	(2, '', '', '', 'fotos_perfil/user_2/42c6abce6aa94e4b8457fba92ad1c077.jpg');
-INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`) VALUES
-	(3, '', '', '', 'fotos_perfil/user_3/2315b78357514210a8cd9d01407bc8d0.jpg');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
+	(1, '', '', '', 'fotos_perfil/default/default_avatar.png', '', '', '');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
+	(2, '', '', '', 'fotos_perfil/user_2/42c6abce6aa94e4b8457fba92ad1c077.jpg', '', '', '');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
+	(3, '', '', '', 'fotos_perfil/user_3/2315b78357514210a8cd9d01407bc8d0.jpg', '', '', '');
 
 -- Volcando estructura para tabla vinyles_local.clientes_generos_favoritos
 DROP TABLE IF EXISTS `clientes_generos_favoritos`;
@@ -580,9 +583,9 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~24 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~25 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-07-05 20:43:42.281399');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
@@ -631,6 +634,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(23, 'gestion', '0003_pedido_costo_envio_pedido_subtotal', '2025-07-07 05:16:54.369402');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(24, 'gestion', '0004_alter_publicacion_producto', '2025-07-07 07:12:54.570254');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(25, 'gestion', '0005_cliente_ciudad_residencia_cliente_codigo_postal_and_more', '2025-07-07 17:47:38.090054');
 
 -- Volcando estructura para tabla vinyles_local.django_session
 DROP TABLE IF EXISTS `django_session`;
