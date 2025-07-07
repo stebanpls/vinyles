@@ -53,6 +53,14 @@ body {
   font-size: 1.5rem;
   display: flex; /* Convierte la marca en un contenedor flex */
   align-items: center; /* Centra verticalmente el contenido dentro de la marca */
+  /* Margen negativo para permitir que el logo sea más grande sin afectar la altura del header */
+  margin-top: -42px;
+  margin-bottom: -42px;
+}
+
+.navbar-brand img {
+    height: 120px; /* Altura del logo aumentada aún más */
+    width: auto; /* Mantiene la proporción */
 }
 
 .navbar-nav .nav-link {

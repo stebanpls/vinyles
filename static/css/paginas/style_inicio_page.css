@@ -10,14 +10,14 @@
 .hero-banner {
   position: relative; /* Needed for absolute positioning of text overlay if used */
   width: 100%;
-  max-height: 450px; /* Adjust as needed */
+  height: 450px; /* Usar una altura fija para que object-fit funcione de manera predecible */
   overflow: hidden; /* Hide parts of image that overflow */
 }
 
 .hero-banner img {
   display: block;
   width: 100%;
-  height: auto; /* Maintain aspect ratio */
+  height: 100%; /* Hacer que la imagen llene la altura del contenedor */
   object-fit: cover; /* Cover the area, might crop */
   object-position: center center; /* Center the image */
 }

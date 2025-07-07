@@ -5,18 +5,18 @@
         {# Enlace de la marca - dinámico según el rol del usuario #}
         {% if user.is_authenticated %} {# Si el usuario está autenticado #}
             {% if user.is_staff or user.is_superuser %}
-                <a class="navbar-brand" href="{% url 'admin_administrador' %}">VINYLES</a>
+                <a class="navbar-brand" href="{% url 'admin_administrador' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
             {% else %}
                 {# Para usuarios autenticados no administradores, el enlace de la marca #}
                 {# se adapta si están en una página de vendedor, de lo contrario va a com_inicio. #}
                 {% if request.resolver_match.url_name|slice:"0:4" == 'ven_' %}
-                    <a class="navbar-brand" href="{% url 'ven_crear' %}">VINYLES</a>
+                    <a class="navbar-brand" href="{% url 'com_inicio' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
                 {% else %} {# Default for other authenticated users (comprador) #}
-                    <a class="navbar-brand" href="{% url 'com_inicio' %}">VINYLES</a>
+                    <a class="navbar-brand" href="{% url 'com_inicio' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
                 {% endif %}
             {% endif %}
         {% else %}
-            <a class="navbar-brand" href="{% url 'pub_inicio' %}">VINYLES</a>
+            <a class="navbar-brand" href="{% url 'pub_inicio' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
         {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
