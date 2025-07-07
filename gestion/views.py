@@ -3,7 +3,7 @@ import os  # Importar para obtener variables de entorno
 import time
 from datetime import timedelta  # Importar timedelta
 from decimal import Decimal
-
+from django.views.decorators.http import require_POST
 from django.conf import settings  # Para acceder a settings.py
 from django.contrib import messages  # Para mensajes opcionales
 from django.contrib.auth import (  # Importa las funciones de autenticación
@@ -1908,15 +1908,64 @@ def admin_new_users(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_pedido_pendiente(request):
-    return render(request, "paginas/administrador/admin_pedido_pendiente.html")
+    pedidos = (
+        Pedido.objects
+        .filter(estado="P")  # Solo pendientes
+        .select_related("comprador")
+        .prefetch_related("detalles_publicacion_producto")  # Carga álbumes
+    )
+
+    return render(
+        request,
+        "paginas/Administrador/admin_pedido_pendiente.html",
+        {"pedidos": pedidos}
+    )
+
+@require_POST
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def marcar_pedido_entregado(request, pedido_id):
+    try:
+        pedido = Pedido.objects.get(pk=pedido_id)
+        pedido.estado = "C"  # Completado
+        pedido.save()
+        return JsonResponse({"success": True})
+    except Pedido.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Pedido no encontrado"}, status=404)
+
 
 
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_pedido_realizado(request):
-    return render(request, "paginas/administrador/admin_pedido_realizado.html")
+    pedidos = (
+        Pedido.objects
+        .filter(estado="C")  # Solo los completados
+        .select_related("comprador", "comprador__cliente")
+        .prefetch_related("detalles_publicacion_producto")
+    )
 
+    return render(
+        request,
+        "paginas/Administrador/admin_pedido_realizado.html",
+        {"pedidos": pedidos}
+    )
+
+
+@require_POST
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def eliminar_pedido_realizado(request, pedido_id):
+    try:
+        print("Intentando eliminar pedido ID:", pedido_id)
+        pedido = Pedido.objects.get(pk=pedido_id, estado='C')  # Solo completados
+        pedido.delete()
+        print("Pedido eliminado correctamente.")
+        return JsonResponse({"success": True})
+    except Pedido.DoesNotExist:
+        print("Pedido no encontrado.")
+        return JsonResponse({"success": False, "error": "Pedido no encontrado"}, status=404)
 
 @never_cache
 @login_required
