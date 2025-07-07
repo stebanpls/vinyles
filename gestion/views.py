@@ -3,7 +3,7 @@ import os  # Importar para obtener variables de entorno
 import time
 from datetime import timedelta  # Importar timedelta
 from decimal import Decimal
-
+from django.db.models import Sum, F
 from django.conf import settings  # Para acceder a settings.py
 from django.contrib import messages  # Para mensajes opcionales
 from django.contrib.auth import (  # Importa las funciones de autenticación
@@ -1442,17 +1442,26 @@ def admin_administrador(request):
     today_start = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_end = today_start + timedelta(days=1)
 
-    # Nuevos usuarios (CORREGIDO aquí los filtros)
-    usuarios_hoy = User.objects.filter(date_joined__gte=today_start, date_joined__lt=today_end).count()
+    # Nuevos usuarios
+    usuarios_hoy = User.objects.filter(
+        date_joined__gte=today_start, date_joined__lt=today_end
+    ).count()
 
     # Ventas de hoy
-    from django.db.models import Sum
-
-    pedidos_hoy = Pedido.objects.filter(fecha_pedido__gte=today_start, fecha_pedido__lt=today_end)
+    pedidos_hoy = Pedido.objects.filter(
+        fecha_pedido__gte=today_start, fecha_pedido__lt=today_end
+    )
     total_ventas = pedidos_hoy.aggregate(total=Sum("total"))["total"] or 0
     num_ventas = pedidos_hoy.count()
 
-    # Verificación de estado de bloqueo
+    # Cantidad de productos distintos más vendidos
+    num_mas_vendidos = (
+        DetallePedido.objects.values("publicacion__producto__id")
+        .annotate(cantidad=Sum("cantidad"))
+        .count()
+    )
+
+    # Verificar bloqueo
     usuario = request.user
     try:
         estado = EstadoUsuario.objects.get(user=usuario)
@@ -1472,9 +1481,9 @@ def admin_administrador(request):
             "usuarios_hoy": usuarios_hoy,
             "num_ventas": num_ventas,
             "total_ventas": total_ventas,
+            "num_mas_vendidos": num_mas_vendidos,
         },
     )
-
 
 @never_cache
 @login_required
@@ -2007,4 +2016,20 @@ def admin_terminos(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_mas_vendidos(request):
-    return render(request, "paginas/administrador/admin_mas_vendidos.html")
+    mas_vendidos = (
+        DetallePedido.objects.values(
+            "publicacion__producto__id",
+            "publicacion__producto__nombre"
+        )
+        .annotate(
+            cantidad_vendida=Sum("cantidad"),
+            total_vendido=Sum(F("cantidad") * F("precio_unitario"))
+        )
+        .order_by("-cantidad_vendida")[:10]  # TOP 10
+    )
+
+    return render(
+        request,
+        "paginas/administrador/admin_mas_vendidos.html",
+        {"mas_vendidos": mas_vendidos}
+    )
