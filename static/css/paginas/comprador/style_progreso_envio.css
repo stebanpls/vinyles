@@ -57,6 +57,10 @@
     border-color: #0a58ca;
 }
 
+.text-muted-light {
+  color: #ced4da !important; /* Un gris más claro y legible que el 'muted' por defecto */
+}
+
 /* Estilos para la Línea de Tiempo de Estado */
 .status-timeline-container {
     margin-top: 2.5rem;

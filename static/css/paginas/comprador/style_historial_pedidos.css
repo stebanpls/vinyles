@@ -111,6 +111,10 @@
   font-size: 0.95rem;
 }
 
+.accordion-body .list-group-item .text-muted {
+  color: #ced4da !important; /* Un gris más claro y legible que el 'muted' por defecto */
+}
+
 @media (max-width: 768px) {
   .order-summary-header {
     flex-direction: column;

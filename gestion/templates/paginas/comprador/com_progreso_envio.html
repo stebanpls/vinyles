@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_progreso_envio.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %}Vinyles – Pedido Confirmado{% endblock titulo %}
+{% block titulo %}Pedido Confirmado{% endblock titulo %}
 
 {% block contenido %}
 <div class="container my-5">
@@ -49,7 +49,7 @@
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
                                     <strong>{{ detalle.publicacion.producto.nombre }}</strong>
-                                    <small class="d-block text-muted">{{ detalle.publicacion.producto.artistas.first.nombre }}</small>
+                                    <small class="d-block text-muted-light">{{ detalle.publicacion.producto.artistas.all|join:", " }}</small>
                                 </div>
                                 <span>${{ detalle.precio_unitario|floatformat:2|intcomma }}</span>
                             </li>

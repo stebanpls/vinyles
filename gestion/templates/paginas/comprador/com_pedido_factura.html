@@ -6,8 +6,7 @@
   rel="stylesheet"
   href="{% static 'css/paginas/comprador/style_factura.css' %}"
 />
-{% endblock extra_css %} {% block titulo %}{{ titulo_pagina|default:"Factura" }}
-- Vinyles{% endblock titulo %} {% block contenido %}
+{% endblock extra_css %} {% block titulo %}{{ titulo_pagina|default:"Factura" }}{% endblock titulo %} {% block contenido %}
 <div class="container my-5">
   <div class="invoice-container">
     <div class="invoice-header">
@@ -33,11 +32,11 @@
     <div class="invoice-addresses">
       <div class="address-block">
         <h4>Facturado a:</h4>
-        <p style="white-space: pre-wrap">{{ pedido.direccion_envio }}</p>
+        <p style="white-space: pre-wrap;">{{ pedido.direccion_envio }}</p>
       </div>
       <div class="address-block">
         <h4>Enviado a:</h4>
-        <p style="white-space: pre-wrap">{{ pedido.direccion_envio }}</p>
+        <p style="white-space: pre-wrap;">{{ pedido.direccion_envio }}</p>
       </div>
     </div>
 
@@ -57,8 +56,8 @@
           <tr>
             <td>
               <strong>{{ detalle.publicacion.producto.nombre }}</strong><br />
-              <small class="text-muted"
-                >{{ detalle.publicacion.producto.artistas.first.nombre }}</small
+              <small
+                >{{ detalle.publicacion.producto.artistas.all|join:", " }}</small
               >
             </td>
             <td>{{ detalle.publicacion.vendedor.username }}</td>

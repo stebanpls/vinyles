@@ -87,7 +87,7 @@
             <tbody>
               {% for detalle in pedido.detalles.all %}
               <tr>
-                <td>{{ detalle.publicacion.producto.nombre }} - {{ detalle.publicacion.producto.artistas.first.nombre }}</td>
+                <td>{{ detalle.publicacion.producto.nombre }} - {{ detalle.publicacion.producto.artistas.all|join:", " }}</td>
                 <td style="text-align: center;">{{ detalle.cantidad }}</td>
                 <td>${{ detalle.precio_unitario|floatformat:2|intcomma }}</td>
               </tr>

@@ -6,8 +6,8 @@
   rel="stylesheet"
   href="{% static 'css/paginas/comprador/style_historial_pedidos.css' %}"
 />
-{% endblock extra_css %} {% block titulo %}{{ titulo_pagina|default:"Mis
-Pedidos" }} - Vinyles{% endblock titulo %} {% block contenido %}
+{% endblock extra_css %} {% block titulo %}{{ titulo_pagina|default:"Mis Pedidos" }}{% endblock titulo %} {% block contenido %}
+{% autoescape on %}
 <div class="container my-5">
   <div class="historial-container">
     <h1 class="mb-4 text-center">{{ titulo_pagina|default:"Mis Pedidos" }}</h1>
@@ -61,15 +61,11 @@ Pedidos" }} - Vinyles{% endblock titulo %} {% block contenido %}
                     <div class="flex-grow-1">
                       <strong>{{ detalle.publicacion.producto.nombre }}</strong>
                       <small class="d-block text-muted"
-                        >{{ detalle.publicacion.producto.artistas.first.nombre
-                        }}</small
+                        >{{ detalle.publicacion.producto.artistas.all|join:", " }}</small
                       >
                     </div>
                     <div class="text-end">
-                      <span
-                        >{{ detalle.cantidad }} x ${{
-                        detalle.precio_unitario|floatformat:2|intcomma }}</span
-                      >
+                      <span>{{ detalle.cantidad }} x ${{ detalle.precio_unitario|stringformat:".2f"|intcomma }}</span>
                     </div>
                   </li>
                   {% endfor %}
@@ -78,9 +74,7 @@ Pedidos" }} - Vinyles{% endblock titulo %} {% block contenido %}
               <div class="col-md-4 mt-4 mt-md-0">
                 <h5>Dirección de Envío</h5>
                 <div class="shipping-address">
-                  <p style="white-space: pre-wrap">
-                    {{ pedido.direccion_envio }}
-                  </p>
+                  <p style="white-space: pre-wrap">{{ pedido.direccion_envio }}</p>
                 </div>
                 <hr />
                 <div class="d-flex justify-content-between">
@@ -143,6 +137,7 @@ Pedidos" }} - Vinyles{% endblock titulo %} {% block contenido %}
     {% endif %}
   </div>
 </div>
+{% endautoescape %}
 {% endblock contenido %} {% block pie %}
 <script>
   // Opcional: Si quieres que solo un acordeón esté abierto a la vez,
