@@ -580,9 +580,9 @@ CREATE TABLE IF NOT EXISTS `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.django_migrations: ~23 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_migrations: ~24 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(1, 'contenttypes', '0001_initial', '2025-07-05 20:43:42.281399');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
@@ -629,6 +629,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(22, 'gestion', '0002_alter_publicacion_unique_together', '2025-07-07 01:23:33.816648');
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 	(23, 'gestion', '0003_pedido_costo_envio_pedido_subtotal', '2025-07-07 05:16:54.369402');
+INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
+	(24, 'gestion', '0004_alter_publicacion_producto', '2025-07-07 07:12:54.570254');
 
 -- Volcando estructura para tabla vinyles_local.django_session
 DROP TABLE IF EXISTS `django_session`;
