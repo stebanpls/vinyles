@@ -72,7 +72,7 @@
       </div>
       <div class="content">
         <p>{% blocktranslate with username=user.first_name|default:user.username %}Hola {{ username }},{% endblocktranslate %}</p>
-        <p>{% blocktranslate %}Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el {{ pedido.fecha_pedido|date:"d/m/Y \a \l\a\s H:i" }}.{% endblocktranslate %}</p>
+        <p>{% trans "Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el" %} {{ pedido.fecha_pedido|date:"d/m/Y, g:i a" }}.</p>
 
         <div class="order-summary">
           <h2>{% trans "Resumen del Pedido" %} #{{ pedido.id }}</h2>
@@ -85,7 +85,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for detalle in detalles_pedido %}
+              {% for detalle in pedido.detalles.all %}
               <tr>
                 <td>{{ detalle.publicacion.producto.nombre }} - {{ detalle.publicacion.producto.artistas.first.nombre }}</td>
                 <td style="text-align: center;">{{ detalle.cantidad }}</td>

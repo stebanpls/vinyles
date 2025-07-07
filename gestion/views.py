@@ -3,7 +3,7 @@ import os  # Importar para obtener variables de entorno
 import time
 from datetime import timedelta  # Importar timedelta
 from decimal import Decimal
-from django.views.decorators.http import require_POST
+
 from django.conf import settings  # Para acceder a settings.py
 from django.contrib import messages  # Para mensajes opcionales
 from django.contrib.auth import (  # Importa las funciones de autenticación
@@ -26,6 +26,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone  # Importar timedelta también
 from django.views.decorators.cache import never_cache  # Importar never_cache
+from django.views.decorators.http import require_POST
 
 from .discogs_api_utils import discogs_api
 from .forms import (
@@ -524,6 +525,26 @@ def com_carrito(request):
 @never_cache
 @login_required
 def com_checkout(request):
+    def _send_confirmation_email(user, pedido, subtotal, costo_envio, shipping_address):
+        """Función encapsulada para enviar el email de confirmación."""
+        email_context = {
+            "user": user,
+            "pedido": pedido,
+            "subtotal": subtotal,
+            "costo_envio": costo_envio,
+            "shipping_address": shipping_address,
+        }
+        html_message = render_to_string("emails/order_confirmation.html", email_context)
+        text_message = render_to_string("emails/order_confirmation.txt", email_context)
+        mail_subject = render_to_string("emails/order_confirmation_subject.txt", email_context).strip()
+
+        # Usar el email del formulario si se proporcionó, si no, el del usuario.
+        to_email = request.POST.get("email") or user.email
+
+        email_message = EmailMultiAlternatives(mail_subject, text_message, settings.DEFAULT_FROM_EMAIL, [to_email])
+        email_message.attach_alternative(html_message, "text/html")
+        email_message.send()
+
     cart = request.session.get("cart", [])
     if not cart:
         messages.warning(request, "Tu carrito está vacío. No puedes proceder al pago.")
@@ -558,6 +579,8 @@ def com_checkout(request):
                 # 2. Crear el objeto Pedido
                 pedido = Pedido.objects.create(
                     comprador=request.user,
+                    subtotal=subtotal,
+                    costo_envio=costo_envio,
                     total=total_final,
                     direccion_envio=direccion_envio_str,
                     estado="P",  # Procesando
@@ -575,27 +598,18 @@ def com_checkout(request):
                     publicacion.stock -= item["quantity"]
                     publicacion.save()
 
-                # 4. Preparar y enviar el email de confirmación
-                email_context = {
-                    "user": request.user,
-                    "pedido": pedido,
-                    "detalles_pedido": pedido.detalles.all(),
-                    "subtotal": subtotal,
-                    "costo_envio": costo_envio,
-                    "shipping_address": shipping_address_dict,
-                }
-                html_message = render_to_string("emails/order_confirmation.html", email_context)
-                text_message = render_to_string("emails/order_confirmation.txt", email_context)
-                mail_subject = render_to_string("emails/order_confirmation_subject.txt", email_context).strip()
-                to_email = request.POST.get("email", request.user.email)
-                email_message = EmailMultiAlternatives(
-                    mail_subject, text_message, settings.DEFAULT_FROM_EMAIL, [to_email]
+                # Volvemos a cargar el pedido desde la BD para asegurarnos de tener
+                # todos los datos (como fecha_pedido) y las relaciones (detalles).
+                pedido_completo = Pedido.objects.prefetch_related("detalles__publicacion__producto__artistas").get(
+                    id=pedido.id
                 )
-                email_message.attach_alternative(html_message, "text/html")
-                email_message.send()
 
-                # 5. Guardar ID del pedido en la sesión para la página de confirmación
-                request.session["last_order_id"] = pedido.id
+                # 4. Programar el envío del email para DESPUÉS de que la transacción se confirme.
+                transaction.on_commit(
+                    lambda: _send_confirmation_email(
+                        request.user, pedido_completo, subtotal, costo_envio, shipping_address_dict
+                    )
+                )
 
                 # 6. Limpiar el carrito y redirigir
                 request.session["cart"] = []
@@ -603,7 +617,7 @@ def com_checkout(request):
                 messages.success(
                     request, "¡Tu pedido ha sido procesado exitosamente! Revisa tu correo para ver la confirmación."
                 )
-                return redirect("com_progreso_envio")
+                return redirect("com_pedido_confirmacion", pedido_id=pedido.id)
 
         except ValueError as e:
             messages.error(request, str(e))
@@ -759,25 +773,18 @@ def com_pedido_factura(request, pedido_id):
 
 @never_cache
 @login_required
-def com_progreso_envio(request):
-    # Recuperar el ID del último pedido de la sesión
-    last_order_id = request.session.get("last_order_id")
-    pedido = None
-
-    if last_order_id:
-        try:
-            # Obtener el pedido desde la base de datos
-            pedido = Pedido.objects.prefetch_related("detalles__publicacion__producto").get(
-                id=last_order_id, comprador=request.user
-            )
-        except Pedido.DoesNotExist:
-            messages.warning(request, "No se encontró el pedido solicitado.")
-
-    # Limpiar los detalles de la sesión para que no se muestren de nuevo
-    if "last_order_id" in request.session:
-        del request.session["last_order_id"]
-        request.session.modified = True
-
+def com_progreso_envio(request, pedido_id):
+    """
+    Muestra la página de confirmación de un pedido específico.
+    Esta vista ya no depende de la sesión, sino del ID en la URL.
+    """
+    # Usamos get_object_or_404 para obtener el pedido y asegurarnos
+    # de que pertenece al usuario actual, para mayor seguridad.
+    pedido = get_object_or_404(
+        Pedido.objects.prefetch_related("detalles__publicacion__producto__artistas"),
+        id=pedido_id,
+        comprador=request.user,
+    )
     context = {"pedido": pedido}
     return render(request, "paginas/comprador/com_progreso_envio.html", context)
 
@@ -1355,7 +1362,7 @@ def ven_seleccionar_version(request, release_id):
 @login_required  # Solo los vendedores pueden ver esto
 def ven_producto(request):
     publicaciones = (
-        Publicacion.objects.filter(vendedor=request.user)
+        Publicacion.objects.filter(vendedor=request.user, stock__gt=0)
         .select_related("producto")
         .prefetch_related("producto__artistas")
     )
@@ -1909,17 +1916,13 @@ def admin_new_users(request):
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_pedido_pendiente(request):
     pedidos = (
-        Pedido.objects
-        .filter(estado="P")  # Solo pendientes
+        Pedido.objects.filter(estado="P")  # Solo pendientes
         .select_related("comprador")
-        .prefetch_related("detalles_publicacion_producto")  # Carga álbumes
+        .prefetch_related("detalles__publicacion__producto")  # Carga álbumes
     )
 
-    return render(
-        request,
-        "paginas/Administrador/admin_pedido_pendiente.html",
-        {"pedidos": pedidos}
-    )
+    return render(request, "paginas/Administrador/admin_pedido_pendiente.html", {"pedidos": pedidos})
+
 
 @require_POST
 @login_required
@@ -1934,23 +1937,17 @@ def marcar_pedido_entregado(request, pedido_id):
         return JsonResponse({"success": False, "error": "Pedido no encontrado"}, status=404)
 
 
-
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_pedido_realizado(request):
     pedidos = (
-        Pedido.objects
-        .filter(estado="C")  # Solo los completados
+        Pedido.objects.filter(estado="C")  # Solo los completados
         .select_related("comprador", "comprador__cliente")
-        .prefetch_related("detalles_publicacion_producto")
+        .prefetch_related("detalles__publicacion__producto")
     )
 
-    return render(
-        request,
-        "paginas/Administrador/admin_pedido_realizado.html",
-        {"pedidos": pedidos}
-    )
+    return render(request, "paginas/Administrador/admin_pedido_realizado.html", {"pedidos": pedidos})
 
 
 @require_POST
@@ -1959,13 +1956,14 @@ def admin_pedido_realizado(request):
 def eliminar_pedido_realizado(request, pedido_id):
     try:
         print("Intentando eliminar pedido ID:", pedido_id)
-        pedido = Pedido.objects.get(pk=pedido_id, estado='C')  # Solo completados
+        pedido = Pedido.objects.get(pk=pedido_id, estado="C")  # Solo completados
         pedido.delete()
         print("Pedido eliminado correctamente.")
         return JsonResponse({"success": True})
     except Pedido.DoesNotExist:
         print("Pedido no encontrado.")
         return JsonResponse({"success": False, "error": "Pedido no encontrado"}, status=404)
+
 
 @never_cache
 @login_required

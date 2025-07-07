@@ -42,7 +42,7 @@ buyer_patterns = [
     path("perfil/editar/", views.com_perfil_editar, name="com_perfil_editar"),
     path("mis-pedidos/", views.com_historial_pedidos, name="com_historial_pedidos"),
     path("pedido/<int:pedido_id>/factura/", views.com_pedido_factura, name="com_pedido_factura"),
-    path("envio/progreso/", views.com_progreso_envio, name="com_progreso_envio"),
+    path("pedido/<int:pedido_id>/confirmacion/", views.com_progreso_envio, name="com_pedido_confirmacion"),
     # Las páginas de 'nosotros', 'terminos', etc. pueden reutilizar las públicas o tener su propia versión
     path("nosotros/", views.com_nosotros, name="com_nosotros"),
     path("terminos/", views.com_terminos, name="com_terminos"),

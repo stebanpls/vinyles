@@ -348,7 +348,7 @@ class Publicacion(models.Model):
     producto = models.ForeignKey(
         Producto,
         on_delete=models.CASCADE,
-        related_name="publicaciones",
+        related_name="ofertas",  # Renombrado para evitar conflicto
         verbose_name="Producto del Catálogo",
     )
     vendedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="publicaciones", verbose_name="Vendedor")
@@ -521,6 +521,8 @@ class Notificacion(models.Model):
 class Pedido(models.Model):
     comprador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="pedidos")
     fecha_pedido = models.DateTimeField(auto_now_add=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    costo_envio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     direccion_envio = models.TextField()
     ESTADOS_PEDIDO = [
@@ -536,17 +538,6 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"Pedido #{self.id} de {self.comprador.username if self.comprador else 'Usuario Eliminado'}"
-
-    @property
-    def subtotal(self):
-        """Calcula el subtotal del pedido sumando los subtotales de los detalles."""
-        # Usamos prefetch_related en la vista para optimizar esto
-        return sum(detalle.subtotal for detalle in self.detalles.all())
-
-    @property
-    def costo_envio(self):
-        """Calcula el costo de envío restando el subtotal del total."""
-        return self.total - self.subtotal
 
 
 class DetallePedido(models.Model):

@@ -43,6 +43,7 @@
 .list-group-item {
     background-color: #212529;
     border-color: #495057;
+    color: #e9ecef; /* ¡Hágase la luz! */
 }
 
 .btn-primary {

@@ -4,12 +4,12 @@
 
 {% blocktranslate with username=user.first_name|default:user.username %}Hola {{ username }},{% endblocktranslate %}
 
-{% blocktranslate %}Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el {{ pedido.fecha_pedido|date:"d/m/Y \a \l\a\s H:i" }}.{% endblocktranslate %}
+{% trans "Hemos recibido tu pedido y ya lo estamos preparando. Aquí tienes un resumen de tu compra realizada el" %} {{ pedido.fecha_pedido|date:"d/m/Y, g:i a" }}.
 
 ---
 {% trans "Resumen del Pedido" %} #{{ pedido.id }}
 ---
-{% for detalle in detalles_pedido %}
+{% for detalle in pedido.detalles.all %}
 - {{ detalle.cantidad }}x {{ detalle.publicacion.producto.nombre }} - {{ detalle.publicacion.producto.artistas.first.nombre }}: ${{ detalle.precio_unitario|floatformat:2|intcomma }}
 {% endfor %}
 
