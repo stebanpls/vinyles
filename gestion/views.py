@@ -522,149 +522,131 @@ def com_carrito(request):
     return render(request, "paginas/comprador/com_carrito.html", context)
 
 
+def _send_confirmation_email(user, pedido, subtotal, costo_envio, shipping_address, to_email):
+    """Función encapsulada para enviar el email de confirmación."""
+    email_context = {
+        "user": user,
+        "pedido": pedido,
+        "subtotal": subtotal,
+        "costo_envio": costo_envio,
+        "shipping_address": shipping_address,
+    }
+    html_message = render_to_string("emails/order_confirmation.html", email_context)
+    text_message = render_to_string("emails/order_confirmation.txt", email_context)
+    mail_subject = render_to_string("emails/order_confirmation_subject.txt", email_context).strip()
+
+    email_message = EmailMultiAlternatives(mail_subject, text_message, settings.DEFAULT_FROM_EMAIL, [to_email])
+    email_message.attach_alternative(html_message, "text/html")
+    email_message.send()
+
+
+def _get_shipping_info(post_data):
+    """Extrae y formatea la información de envío desde el POST."""
+    shipping_address_dict = {
+        "nombre_receptor": post_data.get("nombre_receptor"),
+        "apellidos_receptor": post_data.get("apellidos_receptor"),
+        "direccion_entrega": post_data.get("direccion_entrega"),
+        "direccion_extra": post_data.get("direccion_extra", ""),
+        "ciudad_entrega": post_data.get("ciudad_entrega"),
+        "codigo_postal": post_data.get("codigo_postal"),
+        "telefono_receptor": post_data.get("telefono_receptor"),
+    }
+    direccion_envio_str = (
+        f"{shipping_address_dict['nombre_receptor']} {shipping_address_dict['apellidos_receptor']}\n"
+        f"{shipping_address_dict['direccion_entrega']}"
+        f"{', ' + shipping_address_dict['direccion_extra'] if shipping_address_dict['direccion_extra'] else ''}\n"
+        f"{shipping_address_dict['ciudad_entrega']}, {shipping_address_dict['codigo_postal']}\n"
+        f"Tel: {shipping_address_dict['telefono_receptor']}"
+    )
+    return shipping_address_dict, direccion_envio_str
+
+
+def _update_customer_profile(request):
+    """Actualiza el perfil del cliente si se solicita y devuelve True/False."""
+    user = request.user
+    post_data = request.POST
+
+    email_form = post_data.get("email")
+    if email_form and User.objects.filter(email__iexact=email_form).exclude(pk=user.pk).exists():
+        messages.error(
+            request,
+            "Este correo electrónico ya está asociado a otra cuenta. Por favor, utiliza otro correo o inicia sesión con la cuenta existente.",
+        )
+        return False  # Indica fallo
+
+    cliente = user.cliente
+    cliente.celular = post_data.get("telefono_receptor")
+    cliente.direccion_residencia = post_data.get("direccion_entrega")
+    cliente.direccion_extra = post_data.get("direccion_extra", "")
+    cliente.codigo_postal = post_data.get("codigo_postal")
+    cliente.ciudad_residencia = post_data.get("ciudad_entrega")
+    cliente.numero_documento = post_data.get("cedula_receptor")
+
+    if email_form and user.email != email_form:
+        user.email = email_form
+        user.save()
+
+    cliente.save()
+    messages.success(request, "¡Información guardada en tu perfil!")
+    return True  # Indica éxito
+
+
+def _process_order_items(pedido, cart):
+    """Crea los detalles del pedido y actualiza el stock."""
+    for item in cart:
+        publicacion = Publicacion.objects.select_for_update().get(id=item["id"])
+        if publicacion.stock < item["quantity"]:
+            raise ValueError(f"No hay suficiente stock para {publicacion.producto.nombre}.")
+
+        DetallePedido.objects.create(
+            pedido=pedido, publicacion=publicacion, cantidad=item["quantity"], precio_unitario=item["price"]
+        )
+        publicacion.stock -= item["quantity"]
+        publicacion.save()
+
+
 @never_cache
 @login_required
 def com_checkout(request):
-    def _send_confirmation_email(user, pedido, subtotal, costo_envio, shipping_address):
-        """Función encapsulada para enviar el email de confirmación."""
-        email_context = {
-            "user": user,
-            "pedido": pedido,
-            "subtotal": subtotal,
-            "costo_envio": costo_envio,
-            "shipping_address": shipping_address,
-        }
-        html_message = render_to_string("emails/order_confirmation.html", email_context)
-        text_message = render_to_string("emails/order_confirmation.txt", email_context)
-        mail_subject = render_to_string("emails/order_confirmation_subject.txt", email_context).strip()
-
-        # Usar el email del formulario si se proporcionó, si no, el del usuario.
-        to_email = request.POST.get("email") or user.email
-
-        email_message = EmailMultiAlternatives(mail_subject, text_message, settings.DEFAULT_FROM_EMAIL, [to_email])
-        email_message.attach_alternative(html_message, "text/html")
-        email_message.send()
-
     cart = request.session.get("cart", [])
     if not cart:
         messages.warning(request, "Tu carrito está vacío. No puedes proceder al pago.")
         return redirect("com_carrito")
 
     if request.method == "POST":
-        shipping_address_dict = {
-            "nombre_receptor": request.POST.get("nombre_receptor"),
-            "apellidos_receptor": request.POST.get("apellidos_receptor"),
-            "direccion_entrega": request.POST.get("direccion_entrega"),
-            "direccion_extra": request.POST.get("direccion_extra", ""),
-            "ciudad_entrega": request.POST.get("ciudad_entrega"),
-            "codigo_postal": request.POST.get("codigo_postal"),
-            "telefono_receptor": request.POST.get("telefono_receptor"),
-        }
-        # Formatear la dirección como un solo string para el modelo
-        direccion_envio_str = (
-            f"{shipping_address_dict['nombre_receptor']} {shipping_address_dict['apellidos_receptor']}\n"
-            f"{shipping_address_dict['direccion_entrega']}"
-            f"{', ' + shipping_address_dict['direccion_extra'] if shipping_address_dict['direccion_extra'] else ''}\n"
-            f"{shipping_address_dict['ciudad_entrega']}, {shipping_address_dict['codigo_postal']}\n"
-            f"Tel: {shipping_address_dict['telefono_receptor']}"
-        )
-
+        shipping_address_dict, direccion_envio_str = _get_shipping_info(request.POST)
         subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
-        subtotal = Decimal(str(subtotal))  # por si subtotal viene como float puro
-
-        # --- Temporal: Envío gratuito para todos los destinos ---
-        costo_envio = Decimal("0")
-        # # Lógica original para costo de envío basado en la ciudad
-        # ciudad_entrega = request.POST.get("ciudad_entrega", "").strip().lower()
-        # # El envío es gratis si la ciudad contiene "bogota" o "bogotá"
-        # if "bogota" not in ciudad_entrega and "bogotá" not in ciudad_entrega:
-        #     costo_envio = Decimal("12500")
-
+        costo_envio = Decimal("0")  # Envío gratuito temporal
         total_final = subtotal + costo_envio
 
         try:
             with transaction.atomic():
-                # 2. Crear el objeto Pedido
+                if request.POST.get("guardar_info"):
+                    if not _update_customer_profile(request):
+                        return redirect("com_checkout")
+
                 pedido = Pedido.objects.create(
                     comprador=request.user,
-                    subtotal=subtotal,
+                    subtotal=Decimal(str(subtotal)),
                     costo_envio=costo_envio,
                     total=total_final,
                     direccion_envio=direccion_envio_str,
                     estado="P",  # Procesando
                 )
 
-                # 5. Guardar la información en el perfil del usuario si se solicita
-                if request.POST.get("guardar_info"):
-                    email_form = request.POST.get("email")
-                    # Verificar si el correo electrónico ya existe en otra cuenta
-                    if (
-                        email_form
-                        and User.objects.filter(email__iexact=email_form).exclude(pk=request.user.pk).exists()
-                    ):
-                        messages.error(
-                            request,
-                            "Este correo electrónico ya está asociado a otra cuenta. Por favor, utiliza otro correo o inicia sesión con la cuenta existente.",
-                        )
-                        return redirect("com_checkout")  # Redirige de nuevo al checkout
+                _process_order_items(pedido, cart)
 
-                    cliente = request.user.cliente
-                    cliente.celular = request.POST.get("telefono_receptor")
-                    cliente.direccion_residencia = request.POST.get("direccion_entrega")
-                    # Nota: Para guardar la información extra y el código postal,
-                    # tu modelo Cliente debe tener campos como 'direccion_extra' y 'codigo_postal'.
-                    cliente.direccion_extra = request.POST.get("direccion_extra", "")
-                    cliente.codigo_postal = request.POST.get("codigo_postal")
-                    cliente.ciudad_residencia = request.POST.get("ciudad_entrega")
-
-                    cliente.numero_documento = request.POST.get(
-                        "cedula_receptor"
-                    )  # Utiliza 'cedula_receptor' del formulario
-
-                    # Guarda el correo electrónico también, si se proporciona y es diferente
-                    if email_form and request.user.email != email_form:
-                        # antes de actualizar el email, verificar si ya existe en otro user
-                        if User.objects.filter(email__iexact=email_form).exclude(pk=request.user.pk).exists():
-                            messages.error(
-                                request,
-                                "Este correo electrónico ya está asociado a otra cuenta. Por favor, utiliza otro correo o inicia sesión con la cuenta existente.",
-                            )
-                            return redirect("com_checkout")
-                    cliente.numero_documento = request.POST.get(
-                        "cedula_receptor"
-                    )  # Utiliza 'cedula_receptor' del formulario
-                    request.user.email = email_form
-                    request.user.save()
-
-                    cliente.save()
-                    messages.success(request, "¡Información guardada en tu perfil!")
-
-                # 3. Crear los detalles del pedido y actualizar stock
-                for item in cart:
-                    publicacion = Publicacion.objects.select_for_update().get(id=item["id"])
-                    if publicacion.stock < item["quantity"]:
-                        raise ValueError(f"No hay suficiente stock para {publicacion.producto.nombre}.")
-
-                    DetallePedido.objects.create(
-                        pedido=pedido, publicacion=publicacion, cantidad=item["quantity"], precio_unitario=item["price"]
-                    )
-                    publicacion.stock -= item["quantity"]
-                    publicacion.save()
-
-                # Volvemos a cargar el pedido desde la BD para asegurarnos de tener
-                # todos los datos (como fecha_pedido) y las relaciones (detalles).
                 pedido_completo = Pedido.objects.prefetch_related("detalles__publicacion__producto__artistas").get(
                     id=pedido.id
                 )
 
-                # 4. Programar el envío del email para DESPUÉS de que la transacción se confirme.
+                to_email = request.POST.get("email") or request.user.email
                 transaction.on_commit(
                     lambda: _send_confirmation_email(
-                        request.user, pedido_completo, subtotal, costo_envio, shipping_address_dict
+                        request.user, pedido_completo, subtotal, costo_envio, shipping_address_dict, to_email
                     )
                 )
 
-                # 6. Limpiar el carrito y redirigir
                 request.session["cart"] = []
                 request.session.modified = True
                 messages.success(
