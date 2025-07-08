@@ -3,25 +3,42 @@
 [![Django CI](https://github.com/stebanpls/vinyles/actions/workflows/ci.yml/badge.svg)](https://github.com/stebanpls/vinyles/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Sistema de Información para la compra y venta de vinilos. Un proyecto desarrollado para facilitar la interacción entre coleccionistas y vendedores de discos de vinilo, ofreciendo una plataforma para descubrir, comprar y vender música en este formato clásico.
+**Vinyles** es un sistema de información para la compra y venta de vinilos. Este proyecto facilita la interacción entre coleccionistas y vendedores, ofreciendo una plataforma para descubrir, comprar y vender música en este formato clásico.
 
-![Captura de pantalla de la aplicación](URL_A_LA_IMAGEN_O_GIF_AQUI)
+![Captura de pantalla de la aplicación](static/images/utiles/pantallazo_inicio.png)
+
+<details>
+<summary><strong>📚 Tabla de Contenidos</strong></summary>
+
+- [Estado del Proyecto](#estado-del-proyecto)
+- [Características Principales](#características-principales-)
+- [Tech Stack](#tech-stack-️)
+- [Estructura del Proyecto](#estructura-del-proyecto-)
+- [Requisitos Previos](#requisitos-previos-)
+- [Instalación y Configuración Local](#instalación-y-configuración-local-)
+- [Uso Básico](#uso-básico-️)
+- [Contribuciones](#contribuciones-)
+- [Equipo de Desarrollo](#equipo-de-desarrollo--)
+- [Licencia](#licencia-)
+
+</details>
 
 ## Estado del Proyecto
 
-Actualmente en desarrollo activo (Versión 25.06.14 - puedes poner tu versión actual o una fecha).
+El proyecto se encuentra en **desarrollo activo**.
 
 ## Características Principales ✨
 
-*   Navegación y búsqueda de álbumes de vinilo.
-*   Registro e inicio de sesión para usuarios (compradores y vendedores).
-*   Perfiles de usuario personalizables.
-*   Sistema de carrito de compras.
-*   Proceso de checkout (simulado o integrado).
-*   Panel de administración para la gestión de usuarios, productos y pedidos.
-*   (Añade más características específicas de tu proyecto aquí)
+*   🎵 **Catálogo de Vinilos**: Navegación y búsqueda de álbumes.
+*   👤 **Gestión de Usuarios**: Registro e inicio de sesión para compradores y vendedores.
+*   🎨 **Perfiles Personalizables**: Los usuarios pueden editar su información y foto de perfil.
+*   🛒 **Carrito de Compras**: Sistema funcional para añadir y gestionar productos.
+*   💳 **Proceso de Checkout**: Flujo de pago simulado con confirmación por correo.
+*   💿 **Integración con Discogs**: Importación de información de álbumes directamente desde la API de Discogs.
+*   ⚙️ **Panel de Administración**: Panel personalizado para la gestión de usuarios, productos y pedidos.
+*   *... y más en desarrollo!*
 
-## Tecnologías Utilizadas 🛠️
+## Tech Stack 🛠️
 
 *   **Backend**: Python, Django
 *   **Frontend**: HTML, CSS, JavaScript (puedes especificar frameworks si usas, ej. Bootstrap)
@@ -30,6 +47,11 @@ Actualmente en desarrollo activo (Versión 25.06.14 - puedes poner tu versión a
 *   **Servicio de CAPTCHA**: Google reCAPTCHA
 *   **Otros**: `python-dotenv`, `django-widget-tweaks`, `whitenoise`, etc.
 
+## Estructura del Proyecto 📂
+
+El repositorio tiene una estructura anidada, común en proyectos Django:
+
+```
 ## Requisitos Previos (Para Desarrolladores) 📋
 
 *   Python (versión 3.11 o compatible)
