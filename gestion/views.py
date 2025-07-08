@@ -472,7 +472,7 @@ def add_to_cart(request, publicacion_id):
             "id": publicacion.id,
             "title": publicacion.producto.nombre,
             "artist": ", ".join([a.nombre for a in publicacion.producto.artistas.all()]),
-            "price": float(publicacion.precio),  # Convertir Decimal a float para que sea serializable en JSON
+            "price": str(publicacion.precio),  # Convertir Decimal a string para que sea serializable en JSON
             "image": publicacion.producto.imagen_portada.url if publicacion.producto.imagen_portada else "",
             "quantity": 1,  # Por ahora, la cantidad es siempre 1
         }
@@ -513,7 +513,7 @@ def com_carrito(request):
             messages.error(request, "Índice de item inválido.")
 
     # Calcular el total
-    total = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
+    total = sum(Decimal(item.get("price", "0")) * item.get("quantity", 1) for item in cart)
 
     context = {
         "cart_items": cart,
@@ -615,7 +615,7 @@ def com_checkout(request):
 
     if request.method == "POST":
         shipping_address_dict, direccion_envio_str = _get_shipping_info(request.POST)
-        subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
+        subtotal = sum(Decimal(item.get("price", "0")) * item.get("quantity", 1) for item in cart)
         costo_envio = Decimal("0")  # Envío gratuito temporal
         total_final = subtotal + costo_envio
 
@@ -663,7 +663,7 @@ def com_checkout(request):
             return redirect("com_carrito")
 
     # Lógica para GET (mostrar el formulario)
-    subtotal = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart)
+    subtotal = sum(Decimal(item.get("price", "0")) * item.get("quantity", 1) for item in cart)
 
     # Precargar datos del usuario si existen
     initial_data = {}

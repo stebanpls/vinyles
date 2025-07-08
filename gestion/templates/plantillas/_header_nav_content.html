@@ -4,17 +4,10 @@
     <div class="container">
         {# Enlace de la marca - dinámico según el rol del usuario #}
         {% if user.is_authenticated %} {# Si el usuario está autenticado #}
-            {% if user.is_staff or user.is_superuser %}
-                <a class="navbar-brand" href="{% url 'admin_administrador' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
-            {% else %}
-                {# Para usuarios autenticados no administradores, el enlace de la marca #}
-                {# se adapta si están en una página de vendedor, de lo contrario va a com_inicio. #}
-                {% if request.resolver_match.url_name|slice:"0:4" == 'ven_' %}
-                    <a class="navbar-brand" href="{% url 'com_inicio' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
-                {% else %} {# Default for other authenticated users (comprador) #}
-                    <a class="navbar-brand" href="{% url 'com_inicio' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
-                {% endif %}
-            {% endif %}
+            {% comment %} Simplificado: Si es admin va al panel, si no, al inicio de comprador. {% endcomment %}
+            <a class="navbar-brand" href="{% if user.is_staff or user.is_superuser %}{% url 'admin_administrador' %}{% else %}{% url 'com_inicio' %}{% endif %}">
+                <img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo">
+            </a>
         {% else %}
             <a class="navbar-brand" href="{% url 'pub_inicio' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
         {% endif %}
@@ -27,38 +20,37 @@
                 {# Enlaces de navegación basados en el rol del usuario #}
                 {% if user.is_authenticated %}
                     {% if user.is_staff or user.is_superuser %}
-                        {# Enlaces de Administrador #}
-                        <li class="nav-item"> <a class="nav-link" href="{% url 'admin_producto' %}">Productos</a>
+                        {# Enlaces de Administrador con Iconos #}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_producto' %}"><i class="fas fa-compact-disc me-2"></i>Productos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin_usuario' %}">Usuarios</a>
+                            <a class="nav-link" href="{% url 'admin_usuario' %}"><i class="fas fa-users me-2"></i>Usuarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin_pedido' %}">Pedidos</a>
+                            <a class="nav-link" href="{% url 'admin_pedido' %}"><i class="fas fa-receipt me-2"></i>Pedidos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin_verificacion' %}">Verificación</a>
+                            <a class="nav-link" href="{% url 'admin_verificacion' %}"><i class="fas fa-check-double me-2"></i>Verificación</a>
                         </li>
                     {% else %} {# Si el usuario no es admin, es un usuario autenticado general (comprador/vendedor) #}
-                        {# Enlaces de Comprador #}
+                        {# Enlaces de Comprador/Vendedor con Iconos #}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'com_albumes' %}">Álbumes</a>
+                            <a class="nav-link" href="{% url 'com_albumes' %}"><i class="fas fa-record-vinyl me-2"></i>Álbumes</a>
                         </li>
                         <li class="nav-item">
                             <a href="{% url 'com_carrito' %}" class="nav-link cart-icon-link" id="cart-toggle">
                                 <span class="cart-count-badge">{{ cart_count }}</span> {# Contador de ítems en el carrito #}
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icono" viewBox="0 0 16 16">
-                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                                </svg>
+                                <i class="fas fa-shopping-cart icono"></i>
                             </a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownVendedor" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Vender
+                                <i class="fas fa-store me-2"></i>Vender
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownVendedor">
-                                <li><a class="dropdown-item" href="{% url 'ven_crear' %}">Vender un Producto</a></li>
-                                <li><a class="dropdown-item" href="{% url 'ven_producto' %}">Mis Productos</a></li>
+                                <li><a class="dropdown-item" href="{% url 'ven_crear' %}"><i class="fas fa-plus-circle me-2"></i>Vender un Producto</a></li>
+                                <li><a class="dropdown-item" href="{% url 'ven_producto' %}"><i class="fas fa-tags me-2"></i>Mis Productos</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'ven_notificaciones' %}"><i class="fas fa-bell me-2"></i>Notificaciones</a></li>
                             </ul>
@@ -73,22 +65,22 @@
                             {% else %}
                                 <i class="fas fa-user-circle ms-2 user-icon"></i>
                             {% endif %}
-                            {% if user.is_staff or user.is_superuser %} (Admin)
-                            {# Ya no mostramos (Vendedor) aquí si el rol es unificado #}
-                            {% endif %}
+                            <span class="d-none d-lg-inline ms-2">{{ user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownUser">
                             {% if user.is_staff or user.is_superuser %}
-                                <li><a class="dropdown-item" href="{% url 'admin_administrador' %}">Panel Admin</a></li>
+                                <li><a class="dropdown-item" href="{% url 'admin_administrador' %}"><i class="fas fa-tachometer-alt me-2"></i>Panel Admin</a></li>
                             {% else %}
                                 <li><a class="dropdown-item" href="{% url 'com_perfil' %}"><i class="fas fa-user-circle me-2"></i>Mi Perfil</a></li>
                                 <li><a class="dropdown-item" href="{% url 'com_historial_pedidos' %}"><i class="fas fa-receipt me-2"></i>Mis Pedidos</a></li>
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="{% url 'logout' %}" method="post" class="dropdown-item-form">
+                                <form action="{% url 'logout' %}" method="post" class="d-grid">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-link dropdown-item-button">Cerrar Sesión</button>
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    </button>
                                 </form>
                             </li>
                         </ul>
@@ -96,11 +88,11 @@
                 {% else %}
                     {# Enlaces públicos (no autenticados) #}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pub_albumes' %}">Álbumes</a>
+                        <a class="nav-link" href="{% url 'pub_albumes' %}"><i class="fas fa-record-vinyl me-2"></i>Álbumes</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDDL" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            DDL
+                            <i class="fas fa-database me-2"></i>DDL
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownDDL">
                             <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-normalizacion">Normalización</a></li>
@@ -113,10 +105,10 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pub_login' %}">Iniciar Sesión</a>
+                        <a class="nav-link" href="{% url 'pub_login' %}"><i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pub_registro' %}">Registrarse</a>
+                        <a class="nav-link" href="{% url 'pub_registro' %}"><i class="fas fa-user-plus me-2"></i>Registrarse</a>
                     </li>
                 {% endif %}
             </ul>

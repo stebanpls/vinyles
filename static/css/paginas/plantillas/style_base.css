@@ -17,11 +17,6 @@ header {
   transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
 }
 
-/* Se eliminaron los colores específicos por rol, se aplicará el #121212 por defecto */
-/* .header-admin, .header-vendor, .header-buyer, .header-public {
-  background-color: #121212;
-} */
-
 body {
   display: flex;
   flex-direction: column;
@@ -103,32 +98,30 @@ body {
 }
 
 .nav-link.cart-icon-link .icono {
-    fill: #f8f9fa; /* Asegurar que el color de relleno del SVG sea claro */
-    width: 1.5em; /* Aseguramos un ancho consistente */
-    height: 1.5em; /* Aseguramos una altura consistente */
+    color: #f8f9fa; /* Usamos 'color' para Font Awesome en lugar de 'fill' */
+    font-size: 1.3em; /* Ajustamos el tamaño del icono */
+    transition: color 0.2s ease;
 }
 
 .nav-link.cart-icon-link:hover .icono {
-    fill: #adb5bd; /* Cambiar relleno al pasar el ratón */
+    color: #adb5bd; /* Cambiamos 'color' en el hover */
 }
 
 /* Estilos para el contador de ítems en el carrito */
 .cart-count-badge {
+    position: absolute; /* Posicionamiento absoluto relativo al link */
+    top: 5px; /* Ajuste vertical */
+    right: 5px; /* Ajuste horizontal */
+    transform: translate(50%, -50%); /* Centrado sobre la esquina del icono */
     background-color: #dc3545; /* Color rojo de Bootstrap para alertas/errores */
     color: white;
     border-radius: 50%; /* Circular */
-    font-size: 0.7em;
-    min-width: 1.2em; /* Ajustado para un mejor ajuste de dígitos */
-    height: 1.2em; /* Altura fija para el badge */
-    width: 1.2em; /* Establecemos un ancho fijo para el badge */
-    padding: 0 0.4em; /* Ajuste de padding horizontal */
-    line-height: 1.2em; /* Centrado vertical del texto */
+    font-size: 0.65em; /* Tamaño de fuente más pequeño */
+    width: 1.5em; /* Ancho fijo */
+    height: 1.5em; /* Alto fijo */
+    line-height: 1.5em; /* Centrado vertical del texto */
     text-align: center;
-    white-space: nowrap; /* Evita que el texto se envuelva */
-    box-sizing: border-box; /* Incluye padding y borde en el tamaño total */
-    display: inline-block;
-    flex-shrink: 0; /* Evita que el elemento se encoja o estire más allá de su tamaño */
-    flex-grow: 0; /* Evita que el elemento crezca */
+    font-weight: bold;
 }
 
 /* Añadir estas reglas para asegurar la alineación vertical de los elementos de navegación */
@@ -161,26 +154,10 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Estilos para el botón de cerrar sesión dentro del menú desplegable */
-.dropdown-item-form {
-    display: inline; /* Asegurar que el formulario no rompa el diseño */
-    width: 100%; /* Hacer que el formulario ocupe todo el ancho del elemento del desplegable */
-}
-
-.dropdown-item-button {
-    width: 100%; /* Hacer que el botón ocupe todo el ancho del formulario */
-    text-align: left; /* Alinear texto a la izquierda */
-    padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x); /* Heredar el padding de Bootstrap */
-    color: #f8f9fa; /* Texto claro para el botón */
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-.dropdown-item-button:hover, .dropdown-item-button:focus {
+/* Estilos para el botón de cerrar sesión (ahora más simple) */
+.dropdown-item.text-danger:hover, .dropdown-item.text-danger:focus {
     background-color: #343a40; /* Fondo más oscuro al pasar el ratón/enfocar */
-    color: #f8f9fa;
-    text-decoration: none; /* Quitar subrayado al pasar el ratón */
+    color: #ff5c5c !important; /* Hacemos el rojo un poco más brillante en hover */
 }
 
 /* Estilos generales de los botones (si no están definidos en otro lugar) */
@@ -196,6 +173,7 @@ body {
 
 .icono {
   fill: #f8f9fa;
+  color: #f8f9fa; /* Añadido para consistencia con Font Awesome */
 }
 
 main {
