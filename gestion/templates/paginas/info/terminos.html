@@ -1,0 +1,13 @@
+{% extends base_template %} {% load static %} {% block title %}Términos y
+Condiciones{% endblock title %} {% block extra_css %} {# Si las plantillas base
+(comprador, publico, etc.) tienen CSS, lo heredamos #} {{ block.super }} {#
+Añadimos un CSS unificado para todas las páginas de información #}
+<link
+  rel="stylesheet"
+  href="{% static 'css/paginas/info/style_info_pages.css' %}"
+/>
+{% endblock extra_css %} {% block content %} {# Incluimos el contenido de los
+términos que centralizamos antes #} {% include
+'componentes/_terminos_content.html' %} {% endblock content %} {# No se necesita
+JS específico para esta página, por lo que el bloque 'pie' o 'extra_js' puede
+quedar vacío. #}

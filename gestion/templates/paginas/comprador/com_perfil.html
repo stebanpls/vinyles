@@ -1,11 +1,12 @@
-{% extends base_template %}
+{% extends 'plantillas/plantilla_comprador.html' %}
 {% load static %}
 
 {% block extra_css %}
+    {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_perfil.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %} {{ titulo_pagina|default:"Mi Perfil" }} {% endblock titulo %}
+{% block title %} {{ titulo_pagina|default:"Mi Perfil" }} {% endblock title %}
 
 {% block contenido %}
 <div class="profile-page-wrapper">

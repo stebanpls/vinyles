@@ -49,12 +49,12 @@ body {
   display: flex; /* Convierte la marca en un contenedor flex */
   align-items: center; /* Centra verticalmente el contenido dentro de la marca */
   /* Margen negativo para permitir que el logo sea más grande sin afectar la altura del header */
-  margin-top: -59px;
-  margin-bottom: -59px;
+  margin-top: -34px; /* Ajustado para el nuevo tamaño del logo */
+  margin-bottom: -34px; /* Ajustado para el nuevo tamaño del logo */
 }
 
 .navbar-brand img {
-    height: 150px; /* Altura del logo aumentada aún más */
+    height: 60px; /* Altura del logo reducida para el nuevo logo rectangular */
     width: auto; /* Mantiene la proporción */
 }
 

@@ -165,6 +165,23 @@ def _handle_successful_login(request, user, next_url):
     return redirect(next_url or default_redirect)
 
 
+def _get_base_template(request):
+    """
+    Determina la plantilla base a usar según el rol del usuario.
+    Esto evita repetir la lógica en cada vista de página de información.
+    """
+    # TODO: Si el layout del vendedor es diferente, se podría refinar esta lógica
+    # usando request.path.startswith('/vendedor/') para cargar 'plantillas/plantilla_vendedor.html'.
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            return "plantillas/plantilla_administrador.html"
+        # Por ahora, todos los autenticados no-staff usan la de comprador.
+        # Esto funciona porque la navegación se adapta dentro de la plantilla base.
+        return "plantillas/plantilla_comprador.html"
+    # Si no está autenticado, usa la pública.
+    return "plantillas/plantilla_publico.html"
+
+
 def inicio_view(request):
     """
     Vista unificada para la página de inicio.
@@ -297,10 +314,6 @@ def pub_log_out(request):
     return render(request, "paginas/publico/pub_log_out.html")  # Página de sesión cerrada
 
 
-def pub_nosotros(request):
-    return render(request, "paginas/publico/pub_nosotros.html")  # Se crea un renderizado de este archivo HTML.
-
-
 def pub_registro(request):
     if request.user.is_authenticated:
         messages.info(
@@ -326,18 +339,6 @@ def pub_registro(request):
     else:
         user_form = UserRegistrationForm()  # Si no es POST, crea un formulario vacío
     return render(request, "paginas/publico/pub_registro.html", {"user_form": user_form})
-
-
-def pub_reembolsos(request):
-    return render(request, "paginas/publico/pub_reembolsos.html")
-
-
-def pub_soporte(request):
-    return render(request, "paginas/publico/pub_soporte.html")
-
-
-def pub_terminos(request):
-    return render(request, "paginas/publico/pub_terminos.html")
 
 
 def pub_vinilo(request, producto_id):
@@ -679,11 +680,8 @@ def com_checkout(request):
 
 @never_cache
 @login_required
-def com_nosotros(request):
+def com_nosotros(request):  # This view is now obsolete and will be removed.
     return render(request, "paginas/comprador/com_nosotros.html")
-
-
-# Vista para MOSTRAR el perfil del comprador
 
 
 @never_cache
@@ -835,20 +833,8 @@ def com_progreso_envio(request, pedido_id):
 
 @never_cache
 @login_required
-def com_reembolsos(request):
+def com_reembolsos(request):  # This view is now obsolete and will be removed.
     return render(request, "paginas/publico/pub_reembolsos.html")
-
-
-@never_cache
-@login_required
-def com_soporte(request):
-    return render(request, "paginas/comprador/com_soporte.html")
-
-
-@never_cache
-@login_required
-def com_terminos(request):
-    return render(request, "paginas/comprador/com_terminos.html")
 
 
 # VISTAS DE LA CARPETA "VENDEDOR"
@@ -1465,17 +1451,8 @@ def ven_eliminar_producto(request, publicacion_id):
 
 @never_cache
 @login_required  # Solo requiere que el usuario esté autenticado
-def ven_nosotros(request):
+def ven_nosotros(request):  # This view is now obsolete and will be removed.
     return render(request, "paginas/vendedor/ven_nosotros.html")
-
-
-@never_cache
-@login_required  # Solo requiere que el usuario esté autenticado
-def ven_terminos(request):
-    return render(request, "paginas/vendedor/ven_terminos.html")
-
-
-# VISTAS DE LA CARPETA "ADMINISTRADOR"
 
 
 @never_cache
@@ -1567,12 +1544,10 @@ def admin_producto(request):
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
-def admin_reembolsos(request):
+def admin_reembolsos(request):  # This view is now obsolete and will be removed.
     return render(request, "paginas/administrador/admin_reembolsos.html")
 
 
-@never_cache
-@login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
 def admin_usuario(request):
     return render(request, "paginas/Administrador/admin_usuario.html")
@@ -2037,15 +2012,52 @@ def admin_ventas(request):
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_staff, login_url="pub_login")
-def admin_nosotros(request):
+def admin_nosotros(request):  # This view is now obsolete and will be removed.
     return render(request, "paginas/administrador/admin_nosotros.html")
 
 
-@never_cache
-@login_required
-@user_passes_test(lambda u: u.is_staff, login_url="pub_login")
-def admin_terminos(request):
-    return render(request, "paginas/administrador/admin_terminos.html")
+def terminos_view(request):
+    """
+    Vista unificada para mostrar la página de Términos y Condiciones.
+    Renderiza el contenido usando la plantilla base apropiada para el rol del usuario.
+    """
+    context = {
+        "base_template": _get_base_template(request),
+    }
+    return render(request, "paginas/info/terminos.html", context)
+
+
+def nosotros_view(request):
+    """
+    Vista unificada para mostrar la página "Sobre Nosotros".
+    Renderiza el contenido usando la plantilla base apropiada para el rol del usuario.
+    """
+    context = {
+        "base_template": _get_base_template(request),
+    }
+    return render(request, "paginas/info/nosotros.html", context)
+
+
+def soporte_view(request):
+    """
+    Vista unificada para mostrar la página de Soporte.
+    Renderiza el contenido usando la plantilla base apropiada para el rol del usuario.
+    """
+    context = {
+        "base_template": _get_base_template(request),
+    }
+    return render(request, "paginas/info/soporte.html", context)
+
+
+def reembolsos_view(request):
+    """
+    Vista unificada para mostrar la página de Reembolsos.
+    Renderiza el contenido usando la plantilla base apropiada para el rol del usuario.
+    """
+    context = {
+        "base_template": _get_base_template(request),
+    }
+    return render(request, "paginas/info/reembolsos.html", context)
 
 
 # Vista placeholder para "Más Vendidos" (Asegúrate de que esta plantilla exista)

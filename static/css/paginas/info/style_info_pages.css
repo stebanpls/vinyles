@@ -1,0 +1,44 @@
+/* Estilos unificados para páginas de información (Términos, Nosotros, etc.) */
+.terminos-condiciones,
+.about-us-container,
+.reembolso-container,
+.soporte-container {
+  /* Clases para las futuras páginas unificadas */
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #ccc;
+}
+
+.terminos-condiciones h2,
+.about-us-container h1,
+.reembolso-container h2,
+.soporte-container h2 {
+  color: #fff;
+  border-bottom: 2px solid #444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.terminos-condiciones h3,
+.about-us-container h2,
+.about-us-container h3 {
+  color: #e9ecef;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.terminos-condiciones p,
+.about-us-container p {
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.terminos-condiciones .fecha-actualizacion {
+  font-style: italic;
+  color: #888;
+  margin-bottom: 2rem;
+}

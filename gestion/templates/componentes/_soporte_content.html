@@ -1,0 +1,31 @@
+{% comment %}
+Este componente contiene el texto y la estructura de la página de "Soporte".
+{% endcomment %}
+<section class="soporte-container">
+    <h1>Centro de Soporte</h1>
+    <p class="lead">¿Necesitas ayuda? Has llegado al lugar indicado. Aquí encontrarás respuestas a las preguntas más comunes y cómo contactarnos directamente.</p>
+
+    <h2>Preguntas Frecuentes (FAQ)</h2>
+
+    <div class="accordion" id="faqAccordion">
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    ¿Cómo puedo rastrear mi pedido?
+                </button>
+            </h3>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Una vez que tu pedido ha sido enviado, recibirás un correo electrónico con el número de seguimiento y un enlace a la página de la transportadora. También puedes ver el estado de tu pedido en la sección <a href="{% if user.is_authenticated %}{% url 'com_historial_pedidos' %}{% else %}{% url 'pub_login' %}{% endif %}">"Mis Pedidos"</a> de tu perfil.
+                </div>
+            </div>
+        </div>
+        <!-- Puedes agregar más preguntas frecuentes aquí siguiendo el mismo patrón -->
+    </div>
+
+    <h2 class="mt-5">Contacta con Nosotros</h2>
+    <p>Si no encuentras la respuesta a tu pregunta, no dudes en enviarnos un mensaje. Nuestro equipo de soporte te responderá en un plazo de 24-48 horas hábiles.</p>
+    <p><strong>Correo de Soporte:</strong> <a href="mailto:soporte@vinyles.com">soporte@vinyles.com</a></p>
+    <p>También puedes visitar nuestra página de <a href="{% url 'reembolsos' %}">Reembolsos</a> para información específica sobre devoluciones.</p>
+
+</section>

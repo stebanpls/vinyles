@@ -1,12 +1,13 @@
-{% extends base_template %}
+{% extends 'plantillas/plantilla_comprador.html' %}
 {% load static %}
 {% load widget_tweaks %}
 
 {% block extra_css %}
+    {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/paginas/comprador/style_perfil_editar.css' %}">
 {% endblock extra_css %}
 
-{% block titulo %}{{ titulo_pagina|default:"Editar Mi Perfil" }} {% endblock titulo %}
+{% block title %}{{ titulo_pagina|default:"Editar Mi Perfil" }} {% endblock title %}
 
 {% block contenido %}
 <div class="profile-edit-page-wrapper">
@@ -130,8 +131,9 @@
         </form>
     </div>
 </div>
+{% endblock contenido %}
 
-{% block extra_js %}
+{% block pie %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const editPhotoButton = document.getElementById('editPhotoButton');
@@ -199,9 +201,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-{% endblock extra_js %}
-{% endblock contenido %}
-
-{% block pie %}
-    {{ block.super }}
 {% endblock pie %}

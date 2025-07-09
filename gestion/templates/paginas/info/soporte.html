@@ -1,0 +1,14 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Soporte{% endblock title %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/paginas/info/style_info_pages.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    {% include 'componentes/_soporte_content.html' %}
+{% endblock content %}
+{}

@@ -16,10 +16,10 @@ public_patterns = [
     path("", views.inicio_view, name="pub_inicio"),
     path("albumes/", views.albumes_view, name="pub_albumes"),
     path("vinilo/<int:producto_id>/", views.pub_vinilo, name="pub_vinilo"),
-    path("nosotros/", views.pub_nosotros, name="pub_nosotros"),
-    path("terminos-y-condiciones/", views.pub_terminos, name="pub_terminos"),
-    path("reembolsos/", views.pub_reembolsos, name="pub_reembolsos"),
-    path("soporte/", views.pub_soporte, name="pub_soporte"),
+    path("nosotros/", views.nosotros_view, name="nosotros"),
+    path("terminos-y-condiciones/", views.terminos_view, name="terminos"),
+    path("reembolsos/", views.reembolsos_view, name="reembolsos"),
+    path("soporte/", views.soporte_view, name="soporte"),
     path("ddl/", views.pub_ddl, name="pub_ddl"),
 ]
 
@@ -43,11 +43,6 @@ buyer_patterns = [
     path("mis-pedidos/", views.com_historial_pedidos, name="com_historial_pedidos"),
     path("pedido/<int:pedido_id>/factura/", views.com_pedido_factura, name="com_pedido_factura"),
     path("pedido/<int:pedido_id>/confirmacion/", views.com_progreso_envio, name="com_pedido_confirmacion"),
-    # Las páginas de 'nosotros', 'terminos', etc. pueden reutilizar las públicas o tener su propia versión
-    path("nosotros/", views.com_nosotros, name="com_nosotros"),
-    path("terminos/", views.com_terminos, name="com_terminos"),
-    path("reembolsos/", views.com_reembolsos, name="com_reembolsos"),
-    path("soporte/", views.com_soporte, name="com_soporte"),
 ]
 
 # --- URLs del Vendedor (requieren inicio de sesión y permisos de vendedor) ---
@@ -63,8 +58,6 @@ seller_patterns = [
     path("mis-productos/<int:publicacion_id>/eliminar/", views.ven_eliminar_producto, name="ven_eliminar_producto"),
     path("perfil/", views.com_perfil, {"user_mode": "vendedor"}, name="ven_perfil"),
     path("notificaciones/", views.ven_notificaciones, name="ven_notificaciones"),
-    path("nosotros/", views.ven_nosotros, name="ven_nosotros"),
-    path("terminos/", views.ven_terminos, name="ven_terminos"),
 ]
 
 # --- URLs del Panel de Administración (requieren permisos de staff) ---
@@ -89,11 +82,8 @@ admin_patterns = [
     path("pedidos/realizados/", views.admin_pedido_realizado, name="admin_pedido_realizado"),
     path("ventas/", views.admin_ventas, name="admin_ventas"),
     path("ventas/top/", views.admin_mas_vendidos, name="admin_mas_vendidos"),
-    path("reembolsos/", views.admin_reembolsos, name="admin_reembolsos"),
     path("verificacion/", views.admin_verificacion, name="admin_verificacion"),
     path("notificaciones/", views.admin_notificaciones, name="admin_notificaciones"),
-    path("nosotros/", views.admin_nosotros, name="admin_nosotros"),
-    path("terminos/", views.admin_terminos, name="admin_terminos"),
     path("usuarios/admin/bloq/gesUsers/", views.admin_usuario, name="admin_usuario"),
     path(
         "admin/eliminar-notificacion/<int:notificacion_id>/",

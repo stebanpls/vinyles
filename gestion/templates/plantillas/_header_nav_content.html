@@ -6,10 +6,10 @@
         {% if user.is_authenticated %} {# Si el usuario está autenticado #}
             {% comment %} Simplificado: Si es admin va al panel, si no, al inicio de comprador. {% endcomment %}
             <a class="navbar-brand" href="{% if user.is_staff or user.is_superuser %}{% url 'admin_administrador' %}{% else %}{% url 'com_inicio' %}{% endif %}">
-                <img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo">
+                <img src="{% static 'images/utiles/logo_letras.png' %}" alt="Vinyles Logo">
             </a>
         {% else %}
-            <a class="navbar-brand" href="{% url 'pub_inicio' %}"><img src="{% static 'images/utiles/letraLogo.png' %}" alt="Vinyles Logo"></a>
+            <a class="navbar-brand" href="{% url 'pub_inicio' %}"><img src="{% static 'images/utiles/logo_letras.png' %}" alt="Vinyles Logo"></a>
         {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,13 +95,13 @@
                             <i class="fas fa-database me-2"></i>DDL
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownDDL">
-                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-normalizacion">Normalización</a></li>
-                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#modelo-relacional-container">Modelo Relacional</a></li>
-                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diagrama-clases">Diagrama de Clases</a></li>
-                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-codigo-sql">Código SQL</a></li>
-                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diccionario-datos">Diccionario de Datos</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-normalizacion"><i class="fas fa-sitemap fa-fw me-2"></i>Normalización</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#modelo-relacional-container"><i class="fas fa-table fa-fw me-2"></i>Modelo Relacional</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diagrama-clases"><i class="fas fa-object-group fa-fw me-2"></i>Diagrama de Clases</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-codigo-sql"><i class="fas fa-file-code fa-fw me-2"></i>Código SQL</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}#titulo-diccionario-datos"><i class="fas fa-book fa-fw me-2"></i>Diccionario de Datos</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}">Ver Todo DDL</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pub_ddl' %}"><i class="fas fa-eye fa-fw me-2"></i>Ver Todo DDL</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">

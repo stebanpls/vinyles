@@ -1,37 +1,29 @@
 {% load static %}
 
-{% comment %} Determinar clase del encabezado basado en el rol del usuario {% endcomment %}
+{% comment %}
+  Determina la clase del encabezado y renderiza el contenido.
+  La estructura se ha aplanado con if/elif/else para mayor claridad y
+  para evitar la repetición innecesaria de código.
+{% endcomment %}
 {% if user.is_authenticated %}
-    {% with usuario_es_staff=user.is_staff usuario_es_superuser=user.is_superuser nombre_usuario=user.username %} {# Define las propiedades del usuario una vez #}
-        {% if usuario_es_staff or usuario_es_superuser %} {# Admin #}
-            {% with header_class="header-admin" %}
-                <header class="{{ header_class }}">
-                    {% include "plantillas/_header_nav_content.html" %} {# Incluir contenido de la barra de navegación #}
-                </header>
-            {% endwith %}
-        {% else %} {# Not admin, check for vendor or buyer #}
-            {% if user_username == 'stebanpls' %} {# Vendor (example with specific username) #}
-                {% with header_class="header-vendor" %}
-                    <header class="{{ header_class }}">
-                        {% include "plantillas/_header_nav_content.html" %}
-                    </header>
-                {% endwith %}
-            {% else %} {# Buyer (default authenticated user) #}
-                {% with header_class="header-buyer" %}
-                    <header class="{{ header_class }}">
-                        {% include "plantillas/_header_nav_content.html" %}
-                    </header>
-                {% endwith %}
-            {% endif %}
-        {% endif %}
-    {% endwith %} {# Cierra el bloque with de usuario_es_staff, usuario_es_superuser, nombre_usuario #}
-{% else %}
-    {% with header_class="header-public" %}
-        <header class="{{ header_class }}">
+    {% if user.is_staff or user.is_superuser %}
+        <header class="header-admin">
             {% include "plantillas/_header_nav_content.html" %}
         </header>
-    {% endwith %}
-{% endif %} {# Cierra el bloque if del usuario autenticado #}
+    {% elif user.username == 'stebanpls' %} {# TODO: Reemplazar con un chequeo de grupo 'Vendedor' #}
+        <header class="header-vendor">
+            {% include "plantillas/_header_nav_content.html" %}
+        </header>
+    {% else %}
+        <header class="header-buyer">
+            {% include "plantillas/_header_nav_content.html" %}
+        </header>
+    {% endif %}
+{% else %}
+    <header class="header-public">
+        {% include "plantillas/_header_nav_content.html" %}
+    </header>
+{% endif %}
 
 {# Script para ajustar dinámicamente el padding-top del body. Se coloca aquí para que esté centralizado. #}
 <script>
