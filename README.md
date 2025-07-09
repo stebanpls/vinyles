@@ -1,68 +1,62 @@
 # Vinyles 🎶
 
 [![Django CI](https://github.com/stebanpls/vinyles/actions/workflows/ci.yml/badge.svg)](https://github.com/stebanpls/vinyles/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Django 5.2](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![MariaDB 11.x](https://img.shields.io/badge/MariaDB-11.x-C0005C?logo=mariadb&logoColor=white)](https://mariadb.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-A31F34?logo=opensource&logoColor=white)](https://opensource.org/licenses/MIT)
 
-**Vinyles** es un sistema de información para la compra y venta de vinilos. Este proyecto facilita la interacción entre coleccionistas y vendedores, ofreciendo una plataforma para descubrir, comprar y vender música en este formato clásico.
+**Vinyles** es una plataforma web para la compra y venta de vinilos nuevos y de segunda mano. Facilita la interacción entre coleccionistas y vendedores, ofreciendo un espacio para descubrir, comprar y vender música en este formato clásico.
 
 ![Captura de pantalla de la aplicación](static/images/utiles/pantallazo_inicio.png)
 
 <details>
 <summary><strong>📚 Tabla de Contenidos</strong></summary>
 
-- [Estado del Proyecto](#estado-del-proyecto)
 - [Características Principales](#características-principales-)
-- [Tech Stack](#tech-stack-️)
-- [Estructura del Proyecto](#estructura-del-proyecto-)
-- [Requisitos Previos](#requisitos-previos-)
+- [Arquitectura y Tecnologías](#arquitectura-y-tecnologías-️)
 - [Instalación y Configuración Local](#instalación-y-configuración-local-)
-- [Uso Básico](#uso-básico-️)
-- [Contribuciones](#contribuciones-)
-- [Equipo de Desarrollo](#equipo-de-desarrollo--)
+- [Flujo de Trabajo para Colaboradores](#flujo-de-trabajo-para-colaboradores-)
+- [Equipo de Desarrollo](#equipo-de-desarrollo-)
 - [Licencia](#licencia-)
 
 </details>
 
-## Estado del Proyecto
-
-El proyecto se encuentra en **desarrollo activo**.
-
 ## Características Principales ✨
 
-*   🎵 **Catálogo de Vinilos**: Navegación y búsqueda de álbumes.
-*   👤 **Gestión de Usuarios**: Registro e inicio de sesión para compradores y vendedores.
+*   🎵 **Catálogo de Vinilos**: Navegación y búsqueda de álbumes con filtros por género.
+*   👤 **Gestión de Usuarios**: Registro e inicio de sesión para compradores y vendedores con roles diferenciados.
 *   🎨 **Perfiles Personalizables**: Los usuarios pueden editar su información y foto de perfil.
-*   🛒 **Carrito de Compras**: Sistema funcional para añadir y gestionar productos.
-*   💳 **Proceso de Checkout**: Flujo de pago simulado con confirmación por correo.
-*   💿 **Integración con Discogs**: Importación de información de álbumes directamente desde la API de Discogs.
+*   🛒 **Carrito de Compras**: Sistema funcional para añadir y gestionar productos antes de la compra.
+*   💳 **Proceso de Checkout**: Flujo de pago completo con formulario de dirección y confirmación por correo electrónico.
+*   💿 **Integración con API de Discogs**: Importación de información de álbumes (títulos, artistas, portadas) directamente desde la API de Discogs para agilizar la creación de productos.
 *   ⚙️ **Panel de Administración**: Panel personalizado para la gestión de usuarios, productos y pedidos.
-*   *... y más en desarrollo!*
+*   ✅ **Calidad de Código Automatizada**: Uso de `pre-commit` con `Ruff` y `Bandit` para garantizar un código limpio, consistente y seguro.
 
-## Tech Stack 🛠️
+## Arquitectura y Tecnologías 🛠️
 
-*   **Backend**: Python, Django
-*   **Frontend**: HTML, CSS, JavaScript (puedes especificar frameworks si usas, ej. Bootstrap)
-*   **Base de Datos**: MariaDB
-*   **Servidor de Desarrollo**: Django Development Server
-*   **Servicio de CAPTCHA**: Google reCAPTCHA
-*   **Otros**: `python-dotenv`, `django-widget-tweaks`, `whitenoise`, etc.
+*   **Backend**: **Django 5.2** (Python 3.11+).
+*   **Base de Datos**: **MariaDB** para desarrollo. Se recomienda **PostgreSQL** para producción por su robustez.
+*   **Frontend**: HTML5, CSS3, JavaScript y **Bootstrap 5**.
+*   **Calidad de Código**: `pre-commit` para ejecutar `Ruff` (linter y formateador) y `Bandit` (análisis de seguridad) antes de cada commit.
+*   **Integraciones (Consumo de APIs)**:
+    *   **Discogs API**: Obtiene información de álbumes y artistas.
+    *   **Google reCAPTCHA v2**: Para proteger los formularios de registro e inicio de sesión.
+    *   **Gmail SMTP**: Para el envío de correos transaccionales (confirmación de pedido, reseteo de contraseña).
+*   **Servidor de Archivos Estáticos**: `WhiteNoise` para servir archivos estáticos eficientemente en producción.
+*   **Variables de Entorno**: `python-dotenv` para gestionar la configuración de forma segura.
 
-## Estructura del Proyecto 📂
+> **Nota sobre "Scraping"**: El término correcto para lo que hacemos es **consumo de API** (API consumption). *Web scraping* se refiere a la extracción automatizada de datos de páginas web que no ofrecen una API. Nuestro proyecto se comunica de manera estructurada y permitida con servicios como Discogs y Google a través de sus Interfaces de Programación de Aplicaciones (APIs).
 
-El repositorio tiene una estructura anidada, común en proyectos Django:
-
-```
-## Requisitos Previos (Para Desarrolladores) 📋
+### Requisitos Previos 📋
 
 *   Python (versión 3.11 o compatible)
 *   Pip (gestor de paquetes de Python, usualmente viene con Python)
 *   Git (para control de versiones)
-*   Una instancia de MariaDB (versión 11.8.2 o compatible) en ejecución.
+*   Una instancia de **MariaDB** (o MySQL) en ejecución.
 *   Un navegador web moderno.
 
 ## Instalación y Configuración Local 🚀
-
-Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
 
 1.  **Clona el repositorio:**
     ```bash
@@ -70,7 +64,7 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
     cd vinyles
     ```
 
-2.  **Crea y activa un entorno virtual:**
+2.  **Crea y activa un entorno virtual (muy recomendado):**
     ```bash
     python -m venv .venv
     # En Windows
@@ -79,73 +73,81 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
     source .venv/bin/activate
     ```
 
-3.  **Instala las dependencias:**
-    El proyecto usa un único archivo `requirements.txt` para simplificar.
+3.  **Instala las dependencias del proyecto:**
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Configura los ganchos (hooks) de pre-commit (¡Muy recomendado!)**
-    Esto instalará un asistente que revisará y formateará tu código automáticamente antes de cada commit, asegurando la calidad y consistencia.
-    ```bash
-    # Instala la herramienta (ya debería estar en requirements.txt)
-    pip install pre-commit
-    # Instala los ganchos en tu repositorio local de Git
-    pre-commit install
-    ```
-
-5.  **Configura las variables de entorno:**
-    *   Crea un archivo `.env` en la raíz del proyecto (al mismo nivel que `manage.py`) a partir del archivo de ejemplo `.env.example` (si lo tienes).
+4.  **Configura las variables de entorno:**
+    *   Crea un archivo `.env` en la raíz del proyecto (al mismo nivel que `manage.py`). Puedes copiar y renombrar el archivo `LEEME.md` que tienes como `.env.example` o usar esta plantilla:
     *   Rellena las siguientes variables con tus propios valores:
         ```env
-        DJANGO_SECRET_KEY='tu_super_secreto_aqui'
-        DJANGO_DEBUG='True'
+        # Configuración de Django
+        DJANGO_SECRET_KEY='tu_clave_secreta_muy_larga_y_segura'
+        DJANGO_DEBUG='True' # Cambiar a 'False' en producción
 
+        # Configuración de la Base de Datos
         DB_ENGINE='django.db.backends.mysql'
-        DB_NAME='nombre_de_tu_bd'
-        DB_USER='tu_usuario_bd'
-        DB_PASSWORD='tu_contraseña_bd'
-        DB_HOST='localhost' # o la IP de tu servidor MariaDB
-        DB_PORT='3307'      # o el puerto que estés usando para MariaDB
+        DB_NAME='vinyles_local'
+        DB_USER='tu_usuario_de_mariadb'
+        DB_PASSWORD='tu_contraseña_de_mariadb'
+        DB_HOST='localhost'
+        DB_PORT='3307' # Puerto por defecto de MariaDB es 3306, ajusta si es necesario
 
-        RECAPTCHA_SITE_KEY='tu_site_key_de_recaptcha_v2_checkbox'
-        RECAPTCHA_SECRET_KEY='tu_secret_key_de_recaptcha_v2_checkbox'
+        # Claves de reCAPTCHA v2 (Checkbox)
+        RECAPTCHA_SITE_KEY='tu_site_key_de_recaptcha'
+        RECAPTCHA_SECRET_KEY='tu_secret_key_de_recaptcha'
+
+        # Configuración de correo para notificaciones (Gmail)
+        EMAIL_HOST_USER='tu_correo@gmail.com'
+        EMAIL_HOST_PASSWORD='tu_contraseña_de_aplicacion_de_gmail'
+
+        # Claves de la API de Discogs
+        DISCOGS_CONSUMER_KEY='tu_consumer_key_de_discogs'
+        DISCOGS_CONSUMER_SECRET='tu_consumer_secret_de_discogs'
+        DISCOGS_USER_TOKEN='tu_user_token_de_discogs'
+        ```
+
+5.  **Configura la Base de Datos:**
+    *   Abre tu cliente de MariaDB/MySQL y crea la base de datos que definiste en `.env`:
+        ```sql
+        CREATE DATABASE vinyles_local CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
         ```
 
 6.  **Aplica las migraciones de la base de datos:**
+    Esto creará todas las tablas necesarias en tu base de datos.
     ```bash
     python manage.py migrate
     ```
 
-7.  **Crea un superusuario (opcional, para acceder al admin de Django):**
+7.  **Instala los ganchos (hooks) de pre-commit:**
+    Este paso es crucial para mantener la calidad del código.
+    ```bash
+    pre-commit install
+    ```
+
+8.  **Crea un superusuario (opcional, para acceder al panel de admin):**
     ```bash
     python manage.py createsuperuser
     ```
 
-8.  **Ejecuta el servidor de desarrollo:**
+9.  **¡Ejecuta el servidor de desarrollo!**
     ```bash
     python manage.py runserver
     ```
     El sitio estará disponible en `http://127.0.0.1:8000/`.
 
-## Uso Básico 🖱️
+## Flujo de Trabajo para Colaboradores 👨‍💻
 
-*   **Visitantes**: Pueden navegar por los álbumes, ver detalles de los vinilos.
-*   **Registro**: Los nuevos usuarios pueden crear una cuenta.
-*   **Inicio de Sesión**: Los usuarios registrados pueden acceder a sus perfiles y funcionalidades específicas.
-*   **Compradores**: Pueden añadir vinilos al carrito y proceder al checkout.
-*   **Administradores**: Pueden gestionar el contenido del sitio a través del panel de Django (`/admin/`).
+1.  **Realiza tus cambios** en el código.
+2.  **Añade y haz commit** de tus cambios: `git add .` y luego `git commit -m "Mensaje descriptivo"`.
+    *   Al hacer commit, `pre-commit` revisará tu código automáticamente. Si encuentra errores, arréglalos y vuelve a hacer commit.
+3.  **(Opcional) Ejecuta las pruebas locales**: `python manage.py test`.
+4.  **Sube tus cambios**: `git push`. Esto activará la ejecución de pruebas en el servidor a través de GitHub Actions.
 
-## Contribuciones 🤝
+## Equipo de Desarrollo 🧑‍💻
 
-¡Las contribuciones son bienvenidas! Si deseas contribuir, por favor:
-1.  Haz un Fork del proyecto.
-2.  Crea una nueva rama (`git checkout -b feature/nueva-caracteristica`).
-3.  Realiza tus cambios y haz commit (`git commit -m 'Añade nueva característica'`).
-4.  Haz Push a la rama (`git push origin feature/nueva-caracteristica`).
-5.  Abre un Pull Request.
-
-## Equipo de Desarrollo (Grupo 4 - Ficha: 3069239) 🧑‍💻
+**(Grupo 4 - Ficha 3069239)**
 
 *   Cristiam David Galeano Marín
 *   Daniel Felipe Guerrero Prias
@@ -155,4 +157,4 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
 
 ## Licencia 📄
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE.md` para más detalles.

@@ -1,6 +1,6 @@
 anyio==4.9.0
 asgiref==3.9.1
-certifi==2025.6.15
+certifi==2025.7.9
 cfgv==3.4.0
 charset-normalizer==3.4.2
 discogs-client==2.3.0
