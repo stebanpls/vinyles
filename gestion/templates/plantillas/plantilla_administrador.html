@@ -17,3 +17,6 @@
 {% block extra_js %}
     {% block pie %}{% endblock %}
 {% endblock %}
+
+{# Ocultamos el botón de WhatsApp para los administradores sobreescribiendo el bloque. #}
+{% block whatsapp_button_block %}{% endblock whatsapp_button_block %}

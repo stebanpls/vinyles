@@ -137,7 +137,7 @@
 
 .btn-whatsapp {
     display: inline-block;
-    background-color: #25D366; /* Color oficial de WhatsApp */
+    background-color: #128C7E; /* Un verde más oscuro y menos saturado */
     color: #fff;
     padding: 12px 24px;
     border-radius: 50px;
@@ -148,7 +148,7 @@
 }
 
 .btn-whatsapp:hover {
-    background-color: #1DA851;
+    background-color: #075E54; /* Un verde aún más oscuro para el hover */
     color: #fff;
     transform: scale(1.05);
 }

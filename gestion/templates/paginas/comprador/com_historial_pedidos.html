@@ -116,7 +116,16 @@
                             <div class="alert alert-danger mt-3 text-center"><i class="fas fa-times-circle me-2"></i>Este pedido fue cancelado.</div>
                             {% endif %}
                             <div class="text-end mt-4">
-              <a href="{% url 'com_pedido_factura' pedido.id %}" class="btn btn-sm btn-outline-light">Ver Factura</a>
+                                {# Creamos el mensaje específico para este pedido #}
+                                {% with message="Hola, soy '"|add:user.username|add:"', usuario de Vinyles. Tengo una consulta sobre mi pedido #"|add:pedido.id|add:"." %}
+                                <a href="https://wa.me/573196604668?text={{ message|urlencode }}"
+                                   class="btn btn-sm btn-whatsapp-order"
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    <i class="fab fa-whatsapp me-1"></i> Ayuda con este pedido
+                                </a>
+                                {% endwith %}
+                                <a href="{% url 'com_pedido_factura' pedido.id %}" class="btn btn-sm btn-outline-light">Ver Factura</a>
             </div>
           </div>
         </div>
@@ -143,5 +152,8 @@
   // Opcional: Si quieres que solo un acordeón esté abierto a la vez,
   // el atributo data-bs-parent="#pedidosAccordion" ya se encarga de eso.
   // No se necesita JS adicional para la funcionalidad básica.
+
+  {# Ocultamos el botón flotante genérico en esta página sobreescribiendo el bloque #}
+  {% block whatsapp_button_block %}{% endblock whatsapp_button_block %}
 </script>
 {% endblock pie %}

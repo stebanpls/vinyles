@@ -88,5 +88,38 @@
         });
     </script>
     {% block extra_js %}{% endblock %}
+
+    {# --- Bloque para el Botón Flotante de WhatsApp --- #}
+    {# Por defecto, el botón se muestra. Las plantillas hijas pueden sobreescribir este bloque para ocultarlo. #}
+    {% block whatsapp_button_block %}
+    <a
+        id="whatsapp-float-button" {# Añadimos un ID para seleccionarlo con JS #}
+        href="https://wa.me/573196604668?text=Hola,%20necesito%20ayuda%20con%20un%20producto%20de%20Vinyles." {# Enlace de fallback #}
+        class="whatsapp-float-button"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chatear por WhatsApp"
+        title="Chatear por WhatsApp"
+    >
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <script>
+        // Este script construye dinámicamente el enlace de WhatsApp.
+        document.addEventListener('DOMContentLoaded', function() {
+            const whatsappButton = document.getElementById('whatsapp-float-button');
+            if (whatsappButton) {
+                // Mensaje por defecto. Puede ser sobreescrito por plantillas hijas.
+                let message = `Hola, soy {% if user.is_authenticated %}'{{ user.username|escapejs }}', usuario de Vinyles.{% else %}un visitante en Vinyles.{% endif %} Tengo una consulta sobre la página: ${window.location.href}`;
+
+                // Bloque que las plantillas hijas pueden usar para definir un mensaje más específico.
+                {% block whatsapp_message_script %}{% endblock whatsapp_message_script %}
+
+                const fullText = encodeURIComponent(message);
+                const phoneNumber = '573196604668';
+                whatsappButton.href = `https://wa.me/${phoneNumber}?text=${fullText}`;
+            }
+        });
+    </script>
+    {% endblock whatsapp_button_block %}
 </body>
 </html>

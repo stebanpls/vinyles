@@ -11,4 +11,21 @@
 {% block content %}
     {% include 'componentes/_soporte_content.html' %}
 {% endblock content %}
-{}
+
+{% block pie %}
+    <script>
+        // Este script hace dinámico el botón de WhatsApp dentro de la página de soporte.
+        document.addEventListener('DOMContentLoaded', function() {
+            const supportButton = document.getElementById('whatsapp-contact-box-button');
+            if (supportButton) {
+                const message = `Hola, soy {% if user.is_authenticated %}'{{ user.username|escapejs }}', usuario de Vinyles.{% else %}un visitante en Vinyles.{% endif %} Tengo una consulta desde la página de Soporte.`;
+                const fullText = encodeURIComponent(message);
+                const phoneNumber = '573196604668';
+                supportButton.href = `https://wa.me/${phoneNumber}?text=${fullText}`;
+            }
+        });
+
+        {# Ocultamos el botón flotante genérico en esta página sobreescribiendo el bloque. #}
+        {% block whatsapp_button_block %}{% endblock whatsapp_button_block %}
+    </script>
+{% endblock pie %}

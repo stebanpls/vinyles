@@ -115,5 +115,8 @@
 {% endblock contenido %}
 
 {% block pie %}
-
+    {# Sobrescribimos el script del mensaje de WhatsApp para esta página específica #}
+    {% block whatsapp_message_script %}
+        message = `Hola, soy {% if user.is_authenticated %}'{{ user.username|escapejs }}', usuario de Vinyles.{% else %}un visitante en Vinyles.{% endif %} Tengo una consulta sobre el vinilo "{{ producto.nombre|escapejs }}".`;
+    {% endblock whatsapp_message_script %}
 {% endblock pie %}

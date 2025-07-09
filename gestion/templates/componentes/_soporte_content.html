@@ -39,7 +39,13 @@ Este componente unificado contiene el texto y la estructura de la página de "So
 
     <div class="whatsapp-contact-box">
         <p>Nuestro equipo está listo para ayudarte con tus compras, pedidos, devoluciones o cualquier otra consulta.</p>
-        <a href="https://wa.me/573196604668?text=Hola,%20necesito%20ayuda%20con..." class="btn-whatsapp" target="_blank" rel="noopener noreferrer">
+        <a id="whatsapp-contact-box-button" {# ID para JS #}
+            href="https://wa.me/573196604668?text=Hola,%20necesito%20ayuda%20con..."
+            class="btn-whatsapp"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Chatear por WhatsApp"
+        >
             <i class="fab fa-whatsapp"></i> Chatear por WhatsApp
         </a>
         <small class="text-muted mt-2 d-block">Horario de atención: Lunes a Viernes de 9:00 a.m. a 6:00 p.m.</small>
