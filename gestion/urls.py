@@ -18,7 +18,6 @@ public_patterns = [
     path("vinilo/<int:producto_id>/", views.pub_vinilo, name="pub_vinilo"),
     path("nosotros/", views.nosotros_view, name="nosotros"),
     path("terminos-y-condiciones/", views.terminos_view, name="terminos"),
-    path("reembolsos/", views.reembolsos_view, name="reembolsos"),
     path("soporte/", views.soporte_view, name="soporte"),
     path("ddl/", views.pub_ddl, name="pub_ddl"),
 ]

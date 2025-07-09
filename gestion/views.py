@@ -2049,17 +2049,6 @@ def soporte_view(request):
     return render(request, "paginas/info/soporte.html", context)
 
 
-def reembolsos_view(request):
-    """
-    Vista unificada para mostrar la página de Reembolsos.
-    Renderiza el contenido usando la plantilla base apropiada para el rol del usuario.
-    """
-    context = {
-        "base_template": _get_base_template(request),
-    }
-    return render(request, "paginas/info/reembolsos.html", context)
-
-
 # Vista placeholder para "Más Vendidos" (Asegúrate de que esta plantilla exista)
 
 

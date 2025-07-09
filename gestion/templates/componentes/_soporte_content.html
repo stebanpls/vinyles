@@ -1,5 +1,5 @@
 {% comment %}
-Este componente contiene el texto y la estructura de la página de "Soporte".
+Este componente unificado contiene el texto y la estructura de la página de "Soporte y Reembolsos".
 {% endcomment %}
 <section class="soporte-container">
     <h1>Centro de Soporte</h1>
@@ -16,16 +16,33 @@ Este componente contiene el texto y la estructura de la página de "Soporte".
             </h3>
             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
                 <div class="accordion-body">
-                    Una vez que tu pedido ha sido enviado, recibirás un correo electrónico con el número de seguimiento y un enlace a la página de la transportadora. También puedes ver el estado de tu pedido en la sección <a href="{% if user.is_authenticated %}{% url 'com_historial_pedidos' %}{% else %}{% url 'pub_login' %}{% endif %}">"Mis Pedidos"</a> de tu perfil.
+                    Una vez que tu pedido ha sido enviado, recibirás un correo electrónico con el número de seguimiento y un enlace a la página de la transportadora. También puedes ver el estado de tu pedido en la sección <a href="{% if user.is_authenticated %}{% url 'com_historial_pedidos' %}{% else %}{% url 'pub_login' %}{% endif %}" class="link-primary">"Mis Pedidos"</a> de tu perfil.
                 </div>
             </div>
         </div>
-        <!-- Puedes agregar más preguntas frecuentes aquí siguiendo el mismo patrón -->
+        <div class="accordion-item">
+            <h3 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    ¿Cuál es la política de reembolsos?
+                </button>
+            </h3>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Aceptamos devoluciones por productos defectuosos, dañados o incorrectos dentro de los 7 días posteriores a la recepción. Para más detalles, puedes consultar nuestra <a href="{% url 'terminos' %}#politica-reembolsos" target="_blank" class="link-primary">Política de Reembolsos</a> en los Términos y Condiciones. Para iniciar un proceso, contáctanos directamente por WhatsApp.
+                </div>
+            </div>
+        </div>
     </div>
 
     <h2 class="mt-5">Contacta con Nosotros</h2>
-    <p>Si no encuentras la respuesta a tu pregunta, no dudes en enviarnos un mensaje. Nuestro equipo de soporte te responderá en un plazo de 24-48 horas hábiles.</p>
-    <p><strong>Correo de Soporte:</strong> <a href="mailto:soporte@vinyles.com">soporte@vinyles.com</a></p>
-    <p>También puedes visitar nuestra página de <a href="{% url 'reembolsos' %}">Reembolsos</a> para información específica sobre devoluciones.</p>
+    <p>Si no encuentras la respuesta a tu pregunta o necesitas iniciar un reclamo o solicitud de reembolso, la forma más rápida de obtener ayuda es a través de WhatsApp.</p>
+
+    <div class="whatsapp-contact-box">
+        <p>Nuestro equipo está listo para ayudarte con tus compras, pedidos, devoluciones o cualquier otra consulta.</p>
+        <a href="https://wa.me/573196604668?text=Hola,%20necesito%20ayuda%20con..." class="btn-whatsapp" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp"></i> Chatear por WhatsApp
+        </a>
+        <small class="text-muted mt-2 d-block">Horario de atención: Lunes a Viernes de 9:00 a.m. a 6:00 p.m.</small>
+    </div>
 
 </section>
