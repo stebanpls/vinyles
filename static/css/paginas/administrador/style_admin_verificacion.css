@@ -1,0 +1,86 @@
+.section {
+    padding: 4% 5% 5% 5%; /* Más espacio arriba */
+}
+
+.notificaciones-box {
+    background-color: #181818;
+    padding: 2.5%;
+    border-radius: 16px;
+    border: 1px solid #3b3b3b;
+}
+
+.titulo{
+    margin-bottom: 25px; /* Más separación del título */
+    color: #e2e8f0;
+    font-size: 1.7rem;
+    text-align: center;
+}
+
+.notificacion-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    margin-bottom: 24px; /* Espacio entre notificaciones */
+}
+
+.notificacion-item {
+    background-color: #2c2c2c;
+    border-left: 4px solid #6b7280;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+
+    box-shadow: none;
+    border: none;
+    outline: none;
+    cursor: default;
+}
+
+.notificacion-item.clickable:hover {
+    background-color: #3b3b3b;
+    cursor: pointer;
+}
+
+.noti-link {
+    color: white;
+    text-decoration: none;
+}
+
+.noti-link:hover {
+    text-decoration: underline;
+}
+
+.btn-eliminar-noti {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-eliminar-noti:hover {
+    color: #ef4444;
+}
+
+.noti-fecha {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.no-noti-text {
+    color: #cbd5e1;
+    text-align: center;
+    margin-top: 30px;
+}
+.noti-acciones {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
