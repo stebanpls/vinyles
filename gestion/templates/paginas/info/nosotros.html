@@ -1,8 +1,13 @@
-{% extends base_template %} {% load static %} {% block title %}Sobre Nosotros{%
-endblock title %} {% block extra_css %} {{ block.super }}
-<link
-  rel="stylesheet"
-  href="{% static 'css/paginas/info/style_info_pages.css' %}"
-/>
-{% endblock extra_css %} {% block content %} {% include
-'componentes/_nosotros_content.html' %} {% endblock content %}
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Sobre Nosotros{% endblock title %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/paginas/info/style_info_pages.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    {% include 'componentes/_nosotros_content.html' %}
+{% endblock content %}

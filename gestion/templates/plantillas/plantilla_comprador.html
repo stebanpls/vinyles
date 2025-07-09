@@ -17,9 +17,3 @@
 {% block extra_js %}
     {% block pie %}{% endblock %}
 {% endblock %}
-
-{# Sobrescribimos los enlaces del footer para que apunten a las URLs de comprador #}
-{% block footer_links %}
-    <li><a href="{% url 'com_terminos' %}">Términos y Condiciones</a></li>
-    <li><a href="{% url 'com_nosotros' %}">Sobre Nosotros</a></li>
-{% endblock footer_links %}

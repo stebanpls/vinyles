@@ -24,14 +24,19 @@ repos:
       # Ejecuta el linter y auto-corrige lo que pueda
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
+        # Excluimos los archivos HTML del linter de Python.
+        exclude: \.html$
       # Ejecuta el formateador de código
       - id: ruff-format
+        # Excluimos los archivos HTML para que ruff no rompa la sintaxis de Django.
+        exclude: \.html$
 
 # -   repo: https://github.com/djlint/djlint
-#     rev: v1.34.1
+#     rev: v1.36.4
 #     hooks:
-#       - id: djlint-reformat-django
-#
+#       - id: djlint
+#         args: ["--reformat", "--lint"]
+
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.8.6 # Esta es la última versión estable
     hooks:
