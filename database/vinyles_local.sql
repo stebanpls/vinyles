@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Versión del servidor:         11.7.2-MariaDB - mariadb.org binary distribution
+-- Versión del servidor:         11.8.2-MariaDB - mariadb.org binary distribution
 -- SO del servidor:              Win64
--- HeidiSQL Versión:             12.10.0.7000
+-- HeidiSQL Versión:             12.11.0.7073
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -328,7 +328,7 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(1, 'pbkdf2_sha256$1000000$BjevyAR20eHBa3wMBpgmYc$I5O6Q5uX/TprqDh36u9DC65iFkeNt9F/DZKplAKaQh4=', '2025-07-07 18:24:33.624246', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-07-05 20:46:08.878189');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-	(2, 'pbkdf2_sha256$1000000$bSsFGd7jUL4DIlabczpZGJ$g98Q7kVrQtjzd29utW7Rznm91blEtRs7t9N0/Z72hsk=', '2025-07-05 20:47:00.261977', 0, 'stebanpls', 'Steban', 'Pulido', 'stebanpulido@gmail.com', 0, 1, '2025-07-05 20:46:45.786394');
+	(2, 'pbkdf2_sha256$1000000$3R7zKz0CAKnp2NEyA3NxGe$fTM+F+mIeZuJraPFGZ3YMbUzHeEIdr0uSW+iZiikBqk=', '2025-07-10 02:02:14.962425', 0, 'stebanpls', 'Steban', 'Pulido', 'stebanpulido@gmail.com', 0, 1, '2025-07-05 20:46:45.786394');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(3, 'pbkdf2_sha256$1000000$lWZMQ1f1Kn1KdbXNGUdvI4$DWpqEdiRfA9SiEPvEODayqFgoepGnDrcgxRV2F8i9eg=', '2025-07-05 20:49:00.802490', 0, 'elkpo', 'Edwin', 'Rojas', 'stebanpul@outlook.com', 0, 1, '2025-07-05 20:48:46.660878');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
@@ -793,7 +793,7 @@ CREATE TABLE IF NOT EXISTS `clientes` (
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
 	(1, '', '', '', 'fotos_perfil/default/default_avatar.png', '', '', '');
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
-	(2, '', '', '', 'fotos_perfil/user_2/42c6abce6aa94e4b8457fba92ad1c077.jpg', '', '', '');
+	(2, '', '', 'stebanpls', 'fotos_perfil/user_2/42c6abce6aa94e4b8457fba92ad1c077.jpg', '', '', '');
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
 	(3, '', '', '', 'fotos_perfil/user_3/2315b78357514210a8cd9d01407bc8d0.jpg', '', '', '');
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
@@ -891,37 +891,41 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(1, 'admin', 'logentry');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(3, 'auth', 'group');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(2, 'auth', 'permission');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(3, 'auth', 'group');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(4, 'auth', 'user');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(5, 'contenttypes', 'contenttype');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(6, 'sessions', 'session');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(7, 'sites', 'site');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(8, 'gestion', 'artista');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(17, 'gestion', 'cancion');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(15, 'gestion', 'ciudad');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(18, 'gestion', 'cliente');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(9, 'gestion', 'crud');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(10, 'gestion', 'departamento');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(24, 'gestion', 'detallepedido');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(16, 'gestion', 'estadousuario');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(11, 'gestion', 'genero');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(12, 'gestion', 'mediodepago');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(19, 'gestion', 'notificacion');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(13, 'gestion', 'pais');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(14, 'gestion', 'productor');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(15, 'gestion', 'ciudad');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(16, 'gestion', 'estadousuario');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(17, 'gestion', 'cancion');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(18, 'gestion', 'cliente');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(19, 'gestion', 'notificacion');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(20, 'gestion', 'passwordresetcode');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
@@ -929,17 +933,13 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(22, 'gestion', 'producto');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(26, 'gestion', 'productocancion');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(14, 'gestion', 'productor');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(23, 'gestion', 'publicacion');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(24, 'gestion', 'detallepedido');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(25, 'gestion', 'ticketsoporte');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(6, 'sessions', 'session');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(7, 'sites', 'site');
+	(26, 'gestion', 'productocancion');
 
 -- Volcando estructura para tabla vinyles_local.django_migrations
 DROP TABLE IF EXISTS `django_migrations`;
