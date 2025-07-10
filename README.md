@@ -6,7 +6,7 @@
 [![MariaDB 11.x](https://img.shields.io/badge/MariaDB-11.x-C0005C?logo=mariadb&logoColor=white)](https://mariadb.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-A31F34?logo=opensource&logoColor=white)](https://opensource.org/licenses/MIT)
 
-**Vinyles** es una plataforma web para la compra y venta de vinilos nuevos y de segunda mano. Facilita la interacción entre coleccionistas y vendedores, ofreciendo un espacio para descubrir, comprar y vender música en este formato clásico.
+**Vinyles** es un sistema de información y plataforma web para la compra y venta de vinilos nuevos y de segunda mano. Facilita la interacción entre coleccionistas y vendedores, ofreciendo un espacio para descubrir, comprar y vender música en este formato clásico.
 
 ![Captura de pantalla de la aplicación](static/images/utiles/pantallazo_inicio.png)
 

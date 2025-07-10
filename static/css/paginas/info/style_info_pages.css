@@ -145,6 +145,7 @@
     font-weight: bold;
     font-size: 1.2rem;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    animation: whatsapp-pulse 2.5s infinite ease-in-out;
 }
 
 .btn-whatsapp:hover {
