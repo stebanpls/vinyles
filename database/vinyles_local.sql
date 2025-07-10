@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Versión del servidor:         11.8.2-MariaDB - mariadb.org binary distribution
 -- SO del servidor:              Win64
--- HeidiSQL Versión:             12.11.0.7073
+-- HeidiSQL Versión:             12.10.0.7000
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS `artistas` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`),
   UNIQUE KEY `discogs_id` (`discogs_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.artistas: ~12 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.artistas: ~13 rows (aproximadamente)
 INSERT INTO `artistas` (`id`, `nombre`, `informacion`, `foto`, `discogs_id`) VALUES
 	(1, 'BTS (4)', '', 'artistas/default/default_avatar.png', '5034422');
 INSERT INTO `artistas` (`id`, `nombre`, `informacion`, `foto`, `discogs_id`) VALUES
@@ -57,6 +57,8 @@ INSERT INTO `artistas` (`id`, `nombre`, `informacion`, `foto`, `discogs_id`) VAL
 	(11, 'Romeo Santos', '', 'artistas/default/default_avatar.png', '3094075');
 INSERT INTO `artistas` (`id`, `nombre`, `informacion`, `foto`, `discogs_id`) VALUES
 	(12, 'The Blanche Hudson Weekend', '', 'artistas/default/default_avatar.png', '1654515');
+INSERT INTO `artistas` (`id`, `nombre`, `informacion`, `foto`, `discogs_id`) VALUES
+	(13, 'BLACKPINK', '', 'artistas/default/default_avatar.png', '5210284');
 
 -- Volcando estructura para tabla vinyles_local.auth_group
 DROP TABLE IF EXISTS `auth_group`;
@@ -322,17 +324,23 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
   `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.auth_user: ~4 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.auth_user: ~7 rows (aproximadamente)
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-	(1, 'pbkdf2_sha256$1000000$BjevyAR20eHBa3wMBpgmYc$I5O6Q5uX/TprqDh36u9DC65iFkeNt9F/DZKplAKaQh4=', '2025-07-07 18:24:33.624246', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-07-05 20:46:08.878189');
+	(1, 'pbkdf2_sha256$1000000$BjevyAR20eHBa3wMBpgmYc$I5O6Q5uX/TprqDh36u9DC65iFkeNt9F/DZKplAKaQh4=', '2025-07-10 11:59:06.385806', 1, 'adminOne', '', '', 'adminone@gmail.com', 1, 1, '2025-07-05 20:46:08.878189');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(2, 'pbkdf2_sha256$1000000$3R7zKz0CAKnp2NEyA3NxGe$fTM+F+mIeZuJraPFGZ3YMbUzHeEIdr0uSW+iZiikBqk=', '2025-07-10 02:02:14.962425', 0, 'stebanpls', 'Steban', 'Pulido', 'stebanpulido@gmail.com', 0, 1, '2025-07-05 20:46:45.786394');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
 	(3, 'pbkdf2_sha256$1000000$lWZMQ1f1Kn1KdbXNGUdvI4$DWpqEdiRfA9SiEPvEODayqFgoepGnDrcgxRV2F8i9eg=', '2025-07-05 20:49:00.802490', 0, 'elkpo', 'Edwin', 'Rojas', 'stebanpul@outlook.com', 0, 1, '2025-07-05 20:48:46.660878');
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-	(4, 'pbkdf2_sha256$1000000$alnXci5pThwp5KgJWpyjgV$r2HunCZcnfHyArNNKwYm/FmpttG/QXA3FikfTnwOGpQ=', '2025-07-07 18:28:15.162175', 0, 'daniel', 'daniel', 'prias', 'pipeguepri23@gmail.com', 0, 1, '2025-07-07 18:22:05.458396');
+	(4, 'pbkdf2_sha256$1000000$alnXci5pThwp5KgJWpyjgV$r2HunCZcnfHyArNNKwYm/FmpttG/QXA3FikfTnwOGpQ=', '2025-07-10 11:55:00.030879', 0, 'daniel', 'daniel', 'prias', 'pipeguepri23@gmail.com', 0, 1, '2025-07-07 18:22:05.458396');
+INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
+	(5, 'pbkdf2_sha256$1000000$rNJYWBW6Ev2vc36uJJq9Nd$8dsDUCHhnyQgY6Z+wgRtplSoLutC+MUh2xsKdv8cL60=', '2025-07-10 11:52:43.642190', 0, 'Angelita', 'Angela', 'Forero', 'luzangelaforeromartinez@gmail.com', 0, 1, '2025-07-10 03:18:44.856778');
+INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
+	(6, 'pbkdf2_sha256$1000000$baxOgV12dSmxfrZJ7ZT1Bo$o9bALGKFInHX6/swKsvdWMjWqowdFRTXrULlsAAA97g=', '2025-07-10 04:07:44.807493', 0, 'Kitty', 'Andrea', 'Santana', 'angkitty0.0@gmail.com', 0, 1, '2025-07-10 04:07:18.853433');
+INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
+	(7, 'pbkdf2_sha256$1000000$v1cJSrVKLFJFbYuCUoMrre$OIhSHEPRmyXJhL2430lMjH78fom/8dLX1aDiMjAgnew=', NULL, 0, 'Jhon', 'Jhon', 'Martinez', 'hitoribochi117@gmail.com', 0, 1, '2025-07-10 04:13:15.889582');
 
 -- Volcando estructura para tabla vinyles_local.auth_user_groups
 DROP TABLE IF EXISTS `auth_user_groups`;
@@ -374,9 +382,9 @@ CREATE TABLE IF NOT EXISTS `canciones` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `discogs_id` (`discogs_id`),
   UNIQUE KEY `canciones_nombre_duracion_edbddb12_uniq` (`nombre`,`duracion`)
-) ENGINE=InnoDB AUTO_INCREMENT=170 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.canciones: ~169 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.canciones: ~177 rows (aproximadamente)
 INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
 	(1, 'Born Singer', NULL, NULL);
 INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
@@ -715,6 +723,22 @@ INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
 	(168, 'To Be That Way Again', NULL, 427000000);
 INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
 	(169, 'Someone Please Make It Rain', NULL, 236000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(170, 'Pink Venom', NULL, 186000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(171, 'Shut Down', NULL, 175000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(172, 'Typa Girl', NULL, 179000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(173, 'Yeah Yeah Yeah', NULL, 178000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(174, 'Hard To Love', NULL, 162000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(175, 'The Happiest Girl', NULL, 222000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(176, 'Tally', NULL, 184000000);
+INSERT INTO `canciones` (`id`, `nombre`, `discogs_id`, `duracion`) VALUES
+	(177, 'Ready For Love', NULL, 184000000);
 
 -- Volcando estructura para tabla vinyles_local.canciones_artistas
 DROP TABLE IF EXISTS `canciones_artistas`;
@@ -789,7 +813,7 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   CONSTRAINT `clientes_user_id_2e92d62d_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.clientes: ~4 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.clientes: ~7 rows (aproximadamente)
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
 	(1, '', '', '', 'fotos_perfil/default/default_avatar.png', '', '', '');
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
@@ -797,7 +821,13 @@ INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_res
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
 	(3, '', '', '', 'fotos_perfil/user_3/2315b78357514210a8cd9d01407bc8d0.jpg', '', '', '');
 INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
-	(4, '', '', '', 'fotos_perfil/user_4/f2a0c38aa6014d7ca106c2180a661491.jpg', '', '', '');
+	(4, '1827339746', '3145769485', '1431 Cra. 151f', 'fotos_perfil/user_4/a889f887853d49819c8df8cb68ffcc90.jpg', 'Bogotá', '110110', 'casa');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
+	(5, '1031809814', '3204021106', '107b5 Cl. 132c Bis', 'fotos_perfil/default/default_avatar.png', 'Bogotá', '111111', 'Apartemento 4');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
+	(6, '1031802637', '3204021106', 'calle 1 #2- 25', 'fotos_perfil/default/default_avatar.png', 'Bogotá', '111111', 'Apartemento 4');
+INSERT INTO `clientes` (`user_id`, `numero_documento`, `celular`, `direccion_residencia`, `foto_perfil`, `ciudad_residencia`, `codigo_postal`, `direccion_extra`) VALUES
+	(7, '', '', '', 'fotos_perfil/default/default_avatar.png', '', '', '');
 
 -- Volcando estructura para tabla vinyles_local.clientes_generos_favoritos
 DROP TABLE IF EXISTS `clientes_generos_favoritos`;
@@ -891,41 +921,37 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(1, 'admin', 'logentry');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(2, 'auth', 'permission');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(3, 'auth', 'group');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(2, 'auth', 'permission');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(4, 'auth', 'user');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(5, 'contenttypes', 'contenttype');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(6, 'sessions', 'session');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(7, 'sites', 'site');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(8, 'gestion', 'artista');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(17, 'gestion', 'cancion');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(15, 'gestion', 'ciudad');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(18, 'gestion', 'cliente');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(9, 'gestion', 'crud');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(10, 'gestion', 'departamento');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(24, 'gestion', 'detallepedido');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(16, 'gestion', 'estadousuario');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(11, 'gestion', 'genero');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(12, 'gestion', 'mediodepago');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(13, 'gestion', 'pais');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(14, 'gestion', 'productor');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(15, 'gestion', 'ciudad');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(16, 'gestion', 'estadousuario');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(17, 'gestion', 'cancion');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(18, 'gestion', 'cliente');
-INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(19, 'gestion', 'notificacion');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(13, 'gestion', 'pais');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(20, 'gestion', 'passwordresetcode');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
@@ -933,13 +959,17 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(22, 'gestion', 'producto');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(23, 'gestion', 'publicacion');
+	(26, 'gestion', 'productocancion');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(24, 'gestion', 'detallepedido');
+	(14, 'gestion', 'productor');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(23, 'gestion', 'publicacion');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 	(25, 'gestion', 'ticketsoporte');
 INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
-	(26, 'gestion', 'productocancion');
+	(6, 'sessions', 'session');
+INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
+	(7, 'sites', 'site');
 
 -- Volcando estructura para tabla vinyles_local.django_migrations
 DROP TABLE IF EXISTS `django_migrations`;
@@ -1013,7 +1043,11 @@ CREATE TABLE IF NOT EXISTS `django_session` (
   KEY `django_session_expire_date_a5c62663` (`expire_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.django_session: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.django_session: ~4 rows (aproximadamente)
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+	('if14g06h54wulzplf3qidpwilnfmp0kp', '.eJxVjDsOwjAQBe_iGllerR1iSnrOYHk_wQHkSHFSRdwdIqWA9s3M20zK61LS2nROo5iLAXP63SjzU-sO5JHrfbI81WUeye6KPWizt0n0dT3cv4OSW_nWTnrCnnTw6KkDIe0EYmThyN6zKpCK0BmQMSKrODdo0Agho7gg5v0BFv85Sg:1uZpve:1H0NfVkcumAWd3OTtwi-i6o0rDWFXCn-lozp7bhc4jw', '2025-07-24 11:59:06.389301');
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+	('n2haykunoksal63ryoy7ir6x7146yc5q', '.eJxVjMsOwiAQRf-FtSEwUx516d5vIMMAUjU0Ke3K-O_apAvd3nPOfYlA21rD1vMSpiTOYhCn3y0SP3LbQbpTu82S57YuU5S7Ig_a5XVO-Xk53L-DSr1-6wIWjE2ePWpC9IgAlCmPORbWHkxipUevnSODGDUr1MYhFEUQB4vi_QHOOTb7:1uZpiA:q_CkgHgj6qDX5AWYlOYB98j7vK1-QEmHSrRB5mRbtWs', '2025-07-24 11:45:10.808875');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 	('uu19qfjepvd8b7zm9cxwcyqvo4f4d0fm', '.eJxVjMsOwiAQRf-FtSEwUx516d5vIMMAUjU0Ke3K-O_apAvd3nPOfYlA21rD1vMSpiTOYhCn3y0SP3LbQbpTu82S57YuU5S7Ig_a5XVO-Xk53L-DSr1-6wIWjE2ePWpC9IgAlCmPORbWHkxipUevnSODGDUr1MYhFEUQB4vi_QHOOTb7:1uYqZb:PLb0WkFkwsw73gbab8yV8lUHxVw_Mq0T7Mf6r6XyraU', '2025-07-21 18:28:15.162175');
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
@@ -1070,9 +1104,21 @@ CREATE TABLE IF NOT EXISTS `gestion_detallepedido` (
   KEY `gestion_detallepedid_publicacion_id_956570bd_fk_publicaci` (`publicacion_id`),
   CONSTRAINT `gestion_detallepedid_publicacion_id_956570bd_fk_publicaci` FOREIGN KEY (`publicacion_id`) REFERENCES `publicaciones` (`id`),
   CONSTRAINT `gestion_detallepedido_pedido_id_f5053ab7_fk_gestion_pedido_id` FOREIGN KEY (`pedido_id`) REFERENCES `gestion_pedido` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.gestion_detallepedido: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.gestion_detallepedido: ~6 rows (aproximadamente)
+INSERT INTO `gestion_detallepedido` (`id`, `cantidad`, `precio_unitario`, `pedido_id`, `publicacion_id`) VALUES
+	(1, 1, 200000.00, 1, 4);
+INSERT INTO `gestion_detallepedido` (`id`, `cantidad`, `precio_unitario`, `pedido_id`, `publicacion_id`) VALUES
+	(2, 1, 160000.00, 2, 7);
+INSERT INTO `gestion_detallepedido` (`id`, `cantidad`, `precio_unitario`, `pedido_id`, `publicacion_id`) VALUES
+	(3, 1, 320000.00, 2, 9);
+INSERT INTO `gestion_detallepedido` (`id`, `cantidad`, `precio_unitario`, `pedido_id`, `publicacion_id`) VALUES
+	(4, 1, 200000.00, 3, 4);
+INSERT INTO `gestion_detallepedido` (`id`, `cantidad`, `precio_unitario`, `pedido_id`, `publicacion_id`) VALUES
+	(5, 1, 85000.00, 4, 5);
+INSERT INTO `gestion_detallepedido` (`id`, `cantidad`, `precio_unitario`, `pedido_id`, `publicacion_id`) VALUES
+	(6, 1, 200000.00, 5, 13);
 
 -- Volcando estructura para tabla vinyles_local.gestion_estadousuario
 DROP TABLE IF EXISTS `gestion_estadousuario`;
@@ -1083,9 +1129,11 @@ CREATE TABLE IF NOT EXISTS `gestion_estadousuario` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),
   CONSTRAINT `gestion_estadousuario_user_id_6641d8e7_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.gestion_estadousuario: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.gestion_estadousuario: ~1 rows (aproximadamente)
+INSERT INTO `gestion_estadousuario` (`id`, `bloqueado`, `user_id`) VALUES
+	(1, 1, 7);
 
 -- Volcando estructura para tabla vinyles_local.gestion_notificacion
 DROP TABLE IF EXISTS `gestion_notificacion`;
@@ -1099,9 +1147,9 @@ CREATE TABLE IF NOT EXISTS `gestion_notificacion` (
   PRIMARY KEY (`id`),
   KEY `gestion_notificacion_usuario_destino_id_13b951b0_fk_auth_user_id` (`usuario_destino_id`),
   CONSTRAINT `gestion_notificacion_usuario_destino_id_13b951b0_fk_auth_user_id` FOREIGN KEY (`usuario_destino_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.gestion_notificacion: ~24 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.gestion_notificacion: ~26 rows (aproximadamente)
 INSERT INTO `gestion_notificacion` (`id`, `mensaje`, `leido`, `fecha_creacion`, `url_destino`, `usuario_destino_id`) VALUES
 	(1, '🆕 El vendedor \'daniel\' ha importado un nuevo producto: \'Proof\'.', 0, '2025-07-07 18:36:38.306731', '/panel-admin/productos/adpro/1/', 1);
 INSERT INTO `gestion_notificacion` (`id`, `mensaje`, `leido`, `fecha_creacion`, `url_destino`, `usuario_destino_id`) VALUES
@@ -1150,6 +1198,10 @@ INSERT INTO `gestion_notificacion` (`id`, `mensaje`, `leido`, `fecha_creacion`, 
 	(23, '🆕 El vendedor \'daniel\' ha importado un nuevo producto: \'How Many Times Have You Let Me Die?\'.', 0, '2025-07-07 19:01:07.377567', '/panel-admin/productos/adpro/12/', 1);
 INSERT INTO `gestion_notificacion` (`id`, `mensaje`, `leido`, `fecha_creacion`, `url_destino`, `usuario_destino_id`) VALUES
 	(24, '📢 El vendedor \'daniel\' ha publicado el álbum \'How Many Times Have You Let Me Die?\'.', 0, '2025-07-07 19:01:07.381750', '/panel-admin/productos/adpro/12/', 1);
+INSERT INTO `gestion_notificacion` (`id`, `mensaje`, `leido`, `fecha_creacion`, `url_destino`, `usuario_destino_id`) VALUES
+	(25, '🆕 El vendedor \'Angelita\' ha importado un nuevo producto: \'Born Pink\'.', 0, '2025-07-10 11:54:44.512114', '/panel-admin/productos/adpro/13/', 1);
+INSERT INTO `gestion_notificacion` (`id`, `mensaje`, `leido`, `fecha_creacion`, `url_destino`, `usuario_destino_id`) VALUES
+	(26, '📢 El vendedor \'Angelita\' ha publicado el álbum \'Born Pink\'.', 0, '2025-07-10 11:54:44.518005', '/panel-admin/productos/adpro/13/', 1);
 
 -- Volcando estructura para tabla vinyles_local.gestion_pedido
 DROP TABLE IF EXISTS `gestion_pedido`;
@@ -1165,9 +1217,19 @@ CREATE TABLE IF NOT EXISTS `gestion_pedido` (
   PRIMARY KEY (`id`),
   KEY `gestion_pedido_comprador_id_35cc19fe_fk_auth_user_id` (`comprador_id`),
   CONSTRAINT `gestion_pedido_comprador_id_35cc19fe_fk_auth_user_id` FOREIGN KEY (`comprador_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.gestion_pedido: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.gestion_pedido: ~5 rows (aproximadamente)
+INSERT INTO `gestion_pedido` (`id`, `fecha_pedido`, `total`, `direccion_envio`, `estado`, `comprador_id`, `costo_envio`, `subtotal`) VALUES
+	(1, '2025-07-10 03:21:05.044314', 200000.00, 'Angela Forero\n107b5 Cl. 132c Bis, Apartemento 4\nBogotá, 111111\nTel: 3204021106', 'C', 5, 0.00, 200000.00);
+INSERT INTO `gestion_pedido` (`id`, `fecha_pedido`, `total`, `direccion_envio`, `estado`, `comprador_id`, `costo_envio`, `subtotal`) VALUES
+	(2, '2025-07-10 03:24:29.236354', 480000.00, 'Angela Forero\n107b5 Cl. 132c Bis, Apartemento 4\nBogotá, 111111\nTel: 3204021106', 'P', 5, 0.00, 480000.00);
+INSERT INTO `gestion_pedido` (`id`, `fecha_pedido`, `total`, `direccion_envio`, `estado`, `comprador_id`, `costo_envio`, `subtotal`) VALUES
+	(3, '2025-07-10 04:08:45.278803', 200000.00, 'Andrea Santana\ncalle 1 #2- 25, Apartemento 4\nBogotá, 111111\nTel: 3204021106', 'P', 6, 0.00, 200000.00);
+INSERT INTO `gestion_pedido` (`id`, `fecha_pedido`, `total`, `direccion_envio`, `estado`, `comprador_id`, `costo_envio`, `subtotal`) VALUES
+	(4, '2025-07-10 04:09:30.096623', 85000.00, 'Andrea Santana\ncalle 1 #2- 25, Apartemento 4\nBogotá, 111111\nTel: 3204021106', 'C', 6, 0.00, 85000.00);
+INSERT INTO `gestion_pedido` (`id`, `fecha_pedido`, `total`, `direccion_envio`, `estado`, `comprador_id`, `costo_envio`, `subtotal`) VALUES
+	(5, '2025-07-10 11:57:35.721650', 200000.00, 'daniel prias\n1431 Cra. 151f, casa\nBogotá, 110110\nTel: 3145769485', 'P', 4, 0.00, 200000.00);
 
 -- Volcando estructura para tabla vinyles_local.medios_de_pago
 DROP TABLE IF EXISTS `medios_de_pago`;
@@ -1231,9 +1293,9 @@ CREATE TABLE IF NOT EXISTS `productos` (
   `discogs_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `discogs_id` (`discogs_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.productos: ~12 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.productos: ~13 rows (aproximadamente)
 INSERT INTO `productos` (`id`, `nombre`, `lanzamiento`, `descripcion`, `discografica`, `imagen_portada`, `discogs_id`) VALUES
 	(1, 'Proof', '2022-01-01', 'BTS\' first anthology release.\n\nCompact Edition release includes:\n• 3 CDs\n• Booklet\n• Photocard (random 1 of 7)\n• Postcard (random 1 of 8)\n• Mini Poster\n• Discography Guide\n\nTechnical information, from booklet:\nTrack 1-1 is new song. It is a cover/reimagining of [a750828]\'s "Born Sinner" with new lyrics.\nOriginal publishers: Songs of Universal, Inc., Almo Music Corp., Underdog West Songs, Fauntleroy Music, Elite That\'s Me Publishing, Kobalt Music Publishing Ltd (KMP), Canei Live Music, EMI Blackwood Music Inc., ILLOGIKAL MUSIC, Copyright Control.\nSub-publishers: Universal Music Publishing Korea, EKKO Music Rights (powered by CTGA), EMI Music Publishing Korea.\n• Recorded @ Dogg Bounce\n• Mixed for KenLewis.com\n\nTrack 1-2 is from [m=1528153] (2013)\n• Recorded @ Dogg Bounce\n• Mixed @ Schmuzik Studios\n\nTrack 1-3 is from [m=1528163] (2013)\n• Recorded @ Dogg Bounce\n• Mixed @ Schmuzik Studios\n\nTrack 1-4 is from [m=1017059] (2014)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Sam Klempner @ Schmuzik Studios in London\n• Mixed @ Schmuzik Studios\n\nTrack 1-5 is from [m=1522998] (2014)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Eric Reichers @ Echo Bar STUDIO in N. Hollywood\n• Mixed @ Schmuzik Studios\n\nTrack 1-6 is from [m=963030] (2015)\n• Recorded @ Dogg Bounce\n• Mixed @ Schmuzik Studios\n\nTrack 1-7 is from [m=963033] (2015)\n• Recorded @ Dogg Bounce\n• Mixed @ Schmuzik Studios\n\nTrack 1-8 is from [m=1044804] (2016)\n• Recorded @ Dogg Bounce\n• Mixed @ Schmuzik Studios\n\nTrack 1-9 is from [r=9231043] (2016)\n• Recorded @ Dogg Bounce\n• Mixed @ Schmuzik Studios\n\nTrack 1-10 is from [r=25152820] (2017)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by 정우영 @ Big Hit Studio\n• Recorded by Peter Ibsen @ Sky Studios\n• Mixed @ Schmuzik Studios\n\nTrack 1-11 is from [m=1528122] (2017)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by 정우영 @ Big Hit Studio\n• Recorded by KASS @ KASS Cave\n• Recorded by Supreme Boi @ The Rock Pit\n• Mixed @ Schmuzik Studios\n\nTrack 1-12 is from [m=1385652] (2018)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by 정우영 @ Big Hit Studio\n• Mixed @ Schmuzik Studios\n\nTrack 1-13 is from [m=1528108] (2018)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Supreme Boi @ The Rock Pit\n• Mixed @ Schmuzik Studios\n\nTrack 1-14 is from [m=1532766] (2019)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by RM @ RKive\n• Recorded by 박진세 @ Big Hit Studio\n• Recorded by Michel "Lindgren" Schulz @ The One With The Big Bulb\n• Recorded by Alex Williams @ The Village Studios Los Angeles, CA\n• Mixed @ Larrabee Sound Studios, North Hollywood, CA\n\nTrack 1-15 is from [m=1692300] (2020)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by RM @ RKive\n• Recorded by Michel "Lindgren" Schulz @ The One With The Big Bulb\n• Recorded by Erik Reichers @ Echo Bar STUDIO in N. Hollywood\n• Mixed for The Penua Project @ Sphere Studios, Los Angeles, CA\n\nTrack 1-16 is from [m=1995718] (2020)\n• Recorded @ Dogg Bounce\n• Mixed @ MixStar Studios, Virginia Beach, VA\n\nTrack 1-17 is from [m=1995718] (2020)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by RM @ RKive\n• Mixed @ Henson Studios, Los Angeles, CA\n\nTrack 1-18 is from the non-album single [m=2199655] (2021)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Juan "Saucy" Peña @ Larry and George Studios\n• Recorded by Keith Parry @ Larry and George Studios\n• Mixed @ MixStar Studios, Virginia Beach, VA\n\nTrack 1-19 is a new song.\n• Recorded @ Dogg Bounce\n• Mixed @ Henson Studios, Los Angeles, CA\n\nTrack 2-1 is a new song.\nProduced by Dem Jointz for U Made Us What We Are LLC, GHSTLOOP.\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by YOUNG @ Studio YOUNG\n• Recorded by Melanie Joy Fontana @ The One With The Big Bulb\n• Mixed for The Penua Project @ Canton House Studios, Studio City, CA\n\nTrack 2-2 is from [m=1532766] (2019)\nContains a sample from BTS "Intro: Skool Luv Affair."\n• Recorded by Hiss noise @ Analog lab\n• Recorded by RM @ RKive\n• Recorded by 김지연 @ Big Hit Studio\n• Mixed for KenLewis.com\n\nTrack 2-3 is from [m=1995718] (2020)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by RM @ RKive\n• Mixed @ Schmuzik Studios\n\nTrack 2-4 is from [m=1692300] (2020)\n• Recorded by Slow Rabbit @ Carrot Express, Dogg Bounce\n• Recorded by 정우영 @ Big Hit Studio\n• Recorded by 박은정 @ Big Hit Studio\n• Recorded by ADORA @ Adorable Trap\n• Recorded by Jordan "DJ Swivel" Young @ House Thirty Three, Los Angeles\n• Recorded by Caesar & Loui, FRANTS @ Studio Bambi Gang\n• Mixed @ Schmuzik Studios\n\nTrack 2-5 is from [m=1532766] (2019)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Hiss noise @ Analog lab\n• Recorded by ADORA @ Adorable Trap\n• Recorded by 김지연 @ Big Hit Studio\n• Mixed @ Big Hit Studio\n\nTrack 2-6 is from [m=1528108] (2018)\n• Recorded by ADORA @ Adorable Trap\n• Recorded by SUGA @ Genius lab\n• Recorded by Slow Rabbit @ Carrot Express\n• Recorded by 정우영 @ Big Hit Studio\n• Mixed @ Big Hit Studio\n\nTrack 2-7 is from [m=1522998] (2014)\n• Recorded by Supreme Boi @ The Supreme Escape\n• Mixed for KenLewis.com\n\nTrack 2-8 is from [m=1692300] (2020)\nContains a sample from BTS "Intro: 2 COOL 4 SKOOL."\n• Recorded by j-hope @ Hope World\n• Recorded by ADORA @ Adorable Trap\n• Recorded by FRANTS @ Studio Bambi Gang\n• Recorded by Erik Reichers @ Echo Bar STUDIO in N. Hollywood\n• Mixed @ Big Hit Studio\n\nTrack 2-9 is from [m=1528108] (2018)\n• Recorded by Slow Rabbit @ Carrot Express\n• Recorded by RM @ RKive\n• Recorded by Supreme Boi @ The Rock Pit\n• Recorded by SUGA @ Genius lab\n• Recorded by 정우영 @ Big Hit Studio\n• Mixed @ Big Hit Studio\n\nTrack 2-10 is from [m=1692300] (2020)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by ADORA @ Adorable Trap\n• Mixed @ The Ninja Beat Club\n\nTrack 2-11 is from [m=1692300] (2020)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by ADORA @ Adorable Trap\n• Recorded by 정우영 @ Big Hit Studio\n• Recorded by Erik Reichers @ Echo Bar STUDIO in N. Hollywood\n\nTrack 2-12 is from [m=1385652] (2018)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Slow Rabbit @ Carrot Express\n• Mixed @ Big Hit Studio\n\nTrack 2-13 is from [m=1692300] (2020)\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by ADORA @ Adorable Trap\n• Recorded by 정우영 @ Big Hit Studio\n• Mixed @ Big Hit Studio\n\nTrack 2-14 is from Love [m=1528108] (2018)\n• Recorded by Slow Rabbit @ Carrot Express\n• Recorded by ADORA @ Adorable Trap\n• Mixed for DJ Swivel Music LLC\n\nTrack 2-15 is from [m=1528122] (2017)\nOriginally titled "Illegal."\nOriginal publishers: Laundromat Music, Quiet Lion Music.\nSub-publishers: Fujipacific Music Korea Inc., Ekko Music Rights.\n• Recorded @ Geimori Studio & Cloud Lodge SAPPORO\n• Mixed @ Big Hit Studio\n\nTrack 3-1\n• Recorded by RM @ Mon Studio\n• Recorded by SUGA @ Genius lab\n• Mixed @ Dogg Bounce\n\nTrack 3-2 is a new song.\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by RM @ Mon Studio\n• Mixed for KenLewis.com\n\nTrack 3-3\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Sam Klempner @ Schmuzik Studios in London\n• Mixed @ Dogg Bounce\n\nTrack 3-4 is a new song.\n• Recorded by RM @ Mon Studio\n• Recorded by j-hope @ Hope World\n• Recorded by Junk Kook @ Golden Closet\n• Mixed for KenLewis.com\n\nTrack 3-5\n• Recorded by RM @ Mon Studio\n• Recorded by j-hope @ Hope World\n• Recorded by SUGA @ Genius lab\n• Recorded by Junk Kook @ Golden Closet\n• Mixed @ Dogg Bounce\n\nTrack 3-6\n• Recorded @ Dogg Bounce\n\nTrack 3-7\n• Recorded @ Genius Lab\n• Mixed @ Dogg Bounce\n\nTrack 3-8\n• Recorded by RM @ Mon Studio\n• Mixed @ HYBE Studio\n\nTrack 3-9\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by 정우영 @ Big Hit Studio\n• Mixed @ HYBE Studio\n\nTrack 3-10\n• Recorded @ Hope World\n• Mixed @ HYBE Studio\n\nTrack 3-11\n• Recorded @ Carrot Express\n• Mixed @ HYBE Studio\n\nTrack 3-12\n• Mixed @ HYBE Studio\n\nTrack 3-13\n• Recorded @ Dogg Bounce\n• Mixed @ HYBE Studio\n\nTrack 3-14\nContains a sample from BTS "EPILOGUE: Young Forever."\n• Recorded by Pdogg @ Dogg Bounce\n• Recorded by Julian Vasquez @ Virtuoso Studios\n• Recorded by Hiss noise @ Analog lab\n• Mixed @ The Echo Bar, North Hollywood, CA \n\nMastering Engineers:\nAlex DeYoung @ Deyoung Masters\nChris Gehringer @ Sterling Sound\nRandy Merrill @ Sterling Sound\nTony Dawsey @ Masterdisk, NYC\nVlado Meller @ Masterdisk, NYC\nYang Ga @ HYBE Studio', 'Bighit Music', 'productos_portadas/master_2668997_42840a7429ccbc2a.jpeg', '23542562');
 INSERT INTO `productos` (`id`, `nombre`, `lanzamiento`, `descripcion`, `discografica`, `imagen_portada`, `discogs_id`) VALUES
@@ -1258,6 +1320,8 @@ INSERT INTO `productos` (`id`, `nombre`, `lanzamiento`, `descripcion`, `discogra
 	(11, 'Utopía', '2019-01-01', '', 'Sony Music Latin', 'productos_portadas/master_1559676_742bd4556f6a89aa.jpeg', '13533251');
 INSERT INTO `productos` (`id`, `nombre`, `lanzamiento`, `descripcion`, `discografica`, `imagen_portada`, `discogs_id`) VALUES
 	(12, 'How Many Times Have You Let Me Die?', '2013-01-01', '', 'Odd Box Records', 'productos_portadas/master_1446867_bb30db226f78f093.jpeg', '5137197');
+INSERT INTO `productos` (`id`, `nombre`, `lanzamiento`, `descripcion`, `discografica`, `imagen_portada`, `discogs_id`) VALUES
+	(13, 'Born Pink', '2022-01-01', '℗ 2022 YG Entertainment, distributed through Interscope Records', 'YG Entertainment', 'productos_portadas/master_2787407_307e397760b70070.jpeg', '24534524');
 
 -- Volcando estructura para tabla vinyles_local.productos_artistas
 DROP TABLE IF EXISTS `productos_artistas`;
@@ -1270,9 +1334,9 @@ CREATE TABLE IF NOT EXISTS `productos_artistas` (
   KEY `productos_artistas_artista_id_750b8d1c_fk_artistas_id` (`artista_id`),
   CONSTRAINT `productos_artistas_artista_id_750b8d1c_fk_artistas_id` FOREIGN KEY (`artista_id`) REFERENCES `artistas` (`id`),
   CONSTRAINT `productos_artistas_producto_id_ccb2281e_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.productos_artistas: ~12 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.productos_artistas: ~13 rows (aproximadamente)
 INSERT INTO `productos_artistas` (`id`, `producto_id`, `artista_id`) VALUES
 	(1, 1, 1);
 INSERT INTO `productos_artistas` (`id`, `producto_id`, `artista_id`) VALUES
@@ -1297,6 +1361,8 @@ INSERT INTO `productos_artistas` (`id`, `producto_id`, `artista_id`) VALUES
 	(11, 11, 11);
 INSERT INTO `productos_artistas` (`id`, `producto_id`, `artista_id`) VALUES
 	(12, 12, 12);
+INSERT INTO `productos_artistas` (`id`, `producto_id`, `artista_id`) VALUES
+	(13, 13, 13);
 
 -- Volcando estructura para tabla vinyles_local.productos_genero_principal
 DROP TABLE IF EXISTS `productos_genero_principal`;
@@ -1309,9 +1375,9 @@ CREATE TABLE IF NOT EXISTS `productos_genero_principal` (
   KEY `productos_genero_principal_genero_id_67fa962f_fk_generos_id` (`genero_id`),
   CONSTRAINT `productos_genero_principal_genero_id_67fa962f_fk_generos_id` FOREIGN KEY (`genero_id`) REFERENCES `generos` (`id`),
   CONSTRAINT `productos_genero_principal_producto_id_e9b51d06_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.productos_genero_principal: ~21 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.productos_genero_principal: ~22 rows (aproximadamente)
 INSERT INTO `productos_genero_principal` (`id`, `producto_id`, `genero_id`) VALUES
 	(1, 1, 1);
 INSERT INTO `productos_genero_principal` (`id`, `producto_id`, `genero_id`) VALUES
@@ -1354,6 +1420,8 @@ INSERT INTO `productos_genero_principal` (`id`, `producto_id`, `genero_id`) VALU
 	(20, 11, 6);
 INSERT INTO `productos_genero_principal` (`id`, `producto_id`, `genero_id`) VALUES
 	(21, 12, 3);
+INSERT INTO `productos_genero_principal` (`id`, `producto_id`, `genero_id`) VALUES
+	(22, 13, 5);
 
 -- Volcando estructura para tabla vinyles_local.producto_canciones
 DROP TABLE IF EXISTS `producto_canciones`;
@@ -1368,9 +1436,9 @@ CREATE TABLE IF NOT EXISTS `producto_canciones` (
   KEY `producto_canciones_cancion_id_faa58a16_fk_canciones_id` (`cancion_id`),
   CONSTRAINT `producto_canciones_cancion_id_faa58a16_fk_canciones_id` FOREIGN KEY (`cancion_id`) REFERENCES `canciones` (`id`),
   CONSTRAINT `producto_canciones_producto_id_8a889b51_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=171 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.producto_canciones: ~170 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.producto_canciones: ~178 rows (aproximadamente)
 INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
 	(1, 1, 1, 1);
 INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
@@ -1711,6 +1779,22 @@ INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_
 	(169, 14, 168, 12);
 INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
 	(170, 15, 169, 12);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(171, 1, 170, 13);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(172, 2, 171, 13);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(173, 3, 172, 13);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(174, 4, 173, 13);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(175, 5, 174, 13);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(176, 6, 175, 13);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(177, 7, 176, 13);
+INSERT INTO `producto_canciones` (`id`, `numero_pista`, `cancion_id`, `producto_id`) VALUES
+	(178, 8, 177, 13);
 
 -- Volcando estructura para tabla vinyles_local.publicaciones
 DROP TABLE IF EXISTS `publicaciones`;
@@ -1728,9 +1812,9 @@ CREATE TABLE IF NOT EXISTS `publicaciones` (
   KEY `publicaciones_producto_id_e5f4d28c` (`producto_id`),
   CONSTRAINT `publicaciones_producto_id_e5f4d28c_fk_productos_id` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
   CONSTRAINT `publicaciones_vendedor_id_3c072a5e_fk_auth_user_id` FOREIGN KEY (`vendedor_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla vinyles_local.publicaciones: ~12 rows (aproximadamente)
+-- Volcando datos para la tabla vinyles_local.publicaciones: ~13 rows (aproximadamente)
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
 	(1, 120000.00, 2, 'El album esta en buen estado', '2025-07-07 18:36:38.306731', 1, 1, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
@@ -1738,23 +1822,25 @@ INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
 	(3, 150000.00, 5, 'En buen estado, solo que tiene un mordisco', '2025-07-07 18:39:35.016069', 1, 3, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
-	(4, 200000.00, 6, 'Es un album que esta en muy buen estado, casi nuevo', '2025-07-07 18:40:47.255985', 1, 4, 4);
+	(4, 200000.00, 4, 'Es un album que esta en muy buen estado, casi nuevo', '2025-07-07 18:40:47.255985', 1, 4, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
-	(5, 85000.00, 2, 'Calidad Aceptable, Lo use pocas veces y viene con una phtocard algo dañada.', '2025-07-07 18:42:37.286158', 1, 5, 4);
+	(5, 85000.00, 1, 'Calidad Aceptable, Lo use pocas veces y viene con una phtocard algo dañada.', '2025-07-07 18:42:37.286158', 1, 5, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
 	(6, 170000.00, 3, 'Buen estado, de segunda mano', '2025-07-07 18:45:14.078150', 1, 6, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
-	(7, 160000.00, 8, 'Esta en muy buen estado esta aun sellado como nuevo', '2025-07-07 18:46:27.976907', 1, 7, 4);
+	(7, 160000.00, 7, 'Esta en muy buen estado esta aun sellado como nuevo', '2025-07-07 18:46:27.976907', 1, 7, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
 	(8, 69000.00, 1, 'Esta en un estado un poco deplorable , pero es original, apto para coleccionistas', '2025-07-07 18:50:42.434362', 1, 8, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
-	(9, 320000.00, 10, 'Esta en un excelente esta nuevo', '2025-07-07 18:55:20.458604', 1, 9, 4);
+	(9, 320000.00, 9, 'Esta en un excelente esta nuevo', '2025-07-07 18:55:20.458604', 1, 9, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
 	(10, 95000.00, 21, 'Clasico del rock con excelente estado y disfrutable', '2025-07-07 18:58:00.423089', 1, 10, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
 	(11, 125000.00, 3, 'Es apto para coleccionistas el carton esta un poco desgastado pero el disco funciona bien', '2025-07-07 18:59:07.857181', 1, 11, 4);
 INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
 	(12, 50000.00, 1, 'Es un album para coleccionistas, ya que si es original pero el disco no funciona', '2025-07-07 19:01:07.379420', 1, 12, 4);
+INSERT INTO `publicaciones` (`id`, `precio`, `stock`, `descripcion_condicion`, `fecha_publicacion`, `activa`, `producto_id`, `vendedor_id`) VALUES
+	(13, 200000.00, 2, 'Esta en un excelente estado, no tiene ningún tipo de daño', '2025-07-10 11:54:44.514646', 1, 13, 5);
 
 -- Volcando estructura para tabla vinyles_local.tickets_soporte
 DROP TABLE IF EXISTS `tickets_soporte`;
